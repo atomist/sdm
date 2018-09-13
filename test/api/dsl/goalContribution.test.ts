@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import {

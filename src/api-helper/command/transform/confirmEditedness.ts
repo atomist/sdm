@@ -15,8 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import * as stringify from "json-stringify-safe";
 
 /**

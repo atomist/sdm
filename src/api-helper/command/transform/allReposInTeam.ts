@@ -15,8 +15,8 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as _ from "lodash";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { ReposInTeam } from "../../../typings/types";

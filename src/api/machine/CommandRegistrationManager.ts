@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { CodeInspectionRegistration } from "../registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";

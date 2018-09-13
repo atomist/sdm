@@ -15,11 +15,11 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Project } from "@atomist/automation-client/project/Project";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { SimpleProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import axios from "axios";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 

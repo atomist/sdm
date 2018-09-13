@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
-import { Project } from "@atomist/automation-client/project/Project";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 export type TransformResult = EditResult;

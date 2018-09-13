@@ -15,7 +15,7 @@
  */
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { AbstractSoftwareDeliveryMachine } from "../../src/api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { GoalSetter } from "../../src/api/mapping/GoalSetter";
 

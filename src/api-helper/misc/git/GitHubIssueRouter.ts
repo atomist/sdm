@@ -17,12 +17,12 @@
 import {
     isTokenCredentials,
     ProjectOperationCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+} from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
     Issue,
     raiseIssue,
-} from "@atomist/automation-client/util/gitHub";
+} from "@atomist/automation-client/lib/util/gitHub";
 import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 /**

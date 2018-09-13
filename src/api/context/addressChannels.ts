@@ -20,7 +20,7 @@ import {
     Destination,
     MessageOptions,
     SlackFileMessage,
-} from "@atomist/automation-client/spi/message/MessageClient";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**

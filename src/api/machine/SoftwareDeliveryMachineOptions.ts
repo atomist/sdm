@@ -17,10 +17,10 @@
 import {
     AnyOptions,
     Configuration,
-} from "@atomist/automation-client/configuration";
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
-import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+} from "@atomist/automation-client/lib/configuration";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";

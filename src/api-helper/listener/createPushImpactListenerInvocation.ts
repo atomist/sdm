@@ -18,8 +18,8 @@ import {
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { Destination } from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";

@@ -18,10 +18,10 @@ import { HandleCommand } from "@atomist/automation-client";
 import {
     commandHandlerFrom,
     OnCommand,
-} from "@atomist/automation-client/onCommand";
-import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+} from "@atomist/automation-client/lib/onCommand";
+import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { MachineOrMachineOptions } from "../machine/toMachineOptions";
 
 /**

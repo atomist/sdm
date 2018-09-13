@@ -15,24 +15,24 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ActionResult } from "@atomist/automation-client/action/ActionResult";
+import { ActionResult } from "@atomist/automation-client/lib/action/ActionResult";
 import {
     GitHubDotComBase,
     isGitHubRepoRef,
-} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { File } from "@atomist/automation-client/project/File";
+} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { TokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { File } from "@atomist/automation-client/lib/project/File";
 import {
     GitProject,
     GitPushOptions,
-} from "@atomist/automation-client/project/git/GitProject";
-import { GitStatus } from "@atomist/automation-client/project/git/gitStatus";
-import { ReleaseFunction } from "@atomist/automation-client/project/local/LocalProject";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { FileStream } from "@atomist/automation-client/project/Project";
-import { AbstractProject } from "@atomist/automation-client/project/support/AbstractProject";
-import { fileContent } from "@atomist/automation-client/util/gitHub";
+} from "@atomist/automation-client/lib/project/git/GitProject";
+import { GitStatus } from "@atomist/automation-client/lib/project/git/gitStatus";
+import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { FileStream } from "@atomist/automation-client/lib/project/Project";
+import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
+import { fileContent } from "@atomist/automation-client/lib/util/gitHub";
 import * as stream from "stream";
 import {
     ProjectLoader,

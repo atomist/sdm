@@ -15,12 +15,12 @@
  */
 
 import { Parameter, Parameters } from "@atomist/automation-client";
-import { SelfDescribingHandleCommand } from "@atomist/automation-client/HandleCommand";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../src/api-helper/command/generator/generatorCommand";
 import {

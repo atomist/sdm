@@ -18,8 +18,8 @@ import { logger } from "@atomist/automation-client";
 import {
     ProjectReview,
     Severity,
-} from "@atomist/automation-client/operations/review/ReviewResult";
-import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
+} from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as _ from "lodash";
 import { PushTest } from "../../../api/mapping/PushTest";
 import { ReviewerRegistration } from "../../../api/registration/ReviewerRegistration";

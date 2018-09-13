@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
-import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
+import { DefaultReviewComment } from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { saveFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import { ReviewListener, ReviewListenerInvocation } from "../../../src/api/listener/ReviewListener";
 import { ReviewerRegistration } from "../../../src/api/registration/ReviewerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../src/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";

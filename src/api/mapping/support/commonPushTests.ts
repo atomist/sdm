@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as _ from "lodash";
 import {
     PullRequestsForBranch,

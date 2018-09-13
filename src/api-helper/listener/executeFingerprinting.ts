@@ -18,7 +18,7 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
+import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
 import {
     ExecuteGoal,
     GoalInvocation,

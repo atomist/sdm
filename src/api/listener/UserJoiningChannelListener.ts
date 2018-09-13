@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as schema from "../../typings/types";
 import {
     ListenerInvocation,

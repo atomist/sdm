@@ -18,8 +18,8 @@ import {
     failure,
     logger,
 } from "@atomist/automation-client";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { ProjectReview } from "@atomist/automation-client/lib/operations/review/ReviewResult";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import {

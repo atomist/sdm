@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
+import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
 import { PushImpactListenerRegistration } from "./PushImpactListenerRegistration";
 
 /**

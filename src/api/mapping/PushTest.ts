@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Project } from "@atomist/automation-client/project/Project";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { PushMapping } from "./PushMapping";
 

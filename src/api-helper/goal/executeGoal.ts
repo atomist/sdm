@@ -21,8 +21,8 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { configurationValue } from "@atomist/automation-client/configuration";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";

@@ -18,8 +18,8 @@ import {
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { Goal } from "../../api/goal/Goal";

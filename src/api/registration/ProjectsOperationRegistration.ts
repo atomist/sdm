@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { RepoFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { RepoTargets } from "../machine/RepoTargets";
 import { ProjectPredicate } from "../mapping/PushTest";
 import { CommandRegistration } from "./CommandRegistration";

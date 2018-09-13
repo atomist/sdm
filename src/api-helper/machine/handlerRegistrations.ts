@@ -25,36 +25,36 @@ import {
     declareMappedParameter,
     declareParameter,
     declareSecret,
-} from "@atomist/automation-client/internal/metadata/decoratorSupport";
-import { OnCommand } from "@atomist/automation-client/onCommand";
-import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
-import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { andFilter } from "@atomist/automation-client/operations/common/repoFilter";
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
-import { editAll } from "@atomist/automation-client/operations/edit/editAll";
-import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
+} from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
+import { OnCommand } from "@atomist/automation-client/lib/onCommand";
+import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
+import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
+import { doWithAllRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
+import { editAll } from "@atomist/automation-client/lib/operations/edit/editAll";
+import { PullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
 import {
     EditResult,
     failedEdit,
     ProjectEditor,
     successfulEdit,
-} from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+} from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import {
     isProject,
     Project,
-} from "@atomist/automation-client/project/Project";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
+} from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import {
     Maker,
     toFactory,
-} from "@atomist/automation-client/util/constructionUtils";
+} from "@atomist/automation-client/lib/util/constructionUtils";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";

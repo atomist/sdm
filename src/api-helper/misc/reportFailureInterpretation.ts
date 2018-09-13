@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
