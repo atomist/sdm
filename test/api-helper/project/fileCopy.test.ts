@@ -17,7 +17,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { copyFileFromUrl, copyFilesFrom } from "../../../src/api-helper/project/fileCopy";
+import { copyFileFromUrl, copyFilesFrom } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
 

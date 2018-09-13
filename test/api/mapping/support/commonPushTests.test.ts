@@ -17,14 +17,14 @@
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
+import { PushListenerInvocation } from "../../../../lib/api/listener/PushListener";
 import {
     hasFile,
     hasFileContaining,
     hasFileWithExtension,
     IsPushToBranchWithPullRequest,
     ToDefaultBranch,
-} from "../../../../src/api/mapping/support/commonPushTests";
+} from "../../../../lib/api/mapping/support/commonPushTests";
 
 describe("commonPushTests", () => {
 

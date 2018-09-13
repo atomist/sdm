@@ -25,20 +25,20 @@ import {
     executeAutofixes,
     filterImmediateAutofixes,
     generateCommitMessageForAutofix,
-} from "../../../src/api-helper/listener/executeAutofixes";
-import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
-import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
-import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { pushTest } from "../../../src/api/mapping/PushTest";
-import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
-import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
+} from "../../../lib/api-helper/listener/executeAutofixes";
+import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { pushTest } from "../../../lib/api/mapping/PushTest";
+import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
+import { RepoRefResolver } from "../../../lib/spi/repo-ref/RepoRefResolver";
 import {
     CoreRepoFieldsAndChannels,
     OnPushToAnyBranch,
     ScmProvider,
-} from "../../../src/typings/types";
+} from "../../../lib/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",

@@ -6,9 +6,7 @@
     "moduleResolution": "Node",
     "jsx": "React",
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
-    "outDir": "build",
     "rootDir": ".",
     "lib": [
       "DOM",
@@ -27,7 +25,9 @@
   },
   "exclude": [
     "build",
-    "node_modules"
+    "node_modules",
+    "docs",
+    "legal"
   ],
   "compileOnSave": true,
   "buildOnSave": false,

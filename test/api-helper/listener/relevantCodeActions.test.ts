@@ -18,11 +18,11 @@ import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMe
 import axios from "axios";
 
 import * as assert from "power-assert";
-import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCodeActions";
-import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
+import { relevantCodeActions } from "../../../lib/api-helper/listener/relevantCodeActions";
+import { PushImpactListenerInvocation } from "../../../lib/api/listener/PushImpactListener";
 import {
     AutofixRegistration,
-} from "../../../src/api/registration/AutofixRegistration";
+} from "../../../lib/api/registration/AutofixRegistration";
 
 const SomePickyFix: AutofixRegistration = {
     name: "Some picky fix",

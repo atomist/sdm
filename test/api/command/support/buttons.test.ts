@@ -15,9 +15,9 @@
  */
 
 import * as assert from "assert";
-import { actionableButton } from "../../../../src/api/command/support/buttons";
-import { CodeTransformRegistration } from "../../../../src/api/registration/CodeTransformRegistration";
-import { CommandHandlerRegistration } from "../../../../src/api/registration/CommandHandlerRegistration";
+import { actionableButton } from "../../../../lib/api/command/support/buttons";
+import { CodeTransformRegistration } from "../../../../lib/api/registration/CodeTransformRegistration";
+import { CommandHandlerRegistration } from "../../../../lib/api/registration/CommandHandlerRegistration";
 
 describe("actionableButton", () => {
 

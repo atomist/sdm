@@ -17,15 +17,15 @@
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import assert = require("power-assert");
-import { DefaultGoalImplementationMapper } from "../../../src/api-helper/goal/DefaultGoalImplementationMapper";
-import { fakePush } from "../../../src/api-helper/test/fakePush";
-import { Goal } from "../../../src/api/goal/Goal";
-import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
-import { SdmGoalFulfillmentMethod } from "../../../src/api/goal/SdmGoalMessage";
-import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
-import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { AnyPush } from "../../../src/api/mapping/support/commonPushTests";
-import { not } from "../../../src/api/mapping/support/pushTestUtils";
+import { DefaultGoalImplementationMapper } from "../../../lib/api-helper/goal/DefaultGoalImplementationMapper";
+import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
+import { SdmGoalFulfillmentMethod } from "../../../lib/api/goal/SdmGoalMessage";
+import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { AnyPush } from "../../../lib/api/mapping/support/commonPushTests";
+import { not } from "../../../lib/api/mapping/support/pushTestUtils";
 
 describe("DefaultGoalImplementationMapper", () => {
 

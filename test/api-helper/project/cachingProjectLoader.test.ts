@@ -17,8 +17,8 @@
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { CachingProjectLoader, save } from "../../../src/api-helper/project/CachingProjectLoader";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { CachingProjectLoader, save } from "../../../lib/api-helper/project/CachingProjectLoader";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
 
 describe("cachingProjectLoader", () => {
 

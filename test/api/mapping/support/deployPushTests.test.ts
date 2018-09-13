@@ -18,8 +18,8 @@ import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { IsDeployEnabled } from "../../../../src/api/mapping/support/deployPushTests";
+import { PushListenerInvocation } from "../../../../lib/api/listener/PushListener";
+import { IsDeployEnabled } from "../../../../lib/api/mapping/support/deployPushTests";
 
 describe("deployPushTests tests thing", () => {
 

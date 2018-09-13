@@ -22,10 +22,10 @@ import { Project } from "@atomist/automation-client/lib/project/Project";
 import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
 import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/lib/project/mem/InMemoryFile";
-import { save } from "../../../src/api-helper/project/CachingProjectLoader";
-import { CloningProjectLoader } from "../../../src/api-helper/project/cloningProjectLoader";
-import { LazyProjectLoader } from "../../../src/api-helper/project/LazyProjectLoader";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
+import { CloningProjectLoader } from "../../../lib/api-helper/project/cloningProjectLoader";
+import { LazyProjectLoader } from "../../../lib/api-helper/project/LazyProjectLoader";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,

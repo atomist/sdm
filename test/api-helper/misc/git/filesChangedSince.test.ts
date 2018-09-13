@@ -21,8 +21,8 @@ import {
     anyFileChangedSuchThat,
     anyFileChangedWithExtension,
     filesChangedSince,
-} from "../../../../src/api-helper/misc/git/filesChangedSince";
-import { PushFields } from "../../../../src/typings/types";
+} from "../../../../lib/api-helper/misc/git/filesChangedSince";
+import { PushFields } from "../../../../lib/typings/types";
 
 describe("filesChanged", () => {
 

@@ -15,7 +15,7 @@
  */
 
 import * as assert from "assert";
-import { LoggingProgressLog } from "../../../src/api-helper/log/LoggingProgressLog";
+import { LoggingProgressLog } from "../../../lib/api-helper/log/LoggingProgressLog";
 
 describe("The logging progress logger", () => {
 

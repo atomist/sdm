@@ -17,7 +17,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 
-import { filteredView } from "../../../../src/api-helper/misc/project/filteredView";
+import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
 
 import { AllFiles } from "@atomist/automation-client/lib/project/fileGlobs";
 import { saveFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";

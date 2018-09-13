@@ -18,8 +18,8 @@ import { AllFiles } from "@atomist/automation-client/lib/project/fileGlobs";
 import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { patternMatchReviewer } from "../../../../src/api-helper/code/review/patternMatchReviewer";
-import { ReviewerRegistration } from "../../../../src/api/registration/ReviewerRegistration";
+import { patternMatchReviewer } from "../../../../lib/api-helper/code/review/patternMatchReviewer";
+import { ReviewerRegistration } from "../../../../lib/api/registration/ReviewerRegistration";
 
 describe("patternMatchReviewer", () => {
 

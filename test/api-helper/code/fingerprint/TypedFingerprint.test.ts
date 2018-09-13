@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { TypedFingerprint } from "../../../../src/api-helper/code/fingerprint/TypedFingerprint";
+import { TypedFingerprint } from "../../../../lib/api-helper/code/fingerprint/TypedFingerprint";
 
 interface Person {
     name: string;

@@ -17,7 +17,7 @@
 import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { projectConfigurationValue } from "../../../../src/api-helper/project/configuration/projectConfiguration";
+import { projectConfigurationValue } from "../../../../lib/api-helper/project/configuration/projectConfiguration";
 
 describe("projectConfigurationValue", () => {
 

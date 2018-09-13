@@ -18,29 +18,29 @@ import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/lib/o
 import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { fakePush } from "../../../src/api-helper/test/fakePush";
+import { fakePush } from "../../../lib/api-helper/test/fakePush";
 import {
     enrichGoalSetters,
     goalContributors,
-} from "../../../src/api/dsl/goalContribution";
+} from "../../../lib/api/dsl/goalContribution";
 import {
     onAnyPush,
     whenPushSatisfies,
-} from "../../../src/api/dsl/goalDsl";
-import { GenericGoal } from "../../../src/api/goal/common/GenericGoal";
-import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
-import { Goal } from "../../../src/api/goal/Goal";
-import { Goals } from "../../../src/api/goal/Goals";
+} from "../../../lib/api/dsl/goalDsl";
+import { GenericGoal } from "../../../lib/api/goal/common/GenericGoal";
+import { MessageGoal } from "../../../lib/api/goal/common/MessageGoal";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { Goals } from "../../../lib/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
     CodeInspectionGoal, FingerprintGoal, JustBuildGoal,
     LockingGoal,
     PushReactionGoal,
-} from "../../../src/api/machine/wellKnownGoals";
-import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
-import { predicatePushTest } from "../../../src/api/mapping/PushTest";
-import { anySatisfied } from "../../../src/api/mapping/support/pushTestUtils";
+} from "../../../lib/api/machine/wellKnownGoals";
+import { GoalSetter } from "../../../lib/api/mapping/GoalSetter";
+import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
+import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({

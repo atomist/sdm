@@ -17,15 +17,15 @@
 import { Success } from "@atomist/automation-client";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { executeGoal } from "../../../src/api-helper/goal/executeGoal";
-import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
-import { lastLinesLogInterpreter } from "../../../src/api-helper/log/logInterpreters";
-import { fakeContext } from "../../../src/api-helper/test/fakeContext";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { Goal } from "../../../src/api/goal/Goal";
-import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
-import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
-import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
+import { executeGoal } from "../../../lib/api-helper/goal/executeGoal";
+import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
+import { lastLinesLogInterpreter } from "../../../lib/api-helper/log/logInterpreters";
+import { fakeContext } from "../../../lib/api-helper/test/fakeContext";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
+import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
 
 const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
     goalInvocation.progressLog.write("Hello world\n");

@@ -15,9 +15,9 @@
  */
 
 import * as assert from "assert";
-import { toScalarProjectEditor } from "../../../src/api-helper/machine/handlerRegistrations";
-import { InMemoryProject } from "../../../src/api/project/exports";
-import { CodeTransform, CodeTransformOrTransforms } from "../../../src/api/registration/CodeTransform";
+import { toScalarProjectEditor } from "../../../lib/api-helper/machine/handlerRegistrations";
+import { InMemoryProject } from "../../../lib/api/project/exports";
+import { CodeTransform, CodeTransformOrTransforms } from "../../../lib/api/registration/CodeTransform";
 
 describe("toScalarProjectEditor", () => {
 

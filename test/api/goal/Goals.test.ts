@@ -15,15 +15,15 @@
  */
 
 import * as assert from "power-assert";
-import { GoalWithPrecondition } from "../../../src/api/goal/Goal";
-import { goals } from "../../../src/api/goal/Goals";
+import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
+import { goals } from "../../../lib/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
     CodeInspectionGoal,
     ProductionDeploymentGoal,
     StagingEndpointGoal,
-} from "../../../src/api/machine/wellKnownGoals";
+} from "../../../lib/api/machine/wellKnownGoals";
 
 describe("GoalBuilder", () => {
 
