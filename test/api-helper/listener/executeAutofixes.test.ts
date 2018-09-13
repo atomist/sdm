@@ -160,7 +160,7 @@ describe("executeAutofixes", () => {
         const foundFile = p.findFileSync("thing");
         assert(!!foundFile);
         assert.equal(foundFile.getContentSync(), "1");
-    });
+    }).timeout(10000);
 
     it("should execute with parameter and find a match and add a header", async () => {
         const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
@@ -179,7 +179,7 @@ describe("executeAutofixes", () => {
         const foundFile = p.findFileSync("bird");
         assert(!!foundFile, r.description);
         assert.equal(foundFile.getContentSync(), "ibis");
-    });
+    }).timeout(10000);
 
     describe("filterImmediateAutofixes", () => {
 
