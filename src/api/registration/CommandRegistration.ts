@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
-import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { ParametersDefinition } from "./ParametersDefinition";
 
 /**

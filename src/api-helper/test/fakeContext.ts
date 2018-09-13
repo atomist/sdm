@@ -18,13 +18,13 @@ import {
     AutomationContextAware,
     HandlerContext,
 } from "@atomist/automation-client";
-import { CommandIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
+import { CommandIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import {
     Destination,
     MessageClient,
     MessageOptions,
     SlackMessageClient,
-} from "@atomist/automation-client/spi/message/MessageClient";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**

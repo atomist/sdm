@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-export { Project } from "@atomist/automation-client/project/Project";
+export { Project } from "@atomist/automation-client/lib/project/Project";
 
-export { File as ProjectFile } from "@atomist/automation-client/project/File";
-export { InMemoryFile as InMemoryProjectFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-export { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+export { File as ProjectFile } from "@atomist/automation-client/lib/project/File";
+export { InMemoryFile as InMemoryProjectFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+export { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 
-export { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
-export { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
+export { LocalProject } from "@atomist/automation-client/lib/project/local/LocalProject";
+export { NodeFsLocalProject } from "@atomist/automation-client/lib/project/local/NodeFsLocalProject";
 
-export * from "@atomist/automation-client/project/util/projectUtils";
+export * from "@atomist/automation-client/lib/project/util/projectUtils";
 
-import * as validationPatterns from "@atomist/automation-client/operations/common/params/gitHubPatterns";
-import * as parseUtils from "@atomist/automation-client/project/util/parseUtils";
-import * as astUtils from "@atomist/automation-client/tree/ast/astUtils";
+import * as validationPatterns from "@atomist/automation-client/lib/operations/common/params/gitHubPatterns";
+import * as parseUtils from "@atomist/automation-client/lib/project/util/parseUtils";
+import * as astUtils from "@atomist/automation-client/lib/tree/ast/astUtils";
 
 export { parseUtils };
 
 export { astUtils };
 
-export { RemoteRepoRef, RepoId, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-export { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+export { RemoteRepoRef, RepoId, RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+export { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 
-export * from "@atomist/automation-client/operations/edit/editModes";
+export * from "@atomist/automation-client/lib/operations/edit/editModes";
 
-export { GitProject } from "@atomist/automation-client/project/git/GitProject";
-export { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+export { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+export { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 
 export {
     DefaultReviewComment, ProjectReview, ReviewComment, ReviewResult, Severity,
-} from "@atomist/automation-client/operations/review/ReviewResult";
+} from "@atomist/automation-client/lib/operations/review/ReviewResult";
 
 export { validationPatterns };
 
-export { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+export { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";

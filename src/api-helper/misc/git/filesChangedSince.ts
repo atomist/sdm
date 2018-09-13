@@ -18,7 +18,7 @@ import {
     execIn,
     logger,
 } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { PushFields } from "../../../typings/types";
 
 /**

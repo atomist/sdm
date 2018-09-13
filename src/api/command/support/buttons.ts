@@ -18,7 +18,7 @@ import {
     buttonForCommand,
     ButtonSpecification,
     mergeParameters,
-} from "@atomist/automation-client/spi/message/MessageClient";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { Action } from "@atomist/slack-messages";
 import { CommandRegistration } from "../../registration/CommandRegistration";
 

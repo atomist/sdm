@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
-import { Project } from "@atomist/automation-client/project/Project";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
+import { RepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/RepoCreationParameters";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**

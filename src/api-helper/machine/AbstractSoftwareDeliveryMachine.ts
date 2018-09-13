@@ -19,8 +19,8 @@ import {
     HandleEvent,
     logger,
 } from "@atomist/automation-client";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";

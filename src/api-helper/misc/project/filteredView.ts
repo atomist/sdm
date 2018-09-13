@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { File } from "@atomist/automation-client/project/File";
+import { File } from "@atomist/automation-client/lib/project/File";
 import {
     FileStream,
     Project,
-} from "@atomist/automation-client/project/Project";
-import { AbstractProject } from "@atomist/automation-client/project/support/AbstractProject";
+} from "@atomist/automation-client/lib/project/Project";
+import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
 import * as stream from "stream";
 
 /**

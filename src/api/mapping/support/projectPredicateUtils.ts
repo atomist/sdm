@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Project } from "@atomist/automation-client/project/Project";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import { PredicateMapping } from "../PredicateMapping";
 import { ProjectPredicate } from "../PushTest";
 import {

@@ -21,7 +21,7 @@ import {
     SpawnCommand,
     stringifySpawnCommand,
 } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { SpawnOptions } from "child_process";
 import { CodeTransform } from "../../../api/registration/CodeTransform";
 import { ProgressLog } from "../../../spi/log/ProgressLog";

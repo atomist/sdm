@@ -20,11 +20,11 @@ import {
     Parameter,
     Parameters,
 } from "@atomist/automation-client";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
-import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
-import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/lib/operations/common/BitBucketServerRepoRef";
+import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
+import { GitBranchRegExp } from "@atomist/automation-client/lib/operations/common/params/gitHubPatterns";
+import { TargetsParams } from "@atomist/automation-client/lib/operations/common/params/TargetsParams";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import {
     RepoTargets,
     ValidationResult,

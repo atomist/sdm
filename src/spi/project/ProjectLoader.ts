@@ -15,10 +15,10 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { CloneOptions } from "@atomist/automation-client/spi/clone/DirectoryManager";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 
 /**
  * Operation on loaded project

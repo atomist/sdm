@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Project } from "@atomist/automation-client/project/Project";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import * as _ from "lodash";
 
 export async function projectConfigurationValue<T>(path: string, p: Project, defaultValue?: T): Promise<T> {

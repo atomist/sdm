@@ -15,11 +15,11 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { guid } from "@atomist/automation-client/internal/util/string";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import {
     RemoteRepoRef,
     RepoId,
-} from "@atomist/automation-client/operations/common/RepoId";
+} from "@atomist/automation-client/lib/operations/common/RepoId";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { Goal } from "../../api/goal/Goal";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";

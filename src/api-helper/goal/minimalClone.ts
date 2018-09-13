@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CloneOptions } from "@atomist/automation-client/spi/clone/DirectoryManager";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 import { PushFields } from "../../typings/types";
 
 export function minimalClone(push: PushFields.Fragment, extras: Partial<CloneOptions> = {}): CloneOptions {

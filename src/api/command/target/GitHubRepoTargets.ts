@@ -6,9 +6,9 @@ import {
     MappedParameters,
     Parameter,
 } from "@atomist/automation-client";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
-import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
-import { GitHubTargetsParams } from "@atomist/automation-client/operations/common/params/GitHubTargetsParams";
+import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
+import { GitBranchRegExp } from "@atomist/automation-client/lib/operations/common/params/gitHubPatterns";
+import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
 import {
     RepoTargets,
     ValidationResult,

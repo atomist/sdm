@@ -15,7 +15,7 @@
  */
 
 import { Success } from "@atomist/automation-client";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { executeGoal } from "../../../src/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";

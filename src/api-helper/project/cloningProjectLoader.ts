@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoContext } from "../context/SdmContext";
 import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliveryMachineOptions";
