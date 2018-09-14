@@ -18,14 +18,12 @@ import {
     GitHubRepoRef,
     InMemoryFile,
     InMemoryProject,
+    Parameter,
+    Parameters,
     SeedDrivenGeneratorParameters,
     SelfDescribingHandleCommand,
     toFactory,
 } from "@atomist/automation-client";
-import {
-    Parameter,
-    Parameters,
-} from "@atomist/automation-client/lib/decorators";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
 import {
@@ -38,7 +36,10 @@ import { CodeTransformRegistration } from "../../../lib/api/registration/CodeTra
 import { CommandHandlerRegistration } from "../../../lib/api/registration/CommandHandlerRegistration";
 import { GeneratorRegistration } from "../../../lib/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../lib/api/registration/ParametersBuilder";
-import { DeclarationType, ParametersObject } from "../../../lib/api/registration/ParametersDefinition";
+import {
+    DeclarationType,
+    ParametersObject,
+} from "../../../lib/api/registration/ParametersDefinition";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 describe("command registrations", () => {

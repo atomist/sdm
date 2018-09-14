@@ -5,12 +5,10 @@ import {
     FallbackParams,
     GitBranchRegExp,
     GitHubTargetsParams,
-} from "@atomist/automation-client";
-import {
     MappedParameter,
     MappedParameters,
     Parameter,
-} from "@atomist/automation-client/lib/decorators";
+} from "@atomist/automation-client";
 import {
     RepoTargets,
     ValidationResult,
