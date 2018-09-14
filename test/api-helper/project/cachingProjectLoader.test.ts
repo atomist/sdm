@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { CachingProjectLoader, save } from "../../../lib/api-helper/project/CachingProjectLoader";
 import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";

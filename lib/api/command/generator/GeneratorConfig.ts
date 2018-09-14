@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client";
 
 /**
  * Basic config for all parameter creation

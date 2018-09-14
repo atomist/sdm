@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import { DefaultReviewComment } from "@atomist/automation-client/lib/operations/review/ReviewResult";
-import { saveFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
-
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
-import { ReviewListener, ReviewListenerInvocation } from "../../../lib/api/listener/ReviewListener";
+import {
+    DefaultReviewComment,
+    GitHubRepoRef,
+    InMemoryFile,
+    InMemoryProject,
+    saveFromFiles,
+} from "@atomist/automation-client";
 import { ReviewerRegistration } from "../../../lib/api/registration/ReviewerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
-import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../lib/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { ReviewListener,
+    ReviewListenerInvocation,
+} from "../../../lib/api/listener/ReviewListener";
 import { PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {

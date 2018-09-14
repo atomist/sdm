@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-export { logger } from "@atomist/automation-client";
-
-export { MessageClient, Destination, SlackDestination, isSlackMessage } from "@atomist/automation-client/lib/spi/message/MessageClient";
+export {
+    logger,
+    MessageClient,
+    Destination,
+    SlackDestination,
+    isSlackMessage,
+    ButtonSpecification,
+    ProjectOperationCredentials,
+    TokenCredentials,
+    isTokenCredentials,
+} from "@atomist/automation-client";
 
 import * as slack from "@atomist/slack-messages";
 
 export { slack };
 
-export { ButtonSpecification } from "@atomist/automation-client/lib/spi/message/MessageClient";
-
 export * from "@atomist/automation-client/lib/spi/graph/GraphClient";
-
-export {
-    ProjectOperationCredentials, TokenCredentials, isTokenCredentials,
-} from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";

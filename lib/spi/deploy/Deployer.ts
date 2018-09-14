@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import {
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import { DeployableArtifact } from "../artifact/ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";

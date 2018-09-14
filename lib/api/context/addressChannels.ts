@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
 import {
     addressSlackChannels,
     Destination,
+    HandlerContext,
     MessageOptions,
     SlackFileMessage,
-} from "@atomist/automation-client/lib/spi/message/MessageClient";
+} from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**

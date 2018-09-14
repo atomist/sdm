@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    HandleCommand,
+    HandleEvent,
+    Maker,
+} from "@atomist/automation-client";
 import { AbstractSoftwareDeliveryMachine } from "../../lib/api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { GoalSetter } from "../../lib/api/mapping/GoalSetter";
 

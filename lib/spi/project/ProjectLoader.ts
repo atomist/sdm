@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
-import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
+import {
+    CloneOptions,
+    GitProject,
+    HandlerContext,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 
 /**
  * Operation on loaded project

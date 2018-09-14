@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RepoFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { ValidationError } from "@atomist/automation-client/lib/SmartParameters";
+import {
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+    RepoFilter,
+    ValidationError,
+} from "@atomist/automation-client";
 
 export interface ValidationError {
     message: string;

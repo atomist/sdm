@@ -15,11 +15,11 @@
  */
 
 import {
+    AbstractProject,
     File,
     FileStream,
     Project,
 } from "@atomist/automation-client";
-import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
 import * as stream from "stream";
 
 /**

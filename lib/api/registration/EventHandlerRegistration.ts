@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { OnEvent } from "@atomist/automation-client/lib/onEvent";
-import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    Maker,
+    OnEvent,
+} from "@atomist/automation-client";
 
 /**
  * Type for registering event handlers.

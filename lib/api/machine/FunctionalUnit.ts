@@ -17,8 +17,8 @@
 import {
     HandleCommand,
     HandleEvent,
+    Maker,
 } from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 
 /**
  * Unit of functionality that can be added to an Atomist automation.

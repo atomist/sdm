@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectReview } from "@atomist/automation-client/lib/operations/review/ReviewResult";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import {
+    NoParameters,
+    ProjectReview,
+} from "@atomist/automation-client";
 import { AutoInspectRegistration } from "./AutoInspectRegistration";
 
 /**

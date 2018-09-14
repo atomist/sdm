@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     CoreRepoFieldsAndChannels,

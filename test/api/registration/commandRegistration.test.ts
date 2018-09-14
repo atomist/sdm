@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { Parameter, Parameters } from "@atomist/automation-client";
-import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
-import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
-import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    GitHubRepoRef,
+    InMemoryFile,
+    InMemoryProject,
+    Parameter,
+    SeedDrivenGeneratorParameters,
+    SelfDescribingHandleCommand,
+    toFactory,
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/lib/decorators";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
 import {

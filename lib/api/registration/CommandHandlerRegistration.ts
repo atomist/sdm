@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { NoParameters } from "@atomist/automation-client";
 import { CommandListener } from "../listener/CommandListener";
 import { CommandRegistration } from "./CommandRegistration";
 

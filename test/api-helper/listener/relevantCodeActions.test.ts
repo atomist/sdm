@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { InMemoryProject } from "@atomist/automation-client";
 import axios from "axios";
 
 import * as assert from "power-assert";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";

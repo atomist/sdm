@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { NoParameters } from "@atomist/automation-client";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { CodeInspection } from "./CodeInspectionRegistration";
 import {

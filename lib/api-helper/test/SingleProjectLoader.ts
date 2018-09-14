@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
-import { Project } from "@atomist/automation-client/lib/project/Project";
+import {
+    GitProject,
+    Project,
+} from "@atomist/automation-client";
 import {
     ProjectLoader,
     ProjectLoadingParameters,

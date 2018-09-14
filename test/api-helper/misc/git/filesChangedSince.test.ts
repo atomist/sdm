@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+import {
+    GitCommandGitProject,
+    GitHubRepoRef,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
     anyFileChangedSuchThat,

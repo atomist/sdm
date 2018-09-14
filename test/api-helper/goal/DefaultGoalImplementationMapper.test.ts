@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import assert = require("power-assert");
 import { DefaultGoalImplementationMapper } from "../../../lib/api-helper/goal/DefaultGoalImplementationMapper";
 import { fakePush } from "../../../lib/api-helper/test/fakePush";

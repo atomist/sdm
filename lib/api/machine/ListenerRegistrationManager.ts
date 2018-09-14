@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { NoParameters } from "@atomist/automation-client";
 import { ArtifactListenerRegisterable } from "../listener/ArtifactListener";
 import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";

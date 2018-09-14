@@ -15,16 +15,18 @@
  */
 
 import {
+    GitHubNameRegExp,
+    GitHubRepoCreationParameters,
+    NewRepoCreationParameters,
+    Parameter,
+    RemoteLocator,
+    SeedDrivenGeneratorParameters,
+} from "@atomist/automation-client";
+import {
     MappedParameter,
     MappedParameters,
-    Parameter,
     Parameters,
-} from "@atomist/automation-client";
-import { GitHubNameRegExp } from "@atomist/automation-client/lib/operations/common/params/gitHubPatterns";
-import { RemoteLocator } from "@atomist/automation-client/lib/operations/common/params/RemoteLocator";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
-import { NewRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/NewRepoCreationParameters";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
+} from "@atomist/automation-client/lib/decorators";
 import { SemVerRegExp } from "../support/commonValidationPatterns";
 import { GeneratorConfig } from "./GeneratorConfig";
 

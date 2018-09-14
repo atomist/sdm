@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { Project } from "@atomist/automation-client/lib/project/Project";
-
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,

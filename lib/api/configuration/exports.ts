@@ -16,4 +16,4 @@
 
 export {
     Configuration,
-} from "@atomist/automation-client/lib/configuration";
+} from "@atomist/automation-client";

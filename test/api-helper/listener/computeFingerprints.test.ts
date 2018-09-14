@@ -16,9 +16,11 @@
 
 import { computeFingerprints } from "../../../lib/api-helper/listener/computeFingerprints";
 
-import { SimpleRepoId } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import {
+    InMemoryFile,
+    InMemoryProject,
+    SimpleRepoId,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { computeShaOf } from "../../../lib/api-helper/misc/sha";
 import { PushImpactListenerInvocation } from "../../../lib/api/listener/PushImpactListener";

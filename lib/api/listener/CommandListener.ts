@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import {
+    NoParameters,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import { SdmListener } from "./Listener";
 import { ParametersInvocation } from "./ParametersInvocation";
 

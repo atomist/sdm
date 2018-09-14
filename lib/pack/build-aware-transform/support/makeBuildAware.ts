@@ -17,7 +17,7 @@
 import {
     EditMode,
     isPullRequest,
-} from "@atomist/automation-client/lib/operations/edit/editModes";
+} from "@atomist/automation-client";
 import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import {
     CodeTransformRegistration,

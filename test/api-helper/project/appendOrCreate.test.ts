@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { InMemoryProject } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { appendOrCreateFileContent } from "../../../lib/api-helper/project/appendOrCreate";
 

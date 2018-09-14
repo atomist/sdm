@@ -15,15 +15,17 @@
  */
 
 import {
+    BitBucketServerRepoRef,
+    NewRepoCreationParameters,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
+import {
     MappedParameter,
     MappedParameters,
     Secret,
     Secrets,
-} from "@atomist/automation-client";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/lib/operations/common/BitBucketServerRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { NewRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/NewRepoCreationParameters";
+} from "@atomist/automation-client/lib/decorators";
 
 // TODO could this be universal
 export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {
