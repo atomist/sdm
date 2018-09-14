@@ -90,7 +90,7 @@
     "fmt:gql": "prettier --write \"**/*.graphql\"",
     "clean:barrels": "rimraf index.ts",
     "generate:barrels": "npm-run-all clean:barrels generate:cleaned-barrels",
-    "generate:cleaned-barrels": "barrelsby -d . --i 'lib/api/.*' --i 'lib/api-helper/.*' --i 'lib/spi/.*' --i 'lib/typings/.*' -e .*\\.d.ts -e test/.* -e .*buildDsl.* -e .*deployDsl.* -e CommandRegistration.* -e ParametersInvocation.* -e ProjectsOperationRegistration.* -e ProjectOperationRegistration.*",
+    "generate:cleaned-barrels": "barrelsby -d . --i 'lib/api/.*' --i 'lib/api-helper/.*' --i 'lib/spi/.*' --i 'lib/typings/.*' -e .*\\.d.ts -e test/.* -e .*buildDsl.* -e .*deployDsl.* -e ProjectsOperationRegistration.* -e ProjectOperationRegistration.*",
     "git:info": "atm-git-info",
     "gql:gen": "atm-gql-gen",
     "lint": "npm-run-all lint:ts lint:gql",

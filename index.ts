@@ -1,19 +1,3 @@
-/*
- * Copyright © 2018 Atomist, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 export * from "./lib/api/command/generator/BitBucketRepoCreationParameters";
 export * from "./lib/api/command/generator/GeneratorConfig";
 export * from "./lib/api/command/generator/SeedDrivenGeneratorParametersSupport";
@@ -66,6 +50,7 @@ export * from "./lib/api/listener/GoalsSetListener";
 export * from "./lib/api/listener/IssueListenerInvocation";
 export * from "./lib/api/listener/Listener";
 export * from "./lib/api/listener/NewIssueListener";
+export * from "./lib/api/listener/ParametersInvocation";
 export * from "./lib/api/listener/ProjectListener";
 export * from "./lib/api/listener/PullRequestListener";
 export * from "./lib/api/listener/PushImpactListener";
@@ -77,6 +62,7 @@ export * from "./lib/api/listener/TagListener";
 export * from "./lib/api/listener/UpdatedIssueListener";
 export * from "./lib/api/listener/UserJoiningChannelListener";
 export * from "./lib/api/listener/VerifiedDeploymentListener";
+export * from "./lib/api/machine/CommandRegistrationManager";
 export * from "./lib/api/machine/ConfigurationValues";
 export * from "./lib/api/machine/ExtensionPack";
 export * from "./lib/api/machine/FunctionalUnit";
@@ -113,6 +99,7 @@ export * from "./lib/api/registration/CodeInspectionRegistration";
 export * from "./lib/api/registration/CodeTransform";
 export * from "./lib/api/registration/CodeTransformRegistration";
 export * from "./lib/api/registration/CommandHandlerRegistration";
+export * from "./lib/api/registration/CommandRegistration";
 export * from "./lib/api/registration/EventHandlerRegistration";
 export * from "./lib/api/registration/EventRegistrationManager";
 export * from "./lib/api/registration/FingerprinterRegistration";
@@ -211,4 +198,3 @@ export * from "./lib/spi/log/InterpretedLog";
 export * from "./lib/spi/log/ProgressLog";
 export * from "./lib/spi/project/ProjectLoader";
 export * from "./lib/spi/repo-ref/RepoRefResolver";
-export * from "./lib/typings/types";
