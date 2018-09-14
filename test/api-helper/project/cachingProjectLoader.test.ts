@@ -20,7 +20,7 @@ import {
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { CachingProjectLoader, save } from "../../../lib/api-helper/project/CachingProjectLoader";
-import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 
 describe("cachingProjectLoader", () => {
 

@@ -28,8 +28,8 @@ import {
     filterImmediateAutofixes,
     generateCommitMessageForAutofix,
 } from "../../../lib/api-helper/listener/executeAutofixes";
-import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";

@@ -21,7 +21,7 @@ import {
     isGitHubRepoRef,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
     enrichGoalSetters,
     goalContributors,

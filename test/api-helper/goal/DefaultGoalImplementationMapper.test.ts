@@ -20,7 +20,7 @@ import {
 } from "@atomist/automation-client";
 import assert = require("power-assert");
 import { DefaultGoalImplementationMapper } from "../../../lib/api-helper/goal/DefaultGoalImplementationMapper";
-import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { SdmGoalFulfillmentMethod } from "../../../lib/api/goal/SdmGoalMessage";

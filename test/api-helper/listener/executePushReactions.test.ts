@@ -20,8 +20,8 @@ import {
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { executePushReactions } from "../../../lib/api-helper/listener/executePushReactions";
-import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { PushImpactListenerRegistration, PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";

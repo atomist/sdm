@@ -26,8 +26,8 @@ import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
 import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../lib/api-helper/listener/executeAutoInspects";
-import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { ReviewListener,
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";

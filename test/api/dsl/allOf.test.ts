@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { allOf } from "../../../lib/api/dsl/allOf";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 

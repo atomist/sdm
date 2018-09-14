@@ -26,7 +26,7 @@ import * as assert from "power-assert";
 import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../lib/api-helper/project/cloningProjectLoader";
 import { LazyProjectLoader } from "../../../lib/api-helper/project/LazyProjectLoader";
-import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,

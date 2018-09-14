@@ -17,7 +17,7 @@
 import * as assert from "power-assert";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { spawnAndWatch, SpawnCommand } from "../../../lib/api-helper/misc/spawned";
-import { fakeContext } from "../../../lib/api-helper/test/fakeContext";
+import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("spawned", () => {

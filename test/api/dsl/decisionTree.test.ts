@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { given } from "../../../lib/api/dsl/decisionTree";
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
