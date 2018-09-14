@@ -20,14 +20,14 @@ import {
     anyFileChangedSuchThat,
     anyFileChangedWithExtension,
     filesChangedSince,
-} from "../../../lib/api-helper/misc/git/filesChangedSince";
+} from "../misc/git/filesChangedSince";
 import {
     DefaultGoalNameGenerator,
-} from "../../../lib/api/goal/GoalNameGenerator";
+} from "../../api/goal/GoalNameGenerator";
 import {
     PushTest,
     pushTest,
-} from "../../../lib/api/mapping/PushTest";
+} from "../../api/mapping/PushTest";
 
 /**
  * Options to pass to the IsMaterialChange push test
