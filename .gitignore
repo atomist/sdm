@@ -20,3 +20,4 @@ git-info.json
 coverage/
 .vscode
 /doc/
+/index.ts
