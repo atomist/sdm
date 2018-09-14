@@ -16,16 +16,18 @@
 
 import { logger } from "@atomist/automation-client";
 import * as minimatch from "minimatch";
-import { DefaultGoalNameGenerator } from "../../api/goal/GoalNameGenerator";
-import {
-    pushTest,
-    PushTest,
-} from "../../api/mapping/PushTest";
 import {
     anyFileChangedSuchThat,
     anyFileChangedWithExtension,
     filesChangedSince,
-} from "../misc/git/filesChangedSince";
+} from "../../../lib/api-helper/misc/git/filesChangedSince";
+import {
+    DefaultGoalNameGenerator,
+} from "../../../lib/api/goal/GoalNameGenerator";
+import {
+    PushTest,
+    pushTest,
+} from "../../../lib/api/mapping/PushTest";
 
 /**
  * Options to pass to the IsMaterialChange push test
