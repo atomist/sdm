@@ -214,3 +214,4 @@ export * from "./lib/spi/log/InterpretedLog";
 export * from "./lib/spi/log/ProgressLog";
 export * from "./lib/spi/project/ProjectLoader";
 export * from "./lib/spi/repo-ref/RepoRefResolver";
+export * from "./lib/typings/types";
