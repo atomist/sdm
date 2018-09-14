@@ -14,31 +14,33 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import {
+    fileExists,
+    GitHubRepoRef,
+    GitProject,
+    InMemoryFile,
+    InMemoryProject,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
     executeAutofixes,
     filterImmediateAutofixes,
     generateCommitMessageForAutofix,
-} from "../../../src/api-helper/listener/executeAutofixes";
-import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
-import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
-import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { pushTest } from "../../../src/api/mapping/PushTest";
-import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
-import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
+} from "../../../lib/api-helper/listener/executeAutofixes";
+import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { pushTest } from "../../../lib/api/mapping/PushTest";
+import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
+import { RepoRefResolver } from "../../../lib/spi/repo-ref/RepoRefResolver";
 import {
     CoreRepoFieldsAndChannels,
     OnPushToAnyBranch,
     ScmProvider,
-} from "../../../src/typings/types";
+} from "../../../lib/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",

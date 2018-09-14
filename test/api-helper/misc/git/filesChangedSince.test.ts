@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {
+    GitCommandGitProject,
+    GitHubRepoRef,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
     anyFileChangedSuchThat,
     anyFileChangedWithExtension,
     filesChangedSince,
-} from "../../../../src/api-helper/misc/git/filesChangedSince";
-import { PushFields } from "../../../../src/typings/types";
+} from "../../../../lib/api-helper/misc/git/filesChangedSince";
+import { PushFields } from "../../../../lib/typings/types";
 
 describe("filesChanged", () => {
 

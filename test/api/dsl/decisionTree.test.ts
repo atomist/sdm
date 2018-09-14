@@ -15,12 +15,12 @@
  */
 
 import * as assert from "power-assert";
-import { fakePush } from "../../../src/api-helper/test/fakePush";
-import { given } from "../../../src/api/dsl/decisionTree";
-import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-import { Goal } from "../../../src/api/goal/Goal";
-import { Goals } from "../../../src/api/goal/Goals";
-import { PushMapping } from "../../../src/api/mapping/PushMapping";
+import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { given } from "../../../lib/api/dsl/decisionTree";
+import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { Goals } from "../../../lib/api/goal/Goals";
+import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
 
 const FrogPushMapping: PushMapping<string> = {

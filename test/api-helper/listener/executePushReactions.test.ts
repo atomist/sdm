@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { executePushReactions } from "../../../src/api-helper/listener/executePushReactions";
-import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { PushImpactListenerRegistration, PushReactionResponse } from "../../../src/api/registration/PushImpactListenerRegistration";
+import { executePushReactions } from "../../../lib/api-helper/listener/executePushReactions";
+import { fakeGoalInvocation } from "../../../lib/api-helper/test/fakeGoalInvocation";
+import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { PushImpactListenerRegistration, PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
 function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushImpactListenerRegistration {

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { guid } from "@atomist/automation-client/internal/util/string";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    GitHubRepoRef,
+    guid,
+} from "@atomist/automation-client";
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { IsDeployEnabled } from "../../../../src/api/mapping/support/deployPushTests";
+import { PushListenerInvocation } from "../../../../lib/api/listener/PushListener";
+import { IsDeployEnabled } from "../../../../lib/api/mapping/support/deployPushTests";
 
 describe("deployPushTests tests thing", () => {
 

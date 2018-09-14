@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { AbstractSoftwareDeliveryMachine } from "../../src/api-helper/machine/AbstractSoftwareDeliveryMachine";
-import { GoalSetter } from "../../src/api/mapping/GoalSetter";
+import {
+    HandleCommand,
+    HandleEvent,
+    Maker,
+} from "@atomist/automation-client";
+import { AbstractSoftwareDeliveryMachine } from "../../lib/api-helper/machine/AbstractSoftwareDeliveryMachine";
+import { GoalSetter } from "../../lib/api/mapping/GoalSetter";
 
 /**
  * SDM implementation for use in tests

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    InMemoryFile,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { projectConfigurationValue } from "../../../../src/api-helper/project/configuration/projectConfiguration";
+import { projectConfigurationValue } from "../../../../lib/api-helper/project/configuration/projectConfiguration";
 
 describe("projectConfigurationValue", () => {
 

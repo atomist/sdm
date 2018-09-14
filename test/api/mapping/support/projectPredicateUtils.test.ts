@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Project } from "@atomist/automation-client/project/Project";
-
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,
     anyPredicateSatisfied, notPredicate,
-} from "../../../../src/api/mapping/support/projectPredicateUtils";
+} from "../../../../lib/api/mapping/support/projectPredicateUtils";
 import { BigProject, FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtils.test";
 
 const id = new GitHubRepoRef("atomist", "github-sdm");

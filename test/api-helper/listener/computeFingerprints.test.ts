@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { computeFingerprints } from "../../../src/api-helper/listener/computeFingerprints";
+import { computeFingerprints } from "../../../lib/api-helper/listener/computeFingerprints";
 
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    InMemoryFile,
+    InMemoryProject,
+    SimpleRepoId,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { computeShaOf } from "../../../src/api-helper/misc/sha";
-import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
-import { FingerprinterResult } from "../../../src/api/registration/FingerprinterRegistration";
-import { PushImpactListener } from "../../../src/api/registration/PushImpactListenerRegistration";
+import { computeShaOf } from "../../../lib/api-helper/misc/sha";
+import { PushImpactListenerInvocation } from "../../../lib/api/listener/PushImpactListener";
+import { FingerprinterResult } from "../../../lib/api/registration/FingerprinterRegistration";
+import { PushImpactListener } from "../../../lib/api/registration/PushImpactListenerRegistration";
 
 const SomeFingerprinter: PushImpactListener<FingerprinterResult> = async pli => {
     return [];

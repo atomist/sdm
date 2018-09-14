@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {
+    AllFiles,
+    GitCommandGitProject,
+    GitHubRepoRef,
+    saveFromFiles,
+} from "@atomist/automation-client";
 
-import { filteredView } from "../../../../src/api-helper/misc/project/filteredView";
+import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
 
-import { AllFiles } from "@atomist/automation-client/project/fileGlobs";
-import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
 
 describe("filteredView", () => {

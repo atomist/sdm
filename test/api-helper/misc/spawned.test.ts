@@ -15,10 +15,10 @@
  */
 
 import * as assert from "power-assert";
-import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
-import { spawnAndWatch, SpawnCommand } from "../../../src/api-helper/misc/spawned";
-import { fakeContext } from "../../../src/api-helper/test/fakeContext";
-import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
+import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
+import { spawnAndWatch, SpawnCommand } from "../../../lib/api-helper/misc/spawned";
+import { fakeContext } from "../../../lib/api-helper/test/fakeContext";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("spawned", () => {
 

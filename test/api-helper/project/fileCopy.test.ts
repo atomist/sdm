@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    GitHubRepoRef,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { copyFileFromUrl, copyFilesFrom } from "../../../src/api-helper/project/fileCopy";
+import { copyFileFromUrl, copyFilesFrom } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
 

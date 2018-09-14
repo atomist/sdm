@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client";
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { ProjectPredicate, PushTest, pushTest } from "../../../../src/api/mapping/PushTest";
-import { allSatisfied, anySatisfied, not } from "../../../../src/api/mapping/support/pushTestUtils";
+import { PushListenerInvocation } from "../../../../lib/api/listener/PushListener";
+import { ProjectPredicate, PushTest, pushTest } from "../../../../lib/api/mapping/PushTest";
+import { allSatisfied, anySatisfied, not } from "../../../../lib/api/mapping/support/pushTestUtils";
 
 export const TruePushTest: PushTest = pushTest("true", async () => true);
 

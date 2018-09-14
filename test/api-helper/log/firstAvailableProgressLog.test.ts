@@ -15,8 +15,8 @@
  */
 
 import * as assert from "power-assert";
-import { firstAvailableProgressLog } from "../../../src/api-helper/log/firstAvailableProgressLog";
-import { LoggingProgressLog } from "../../../src/api-helper/log/LoggingProgressLog";
+import { firstAvailableProgressLog } from "../../../lib/api-helper/log/firstAvailableProgressLog";
+import { LoggingProgressLog } from "../../../lib/api-helper/log/LoggingProgressLog";
 
 const NeverAvailableProgressLog = new LoggingProgressLog("neverAvailable");
 NeverAvailableProgressLog.isAvailable = async () => false;

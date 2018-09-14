@@ -16,7 +16,7 @@
 
 import { ChildProcessResult } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { serializeResult } from "../../../src/api-helper/misc/result";
+import { serializeResult } from "../../../lib/api-helper/misc/result";
 
 describe("result", () => {
 

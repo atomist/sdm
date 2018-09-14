@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client";
 
 import * as assert from "power-assert";
-import { PushTest, pushTest } from "../../../../src/api/mapping/PushTest";
-import { PushRules } from "../../../../src/api/mapping/support/PushRules";
+import { PushTest, pushTest } from "../../../../lib/api/mapping/PushTest";
+import { PushRules } from "../../../../lib/api/mapping/support/PushRules";
 import { FalsePushTest, TruePushTest } from "./pushTestUtils.test";
 
 export const UndefinedPushTest: PushTest = pushTest("true", async () => undefined);

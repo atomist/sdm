@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-import { Parameter, Parameters } from "@atomist/automation-client";
-import { SelfDescribingHandleCommand } from "@atomist/automation-client/HandleCommand";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { toFactory } from "@atomist/automation-client/util/constructionUtils";
+import {
+    GitHubRepoRef,
+    InMemoryFile,
+    InMemoryProject,
+    SeedDrivenGeneratorParameters,
+    SelfDescribingHandleCommand,
+    toFactory,
+} from "@atomist/automation-client";
+import {
+    Parameter,
+    Parameters,
+} from "@atomist/automation-client/lib/decorators";
 import * as assert from "power-assert";
-import { isSeedDrivenGeneratorParameters } from "../../../src/api-helper/command/generator/generatorCommand";
+import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
 import {
     codeTransformRegistrationToCommand,
     commandHandlerRegistrationToCommand,
     generatorRegistrationToCommand,
-} from "../../../src/api-helper/machine/handlerRegistrations";
-import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";
-import { CodeTransformRegistration } from "../../../src/api/registration/CodeTransformRegistration";
-import { CommandHandlerRegistration } from "../../../src/api/registration/CommandHandlerRegistration";
-import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
-import { addParameters } from "../../../src/api/registration/ParametersBuilder";
-import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
+} from "../../../lib/api-helper/machine/handlerRegistrations";
+import { SeedDrivenGeneratorParametersSupport } from "../../../lib/api/command/generator/SeedDrivenGeneratorParametersSupport";
+import { CodeTransformRegistration } from "../../../lib/api/registration/CodeTransformRegistration";
+import { CommandHandlerRegistration } from "../../../lib/api/registration/CommandHandlerRegistration";
+import { GeneratorRegistration } from "../../../lib/api/registration/GeneratorRegistration";
+import { addParameters } from "../../../lib/api/registration/ParametersBuilder";
+import { DeclarationType, ParametersObject } from "../../../lib/api/registration/ParametersDefinition";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 describe("command registrations", () => {

@@ -15,10 +15,10 @@
  */
 
 import * as assert from "power-assert";
-import { fakePush } from "../../../src/api-helper/test/fakePush";
-import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-import { Goal } from "../../../src/api/goal/Goal";
-import { Goals } from "../../../src/api/goal/Goals";
+import { fakePush } from "../../../lib/api-helper/test/fakePush";
+import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { Goals } from "../../../lib/api/goal/Goals";
 import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({

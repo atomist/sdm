@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
-import { AddressChannels } from "../../../src/api/context/addressChannels";
+import { AddressChannels } from "../../../lib/api/context/addressChannels";
 
-import { reportFailureInterpretation } from "../../../src/api-helper/misc/reportFailureInterpretation";
-import { InterpretedLog } from "../../../src/spi/log/InterpretedLog";
+import { reportFailureInterpretation } from "../../../lib/api-helper/misc/reportFailureInterpretation";
+import { InterpretedLog } from "../../../lib/spi/log/InterpretedLog";
 
 describe("Reporting failure interpretation", () => {
 

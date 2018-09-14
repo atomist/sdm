@@ -18,7 +18,7 @@ import * as assert from "power-assert";
 import {
     ConfigurationValueType,
     validateConfigurationValues,
-} from "../../../src/api/machine/ConfigurationValues";
+} from "../../../lib/api/machine/ConfigurationValues";
 
 describe("validateConfigurationValues", () => {
 

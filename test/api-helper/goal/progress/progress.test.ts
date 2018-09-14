@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { testProgressReporter } from "../../../../src/api-helper/goal/progress/progress";
+import { testProgressReporter } from "../../../../lib/api-helper/goal/progress/progress";
 
 describe("testProgressReporter", () => {
 

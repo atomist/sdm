@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { AllFiles } from "@atomist/automation-client/project/fileGlobs";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import {
+    AllFiles,
+    InMemoryFile,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { patternMatchReviewer } from "../../../../src/api-helper/code/review/patternMatchReviewer";
-import { ReviewerRegistration } from "../../../../src/api/registration/ReviewerRegistration";
+import { patternMatchReviewer } from "../../../../lib/api-helper/code/review/patternMatchReviewer";
+import { ReviewerRegistration } from "../../../../lib/api/registration/ReviewerRegistration";
 
 describe("patternMatchReviewer", () => {
 
