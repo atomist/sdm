@@ -18,13 +18,13 @@ import {
     BitBucketServerRepoRef,
     FallbackParams,
     GitBranchRegExp,
-    Parameter,
     ProjectOperationCredentials,
     TargetsParams,
 } from "@atomist/automation-client";
 import {
     MappedParameter,
     MappedParameters,
+    Parameter,
     Parameters,
 } from "@atomist/automation-client/lib/decorators";
 import {

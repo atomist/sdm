@@ -18,13 +18,13 @@ import {
     GitHubNameRegExp,
     GitHubRepoCreationParameters,
     NewRepoCreationParameters,
-    Parameter,
     RemoteLocator,
     SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
 import {
     MappedParameter,
     MappedParameters,
+    Parameter,
     Parameters,
 } from "@atomist/automation-client/lib/decorators";
 import { SemVerRegExp } from "../support/commonValidationPatterns";

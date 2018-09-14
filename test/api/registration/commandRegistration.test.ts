@@ -18,12 +18,14 @@ import {
     GitHubRepoRef,
     InMemoryFile,
     InMemoryProject,
-    Parameter,
     SeedDrivenGeneratorParameters,
     SelfDescribingHandleCommand,
     toFactory,
 } from "@atomist/automation-client";
-import { Parameters } from "@atomist/automation-client/lib/decorators";
+import {
+    Parameter,
+    Parameters,
+} from "@atomist/automation-client/lib/decorators";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
 import {
