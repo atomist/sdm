@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
     "newLine": "LF",
-    "target": "ES2017",
+    "target": "ES2016",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "jsx": "React",
     "declaration": true,
     "sourceMap": true,
-    "rootDir": ".",
     "lib": [
       "DOM",
       "ES2017",
@@ -23,12 +22,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": [
-    "build",
-    "node_modules",
-    "docs",
-    "legal"
-  ],
+  "include": ["index.ts", "bin/*.ts", "lib/**/*.ts", "test/**/*.ts"],
+  "exclude": [".#*"],
   "compileOnSave": true,
   "buildOnSave": false,
   "atom": {
