@@ -55,68 +55,68 @@
     "graphql-code-generator": "^0.8.13",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
+    "nodemon": "^1.18.4",
     "npm-run-all": "^4.1.3",
-    "nyc": "^12.0.2",
+    "nyc": "^13.0.1",
     "power-assert": "^1.6.0",
     "prettier": "^1.14.2",
     "rimraf": "^2.6.2",
+    "source-map-support": "^0.5.9",
     "supervisor": "^0.12.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typedoc": "^0.11.1",
-    "typescript": "^2.9.2",
-    "typescript-formatter": "^7.2.0"
+    "typescript": "^2.9.2"
   },
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "autostart": "npm-run-all --print-label --parallel watch:compile watch",
-    "autotest": "supervisor --watch lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all compile test",
+    "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
+    "barrels": "barrelsby -d . --i \"lib/api/.*\" --i \"lib/api-helper/.*\" --i \"lib/spi/.*\" --i \"lib/typings/.*\" -e \".*\\.d\\.ts\" -e \"test/.*\" -e \".*buildDsl.*\" -e \".*deployDsl.*\" -e \"ProjectsOperationRegistration.*\" -e \"ProjectOperationRegistration.*\"",
+    "build": "run-s compile test lint doc",
     "clean": "run-p clean:compile clean:test clean:doc clean:run",
+    "clean:barrels": "rimraf index.ts",
     "clean:compile": "rimraf git-info.json build \"index.{d.ts,js{,.map}}\" \"{src,lib,test}/**/*.{d.ts,js{,.map}}\" {src,lib}/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
     "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
     "clean:test": "rimraf .nyc_output coverage",
-    "compile": "npm-run-all git:info compile:gql generate:barrels compile:ts",
-    "compile:gql": "npm-run-all gql:gen",
+    "compile": "run-s gql:gen compile:barrels compile:ts",
+    "compile:barrels": "run-s clean:barrels barrels",
     "compile:ts": "tsc --project .",
-    "debug": "node $NODE_DEBUG_OPTION node_modules/@atomist/automation-client/start.client.js",
-    "fmt": "npm-run-all fmt:ts fmt:gql",
-    "fmt:ts": "tsfmt --replace",
+    "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "fmt": "run-s fmt:gql",
     "fmt:gql": "prettier --write \"**/*.graphql\"",
-    "clean:barrels": "rimraf index.ts",
-    "generate:barrels": "npm-run-all clean:barrels generate:cleaned-barrels",
-    "generate:cleaned-barrels": "barrelsby -d . --i 'lib/api/.*' --i 'lib/api-helper/.*' --i 'lib/spi/.*' --i 'lib/typings/.*' -e .*\\.d.ts -e test/.* -e .*buildDsl.* -e .*deployDsl.* -e ProjectsOperationRegistration.* -e ProjectOperationRegistration.*",
-    "git:info": "atm-git-info",
     "gql:gen": "atm-gql-gen",
-    "lint": "npm-run-all lint:ts lint:gql",
+    "lint": "run-s lint:ts lint:gql",
     "lint:ts": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
     "lint:gql": "prettier --list-different \"lib/graphql/**/*.graphql\"",
-    "lint:fix": "npm-run-all lint:ts:fix fmt:gql",
+    "lint:fix": "run-s lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
-    "test": "nyc mocha --exit --require ts-node/register --require source-map-support/register \"test/**/*est.ts\"",
-    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
-    "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc lib",
-    "watch:compile": "tsc --project . --watch",
-    "watch": "supervisor --watch build --quiet --exec npm -- run start"
+    "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
+    "typedoc": "npm run doc"
   },
   "engines": {
-    "node": "9.x.x",
-    "npm": "5.x.x"
+    "node": ">=8.1.0",
+    "npm": ">=5.0.0"
   },
   "nyc": {
+    "include": [
+      "lib/**/*.*"
+    ],
     "extension": [
       ".ts"
     ],
     "exclude": [
+      "lib/typings",
       "**/*.d.ts"
     ],
     "reporter": [
-      "html"
+      "html",
+      "text-summary"
     ],
     "all": true
   }

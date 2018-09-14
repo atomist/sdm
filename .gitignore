@@ -19,4 +19,4 @@ git-info.json
 .nyc_output/
 coverage/
 .vscode
-
+/doc/
