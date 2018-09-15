@@ -37,7 +37,9 @@ import { Goals } from "../../../lib/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    CodeInspectionGoal, FingerprintGoal, JustBuildGoal,
+    CodeInspectionGoal,
+    FingerprintGoal,
+    JustBuildGoal,
     LockingGoal,
     PushReactionGoal,
 } from "../../../lib/api/machine/wellKnownGoals";

@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import {DelimitedWriteProgressLogDecorator} from "../../../lib/api-helper/log/DelimitedWriteProgressLogDecorator";
+import { DelimitedWriteProgressLogDecorator } from "../../../lib/api-helper/log/DelimitedWriteProgressLogDecorator";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { ProgressLog } from "../../../lib/spi/log/ProgressLog";
 

@@ -23,7 +23,10 @@ import { executePushReactions } from "../../../lib/api-helper/listener/executePu
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
-import { PushImpactListenerRegistration, PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
+import {
+    PushImpactListenerRegistration,
+    PushReactionResponse,
+} from "../../../lib/api/registration/PushImpactListenerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
 function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushImpactListenerRegistration {

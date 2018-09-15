@@ -28,7 +28,8 @@ import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../lib/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
-import { ReviewListener,
+import {
+    ReviewListener,
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";
 import { PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";

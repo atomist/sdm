@@ -17,7 +17,10 @@
 import * as assert from "assert";
 import { toScalarProjectEditor } from "../../../lib/api-helper/machine/handlerRegistrations";
 import { InMemoryProject } from "../../../lib/api/project/exports";
-import { CodeTransform, CodeTransformOrTransforms } from "../../../lib/api/registration/CodeTransform";
+import {
+    CodeTransform,
+    CodeTransformOrTransforms,
+} from "../../../lib/api/registration/CodeTransform";
 
 describe("toScalarProjectEditor", () => {
 

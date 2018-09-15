@@ -20,8 +20,8 @@ import {
     DefaultGoalNameGenerator,
 } from "../../api/goal/GoalNameGenerator";
 import {
-    PushTest,
     pushTest,
+    PushTest,
 } from "../../api/mapping/PushTest";
 import {
     anyFileChangedSuchThat,

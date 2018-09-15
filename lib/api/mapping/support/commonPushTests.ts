@@ -20,10 +20,10 @@ import {
     PullRequestsForBranch,
 } from "../../../typings/types";
 import {
-    PredicatePushTest,
     predicatePushTest,
-    PushTest,
+    PredicatePushTest,
     pushTest,
+    PushTest,
 } from "../PushTest";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>

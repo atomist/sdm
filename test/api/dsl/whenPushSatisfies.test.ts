@@ -19,7 +19,10 @@ import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
-import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
+import {
+    FalsePushTest,
+    TruePushTest,
+} from "../mapping/support/pushTestUtils.test";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
