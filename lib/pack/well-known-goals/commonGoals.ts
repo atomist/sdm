@@ -50,6 +50,7 @@ export const DockerBuildGoal = new GoalWithPrecondition({
     workingDescription: "Running docker build",
     completedDescription: "Docker build successful",
     failedDescription: "Docker build failed",
+    retryFeasible: true,
     isolated: true,
 }, BuildGoal);
 
