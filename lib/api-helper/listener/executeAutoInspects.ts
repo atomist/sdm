@@ -119,7 +119,7 @@ function applyCodeInspections(
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
 
-        const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushReactionResponse }> =
+        const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushReactionResponse }> =
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
@@ -134,18 +134,19 @@ function applyCodeInspections(
                     }
                 }));
 
-        const responsesFromOnInspectionResult: PushReactionResponse[] = reviewsAndErrors.filter(r => !!r.response)
-            .map(r => r.response);;
-        const reviews: ProjectReview[] = reviewsAndErrors.filter(r => !!r.review)
-            .map(r => r.review);
-        const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
+        const reviewerErrors = inspectionReviewsAndResults.filter(e => !!e.error)
             .map(e => e.error);
+        sendErrorsToSlack(reviewerErrors, addressChannels);
+
+        const responsesFromOnInspectionResult: PushReactionResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
+            .map(r => r.response);;
+        const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
+            .map(r => r.review);
 
         const review = consolidate(reviews, id);
         logger.info("Consolidated review of %j has %s comments", id, review.comments.length);
 
         const rli = { ...cri, review };
-        sendErrorsToSlack(reviewerErrors, addressChannels);
         const responsesFromReviewListeners = await Promise.all(reviewListeners.map(async l => {
             try {
                 return (await l.listener(rli)) || PushReactionResponse.proceed;
