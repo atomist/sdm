@@ -1,6 +1,3 @@
-import { ReviewListenerRegistration } from './../../api/registration/ReviewListenerRegistration';
-import { ReviewListener, ReviewListenerInvocation } from './../../api/listener/ReviewListener';
-import { PushListenerInvocation } from './../../api/listener/PushListener';
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -40,6 +37,8 @@ import { ReviewListenerRegistration } from "../../api/registration/ReviewListene
 import { minimalClone } from "../goal/minimalClone";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
+import { ReviewListenerInvocation } from './../../api/listener/ReviewListener';
+import { PushListenerInvocation } from './../../api/listener/PushListener';
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -78,6 +77,9 @@ export function executeAutoInspects(
  * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
  * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
  * Each of these PushReactionResponses may instruct the AutoInspect goal to fail or to require approval.
+ * 
+ * ROD: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
+ * and the onInspectionResult is the way to do this in the future.
  *
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼     per AutoInspectRegistration      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼              ▽▽▽▽▽▽▽▽  per Listener  ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
                         ┌────────────────────┐                                                                           ┌────────────────────┐
