@@ -108,17 +108,14 @@ function applyCodeInspections(
         const review = consolidate(reviews, id);
         logger.info("Consolidated review of %j has %s comments", id, review.comments.length);
 
-        const rli = {
-            ...cri,
-            review,
-        };
+        const rli = { ...cri, review };
         sendErrorsToSlack(reviewerErrors, addressChannels);
         const responsesFromReviewListeners = await Promise.all(reviewListeners.map(async l => {
             try {
                 return (await l.listener(rli)) || PushReactionResponse.proceed;
             } catch (err) {
                 logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
-                await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
+                await cri.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
                 return PushReactionResponse.failGoals;
             }
         }));
