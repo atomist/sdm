@@ -45,7 +45,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id, addressChannels } = goalInvocation;
         try {
