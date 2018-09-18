@@ -127,13 +127,9 @@ function applyCodeInspections(
                     try {
                         const inspectionResult = await autoInspect.inspection(project, cli)
                         if (!!autoInspect.onInspectionResult) {
-                            try {
-                                const r = await autoInspect.onInspectionResult(inspectionResult, cli);
-                                if (!!r) {
-                                    responsesFromOnInspectionResult.push(r);
-                                }
-                            } catch {
-                                // Ignore errors
+                            const r = await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors
+                            if (!!r) {
+                                responsesFromOnInspectionResult.push(r);
                             }
                         }
                         // Suppress non reviews
