@@ -45,7 +45,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id } = goalInvocation;
         try {
@@ -137,7 +137,7 @@ function applyCodeInspections(
         };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
-    }
+    };
 }
 
 function isProjectReview(o: any): o is ProjectReview {
