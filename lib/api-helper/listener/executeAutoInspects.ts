@@ -69,6 +69,47 @@ export function executeAutoInspects(
     };
 }
 
+
+// ts-lint:disable:max-line-length
+/**
+ * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
+ * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
+ * Each of these PushReactionResponses may instruct the AutoInspect goal to fail or to require approval.
+ *
+▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼     per AutoInspectRegistration      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼              ▽▽▽▽▽▽▽▽  per Listener  ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
+                        ┌────────────────────┐                                                                           ┌────────────────────┐
+                        │                    │                                                                           │                    │
+                        │                    │                              is a                                         │                    │
+                        │                    │                         ProjectReview?                                    │                    │
+                        │                    │                               Λ                                           │                    │
+ ┌───────────┐          │                    │           ┌──────────┐       ╱ ╲     ┌────────────┐      consolidate      │      Listener      │          ┌────────────────────┐
+ │  Project  │─────────▶│     Inspection     │────┬─────▶│   any    │─────▶▕   ▏───▶│   Review   │═════▶ with other ────▶│                    │─────┬───▶│PushReactionResponse│════╗
+ └───────────┘          │                    │    │      └──────────┘       ╲ ╱     └────────────┘        Reviews        │                    │          └────────────────────┘    ║
+                        │                    │    │                          V                                           │                    │     │                              ║
+                        │                    │    │                                                                      │                    │                                    ║
+                        │                    │    │                                                                      │                    │     │                              ║
+                        │                    │    │                                                                      └────────────────────┘                                    ║
+                        └────────────────────┘    │                                                                                 │               │                              ║
+                                   │              ?     ┌────────────┐                                                                                                             ║
+                                                  │     │            │                                                              └ ─ ─ ─ "fail"─ ┘                              ║
+                                   │              │     │            │                                                                                                             ║     ┌──────────────────────────┐
+                                                  │     │OnInspection│        ┌────────────────────┐                                                                               ║     │     check for "fail"     │      ┌──────────────────┐
+                                   │              └────▶│   Result   │────?──▶│PushResponseResponse│═══════════════════════════════════════════════════════════════════════════════╩════▶│    check for "require    │─────▶│ExecuteGoalResult │
+                                                        │            │        └────────────────────┘                                                                                     │        approval"         │      └──────────────────┘
+                                   │                    │            │                                                                                                                   └──────────────────────────┘
+                                                        │            │
+                                   │                    └────────────┘
+                                                               │
+                                   │
+                                   ▼                           │
+                             ┌──────────┐                      ▼
+                             │  Error   │                (errors are
+                             └──────────┘                  ignored)
+ * 
+ * @param goalInvocation 
+ * @param autoInspectRegistrations 
+ * @param reviewListeners 
+ */
 function applyCodeInspections(
     goalInvocation: GoalInvocation,
     autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
