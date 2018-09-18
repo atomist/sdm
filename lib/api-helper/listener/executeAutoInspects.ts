@@ -77,10 +77,6 @@ function applyCodeInspections(
         const { id, addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
-        logger.info("Executing review of %j with %d relevant AutoInspects: [%s] of [%s]",
-            id, relevantAutoInspects.length,
-            relevantAutoInspects.map(a => a.name).join(),
-            autoInspectRegistrations.map(a => a.name).join());
 
         const responsesFromOnInspectionResult: PushReactionResponse[] = [];
         const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
