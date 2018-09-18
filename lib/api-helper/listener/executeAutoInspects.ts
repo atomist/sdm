@@ -1,3 +1,6 @@
+import { ReviewListenerRegistration } from './../../api/registration/ReviewListenerRegistration';
+import { ReviewListener, ReviewListenerInvocation } from './../../api/listener/ReviewListener';
+import { PushListenerInvocation } from './../../api/listener/PushListener';
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -92,7 +95,7 @@ export function executeAutoInspects(
                         └────────────────────┘    │                                                                                 │               │                              ║
                                    │              ?     ┌────────────┐                                                                                                             ║
                                                   │     │            │                                                              └ ─ ─ ─ "fail"─ ┘                              ║
-                                   │              │     │            │                                                                                                             ║     ┌──────────────────────────┐
+                                   │              │     │            │                                                                      and send to Slack                      ║     ┌──────────────────────────┐
                                                   │     │OnInspection│        ┌────────────────────┐                                                                               ║     │     check for "fail"     │      ┌──────────────────┐
                                    │              └────▶│   Result   │────?──▶│PushResponseResponse│═══════════════════════════════════════════════════════════════════════════════╩════▶│    check for "require    │─────▶│ExecuteGoalResult │
                                                         │            │        └────────────────────┘                                                                                     │        approval"         │      └──────────────────┘
@@ -139,23 +142,12 @@ function applyCodeInspections(
         sendErrorsToSlack(reviewerErrors, addressChannels);
 
         const responsesFromOnInspectionResult: PushReactionResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
-            .map(r => r.response);;
+            .map(r => r.response);
+
         const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
             .map(r => r.review);
+        const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(reviews, reviewListeners, cri);
 
-        const review = consolidate(reviews, id);
-        logger.info("Consolidated review of %j has %s comments", id, review.comments.length);
-
-        const rli = { ...cri, review };
-        const responsesFromReviewListeners = await Promise.all(reviewListeners.map(async l => {
-            try {
-                return (await l.listener(rli)) || PushReactionResponse.proceed;
-            } catch (err) {
-                logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
-                await cri.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
-                return PushReactionResponse.failGoals;
-            }
-        }));
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
             code: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
@@ -164,6 +156,26 @@ function applyCodeInspections(
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };
+}
+
+async function gatherResponsesFromReviewListeners(reviews: ProjectReview[], reviewListeners: ReviewListenerRegistration[], pli: PushListenerInvocation):
+    Promise<PushReactionResponse[]> {
+    const review = consolidate(reviews, pli.id);
+    logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
+
+    return Promise.all(reviewListeners.map(responseFromOneListener({ ...pli, review })));
+}
+
+function responseFromOneListener(rli: ReviewListenerInvocation) {
+    return async (l: ReviewListenerRegistration): Promise<PushReactionResponse> => {
+        try {
+            return (await l.listener(rli)) || PushReactionResponse.proceed;
+        } catch (err) {
+            logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
+            await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
+            return PushReactionResponse.failGoals;
+        }
+    }
 }
 
 function createParametersInvocation(goalInvocation: GoalInvocation, autoInspect: AutoInspectRegistration<any, any>) {
