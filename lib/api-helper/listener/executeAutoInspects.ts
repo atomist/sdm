@@ -126,15 +126,15 @@ function applyCodeInspections(
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
                     try {
                         const inspectionResult = await autoInspect.inspection(project, cli)
-                        try {
-                            if (!!autoInspect.onInspectionResult) {
+                        if (!!autoInspect.onInspectionResult) {
+                            try {
                                 const r = await autoInspect.onInspectionResult(inspectionResult, cli);
                                 if (!!r) {
                                     responsesFromOnInspectionResult.push(r);
                                 }
+                            } catch {
+                                // Ignore errors
                             }
-                        } catch {
-                            // Ignore errors
                         }
                         // Suppress non reviews
                         return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
