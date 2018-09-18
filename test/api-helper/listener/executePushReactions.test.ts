@@ -22,6 +22,7 @@ import * as assert from "power-assert";
 import { executePushReactions } from "../../../lib/api-helper/listener/executePushReactions";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
+import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import {
     PushImpactListenerRegistration,
@@ -51,7 +52,7 @@ describe("executePushReactions", () => {
         const ge = executePushReactions([react(invocations, true)]);
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(invocations.length, 1);
         assert(!r.requireApproval);
         assert.equal(r.code, 1);
@@ -64,7 +65,7 @@ describe("executePushReactions", () => {
         const ge = executePushReactions([react(invocations, false)]);
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(invocations.length, 1);
         assert.equal(r.code, 0);
         assert(!r.requireApproval);

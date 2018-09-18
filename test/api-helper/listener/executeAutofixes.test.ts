@@ -30,6 +30,7 @@ import {
 } from "../../../lib/api-helper/listener/executeAutofixes";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
+import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
@@ -127,7 +128,7 @@ describe("executeAutofixes", () => {
         const r = await executeAutofixes([])(fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
     });
 
@@ -140,7 +141,7 @@ describe("executeAutofixes", () => {
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -156,7 +157,7 @@ describe("executeAutofixes", () => {
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");
@@ -175,7 +176,7 @@ describe("executeAutofixes", () => {
         const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0, "Did not return 0");
         assert(!!p, r.description);
         const foundFile = p.findFileSync("bird");

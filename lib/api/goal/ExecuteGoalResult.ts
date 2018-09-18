@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { HandlerResult } from "@atomist/automation-client";
-
 /**
- * Result from goal execution
+ * Result from goal execution with additional details that will be
+ * persisted on the currently executing goal.
  */
-export interface ExecuteGoalResult extends HandlerResult {
+export interface GoalDetails {
 
     /**
      * Optional description to be set on the goal
@@ -40,4 +39,22 @@ export interface ExecuteGoalResult extends HandlerResult {
      * Optional flag to indicate if this goal requires approval now
      */
     requireApproval?: boolean;
+
 }
+
+/**
+ * Result from goal execution
+ */
+export interface ExecuteGoalResult extends GoalDetails {
+
+    /**
+     * 0 is success
+     */
+    code: number;
+
+    /**
+     * The simple text message describing the result
+     */
+    message?: string;
+}
+

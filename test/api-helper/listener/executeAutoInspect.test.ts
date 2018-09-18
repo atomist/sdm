@@ -21,6 +21,7 @@ import {
     InMemoryProject,
     saveFromFiles,
 } from "@atomist/automation-client";
+import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { ReviewerRegistration } from "../../../lib/api/registration/ReviewerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
@@ -96,7 +97,7 @@ describe("executeAutoInspects", () => {
         }]);
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
-        } as any));
+        } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert(!r.requireApproval);
         assert.equal(reviewEvents.length, 1);
@@ -115,7 +116,7 @@ describe("executeAutoInspects", () => {
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
-        const r = await ge(rwlc);
+        const r = await ge(rwlc) as ExecuteGoalResult;
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
@@ -135,7 +136,7 @@ describe("executeAutoInspects", () => {
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
-        const r = await ge(rwlc);
+        const r = await ge(rwlc) as ExecuteGoalResult;
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
@@ -156,7 +157,7 @@ describe("executeAutoInspects", () => {
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
-        const r = await ge(rwlc);
+        const r = await ge(rwlc) as ExecuteGoalResult;
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 2);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);

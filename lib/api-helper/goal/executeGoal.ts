@@ -116,12 +116,12 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
     try {
         // execute pre hook
-        let result: any = await executeHook(rules, goalInvocation, sdmGoal, "pre");
+        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, sdmGoal, "pre") || Success);
         if (result.code !== 0) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult = (await execute(goalInvocation)
+        const goalResult: ExecuteGoalResult = (await execute(goalInvocation)
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -135,7 +135,8 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         }
 
         // execute post hook
-        const hookResult = (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
+        const hookResult: ExecuteGoalResult =
+            (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
         if (hookResult.code !== 0) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
@@ -252,6 +253,7 @@ export function markStatus(parameters: {
     progressLogUrl: string,
 }) {
     const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
+
     const newState = result.code !== 0 ? SdmGoalState.failure :
         (result.requireApproval || goal.definition.approvalRequired ? SdmGoalState.waiting_for_approval : SdmGoalState.success);
 
@@ -333,28 +335,6 @@ async function reportGoalError(parameters: {
         // We don't have an interpretation available. Just report
         await addressChannels("Failure executing goal: " + err.message);
     }
-}
-
-export function CompositeGoalExecutor(...goalImplementations: ExecuteGoal[]): ExecuteGoal {
-    return async (r: GoalInvocation) => {
-        let overallResult: ExecuteGoalResult = {
-            code: 0,
-        };
-
-        for (const goalImplementation of goalImplementations) {
-            const result = await goalImplementation(r);
-            if (result.code !== 0) {
-                return result;
-            } else {
-                overallResult = {
-                    code: result.code,
-                    requireApproval: result.requireApproval ? result.requireApproval : overallResult.requireApproval,
-                    message: result.message ? `${overallResult.message}\n${result.message}` : overallResult.message,
-                };
-            }
-        }
-        return overallResult;
-    };
 }
 
 class ProgressReportingProgressLog implements ProgressLog {

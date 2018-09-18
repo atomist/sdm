@@ -26,9 +26,11 @@ import { SdmGoalEvent } from "./SdmGoalEvent";
  * Type of all goal invocation functions. This is a key extension
  * point for SDMs.
  */
-export type ExecuteGoal = (r: GoalInvocation) => Promise<ExecuteGoalResult>;
+export type ExecuteGoal =
+    (r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
-export type PrepareForGoalExecution = (p: GitProject, r: GoalInvocation) => Promise<ExecuteGoalResult>;
+export type PrepareForGoalExecution =
+    (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
 export interface GoalInvocation extends RepoContext {
 
