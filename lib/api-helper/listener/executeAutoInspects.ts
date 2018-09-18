@@ -86,12 +86,7 @@ function applyCodeInspections(
         const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
             await Promise.all(relevantAutoInspects
                 .map(autoInspect => {
-                    const cli: ParametersInvocation<any> = {
-                        addressChannels: goalInvocation.addressChannels,
-                        context: goalInvocation.context,
-                        credentials: goalInvocation.credentials,
-                        parameters: autoInspect.parametersInstance,
-                    };
+                    const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
                     return autoInspect.inspection(project, cli)
                         .then(async inspectionResult => {
                             try {
@@ -139,6 +134,15 @@ function applyCodeInspections(
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };
+}
+
+function createParametersInvocation(goalInvocation: GoalInvocation, autoInspect: AutoInspectRegistration<any, any>) {
+    return {
+        addressChannels: goalInvocation.addressChannels,
+        context: goalInvocation.context,
+        credentials: goalInvocation.credentials,
+        parameters: autoInspect.parametersInstance,
+    }
 }
 
 function isProjectReview(o: any): o is ProjectReview {
