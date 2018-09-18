@@ -35,10 +35,10 @@ import {
 } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { minimalClone } from "../goal/minimalClone";
+import { PushListenerInvocation } from "./../../api/listener/PushListener";
+import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { ReviewListenerInvocation } from './../../api/listener/ReviewListener';
-import { PushListenerInvocation } from './../../api/listener/PushListener';
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -71,13 +71,12 @@ export function executeAutoInspects(
     };
 }
 
-
 // ts-lint:disable:max-line-length
 /**
  * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
  * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
  * Each of these PushReactionResponses may instruct the AutoInspect goal to fail or to require approval.
- * 
+ *
  * ROD: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
  * and the onInspectionResult is the way to do this in the future.
  *
@@ -110,10 +109,10 @@ export function executeAutoInspects(
                              ┌──────────┐                      ▼
                              │  Error   │                (errors are
                              └──────────┘                  ignored)
- * 
- * @param goalInvocation 
- * @param autoInspectRegistrations 
- * @param reviewListeners 
+ *
+ * @param goalInvocation
+ * @param autoInspectRegistrations
+ * @param reviewListeners
  */
 function applyCodeInspections(
     goalInvocation: GoalInvocation,
@@ -129,13 +128,13 @@ function applyCodeInspections(
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
                     try {
-                        const inspectionResult = await autoInspect.inspection(project, cli)
+                        const inspectionResult = await autoInspect.inspection(project, cli);
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
-                            await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined) // ignore errors
+                            await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors
                         return { review, response };
                     } catch (error) {
-                        return { error }
+                        return { error };
                     }
                 }));
 
@@ -177,7 +176,7 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
             await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
             return PushReactionResponse.failGoals;
         }
-    }
+    };
 }
 
 function createParametersInvocation(goalInvocation: GoalInvocation, autoInspect: AutoInspectRegistration<any, any>) {
@@ -186,7 +185,7 @@ function createParametersInvocation(goalInvocation: GoalInvocation, autoInspect:
         context: goalInvocation.context,
         credentials: goalInvocation.credentials,
         parameters: autoInspect.parametersInstance,
-    }
+    };
 }
 
 function isProjectReview(o: any): o is ProjectReview {
