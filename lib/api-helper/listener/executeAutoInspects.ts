@@ -62,6 +62,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: %s",
                 id, autoInspectRegistrations.length, err.message);
+            logger.warn(err.stack);
             return failure(err);
         }
     };
