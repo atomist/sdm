@@ -126,6 +126,7 @@ function applyCodeInspections(
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
                     try {
                         const inspectionResult = await autoInspect.inspection(project, cli)
+                        const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         if (!!autoInspect.onInspectionResult) {
                             const r = await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors
                             if (!!r) {
@@ -133,7 +134,7 @@ function applyCodeInspections(
                             }
                         }
                         // Suppress non reviews
-                        return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
+                        return { review };
                     } catch (error) {
                         return { error }
                     }
