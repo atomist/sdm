@@ -18,7 +18,10 @@ import {
     BaseContext,
     GitHubStatusContext,
 } from "./GitHubContext";
-import { GoalEnvironment } from "./support/environment";
+import {
+    GoalEnvironment,
+    IndependentOfEnvironment,
+} from "./support/environment";
 
 /**
  * Core data for a goal
@@ -31,7 +34,11 @@ export interface GoalDefinition {
      */
     uniqueName: string;
 
-    environment: GoalEnvironment;
+    /**
+     * Optional environment for this goal to run in.
+     * This is meant to allow for logical grouping of goals from code, testing and production etc.
+     */
+    environment?: GoalEnvironment;
 
     /**
      * Not used any more
@@ -94,6 +101,10 @@ export class Goal {
 
     constructor(definition: GoalDefinition) {
         this.definition = definition;
+        // Default environment if hasn't been provided
+        if (!this.definition.environment) {
+            this.definition.environment = IndependentOfEnvironment;
+        }
         this.context = BaseContext + definition.environment + definition.uniqueName;
         this.name = definition.displayName || definition.uniqueName;
     }
