@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.4...HEAD)
 
+### Changed
+
+-   Make environment optional on GoalDefinition. [#530](https://github.com/atomist/sdm/issues/530)
+
 ### Deprecated
 
 -   Typo: getGoalDefintionFrom. [#529](https://github.com/atomist/sdm/issues/529)
