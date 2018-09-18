@@ -71,7 +71,7 @@ export function executeAutoInspects(
     };
 }
 
-// ts-lint:disable:max-line-length
+// tslint:disable:max-line-length
 /**
  * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
  * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
@@ -80,35 +80,35 @@ export function executeAutoInspects(
  * ROD: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
  * and the onInspectionResult is the way to do this in the future.
  *
-▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼     per AutoInspectRegistration      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼              ▽▽▽▽▽▽▽▽  per Listener  ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
-                        ┌────────────────────┐                                                                           ┌────────────────────┐
-                        │                    │                                                                           │                    │
-                        │                    │                              is a                                         │                    │
-                        │                    │                         ProjectReview?                                    │                    │
-                        │                    │                               Λ                                           │                    │
- ┌───────────┐          │                    │           ┌──────────┐       ╱ ╲     ┌────────────┐      consolidate      │      Listener      │          ┌────────────────────┐
- │  Project  │─────────▶│     Inspection     │────┬─────▶│   any    │─────▶▕   ▏───▶│   Review   │═════▶ with other ────▶│                    │─────┬───▶│PushReactionResponse│════╗
- └───────────┘          │                    │    │      └──────────┘       ╲ ╱     └────────────┘        Reviews        │                    │          └────────────────────┘    ║
-                        │                    │    │                          V                                           │                    │     │                              ║
-                        │                    │    │                                                                      │                    │                                    ║
-                        │                    │    │                                                                      │                    │     │                              ║
-                        │                    │    │                                                                      └────────────────────┘                                    ║
-                        └────────────────────┘    │                                                                                 │               │                              ║
-                                   │              ?     ┌────────────┐                                                                                                             ║
-                                                  │     │            │                                                              └ ─ ─ ─ "fail"─ ┘                              ║
-                                   │              │     │            │                                                                      and send to Slack                      ║     ┌──────────────────────────┐
-                                                  │     │OnInspection│        ┌────────────────────┐                                                                               ║     │     check for "fail"     │      ┌──────────────────┐
-                                   │              └────▶│   Result   │────?──▶│PushResponseResponse│═══════════════════════════════════════════════════════════════════════════════╩════▶│    check for "require    │─────▶│ExecuteGoalResult │
-                                                        │            │        └────────────────────┘                                                                                     │        approval"         │      └──────────────────┘
-                                   │                    │            │                                                                                                                   └──────────────────────────┘
-                                                        │            │
-                                   │                    └────────────┘
-                                                               │
-                                   │
-                                   ▼                           │
-                             ┌──────────┐                      ▼
-                             │  Error   │                (errors are
-                             └──────────┘                  ignored)
+ * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼     per AutoInspectRegistration      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼              ▽▽▽▽▽▽▽▽  per Listener  ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
+ *                         ┌────────────────────┐                                                                           ┌────────────────────┐
+ *                         │                    │                                                                           │                    │
+ *                         │                    │                              is a                                         │                    │
+ *                         │                    │                         ProjectReview?                                    │                    │
+ *                         │                    │                               Λ                                           │                    │
+ *  ┌───────────┐          │                    │           ┌──────────┐       ╱ ╲     ┌────────────┐      consolidate      │      Listener      │          ┌────────────────────┐
+ *  │  Project  │─────────▶│     Inspection     │────┬─────▶│   any    │─────▶▕   ▏───▶│   Review   │═════▶ with other ────▶│                    │─────┬───▶│PushReactionResponse│════╗
+ *  └───────────┘          │                    │    │      └──────────┘       ╲ ╱     └────────────┘        Reviews        │                    │          └────────────────────┘    ║
+ *                         │                    │    │                          V                                           │                    │     │                              ║
+ *                         │                    │    │                                                                      │                    │                                    ║
+ *                         │                    │    │                                                                      │                    │     │                              ║
+ *                         │                    │    │                                                                      └────────────────────┘                                    ║
+ *                         └────────────────────┘    │                                                                                 │               │                              ║
+ *                                    │              ?     ┌────────────┐                                                                                                             ║
+ *                                                   │     │            │                                                              └ ─ ─ ─ "fail"─ ┘                              ║
+ *                                    │              │     │            │                                                                      and send to Slack                      ║     ┌──────────────────────────┐
+ *                                                   │     │OnInspection│        ┌────────────────────┐                                                                               ║     │     check for "fail"     │      ┌──────────────────┐
+ *                                    │              └────▶│   Result   │────?──▶│PushResponseResponse│═══════════════════════════════════════════════════════════════════════════════╩════▶│    check for "require    │─────▶│ExecuteGoalResult │
+ *                                                         │            │        └────────────────────┘                                                                                     │        approval"         │      └──────────────────┘
+ *                                    │                    │            │                                                                                                                   └──────────────────────────┘
+ *                                                         │            │
+ *                                    │                    └────────────┘
+ *                                                                │
+ *                                    │
+ *                                    ▼                           │
+ *                              ┌──────────┐                      ▼
+ *                              │  Error   │                (errors are
+ *                              └──────────┘                  ignored)
  *
  * @param goalInvocation
  * @param autoInspectRegistrations
