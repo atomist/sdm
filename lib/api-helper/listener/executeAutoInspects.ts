@@ -44,13 +44,14 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param reviewListeners listeners to respond to reviews
  * @return {ExecuteGoal}
  */
-export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+export function executeAutoInspects(
+    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
+    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id } = goalInvocation;
         try {
             if (autoInspectRegistrations.length === 0) {
-                return { code: 0, description: "No code inspections apply", requireApproval: false };
+                return { code: 0, description: "No code inspections configured", requireApproval: false };
             }
             logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
             return configuration.sdm.projectLoader.doWithProject({
