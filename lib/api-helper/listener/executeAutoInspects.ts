@@ -119,26 +119,25 @@ function applyCodeInspections(
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
 
-        const responsesFromOnInspectionResult: PushReactionResponse[] = [];
-        const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
+        const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushReactionResponse }> =
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
                     try {
                         const inspectionResult = await autoInspect.inspection(project, cli)
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
-                        if (!!autoInspect.onInspectionResult) {
-                            const r = await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors
-                            if (!!r) {
-                                responsesFromOnInspectionResult.push(r);
-                            }
-                        }
+                        const response = autoInspect.onInspectionResult ?
+                            await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined) // ignore errors
+                            : undefined;
                         // Suppress non reviews
-                        return { review };
+                        return { review, response };
                     } catch (error) {
                         return { error }
                     }
                 }));
+
+        const responsesFromOnInspectionResult: PushReactionResponse[] = reviewsAndErrors.filter(r => !!r.response)
+            .map(r => r.response);;
         const reviews: ProjectReview[] = reviewsAndErrors.filter(r => !!r.review)
             .map(r => r.review);
         const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
