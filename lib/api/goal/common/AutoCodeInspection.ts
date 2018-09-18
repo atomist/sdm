@@ -23,7 +23,7 @@ import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrationsAndListeners,
-    getGoalDefintionFrom,
+    getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
 
 /**
@@ -36,7 +36,7 @@ export class AutoCodeInspection
                 ...dependsOn: Goal[]) {
         super({
             ...CodeInspectionGoal.definition,
-            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
             displayName: "code-inspections",
         }, ...dependsOn);
 

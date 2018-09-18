@@ -25,7 +25,7 @@ import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
-    getGoalDefintionFrom,
+    getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
 
 /**
@@ -38,7 +38,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
 
         super({
             ...PushReactionGoal.definition,
-            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
             displayName: "push-impact",
         }, ...dependsOn);
 

@@ -206,8 +206,14 @@ export class GoalWithFulfillment extends FulfillableGoal {
     }
 }
 
-export function getGoalDefintionFrom(goalDetails: FulfillableGoalDetails | string,
-                                     uniqueName: string): { uniqueName: string, approvalRequired?: boolean, retryFeasible?: boolean} {
+/**
+ * @deprecated Please use getGoalDefinitionFrom
+ * @since 1.0.0-M.4
+ */
+export const getGoalDefintionFrom = getGoalDefinitionFrom;
+
+export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
+                                      uniqueName: string): { uniqueName: string, approvalRequired?: boolean, retryFeasible?: boolean} {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,

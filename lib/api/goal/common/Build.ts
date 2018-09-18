@@ -22,7 +22,7 @@ import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
-    getGoalDefintionFrom,
+    getGoalDefinitionFrom,
     ImplementationRegistration,
 } from "../GoalWithFulfillment";
 
@@ -43,7 +43,7 @@ export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration>
 
         super({
             ...BuildGoal.definition,
-            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("build")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("build")),
             displayName: "build",
         }, ...dependsOn);
     }

@@ -23,7 +23,7 @@ import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrationsAndListeners,
-    getGoalDefintionFrom,
+    getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
 
 /**
@@ -37,7 +37,7 @@ export class Fingerprint
 
         super({
             ...FingerprintGoal.definition,
-            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
             displayName: "fingerprint",
         }, ...dependsOn);
 

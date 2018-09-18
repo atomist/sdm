@@ -27,7 +27,7 @@ import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
-    getGoalDefintionFrom,
+    getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
 
 /**
@@ -40,7 +40,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
 
         super({
             ...AutofixGoal.definition,
-            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
             displayName: "autofix",
         }, ...dependsOn);
 
