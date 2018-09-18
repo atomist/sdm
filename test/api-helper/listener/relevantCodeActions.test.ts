@@ -36,7 +36,7 @@ const SomePickyFix: AutofixRegistration = {
 describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
-        const pti: PushImpactListenerInvocation = null;
+        const pti: PushImpactListenerInvocation = {} as PushImpactListenerInvocation;
         const autofixes: AutofixRegistration = {
             name: "License Fix",
             transform: async p => {
