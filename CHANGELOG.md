@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Make environment optional on GoalDefinition. [#530](https://github.com/atomist/sdm/issues/530)
+-   ExecuteGoalResult should not extend HandlerResult. [#469](https://github.com/atomist/sdm/issues/469)
 
 ### Deprecated
 
