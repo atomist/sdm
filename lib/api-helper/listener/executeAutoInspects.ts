@@ -51,15 +51,14 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
         try {
             if (autoInspectRegistrations.length === 0) {
                 return { code: 0, description: "No code inspections apply", requireApproval: false };
-            } else {
-                logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
-                return configuration.sdm.projectLoader.doWithProject({
-                    credentials,
-                    id,
-                    readOnly: true,
-                    cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
-                }, applyCodeInspections(goalInvocation, autoInspectRegistrations, reviewListeners));
             }
+            logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
+            return configuration.sdm.projectLoader.doWithProject({
+                credentials,
+                id,
+                readOnly: true,
+                cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
+            }, applyCodeInspections(goalInvocation, autoInspectRegistrations, reviewListeners));
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: $s",
                 id, autoInspectRegistrations.length, err.message);
