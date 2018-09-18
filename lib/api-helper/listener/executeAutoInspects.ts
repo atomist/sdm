@@ -45,11 +45,13 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id, addressChannels } = goalInvocation;
         try {
-            if (autoInspectRegistrations.length > 0) {
+            if (autoInspectRegistrations.length === 0) {
+                return { code: 0, requireApproval: false };
+            } else {
                 logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
                 return configuration.sdm.projectLoader.doWithProject({
                     credentials,
@@ -121,9 +123,6 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
                     logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
                     return result;
                 });
-            } else {
-                // No reviewers
-                return { code: 0, requireApproval: false };
             }
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: $s",
