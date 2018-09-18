@@ -122,24 +122,25 @@ function applyCodeInspections(
         const responsesFromOnInspectionResult: PushReactionResponse[] = [];
         const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
             await Promise.all(relevantAutoInspects
-                .map(autoInspect => {
+                .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
-                    return autoInspect.inspection(project, cli)
-                        .then(async inspectionResult => {
-                            try {
-                                if (!!autoInspect.onInspectionResult) {
-                                    const r = await autoInspect.onInspectionResult(inspectionResult, cli);
-                                    if (!!r) {
-                                        responsesFromOnInspectionResult.push(r);
-                                    }
+                    try {
+                        const inspectionResult = await autoInspect.inspection(project, cli)
+                        try {
+                            if (!!autoInspect.onInspectionResult) {
+                                const r = await autoInspect.onInspectionResult(inspectionResult, cli);
+                                if (!!r) {
+                                    responsesFromOnInspectionResult.push(r);
                                 }
-                            } catch {
-                                // Ignore errors
                             }
-                            // Suppress non reviews
-                            return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
-                        },
-                            error => ({ error }));
+                        } catch {
+                            // Ignore errors
+                        }
+                        // Suppress non reviews
+                        return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
+                    } catch (error) {
+                        return { error }
+                    }
                 }));
         const reviews: ProjectReview[] = reviewsAndErrors.filter(r => !!r.review)
             .map(r => r.review);
