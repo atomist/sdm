@@ -45,12 +45,12 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id, addressChannels } = goalInvocation;
         try {
             if (autoInspectRegistrations.length === 0) {
-                return { code: 0, requireApproval: false };
+                return { code: 0, description: "No code inspections apply", requireApproval: false };
             } else {
                 logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
                 return configuration.sdm.projectLoader.doWithProject({
