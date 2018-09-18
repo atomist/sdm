@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.4...HEAD)
 
+### Deprecated
+
+-   Typo: getGoalDefintionFrom. [#529](https://github.com/atomist/sdm/issues/529)
+
+### Fixed
+
+-   Typo: getGoalDefintionFrom. [#529](https://github.com/atomist/sdm/issues/529)
+
 ## [1.0.0-M.4](https://github.com/atomist/sdm/compare/1.0.0-M.3...1.0.0-M.4) - 2018-09-16
 
 ### Added
