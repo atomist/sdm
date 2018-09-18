@@ -126,10 +126,8 @@ function applyCodeInspections(
                     try {
                         const inspectionResult = await autoInspect.inspection(project, cli)
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
-                        const response = autoInspect.onInspectionResult ?
+                        const response = autoInspect.onInspectionResult &&
                             await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined) // ignore errors
-                            : undefined;
-                        // Suppress non reviews
                         return { review, response };
                     } catch (error) {
                         return { error }
