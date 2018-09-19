@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { NoParameters } from "@atomist/automation-client";
 import { logger } from "../context/exports";
 import { Project } from "../project/exports";
