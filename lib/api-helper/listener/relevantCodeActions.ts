@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { PushSelector } from "../../api/registration/PushRegistration";
 
@@ -21,9 +22,17 @@ import { PushSelector } from "../../api/registration/PushRegistration";
  * Compute the relevant actions for this push. Some may be filtered out
  * by their push tests.
  */
-export function relevantCodeActions<R extends PushSelector>(registrations: R[],
-                                                            pli: PushImpactListenerInvocation): Promise<R[]> {
-    return Promise.all(
+export async function relevantCodeActions<R extends PushSelector>(registrations: R[],
+                                                                  pli: PushImpactListenerInvocation): Promise<R[]> {
+
+    const relevantAutoInspects = await Promise.all(
         registrations.map(async t => (!t.pushTest || await t.pushTest.mapping(pli)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));
+
+    logger.info("Executing code actions on %j. %d are relevant: [%s] of [%s]",
+        pli.id, relevantAutoInspects.length,
+        relevantAutoInspects.map(a => a.name).join(),
+        registrations.map(a => a.name).join());
+
+    return relevantAutoInspects;
 }
