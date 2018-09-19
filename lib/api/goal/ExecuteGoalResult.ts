@@ -57,4 +57,3 @@ export interface ExecuteGoalResult extends GoalDetails {
      */
     message?: string;
 }
-
