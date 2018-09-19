@@ -17,7 +17,11 @@
 import { NoParameters } from "@atomist/automation-client";
 import { logger } from "../context/exports";
 import { Project } from "../project/exports";
-import { CodeTransform, TransformResult, TransformReturnable } from "./CodeTransform";
+import {
+    CodeTransform,
+    TransformResult,
+    TransformReturnable,
+} from "./CodeTransform";
 
 /**
  * Combine these transforms into a single transform,

@@ -16,7 +16,10 @@
 
 import { InMemoryProject } from "@atomist/automation-client";
 import * as assert from "assert";
-import { CodeTransform, TransformResult } from "../../../lib/api/registration/CodeTransform";
+import {
+    CodeTransform,
+    TransformResult,
+} from "../../../lib/api/registration/CodeTransform";
 import { chainTransforms } from "../../../lib/api/registration/transformUtils";
 
 describe("transformUtils", () => {
