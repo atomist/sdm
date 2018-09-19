@@ -109,7 +109,10 @@ export function executeAutoInspects(
  *                              ┌──────────┐                      ▼
  *                              │  Error   │                (errors are
  *                              └──────────┘                  ignored)
- *
+ */
+
+/**
+ * Apply code inspections
  * @param goalInvocation
  * @param autoInspectRegistrations
  * @param reviewListeners
