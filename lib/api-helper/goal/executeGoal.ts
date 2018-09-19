@@ -195,7 +195,13 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
 
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = goalInvocation;
-    return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+    return projectLoader.doWithProject({
+            credentials,
+            id,
+            context,
+            readOnly: true,
+            cloneOptions: { detachHead: true }
+        }, async p => {
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
