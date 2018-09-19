@@ -46,9 +46,8 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param reviewListeners listeners to respond to reviews
  * @return {ExecuteGoal}
  */
-export function executeAutoInspects(
-    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
+                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id } = goalInvocation;
         try {
@@ -71,7 +70,7 @@ export function executeAutoInspects(
     };
 }
 
-// tslint:disable:max-line-length
+// tslint:disable
 /**
  * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
  * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
@@ -110,17 +109,16 @@ export function executeAutoInspects(
  *                              │  Error   │                (errors are
  *                              └──────────┘                  ignored)
  */
-
+// tslint:enable
 /**
  * Apply code inspections
  * @param goalInvocation
  * @param autoInspectRegistrations
  * @param reviewListeners
  */
-function applyCodeInspections(
-    goalInvocation: GoalInvocation,
-    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-    reviewListeners: ReviewListenerRegistration[]) {
+function applyCodeInspections(goalInvocation: GoalInvocation,
+                              autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
+                              reviewListeners: ReviewListenerRegistration[]) {
     return async project => {
         const { id, addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
@@ -162,7 +160,9 @@ function applyCodeInspections(
     };
 }
 
-async function gatherResponsesFromReviewListeners(reviews: ProjectReview[], reviewListeners: ReviewListenerRegistration[], pli: PushListenerInvocation):
+async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
+                                                  reviewListeners: ReviewListenerRegistration[],
+                                                  pli: PushListenerInvocation):
     Promise<PushReactionResponse[]> {
     const review = consolidate(reviews, pli.id);
     logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
@@ -182,7 +182,8 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
     };
 }
 
-function createParametersInvocation(goalInvocation: GoalInvocation, autoInspect: AutoInspectRegistration<any, any>) {
+function createParametersInvocation(goalInvocation: GoalInvocation,
+                                    autoInspect: AutoInspectRegistration<any, any>) {
     return {
         addressChannels: goalInvocation.addressChannels,
         context: goalInvocation.context,
@@ -203,7 +204,8 @@ function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {
     };
 }
 
-function sendErrorsToSlack(errors: ReviewerError[], addressChannels: AddressChannels) {
+function sendErrorsToSlack(errors: ReviewerError[],
+                           addressChannels: AddressChannels) {
     errors.forEach(async e => {
         await addressChannels(formatReviewerError(e));
     });
