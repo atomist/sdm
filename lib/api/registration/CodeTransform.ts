@@ -23,6 +23,8 @@ import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 export type TransformResult = EditResult;
 
+export type TransformReturnable = Project | TransformResult | void;
+
 /**
  * Function that can transform a project. Mixing HandlerContextMethods into second
  * parameter, and third parameter are only for backward compatibility.
@@ -31,7 +33,7 @@ export type TransformResult = EditResult;
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
                                                sdmc: ParametersInvocation<P>,
-                                               params?: P) => Promise<Project | TransformResult | void>;
+                                               params?: P) => Promise<TransformReturnable>;
 
 /**
  * One or many CodeTransforms
