@@ -200,7 +200,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
             id,
             context,
             readOnly: true,
-            cloneOptions: { detachHead: true }
+            cloneOptions: { detachHead: true },
         }, async p => {
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
