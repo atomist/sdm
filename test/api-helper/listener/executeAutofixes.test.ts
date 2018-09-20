@@ -70,7 +70,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
     transform: async (project, ci) => {
         await project.addFile("bird", ci.parameters.bird);
         assert(!!ci.context.workspaceId);
-        assert(!ci.parameters);
+        assert(!!ci.parameters);
         return { edited: true, success: true, target: project };
     },
     parametersInstance: {
@@ -137,6 +137,8 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
+        (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -152,6 +154,8 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).commit = async () => null;
+        (p as any as GitProject).push = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
@@ -171,6 +175,8 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).commit = async () => null;
+        (p as any as GitProject).push = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
