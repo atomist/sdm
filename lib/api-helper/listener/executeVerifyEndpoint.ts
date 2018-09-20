@@ -26,6 +26,7 @@ import {
     EndpointVerificationInvocation,
     EndpointVerificationListener,
 } from "../../api/listener/EndpointVerificationListener";
+import { SdmGoalState } from "../../typings/types";
 
 /**
  * What the SDM should define for each environment's verification
@@ -64,6 +65,10 @@ export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoal {
             throw err;
         })));
 
-        return { code: 0, requireApproval: sdm.requestApproval, targetUrl: endpointGoal.url };
+        return {
+            code: 0,
+            state: sdm.requestApproval ? SdmGoalState.waiting_for_approval : undefined,
+            targetUrl: endpointGoal.url,
+        };
     };
 }
