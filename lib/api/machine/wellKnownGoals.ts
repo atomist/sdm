@@ -70,9 +70,10 @@ export const AutofixGoal = new Goal({
     uniqueName: "autofix",
     displayName: "autofix",
     environment: IndependentOfEnvironment,
-    workingDescription: "Running autofixes",
-    completedDescription: "Autofixed",
-    failedDescription: "Autofixes applied",
+    workingDescription: "Applying autofixes",
+    completedDescription: "No autofixes applied",
+    failedDescription: "Autofixes failed",
+    stoppedDescription: "Autofixes applied",
     isolated: true,
 });
 

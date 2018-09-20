@@ -181,19 +181,23 @@ function constructProvenance(ctx: HandlerContext): SdmProvenance {
 
 export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
     switch (state) {
-        case "planned":
-        case "requested":
+        case SdmGoalState.planned:
+        case SdmGoalState.requested:
             return goal.requestedDescription;
-        case "in_process":
+        case SdmGoalState.in_process:
             return goal.inProcessDescription;
-        case "waiting_for_approval":
+        case SdmGoalState.waiting_for_approval:
             return goal.waitingForApprovalDescription;
-        case "success":
+        case SdmGoalState.success:
             return goal.successDescription;
-        case "failure":
+        case SdmGoalState.failure:
             return goal.failureDescription;
-        case "skipped":
-            return "Skipped"; // you probably want to use something that describes the reason instead. but don't error.
+        case SdmGoalState.skipped:
+            return "Skipped";
+        case SdmGoalState.canceled:
+            return goal.canceledDescription;
+        case SdmGoalState.stopped:
+            return goal.stoppedDescription;
         default:
             throw new Error("Unknown goal state " + state);
     }

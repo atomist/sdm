@@ -34,6 +34,7 @@ import {
     ReviewerError,
 } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
+import { SdmGoalState } from "../../typings/types";
 import { minimalClone } from "../goal/minimalClone";
 import { PushListenerInvocation } from "./../../api/listener/PushListener";
 import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
@@ -109,6 +110,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
  *                              │  Error   │                (errors are
  *                              └──────────┘                  ignored)
  */
+
 // tslint:enable
 /**
  * Apply code inspections
@@ -120,7 +122,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                               autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
                               reviewListeners: ReviewListenerRegistration[]) {
     return async project => {
-        const { id, addressChannels } = goalInvocation;
+        const { addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
 
@@ -152,9 +154,9 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
-            code: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
-            requireApproval: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed),
-        };
+                code: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
+                state: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed)
+                    ? SdmGoalState.waiting_for_approval : undefined };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };

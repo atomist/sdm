@@ -99,7 +99,7 @@ describe("executeAutoInspects", () => {
             projectLoader: new SingleProjectLoader(p),
         } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
-        assert(!r.requireApproval);
+        assert(!r.state);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 0);
     });
@@ -121,7 +121,7 @@ describe("executeAutoInspects", () => {
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
-        assert(r.requireApproval);
+        assert(r.state);
     });
 
     it("should hate anything it finds, without requiring approval", async () => {
@@ -141,7 +141,7 @@ describe("executeAutoInspects", () => {
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
-        assert(!r.requireApproval);
+        assert(!r.state);
     });
 
     it("consolidate reviewers", async () => {

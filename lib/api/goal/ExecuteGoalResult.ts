@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { SdmGoalState } from "../../typings/types";
+
 /**
  * Result from goal execution with additional details that will be
  * persisted on the currently executing goal.
@@ -24,6 +26,11 @@ export interface GoalDetails {
      * Optional description to be set on the goal
      */
     description?: string;
+
+    /**
+     * Optional state for the goal
+     */
+    state?: SdmGoalState;
 
     /**
      * Optional phase to return from the goal execution
@@ -37,9 +44,9 @@ export interface GoalDetails {
 
     /**
      * Optional flag to indicate if this goal requires approval now
+     * @deprecated use state = SdmGoalState.waiting_for_approval instead
      */
     requireApproval?: boolean;
-
 }
 
 /**
@@ -48,7 +55,8 @@ export interface GoalDetails {
 export interface ExecuteGoalResult extends GoalDetails {
 
     /**
-     * 0 is success
+     * 0 is success; non-zero exit codes will mark the goal as failed,
+     * if state is not defined
      */
     code: number;
 
