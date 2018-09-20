@@ -51,6 +51,8 @@ export interface GoalDefinition {
     workingDescription?: string;
     failedDescription?: string;
     waitingForApprovalDescription?: string;
+    canceledDescription?: string;
+    stoppedDescription?: string;
 
     // when set to true, this goal will execute in its own container/client
     isolated?: boolean;
@@ -93,6 +95,14 @@ export class Goal {
 
     get waitingForApprovalDescription() {
         return this.definition.waitingForApprovalDescription || `Approval required: ${this.successDescription}`;
+    }
+
+    get canceledDescription() {
+        return this.definition.canceledDescription || `Canceled: ${this.name}`;
+    }
+
+    get stoppedDescription() {
+        return this.definition.stoppedDescription || `Goals stopped: ${this.name}`;
     }
 
     get retryIntent() {

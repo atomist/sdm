@@ -196,12 +196,12 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = goalInvocation;
     return projectLoader.doWithProject({
-            credentials,
-            id,
-            context,
-            readOnly: true,
-            cloneOptions: { detachHead: true },
-        }, async p => {
+        credentials,
+        id,
+        context,
+        readOnly: true,
+        cloneOptions: { detachHead: true },
+    }, async p => {
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
@@ -260,8 +260,16 @@ export function markStatus(parameters: {
 }) {
     const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
 
-    const newState = result.code !== 0 ? SdmGoalState.failure :
-        (result.requireApproval || goal.definition.approvalRequired ? SdmGoalState.waiting_for_approval : SdmGoalState.success);
+    let newState = SdmGoalState.success;
+    if (result.state) {
+        newState = result.state;
+    } else if (result.requireApproval) {
+        newState = SdmGoalState.waiting_for_approval;
+    } else if (result.code !== 0) {
+        newState = SdmGoalState.failure;
+    } else if (goal.definition.approvalRequired) {
+        newState = SdmGoalState.waiting_for_approval;
+    }
 
     return updateGoal(
         context,

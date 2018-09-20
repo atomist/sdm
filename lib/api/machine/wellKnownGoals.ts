@@ -72,7 +72,8 @@ export const AutofixGoal = new Goal({
     environment: IndependentOfEnvironment,
     workingDescription: "Running autofixes",
     completedDescription: "Autofixed",
-    failedDescription: "Autofixes applied",
+    failedDescription: "Autofixes failed",
+    stoppedDescription: "Autofixes applied",
     isolated: true,
 });
 

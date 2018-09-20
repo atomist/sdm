@@ -32,6 +32,7 @@ import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { SdmGoalState } from "../../typings/types";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
 import { minimalClone } from "../goal/minimalClone";
 import {
@@ -71,7 +72,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                             success: true,
                             edited: false,
                             target: project,
-                            description: "Autofixes skipped: the branch has moved on",
+                            description: "Autofixes not executing: new commits on branch",
                         };
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
@@ -105,17 +106,24 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             if (editResult.edited) {
                 // Send back an error code, because we want to stop execution of goals after this
                 return {
-                    code: 1,
+                    code: 0,
                     message: "Edited",
-                    description: goalInvocation.goal.failureDescription,
+                    description: goalInvocation.goal.stoppedDescription,
+                    state: SdmGoalState.stopped,
                     phase: detailMessage(appliedAutofixes),
                 };
             }
-            return { code: 0, description: (editResult as any).description };
+            return {
+                code: 0,
+                description: (editResult as any).description
+            };
         } catch (err) {
-            logger.warn("Autofixes failed with %s: Ignoring failure.\n%s", err.message, err.stack);
-            progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
-            return { code: 0, description: "Warning: Autofixes completed with error" };
+            logger.warn("Autofixes failed with '%s':\n%s", err.message, err.stack);
+            progressLog.write(sprintf("Autofixes failed with '%s'", err.message));
+            return {
+                code: 1,
+                message: err.message,
+            };
         }
     };
 }

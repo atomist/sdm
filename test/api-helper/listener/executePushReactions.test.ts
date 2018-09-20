@@ -54,7 +54,7 @@ describe("executePushReactions", () => {
             projectLoader: new SingleProjectLoader(p),
         } as any)) as ExecuteGoalResult;
         assert.equal(invocations.length, 1);
-        assert(!r.requireApproval);
+        assert(!r.state);
         assert.equal(r.code, 1);
     });
 
@@ -68,7 +68,7 @@ describe("executePushReactions", () => {
         } as any)) as ExecuteGoalResult;
         assert.equal(invocations.length, 1);
         assert.equal(r.code, 0);
-        assert(!r.requireApproval);
+        assert(!r.state);
         assert.equal(r.code, 0);
     });
 
