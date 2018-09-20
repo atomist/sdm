@@ -104,7 +104,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                     return cumulativeResult;
                 });
             if (editResult.edited) {
-                // Send back an error code, because we want to stop execution of goals after this
+                // Send back a stop state to skip downstream goals
                 return {
                     code: 0,
                     message: "Edited",
