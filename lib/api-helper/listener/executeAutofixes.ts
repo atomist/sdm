@@ -115,7 +115,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             }
             return {
                 code: 0,
-                description: (editResult as any).description
+                description: (editResult as any).description,
             };
         } catch (err) {
             logger.warn("Autofixes failed with '%s':\n%s", err.message, err.stack);
