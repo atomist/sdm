@@ -32,6 +32,9 @@ export type ExecuteGoal =
 export type PrepareForGoalExecution =
     (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
+export type GoalProjectHook =
+    (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
+
 export interface GoalInvocation extends RepoContext {
 
     /**

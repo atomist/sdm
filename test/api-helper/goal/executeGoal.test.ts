@@ -19,15 +19,22 @@ import {
     Success,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { executeGoal } from "../../../lib/api-helper/goal/executeGoal";
+import {
+    executeGoal,
+    prepareGoalInvocation,
+} from "../../../lib/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { lastLinesLogInterpreter } from "../../../lib/api-helper/log/logInterpreters";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { Goal } from "../../../lib/api/goal/Goal";
-import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import {
+    GoalInvocation,
+    GoalProjectHook,
+} from "../../../lib/api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
+import { WithLoadedProject } from "../../../lib/spi/project/ProjectLoader";
 
 const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
     goalInvocation.progressLog.write("Hello world\n");
@@ -61,7 +68,7 @@ const fakeSdmGoal = {
 
 const fakeCredentials = { token: "NOT-A-TOKEN" };
 
-describe("executing the goal", () => {
+describe("executeGoal", () => {
 
     before(() => {
         (global as any).__runningAutomationClient = {
@@ -94,7 +101,8 @@ describe("executing the goal", () => {
                 helloWorldGoalExecutor,
                 fakeRWLC,
                 lastLinesLogInterpreter("hi"),
-                null)
+                null,
+                { pre: [], post: [] })
                 .then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
@@ -102,6 +110,42 @@ describe("executing the goal", () => {
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 });
         }).then(done, done);
+    });
+
+    describe("prepareGoalInvocation", () => {
+
+        it("should wrap projectLoader and in invoke pre and post hooks", async ()  => {
+            const projectLoader = new SingleProjectLoader(InMemoryProject.of());
+            const fakeRWLC = {
+                context: fakeContext(),
+                credentials: fakeCredentials,
+                goal: fakeGoal,
+                sdmGoal: fakeSdmGoal,
+                configuration: {
+                    sdm: {
+                        projectLoader,
+                    },
+                },
+            } as any as GoalInvocation;
+
+            let count = 0;
+            const hook: GoalProjectHook = async () => { count ++; };
+
+            const hooks = {
+                pre: [hook, hook],
+                post: [hook],
+            };
+
+            let invoked = false;
+            const dwp: WithLoadedProject = async () => { invoked = true; };
+
+            const wgi = prepareGoalInvocation(fakeRWLC, hooks);
+            const pl = wgi.configuration.sdm.projectLoader;
+            await pl.doWithProject({} as any, dwp);
+            assert.equal(count, 3);
+            assert(invoked);
+        });
+
     });
 
 });
