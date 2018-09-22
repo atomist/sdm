@@ -71,12 +71,12 @@ export interface ImplementationRegistration extends FulfillmentRegistration {
 
     /**
      * Optional project hooks that can get invoked before the actual goal implementation
-     * runs. 
+     * runs.
      */
     hooks?: {
         pre?: GoalProjectHook | GoalProjectHook[];
         post?: GoalProjectHook | GoalProjectHook[];
-    }
+    };
 }
 
 export interface Implementation extends ImplementationRegistration {
