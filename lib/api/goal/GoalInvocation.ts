@@ -32,6 +32,14 @@ export type ExecuteGoal =
 export type PrepareForGoalExecution =
     (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
+export enum GoalProjectHookPhase {
+    pre,
+    post,
+}
+
+export type GoalProjectHook =
+    (p: GitProject, r: GoalInvocation, phase: GoalProjectHookPhase) => Promise<void | ExecuteGoalResult>;
+
 export interface GoalInvocation extends RepoContext {
 
     /**

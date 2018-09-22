@@ -28,7 +28,10 @@ import {
     GoalWithPrecondition,
     isGoalDefiniton,
 } from "./Goal";
-import { ExecuteGoal } from "./GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalProjectHook,
+} from "./GoalInvocation";
 import { ReportProgress } from "./progress/ReportProgress";
 import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
 
@@ -66,6 +69,14 @@ export interface ImplementationRegistration extends FulfillmentRegistration {
      */
     progressReporter?: ReportProgress;
 
+    /**
+     * Optional project hooks that can get invoked before the actual goal implementation
+     * runs. 
+     */
+    hooks?: {
+        pre?: GoalProjectHook | GoalProjectHook[];
+        post?: GoalProjectHook | GoalProjectHook[];
+    }
 }
 
 export interface Implementation extends ImplementationRegistration {
@@ -103,6 +114,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     protected readonly fulfillments: Fulfillment[] = [];
     protected readonly callbacks: GoalFulfillmentCallback[] = [];
+    protected readonly projectHooks: GoalProjectHook[] = [];
+
     public sdm: SoftwareDeliveryMachine;
 
     constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
@@ -116,6 +129,11 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             this.registerFulfillment(fulfillment);
         });
         this.callbacks.forEach(cb => this.registerCallback(cb));
+    }
+
+    public withProjectHook(hook: GoalProjectHook): this {
+        this.projectHooks.push(hook);
+        return this;
     }
 
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
@@ -144,6 +162,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                     pushTest: fulfillment.pushTest || AnyPush,
                     progressReporter: fulfillment.progressReporter,
                     logInterpreter: fulfillment.logInterpreter,
+                    projectHooks: this.projectHooks,
                 });
         } else if (isSideEffect(fulfillment)) {
             this.sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);

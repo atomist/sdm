@@ -31,6 +31,8 @@ import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
+    GoalProjectHook,
+    GoalProjectHookPhase,
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
@@ -40,7 +42,11 @@ import {
 } from "../../api/listener/GoalStatusListener";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import {
+    ProjectLoader,
+    ProjectLoadingParameters,
+    WithLoadedProject,
+} from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { toToken } from "../misc/credentials/toToken";
@@ -85,7 +91,11 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
                                   execute: ExecuteGoal,
                                   goalInvocation: GoalInvocation,
                                   logInterpreter: InterpretLog,
-                                  progressReporter: ReportProgress): Promise<ExecuteGoalResult> {
+                                  progressReporter: ReportProgress,
+                                  hooks: {
+                                      pre: GoalProjectHook | GoalProjectHook[],
+                                      post: GoalProjectHook | GoalProjectHook[],
+                                  }): Promise<ExecuteGoalResult> {
     const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials } = goalInvocation;
     const implementationName = sdmGoal.fulfillment.name;
 
@@ -351,6 +361,37 @@ async function reportGoalError(parameters: {
     }
 }
 
+export function prepareGoalInvocation(gi: GoalInvocation, hooks: {
+                                        pre: GoalProjectHook | GoalProjectHook[],
+                                        post: GoalProjectHook | GoalProjectHook[],
+                                    }): GoalInvocation {
+
+    const pre = hooks && hooks.pre ? (Array.isArray(hooks.pre) ? hooks.pre : []) : [];
+    const post = hooks && hooks.post ? (Array.isArray(hooks.post) ? hooks.post : []) : [];
+
+    if (pre.length === 0 && post.length === 0) {
+        return gi;
+    }
+
+    const handler = {
+        get: (target, propKey, receiver) => {
+            const propValue = target[propKey];
+            if (propKey === "projectLoader") {
+                return new HookInvokingProjectLoader(gi, pre, post);
+            } else {
+                return new Proxy(propValue, handler);
+            }
+        },
+    };
+
+    return new Proxy(gi, handler);
+
+}
+
+/**
+ * ProgressLog implementation that uses the configured ReportProgress
+ * instance to report goal execution updates.
+ */
 class ProgressReportingProgressLog implements ProgressLog {
 
     public log: string;
@@ -397,5 +438,44 @@ class ProgressReportingProgressLog implements ProgressLog {
             }
         }
     }
+}
 
+/**
+ * ProjectLoader implementation that invokes pre and post hooks on the project.
+ * Can be used to restore state into a project/workspace area.
+ */
+class HookInvokingProjectLoader implements ProjectLoader {
+
+    constructor(private readonly gi: GoalInvocation,
+                private readonly pre: GoalProjectHook[],
+                private readonly post: GoalProjectHook[]) {}
+
+    public async doWithProject(params: ProjectLoadingParameters, action: WithLoadedProject): Promise<any> {
+        return this.gi.configuration.sdm.projectLoader.doWithProject(params, async p => {
+            let result;
+            try {
+                // execute pre hooks on the project
+                for (const hook of this.pre) {
+                    const preResult = await hook(p, this.gi, GoalProjectHookPhase.pre);
+                    if (preResult && preResult.code !== 0) {
+                        return preResult;
+                    }
+                }
+                // invoke the wrapped action
+                result = await action(p);
+            } catch (err) {
+                throw err;
+            } finally {
+                // execute post hooks on the project
+                for (const hook of this.post) {
+                    const postResult = await hook(p, this.gi, GoalProjectHookPhase.post);
+                    if (postResult && postResult.code !== 0) {
+                        result = postResult;
+                        break;
+                    }
+                }
+            }
+            return result;
+        });
+    }
 }

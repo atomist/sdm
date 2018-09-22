@@ -25,7 +25,10 @@ import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
-import { ExecuteGoal } from "../../api/goal/GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalProjectHook,
+} from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
     NoProgressReport,
@@ -119,18 +122,17 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                  goal: Goal,
                                  goalExecutor: ExecuteGoal,
                                  options?: Partial<{
-            pushTest: PushTest,
-            logInterpreter: InterpretLog,
-            progressReporter: ReportProgress,
-        }>): this {
+                                     pushTest: PushTest,
+                                     logInterpreter: InterpretLog,
+                                     progressReporter: ReportProgress,
+                                     projectHooks: GoalProjectHook | GoalProjectHook[],
+                                 }>): this {
         const implementation = {
             implementationName, goal, goalExecutor,
-            pushTest: options && options.pushTest ? options.pushTest :
-                AnyPush,
-            logInterpreter: options && options.logInterpreter ? options.logInterpreter :
-                lastLinesLogInterpreter(implementationName, 10),
-            progressReporter: options && options.progressReporter ? options.progressReporter :
-                NoProgressReport,
+            pushTest: _.get(options, "pushTest") || AnyPush,
+            logInterpreter: _.get(options, "logInterpreter") || lastLinesLogInterpreter(implementationName, 10),
+            progressReporter: _.get(options, "progressReporter") || NoProgressReport,
+            projectHooks: _.get(options, "projectHooks") || [],
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
         return this;
