@@ -20,6 +20,7 @@ import {
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 
@@ -47,5 +48,6 @@ export interface Builder extends LogInterpretation {
                   ac: AddressChannels,
                   push: PushThatTriggersBuild,
                   log: ProgressLog,
-                  context: HandlerContext): Promise<any>;
+                  context: HandlerContext,
+                  configuration: SoftwareDeliveryMachineConfiguration): Promise<any>;
 }

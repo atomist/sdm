@@ -19,7 +19,10 @@ import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../mapping/PushTest";
 import { Goal } from "../Goal";
-import { ExecuteGoal } from "../GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalProjectListenerRegistration,
+} from "../GoalInvocation";
 import { ReportProgress } from "../progress/ReportProgress";
 import { SdmGoalEvent } from "../SdmGoalEvent";
 
@@ -32,6 +35,7 @@ export interface GoalImplementation {
     pushTest: PushTest;
     logInterpreter: InterpretLog;
     progressReporter?: ReportProgress;
+    projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[];
 }
 
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {

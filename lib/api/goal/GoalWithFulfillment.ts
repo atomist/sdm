@@ -28,7 +28,11 @@ import {
     GoalWithPrecondition,
     isGoalDefiniton,
 } from "./Goal";
-import { ExecuteGoal } from "./GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalProjectListener,
+    GoalProjectListenerRegistration,
+} from "./GoalInvocation";
 import { ReportProgress } from "./progress/ReportProgress";
 import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
 
@@ -65,7 +69,6 @@ export interface ImplementationRegistration extends FulfillmentRegistration {
      * Optional progress reporter for this goal implementation
      */
     progressReporter?: ReportProgress;
-
 }
 
 export interface Implementation extends ImplementationRegistration {
@@ -103,6 +106,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     protected readonly fulfillments: Fulfillment[] = [];
     protected readonly callbacks: GoalFulfillmentCallback[] = [];
+    protected readonly projectListeners: GoalProjectListenerRegistration[] = [];
+
     public sdm: SoftwareDeliveryMachine;
 
     constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
@@ -116,6 +121,11 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             this.registerFulfillment(fulfillment);
         });
         this.callbacks.forEach(cb => this.registerCallback(cb));
+    }
+
+    public withProjectListener(listener: GoalProjectListenerRegistration): this {
+        this.projectListeners.push(listener);
+        return this;
     }
 
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
@@ -144,6 +154,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                     pushTest: fulfillment.pushTest || AnyPush,
                     progressReporter: fulfillment.progressReporter,
                     logInterpreter: fulfillment.logInterpreter,
+                    projectListeners: this.projectListeners,
                 });
         } else if (isSideEffect(fulfillment)) {
             this.sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);

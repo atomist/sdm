@@ -16,7 +16,11 @@
 
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { Goal } from "../goal/Goal";
-import { ExecuteGoal } from "../goal/GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalProjectListener,
+    GoalProjectListenerRegistration,
+} from "../goal/GoalInvocation";
 import { Goals } from "../goal/Goals";
 import { ReportProgress } from "../goal/progress/ReportProgress";
 import { GoalImplementationMapper } from "../goal/support/GoalImplementationMapper";
@@ -59,6 +63,7 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
                               pushTest: PushTest,
                               logInterpreter: InterpretLog,
                               progressReporter: ReportProgress,
+                              projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[],
                           }>): this;
 
     /**
