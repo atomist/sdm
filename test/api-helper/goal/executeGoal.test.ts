@@ -102,7 +102,7 @@ describe("executeGoal", () => {
                 fakeRWLC,
                 lastLinesLogInterpreter("hi"),
                 null,
-                { pre: [], post: [] })
+                [])
                 .then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
@@ -131,10 +131,7 @@ describe("executeGoal", () => {
             let count = 0;
             const hook: GoalProjectHook = async () => { count ++; };
 
-            const hooks = {
-                pre: [hook, hook],
-                post: [hook],
-            };
+            const hooks = [hook, hook];
 
             let invoked = false;
             const dwp: WithLoadedProject = async () => { invoked = true; };
@@ -142,7 +139,7 @@ describe("executeGoal", () => {
             const wgi = prepareGoalInvocation(fakeRWLC, hooks);
             const pl = wgi.configuration.sdm.projectLoader;
             await pl.doWithProject({} as any, dwp);
-            assert.equal(count, 3);
+            assert.equal(count, 4);
             assert(invoked);
         });
 

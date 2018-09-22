@@ -92,10 +92,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
                                   goalInvocation: GoalInvocation,
                                   logInterpreter: InterpretLog,
                                   progressReporter: ReportProgress,
-                                  hooks: {
-                                      pre: GoalProjectHook | GoalProjectHook[],
-                                      post: GoalProjectHook | GoalProjectHook[],
-                                  }): Promise<ExecuteGoalResult> {
+                                  hooks: GoalProjectHook | GoalProjectHook[]): Promise<ExecuteGoalResult> {
     const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials } = goalInvocation;
     const implementationName = sdmGoal.fulfillment.name;
 
@@ -131,7 +128,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await execute(goalInvocation)
+        const goalResult: ExecuteGoalResult = (await execute(prepareGoalInvocation(goalInvocation, hooks))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -361,15 +358,11 @@ async function reportGoalError(parameters: {
     }
 }
 
-export function prepareGoalInvocation(gi: GoalInvocation, hooks: {
-                                        pre: GoalProjectHook | GoalProjectHook[],
-                                        post: GoalProjectHook | GoalProjectHook[],
-                                    }): GoalInvocation {
+export function prepareGoalInvocation(gi: GoalInvocation, hooks: GoalProjectHook | GoalProjectHook[]): GoalInvocation {
+    const hs: GoalProjectHook[] =
+        (hooks && Array.isArray(hooks)) ? hooks : [hooks] as GoalProjectHook[];
 
-    const pre = hooks && hooks.pre ? (Array.isArray(hooks.pre) ? hooks.pre : []) : [];
-    const post = hooks && hooks.post ? (Array.isArray(hooks.post) ? hooks.post : []) : [];
-
-    if (pre.length === 0 && post.length === 0) {
+    if (hs.length === 0) {
         return gi;
     }
 
@@ -377,7 +370,7 @@ export function prepareGoalInvocation(gi: GoalInvocation, hooks: {
         get: (target, propKey, receiver) => {
             const propValue = target[propKey];
             if (propKey === "projectLoader") {
-                return new HookInvokingProjectLoader(gi, pre, post);
+                return new HookInvokingProjectLoader(gi, hs);
             } else {
                 return new Proxy(propValue, handler);
             }
@@ -447,15 +440,14 @@ class ProgressReportingProgressLog implements ProgressLog {
 class HookInvokingProjectLoader implements ProjectLoader {
 
     constructor(private readonly gi: GoalInvocation,
-                private readonly pre: GoalProjectHook[],
-                private readonly post: GoalProjectHook[]) {}
+                private readonly hooks: GoalProjectHook[]) {}
 
     public async doWithProject(params: ProjectLoadingParameters, action: WithLoadedProject): Promise<any> {
         return this.gi.configuration.sdm.projectLoader.doWithProject(params, async p => {
             let result;
             try {
                 // execute pre hooks on the project
-                for (const hook of this.pre) {
+                for (const hook of this.hooks) {
                     const preResult = await hook(p, this.gi, GoalProjectHookPhase.pre);
                     if (preResult && preResult.code !== 0) {
                         return preResult;
@@ -467,7 +459,7 @@ class HookInvokingProjectLoader implements ProjectLoader {
                 throw err;
             } finally {
                 // execute post hooks on the project
-                for (const hook of this.post) {
+                for (const hook of this.hooks) {
                     const postResult = await hook(p, this.gi, GoalProjectHookPhase.post);
                     if (postResult && postResult.code !== 0) {
                         result = postResult;

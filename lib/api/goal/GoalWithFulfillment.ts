@@ -68,15 +68,6 @@ export interface ImplementationRegistration extends FulfillmentRegistration {
      * Optional progress reporter for this goal implementation
      */
     progressReporter?: ReportProgress;
-
-    /**
-     * Optional project hooks that can get invoked before the actual goal implementation
-     * runs.
-     */
-    hooks?: {
-        pre?: GoalProjectHook | GoalProjectHook[];
-        post?: GoalProjectHook | GoalProjectHook[];
-    };
 }
 
 export interface Implementation extends ImplementationRegistration {
