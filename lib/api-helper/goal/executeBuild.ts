@@ -29,7 +29,7 @@ import { Builder } from "../../spi/build/Builder";
  */
 export function executeBuild(builder: Builder): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { sdmGoal, credentials, id, context, progressLog, addressChannels } = goalInvocation;
+        const { sdmGoal, credentials, id, context, progressLog, addressChannels, configuration } = goalInvocation;
 
         logger.info("Building project '%s/%s' with builder '%s'", id.owner, id.repo, builder.name);
 
@@ -48,6 +48,7 @@ export function executeBuild(builder: Builder): ExecuteGoal {
                 sha: sdmGoal.sha,
             },
             progressLog,
-            context);
+            context,
+            configuration);
     };
 }

@@ -23,6 +23,7 @@ import {
     RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
@@ -31,9 +32,11 @@ import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
+    GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import {
     GoalExecutionListener,
     GoalExecutionListenerInvocation,
@@ -48,6 +51,7 @@ import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
 import { spawnAndWatch } from "../misc/spawned";
+import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
 import {
     descriptionFromState,
     updateGoal,
@@ -82,11 +86,10 @@ class GoalExecutionError extends Error {
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
-                                  execute: ExecuteGoal,
-                                  goalInvocation: GoalInvocation,
-                                  logInterpreter: InterpretLog,
-                                  progressReporter: ReportProgress): Promise<ExecuteGoalResult> {
+                                  implementation: GoalImplementation,
+                                  goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
     const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials } = goalInvocation;
+    const { progressReporter, goalExecutor, logInterpreter, projectListeners } = implementation;
     const implementationName = sdmGoal.fulfillment.name;
 
     if (!!progressReporter) {
@@ -121,7 +124,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await execute(goalInvocation)
+        const goalResult: ExecuteGoalResult = (await goalExecutor(prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -351,6 +354,30 @@ async function reportGoalError(parameters: {
     }
 }
 
+export function prepareGoalInvocation(gi: GoalInvocation,
+                                      listeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[]): GoalInvocation {
+    const hs: GoalProjectListenerRegistration[] =
+        (listeners && Array.isArray(listeners)) ? listeners : [listeners] as GoalProjectListenerRegistration[];
+
+    if (hs.length === 0) {
+        return gi;
+    }
+
+    const configuration = _.cloneDeep(gi.configuration);
+    configuration.sdm.projectLoader = new ProjectListenerInvokingProjectLoader(gi, hs);
+
+    const newGi: GoalInvocation = {
+        ...gi,
+        configuration,
+    };
+
+    return newGi;
+}
+
+/**
+ * ProgressLog implementation that uses the configured ReportProgress
+ * instance to report goal execution updates.
+ */
 class ProgressReportingProgressLog implements ProgressLog {
 
     public log: string;
@@ -397,5 +424,4 @@ class ProgressReportingProgressLog implements ProgressLog {
             }
         }
     }
-
 }
