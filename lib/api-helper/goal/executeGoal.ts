@@ -23,6 +23,7 @@ import {
     RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
@@ -366,19 +367,11 @@ export function prepareGoalInvocation(gi: GoalInvocation, hooks: GoalProjectHook
         return gi;
     }
 
-    const handler = {
-        get: (target, propKey, receiver) => {
-            const propValue = target[propKey];
-            if (propKey === "projectLoader") {
-                return new HookInvokingProjectLoader(gi, hs);
-            } else {
-                return new Proxy(propValue, handler);
-            }
-        },
-    };
+    const configuration = _.cloneDeep(gi.configuration);
+    configuration.sdm.projectLoader = new HookInvokingProjectLoader(gi, hs);
 
-    return new Proxy(gi, handler);
-
+    gi.configuration = configuration;
+    return gi;
 }
 
 /**
