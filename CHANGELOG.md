@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   New states for stopped and canceled goals. [#533](https://github.com/atomist/sdm/pull/533)
+-   **BREAKING** Test. [#534](https://github.com/atomist/sdm/issues/534)
 
 ### Changed
 
