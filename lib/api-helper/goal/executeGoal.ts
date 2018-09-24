@@ -370,8 +370,10 @@ export function prepareGoalInvocation(gi: GoalInvocation, hooks: GoalProjectHook
     const configuration = _.cloneDeep(gi.configuration);
     configuration.sdm.projectLoader = new HookInvokingProjectLoader(gi, hs);
 
-    gi.configuration = configuration;
-    return gi;
+    return {
+        ...gi,
+        configuration,
+    }
 }
 
 /**
