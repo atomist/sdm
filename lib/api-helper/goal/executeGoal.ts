@@ -373,7 +373,7 @@ export function prepareGoalInvocation(gi: GoalInvocation, hooks: GoalProjectHook
     return {
         ...gi,
         configuration,
-    }
+    };
 }
 
 /**
