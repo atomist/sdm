@@ -51,6 +51,7 @@ export interface GoalDefinition {
     workingDescription?: string;
     failedDescription?: string;
     waitingForApprovalDescription?: string;
+    waitingForPreApprovalDescription?: string;
     canceledDescription?: string;
     stoppedDescription?: string;
 
@@ -59,6 +60,9 @@ export interface GoalDefinition {
 
     // when set to true, this goal requires approval before it is marked success
     approvalRequired?: boolean;
+
+    // when set to true, this goal requires pre approval before it is requested
+    preApprovalRequired?: boolean;
 
     // when set to true, this goal can be retried in case of failure
     retryFeasible?: boolean;
@@ -95,6 +99,10 @@ export class Goal {
 
     get waitingForApprovalDescription() {
         return this.definition.waitingForApprovalDescription || `Approval required: ${this.successDescription}`;
+    }
+
+    get waitingForPreApprovalDescription() {
+        return this.definition.waitingForPreApprovalDescription || `Start required: ${this.successDescription}`;
     }
 
     get canceledDescription() {

@@ -157,6 +157,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         externalKey: goal.context,
         ts: Date.now(),
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
+        preApprovalRequired: goal.definition.preApprovalRequired ? goal.definition.preApprovalRequired : false, 
         retryFeasible: goal.definition.retryFeasible ? goal.definition.retryFeasible : false,
         provenance: [constructProvenance(ctx)],
         preConditions,

@@ -92,6 +92,7 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
 export interface FulfillableGoalDetails {
     uniqueName?: string;
     approval?: boolean;
+    preApproval?: boolean;
     retry?: boolean;
 }
 
@@ -213,7 +214,8 @@ export class GoalWithFulfillment extends FulfillableGoal {
 export const getGoalDefintionFrom = getGoalDefinitionFrom;
 
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string): { uniqueName: string, approvalRequired?: boolean, retryFeasible?: boolean} {
+                                      uniqueName: string):
+    { uniqueName: string, approvalRequired?: boolean, preApprovalRequired?: boolean, retryFeasible?: boolean} {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
@@ -222,6 +224,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
         return {
             uniqueName: goalDetails.uniqueName || uniqueName,
             approvalRequired: goalDetails.approval,
+            preApprovalRequired: goalDetails.preApproval,
             retryFeasible: goalDetails.retry,
         };
     }
