@@ -27,7 +27,7 @@ import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
-    GoalProjectHook,
+    GoalProjectListener,
 } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
@@ -125,7 +125,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                      pushTest: PushTest,
                                      logInterpreter: InterpretLog,
                                      progressReporter: ReportProgress,
-                                     projectHooks: GoalProjectHook | GoalProjectHook[],
+                                     projectHooks: GoalProjectListener | GoalProjectListener[],
                                  }>): this {
         const implementation = {
             implementationName, goal, goalExecutor,

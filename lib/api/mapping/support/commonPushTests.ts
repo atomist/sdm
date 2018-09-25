@@ -45,7 +45,7 @@ export const FromAtomist: PushTest = pushTest("Push from Atomist", async p =>
  * @param {PushListenerInvocation} p
  * @constructor
  */
-export const AnyPush: PushTest = pushTest("Any push", async p => true);
+export const AnyPush: PushTest = pushTest("Any push", async () => true);
 
 /**
  * Return a PushTest testing for the existence of the given file

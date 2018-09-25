@@ -30,10 +30,12 @@ import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleP
 import { Goal } from "../../../lib/api/goal/Goal";
 import {
     GoalInvocation,
-    GoalProjectHook,
+    GoalProjectListenerRegistration,
 } from "../../../lib/api/goal/GoalInvocation";
+import { NoProgressReport } from "../../../lib/api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
+import { AnyPush } from "../../../lib/api/mapping/support/commonPushTests";
 import { WithLoadedProject } from "../../../lib/spi/project/ProjectLoader";
 
 const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
@@ -98,11 +100,16 @@ describe("executeGoal", () => {
             } as any as GoalInvocation;
 
             return executeGoal({ projectLoader, goalExecutionListeners: [] },
-                helloWorldGoalExecutor,
-                fakeRWLC,
-                lastLinesLogInterpreter("hi"),
-                null,
-                [])
+                {
+                    implementationName: "test",
+                    goalExecutor: helloWorldGoalExecutor,
+                    logInterpreter: lastLinesLogInterpreter("hi"),
+                    pushTest: AnyPush,
+                    projectListeners: [],
+                    progressReporter: NoProgressReport,
+                    goal: fakeGoal,
+                },
+                fakeRWLC)
                 .then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
@@ -114,13 +121,16 @@ describe("executeGoal", () => {
 
     describe("prepareGoalInvocation", () => {
 
-        it("should wrap projectLoader and in invoke pre and post hooks", async ()  => {
+        it("should wrap projectLoader and in invoke pre and post hooks", async () => {
             const projectLoader = new SingleProjectLoader(InMemoryProject.of());
             const fakeRWLC = {
                 context: fakeContext(),
                 credentials: fakeCredentials,
                 goal: fakeGoal,
                 sdmGoal: fakeSdmGoal,
+                progressLog: {
+                    write: () => { /** empty */ },
+                },
                 configuration: {
                     sdm: {
                         projectLoader,
@@ -129,12 +139,20 @@ describe("executeGoal", () => {
             } as any as GoalInvocation;
 
             let count = 0;
-            const hook: GoalProjectHook = async () => { count ++; };
+            const listener: GoalProjectListenerRegistration = {
+                name: "counter",
+                listener: async () => {
+                    count++;
+                },
+                pushTest: AnyPush,
+            };
 
-            const hooks = [hook, hook];
+            const hooks = [listener, listener];
 
             let invoked = false;
-            const dwp: WithLoadedProject = async () => { invoked = true; };
+            const dwp: WithLoadedProject = async () => {
+                invoked = true;
+            };
 
             const wgi = prepareGoalInvocation(fakeRWLC, hooks);
             const pl = wgi.configuration.sdm.projectLoader;

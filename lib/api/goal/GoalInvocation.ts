@@ -18,6 +18,7 @@ import { GitProject } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoContext } from "../context/SdmContext";
 import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliveryMachineOptions";
+import { PushTest } from "../mapping/PushTest";
 import { ExecuteGoalResult } from "./ExecuteGoalResult";
 import { Goal } from "./Goal";
 import { SdmGoalEvent } from "./SdmGoalEvent";
@@ -32,13 +33,19 @@ export type ExecuteGoal =
 export type PrepareForGoalExecution =
     (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
-export enum GoalProjectHookPhase {
-    pre,
-    post,
+export enum GoalProjectListenerEvent {
+    before_action,
+    after_action,
 }
 
-export type GoalProjectHook =
-    (p: GitProject, r: GoalInvocation, phase: GoalProjectHookPhase) => Promise<void | ExecuteGoalResult>;
+export type GoalProjectListener =
+    (p: GitProject, r: GoalInvocation, event: GoalProjectListenerEvent) => Promise<void | ExecuteGoalResult>;
+
+export interface GoalProjectListenerRegistration {
+    name: string;
+    listener: GoalProjectListener;
+    pushTest?: PushTest;
+}
 
 export interface GoalInvocation extends RepoContext {
 

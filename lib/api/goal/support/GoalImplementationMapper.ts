@@ -21,7 +21,7 @@ import { PushTest } from "../../mapping/PushTest";
 import { Goal } from "../Goal";
 import {
     ExecuteGoal,
-    GoalProjectHook,
+    GoalProjectListenerRegistration,
 } from "../GoalInvocation";
 import { ReportProgress } from "../progress/ReportProgress";
 import { SdmGoalEvent } from "../SdmGoalEvent";
@@ -35,7 +35,7 @@ export interface GoalImplementation {
     pushTest: PushTest;
     logInterpreter: InterpretLog;
     progressReporter?: ReportProgress;
-    projectHooks: GoalProjectHook | GoalProjectHook[];
+    projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[];
 }
 
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {

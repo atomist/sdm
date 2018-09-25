@@ -30,7 +30,8 @@ import {
 } from "./Goal";
 import {
     ExecuteGoal,
-    GoalProjectHook,
+    GoalProjectListener,
+    GoalProjectListenerRegistration,
 } from "./GoalInvocation";
 import { ReportProgress } from "./progress/ReportProgress";
 import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
@@ -105,7 +106,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     protected readonly fulfillments: Fulfillment[] = [];
     protected readonly callbacks: GoalFulfillmentCallback[] = [];
-    protected readonly projectHooks: GoalProjectHook[] = [];
+    protected readonly projectListeners: GoalProjectListenerRegistration[] = [];
 
     public sdm: SoftwareDeliveryMachine;
 
@@ -122,8 +123,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         this.callbacks.forEach(cb => this.registerCallback(cb));
     }
 
-    public withProjectHook(hook: GoalProjectHook): this {
-        this.projectHooks.push(hook);
+    public withProjectListener(listener: GoalProjectListenerRegistration): this {
+        this.projectListeners.push(listener);
         return this;
     }
 
@@ -153,7 +154,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                     pushTest: fulfillment.pushTest || AnyPush,
                     progressReporter: fulfillment.progressReporter,
                     logInterpreter: fulfillment.logInterpreter,
-                    projectHooks: this.projectHooks,
+                    projectListeners: this.projectListeners,
                 });
         } else if (isSideEffect(fulfillment)) {
             this.sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);
