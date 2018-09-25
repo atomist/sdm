@@ -32,7 +32,7 @@ import { GitHubLogin } from "../../typings/types";
  */
 export function githubTeamVoter(team: string = "atomist-automation"): GoalApprovalRequestVoter {
     return async gai => {
-        const approval = gai.goal.approval;
+        const approval = gai.goal.approval ? gai.goal.approval : gai.goal.preApproval;
         const repo = gai.goal.repo;
 
         const result = await gai.context.graphClient.query<GitHubLogin.Query, GitHubLogin.Variables>({

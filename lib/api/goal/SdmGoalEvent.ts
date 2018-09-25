@@ -74,6 +74,9 @@ export interface SdmGoalEvent extends SdmGoalKey {
     approval?: SdmProvenance;
     approvalRequired?: boolean;
 
+    preApproval?: SdmProvenance;
+    preApprovalRequired?: boolean;
+
     provenance: SdmProvenance[];
 
     preConditions: SdmGoalKey[];
