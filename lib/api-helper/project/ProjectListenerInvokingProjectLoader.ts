@@ -61,7 +61,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             } catch (err) {
                 throw err;
             } finally {
-                // invoke the before_action listeners
+                // invoke the after_action listeners
                 const afterResult = await this.invokeListeners(p, GoalProjectListenerEvent.after_action);
                 if (afterResult && afterResult.code !== 0) {
                     result = afterResult;
