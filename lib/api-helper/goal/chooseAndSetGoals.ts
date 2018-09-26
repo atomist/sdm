@@ -174,7 +174,8 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
             goalSet: determinedGoals.name,
             goalSetId,
             goal: g,
-            state: (hasPreconditions(g) ? SdmGoalState.planned : SdmGoalState.requested) as SdmGoalState,
+            state: (hasPreconditions(g) ? SdmGoalState.planned :
+                (g.definition.preApprovalRequired ? SdmGoalState.waiting_for_pre_approval : SdmGoalState.requested)) as SdmGoalState,
             id: pli.id,
             providerId: repoRefResolver.providerIdFromPush(pli.push),
             fulfillment: await fulfillment({ implementationMapping }, g, pli),

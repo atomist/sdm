@@ -157,6 +157,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         externalKey: goal.context,
         ts: Date.now(),
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
+        preApprovalRequired: goal.definition.preApprovalRequired ? goal.definition.preApprovalRequired : false,
         retryFeasible: goal.definition.retryFeasible ? goal.definition.retryFeasible : false,
         provenance: [constructProvenance(ctx)],
         preConditions,
@@ -188,6 +189,8 @@ export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
             return goal.inProcessDescription;
         case SdmGoalState.waiting_for_approval:
             return goal.waitingForApprovalDescription;
+        case SdmGoalState.waiting_for_pre_approval:
+            return goal.waitingForPreApprovalDescription;
         case SdmGoalState.success:
             return goal.successDescription;
         case SdmGoalState.failure:
