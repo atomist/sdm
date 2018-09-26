@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   New states for stopped and canceled goals. [#533](https://github.com/atomist/sdm/pull/533)
 -   **BREAKING** Test. [#534](https://github.com/atomist/sdm/issues/534)
 -   Support code level project listeners. [#536](https://github.com/atomist/sdm/issues/536)
+-   Add pre-approval states for goals. [#537](https://github.com/atomist/sdm/issues/537)
 
 ### Changed
 
