@@ -357,7 +357,7 @@ async function reportGoalError(parameters: {
 export function prepareGoalInvocation(gi: GoalInvocation,
                                       listeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[]): GoalInvocation {
     const hs: GoalProjectListenerRegistration[] =
-        (listeners && Array.isArray(listeners)) ? listeners : [listeners] as GoalProjectListenerRegistration[];
+        listeners ? (Array.isArray(listeners) ? listeners : [listeners]) : [] as GoalProjectListenerRegistration[];
 
     if (hs.length === 0) {
         return gi;
