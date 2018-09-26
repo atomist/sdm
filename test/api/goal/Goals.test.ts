@@ -82,4 +82,34 @@ describe("GoalBuilder", () => {
         assert.strictEqual(prodGoal.dependsOn[0].name, BuildGoal.name);
         assert.strictEqual(prodGoal.dependsOn[1].name, StagingEndpointGoal.name);
     });
+
+    it("should construct goal sets with pre conditions", () => {
+        const baseGoals = goals("Base Goals")
+            .plan(CodeInspectionGoal)
+            .plan(AutofixGoal.definition).after(CodeInspectionGoal);
+
+        const simpleGoals = goals("Simple Goals")
+            .plan(BuildGoal).after(baseGoals)
+            .plan(StagingEndpointGoal).after(BuildGoal)
+            .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal.definition);
+
+        assert.strictEqual(simpleGoals.name, "Simple Goals");
+        assert.strictEqual(simpleGoals.goals.length, 3);
+
+        const buildGoal = simpleGoals.goals.find(g => g.name === BuildGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(buildGoal.name, BuildGoal.name);
+        assert.strictEqual(buildGoal.dependsOn.length, 2);
+        assert.strictEqual(buildGoal.dependsOn[0].name, CodeInspectionGoal.name);
+
+        const stagingGoal = simpleGoals.goals.find(g => g.name === StagingEndpointGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(stagingGoal.name, StagingEndpointGoal.name);
+        assert.strictEqual(stagingGoal.dependsOn.length, 1);
+        assert.strictEqual(stagingGoal.dependsOn[0].name, BuildGoal.name);
+
+        const prodGoal = simpleGoals.goals.find(g => g.name === ProductionDeploymentGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(prodGoal.name, ProductionDeploymentGoal.name);
+        assert.strictEqual(prodGoal.dependsOn.length, 2);
+        assert.strictEqual(prodGoal.dependsOn[0].name, BuildGoal.name);
+        assert.strictEqual(prodGoal.dependsOn[1].name, StagingEndpointGoal.name);
+    });
 });
