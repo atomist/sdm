@@ -28,6 +28,7 @@ import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalProjectListener,
+    GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
@@ -125,14 +126,14 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                      pushTest: PushTest,
                                      logInterpreter: InterpretLog,
                                      progressReporter: ReportProgress,
-                                     projectHooks: GoalProjectListener | GoalProjectListener[],
+                                     projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[],
                                  }>): this {
         const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: _.get(options, "pushTest") || AnyPush,
             logInterpreter: _.get(options, "logInterpreter") || lastLinesLogInterpreter(implementationName, 10),
             progressReporter: _.get(options, "progressReporter") || NoProgressReport,
-            projectHooks: _.get(options, "projectHooks") || [],
+            projectListeners: _.get(options, "projectListeners") || [],
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
         return this;
