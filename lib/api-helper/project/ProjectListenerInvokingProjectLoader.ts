@@ -49,8 +49,8 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             let result;
             try {
 
-                // invoke the before_action listeners
-                const beforeResult = await this.invokeListeners(p, GoalProjectListenerEvent.before_action);
+                // invoke the before listeners
+                const beforeResult = await this.invokeListeners(p, GoalProjectListenerEvent.before);
                 if (beforeResult && beforeResult.code !== 0) {
                     return beforeResult;
                 }
@@ -61,8 +61,8 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             } catch (err) {
                 throw err;
             } finally {
-                // invoke the after_action listeners
-                const afterResult = await this.invokeListeners(p, GoalProjectListenerEvent.after_action);
+                // invoke the after listeners
+                const afterResult = await this.invokeListeners(p, GoalProjectListenerEvent.after);
                 if (afterResult && afterResult.code !== 0) {
                     result = afterResult;
                 }

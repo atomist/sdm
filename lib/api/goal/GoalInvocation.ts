@@ -34,8 +34,8 @@ export type PrepareForGoalExecution =
     (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
 export enum GoalProjectListenerEvent {
-    before_action,
-    after_action,
+    before = "before",
+    after = "after",
 }
 
 export type GoalProjectListener =
