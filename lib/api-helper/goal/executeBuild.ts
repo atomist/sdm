@@ -28,7 +28,7 @@ import { Builder } from "../../spi/build/Builder";
  * @param builder builder to user
  */
 export function executeBuild(builder: Builder): ExecuteGoal {
-    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+    return async (goalInvocation: GoalInvocation): Promise<void | ExecuteGoalResult> => {
         const { sdmGoal, credentials, id, context, progressLog, addressChannels, configuration } = goalInvocation;
 
         logger.info("Building project '%s/%s' with builder '%s'", id.owner, id.repo, builder.name);

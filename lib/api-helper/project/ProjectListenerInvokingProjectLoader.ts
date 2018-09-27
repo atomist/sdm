@@ -87,7 +87,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             if (await lr.pushTest.mapping(pli)) {
 
                 this.gi.progressLog.write("/--");
-                this.gi.progressLog.write(`Invoking project listener: ${lr.name}`);
+                this.gi.progressLog.write(`Invoking ${event} project listener: ${lr.name}`);
 
                 await updateGoal(
                     this.gi.context,
@@ -101,7 +101,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
 
                 const postResult = await lr.listener(p, this.gi, event);
 
-                this.gi.progressLog.write(`Result: ${serializeResult(postResult)}`);
+                this.gi.progressLog.write(`Result: ${postResult ? serializeResult(postResult) : "Success"}`);
                 this.gi.progressLog.write("\\--");
 
                 if (postResult && postResult.code !== 0) {
