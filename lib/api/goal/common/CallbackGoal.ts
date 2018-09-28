@@ -16,7 +16,10 @@
 
 import { GoalDefinition } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
-import { Fulfillment, GoalWithFulfillment } from "../GoalWithFulfillment";
+import {
+    Fulfillment,
+    GoalWithFulfillment,
+} from "../GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../support/environment";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {

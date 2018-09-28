@@ -15,7 +15,10 @@
  */
 
 import { SlackMessage } from "@atomist/slack-messages";
-import { CallbackGoal, EssentialGoalInfo } from "./CallbackGoal";
+import {
+    CallbackGoal,
+    EssentialGoalInfo,
+} from "./CallbackGoal";
 
 /**
  * How to present a suggested goal action to the user
