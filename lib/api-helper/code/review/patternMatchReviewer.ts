@@ -47,6 +47,8 @@ export interface PatternMatchReviewerOptions {
 
     category?: string;
 
+    subcategory?: string;
+
     severity?: Severity;
 }
 
@@ -78,6 +80,7 @@ export function patternMatchReviewer(name: string,
                             severity: opts.severity || "error",
                             detail: problem.comment,
                             category: opts.category || name,
+                            subcategory: opts.subcategory,
                             sourceLocation: {
                                 path: f.path,
                                 offset: undefined,
