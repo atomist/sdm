@@ -15,13 +15,13 @@
  */
 
 import { GoalDefinition } from "../Goal";
-import { GoalWithFulfillment, Fulfillment } from "../GoalWithFulfillment";
 import { ExecuteGoal } from "../GoalInvocation";
+import { Fulfillment, GoalWithFulfillment } from "../GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../support/environment";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
-    displayName: string
+    displayName: string;
 }
 
 /**
@@ -51,4 +51,3 @@ export class CallbackGoal extends GoalWithFulfillment {
     }
 
 }
-
