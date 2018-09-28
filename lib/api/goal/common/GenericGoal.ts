@@ -22,6 +22,7 @@ import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Generic goal. Used when creating use-case specific specific goals.
+ * @deprecated use CallbackGoal
  */
 export class GenericGoal extends Goal {
 

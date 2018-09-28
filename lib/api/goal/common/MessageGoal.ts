@@ -19,6 +19,7 @@ import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that sends a message
+ * @deprecated use MessagingGoal
  */
 export class MessageGoal extends Goal {
 
