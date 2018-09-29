@@ -21,10 +21,18 @@ import {
     GoalWithFulfillment,
 } from "../GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../support/environment";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
     displayName: string;
+
+    /**
+     * Prefix to use in goal name generation.
+     * If it is not supplied, the default generation strategy in
+     * DefaultGoalNameGenerator will be used
+     */
+    prefix?: string;
 }
 
 /**
@@ -35,8 +43,7 @@ export class CallbackGoal extends GoalWithFulfillment {
 
     constructor(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal) {
         super({
-            // TODO fix unique name generation
-            uniqueName: egi.displayName,
+            uniqueName: DefaultGoalNameGenerator.generateName(egi.prefix),
             environment: IndependentOfEnvironment,
             completedDescription: `${egi.displayName} completed`,
             workingDescription: `Working: ${egi.displayName}`,
@@ -44,7 +51,7 @@ export class CallbackGoal extends GoalWithFulfillment {
             waitingForApprovalDescription: `${egi.displayName} waiting for approval`,
             canceledDescription: `${egi.displayName} canceled`,
             stoppedDescription: `${egi.displayName} stopped`,
-            ...egi,
+            ...egi as Partial<GoalDefinition>,
         });
         const fulfillment: Fulfillment = {
             name: this.definition.uniqueName,
