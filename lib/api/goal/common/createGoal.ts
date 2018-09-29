@@ -18,23 +18,25 @@ import {
     Goal,
     GoalDefinition,
 } from "../Goal";
-import { IndependentOfEnvironment } from "../support/environment";
+import { ExecuteGoal } from "../GoalInvocation";
+import { GoalWithFulfillment } from "../GoalWithFulfillment";
+
+export interface EssentialGoalInfo extends Partial<GoalDefinition> {
+
+    displayName: string;
+
+}
 
 /**
- * Generic goal. Used when creating use-case specific specific goals.
- * @deprecated use CallbackGoal
+ * Create a goal with basic information
+ * and an action callback.
  */
-export class GenericGoal extends Goal {
-
-    constructor(params: Partial<GoalDefinition> & { uniqueName: string }, description: string) {
-        super({
-            uniqueName: params.uniqueName,
-            environment: IndependentOfEnvironment,
-            workingDescription: `Working: ${description}`,
-            completedDescription: `${description} succeeded`,
-            failedDescription: `${description} failed`,
-            ...params,
-        });
-    }
-
+export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): Goal {
+    const g = new GoalWithFulfillment({
+        ...egi,
+    } as GoalDefinition);
+    return g.with({
+        name: g.definition.uniqueName,
+        goalExecutor,
+    });
 }
