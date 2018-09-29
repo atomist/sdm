@@ -16,12 +16,12 @@
 
 import { GoalDefinition } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     Fulfillment,
     GoalWithFulfillment,
 } from "../GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../support/environment";
-import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
