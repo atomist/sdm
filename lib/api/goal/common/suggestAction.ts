@@ -15,10 +15,11 @@
  */
 
 import { SlackMessage } from "@atomist/slack-messages";
+import { Goal } from "../Goal";
 import {
-    CallbackGoal,
+    createGoal,
     EssentialGoalInfo,
-} from "./CallbackGoal";
+} from "./createGoal";
 
 /**
  * How to present a suggested goal action to the user
@@ -40,24 +41,19 @@ export interface ActionSuggestion extends EssentialGoalInfo {
 }
 
 /**
- * Goal that suggests an action to the user.
+ * Return a goal that suggests an action to the user.
  */
-export class SuggestedActionGoal extends CallbackGoal {
-
-    constructor(suggestion: ActionSuggestion) {
-        super({
-                ...suggestion as EssentialGoalInfo,
-            },
-            async gi => {
-                let m = suggestion.message;
-                /* tslint:disable-next-line */
-                if (typeof m === "string" && suggestion.format !== false) {
-                    m = ":construction: " + m;
-                }
-                await gi.addressChannels(m);
-                if (!!suggestion.url) {
-                    await gi.addressChannels(`For more information, see ${suggestion.url}`);
-                }
-            });
-    }
+export function suggestAction(suggestion: ActionSuggestion): Goal {
+    return createGoal(suggestion,
+        async gi => {
+            let m = suggestion.message;
+            /* tslint:disable-next-line */
+            if (typeof m === "string" && suggestion.format !== false) {
+                m = ":construction: " + m;
+            }
+            await gi.addressChannels(m);
+            if (!!suggestion.url) {
+                await gi.addressChannels(`For more information, see ${suggestion.url}`);
+            }
+        });
 }

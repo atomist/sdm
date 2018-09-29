@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import { Goal } from "../Goal";
-import { IndependentOfEnvironment } from "../support/environment";
+import { Goal, GoalDefinition } from "../Goal";
+import { ExecuteGoal } from "../GoalInvocation";
+import { GoalWithFulfillment } from "../GoalWithFulfillment";
+
+export interface EssentialGoalInfo extends Partial<GoalDefinition> {
+
+    displayName: string;
+
+}
 
 /**
- * Goal that sends a message
- * @deprecated use suggestAction
+ * Create a goal with basic information
+ * and an action callback.
  */
-export class MessageGoal extends Goal {
-
-    constructor(uniqueName: string, name?: string) {
-        super({
-            uniqueName,
-            displayName: name ? name : uniqueName,
-            environment: IndependentOfEnvironment,
-            completedDescription: "Sent",
-        });
-    }
-
+export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): Goal {
+    const g = new GoalWithFulfillment({
+        ...egi,
+    } as GoalDefinition);
+    return g.with({
+        name: g.definition.uniqueName,
+        goalExecutor,
+    });
 }
