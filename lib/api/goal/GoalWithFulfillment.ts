@@ -30,10 +30,13 @@ import {
 } from "./Goal";
 import {
     ExecuteGoal,
-    GoalProjectListener,
     GoalProjectListenerRegistration,
 } from "./GoalInvocation";
 import { ReportProgress } from "./progress/ReportProgress";
+import {
+    GoalEnvironment,
+    IndependentOfEnvironment,
+} from "./support/environment";
 import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
 
 export type Fulfillment = Implementation | SideEffect;
@@ -94,6 +97,7 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export interface FulfillableGoalDetails {
     uniqueName?: string;
+    environment?: GoalEnvironment,
     approval?: boolean;
     preApproval?: boolean;
     retry?: boolean;
@@ -218,15 +222,8 @@ export class GoalWithFulfillment extends FulfillableGoal {
     }
 }
 
-/**
- * @deprecated Please use getGoalDefinitionFrom
- * @since 1.0.0-M.4
- */
-export const getGoalDefintionFrom = getGoalDefinitionFrom;
-
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string):
-    { uniqueName: string, approvalRequired?: boolean, preApprovalRequired?: boolean, retryFeasible?: boolean} {
+                                      uniqueName: string): Partial<GoalDefinition>  {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
@@ -234,6 +231,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
     } else {
         return {
             uniqueName: goalDetails.uniqueName || uniqueName,
+            environment: goalDetails.environment || IndependentOfEnvironment,
             approvalRequired: goalDetails.approval,
             preApprovalRequired: goalDetails.preApproval,
             retryFeasible: goalDetails.retry,
