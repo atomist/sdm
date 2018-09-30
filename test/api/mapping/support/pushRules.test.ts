@@ -20,7 +20,7 @@ import * as assert from "power-assert";
 import {
     pushTest,
     PushTest,
-} from "../../../../lib/api/mapping/Push.test";
+} from "../../../../lib/api/mapping/PushTest";
 import { PushRules } from "../../../../lib/api/mapping/support/PushRules";
 import {
     FalsePushTest,

@@ -34,7 +34,7 @@ import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
-import { pushTest } from "../../../lib/api/mapping/Push.test";
+import { pushTest } from "../../../lib/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
 import { RepoRefResolver } from "../../../lib/spi/repo-ref/RepoRefResolver";
 import {

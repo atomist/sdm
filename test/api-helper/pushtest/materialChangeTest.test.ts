@@ -18,7 +18,7 @@ import assert = require("power-assert");
 import {
     anyFileChanged,
     MaterialChangeOptions,
-} from "../../../lib/api-helper/pushtest/materialChange.test";
+} from "../../../lib/api-helper/pushtest/materialChangeTest";
 
 describe("isMaterialChange", () => {
 

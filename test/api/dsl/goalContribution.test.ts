@@ -44,7 +44,7 @@ import {
     PushReactionGoal,
 } from "../../../lib/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../lib/api/mapping/GoalSetter";
-import { predicatePushTest } from "../../../lib/api/mapping/Push.test";
+import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
 import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
