@@ -97,7 +97,7 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export interface FulfillableGoalDetails {
     uniqueName?: string;
-    environment?: GoalEnvironment,
+    environment?: GoalEnvironment;
     approval?: boolean;
     preApproval?: boolean;
     retry?: boolean;
