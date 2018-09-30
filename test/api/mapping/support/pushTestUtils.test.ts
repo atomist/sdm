@@ -22,7 +22,7 @@ import {
     ProjectPredicate,
     pushTest,
     PushTest,
-} from "../../../../lib/api/mapping/PushTest";
+} from "../../../../lib/api/mapping/Push.test";
 import {
     allSatisfied,
     anySatisfied,
