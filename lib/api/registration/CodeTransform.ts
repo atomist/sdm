@@ -36,6 +36,14 @@ export type CodeTransform<P = NoParameters> = (p: Project,
                                                params?: P) => Promise<TransformReturnable>;
 
 /**
+ * Compatible with CodeTransform but returns TransformResult.
+ * At the cost of greater ceremony, guarantees the return of more information.
+ */
+export type ExplicitCodeTransform<P = NoParameters> = (p: Project,
+                                                       sdmc: ParametersInvocation<P>,
+                                                       params?: P) => Promise<TransformResult>;
+
+/**
  * One or many CodeTransforms
  */
 export type CodeTransformOrTransforms<PARAMS> = CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
