@@ -36,6 +36,8 @@ import { ReportProgress } from "./progress/ReportProgress";
 import {
     GoalEnvironment,
     IndependentOfEnvironment,
+    ProductionEnvironment,
+    StagingEnvironment,
 } from "./support/environment";
 import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
 
@@ -97,7 +99,7 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export interface FulfillableGoalDetails {
     uniqueName?: string;
-    environment?: GoalEnvironment;
+    environment?: string | GoalEnvironment;
     approval?: boolean;
     preApproval?: boolean;
     retry?: boolean;
@@ -223,7 +225,12 @@ export class GoalWithFulfillment extends FulfillableGoal {
 }
 
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string): { uniqueName: string } & Partial<GoalDefinition>  {
+                                      uniqueName: string): {
+                                            uniqueName: string,
+                                            environment?: GoalEnvironment,
+                                            approvalRequired?: boolean,
+                                            preApprovalRequired?: boolean,
+                                            retryFeasible?: boolean }  {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
@@ -231,10 +238,25 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
     } else {
         return {
             uniqueName: goalDetails.uniqueName || uniqueName,
-            environment: goalDetails.environment || IndependentOfEnvironment,
+            environment: getEnvironment(goalDetails),
             approvalRequired: goalDetails.approval,
             preApprovalRequired: goalDetails.preApproval,
             retryFeasible: goalDetails.retry,
         };
+    }
+}
+
+function getEnvironment(details?: { environment?: string }): GoalEnvironment {
+    if (details && details.environment && typeof details.environment === "string") {
+        switch (details.environment) {
+            case "testing":
+                return StagingEnvironment;
+            case "production":
+                return ProductionEnvironment;
+            default:
+                return IndependentOfEnvironment;
+        }
+    } else {
+        return IndependentOfEnvironment;
     }
 }
