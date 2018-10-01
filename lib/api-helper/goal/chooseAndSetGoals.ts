@@ -198,15 +198,6 @@ async function fulfillment(rules: {
     }
 }
 
-/**
- * Do nothing without error
- * @return {Promise<HandlerResult>}
- */
-export const executeImmaterial: ExecuteGoal = async () => {
-    logger.debug("Immaterial: Nothing to execute");
-    return Success;
-};
-
 async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                                            pi: PushListenerInvocation): Promise<Goals> {
     const { goalSetter } = rules;
