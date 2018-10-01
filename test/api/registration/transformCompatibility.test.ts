@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CodeTransform, ExplicitCodeTransform } from "../../../lib/api/registration/CodeTransform";
 import * as assert from "assert";
+import { CodeTransform, ExplicitCodeTransform } from "../../../lib/api/registration/CodeTransform";
 
 describe("ExplicitTransform", () => {
 
