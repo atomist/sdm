@@ -15,7 +15,10 @@
  */
 
 import * as assert from "assert";
-import { CodeTransform, ExplicitCodeTransform } from "../../../lib/api/registration/CodeTransform";
+import {
+    CodeTransform,
+    ExplicitCodeTransform,
+} from "../../../lib/api/registration/CodeTransform";
 
 describe("ExplicitTransform", () => {
 
