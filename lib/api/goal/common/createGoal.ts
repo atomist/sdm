@@ -19,8 +19,8 @@ import {
     GoalDefinition,
 } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
-import { GoalWithFulfillment } from "../GoalWithFulfillment";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
+import { GoalWithFulfillment } from "../GoalWithFulfillment";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
