@@ -20,6 +20,7 @@ import {
 } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
@@ -33,6 +34,7 @@ export interface EssentialGoalInfo extends Partial<GoalDefinition> {
  */
 export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): Goal {
     const g = new GoalWithFulfillment({
+        uniqueName: DefaultGoalNameGenerator.generateName(egi.displayName),
         ...egi,
     } as GoalDefinition);
     return g.with({
