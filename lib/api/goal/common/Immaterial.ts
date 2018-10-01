@@ -41,4 +41,3 @@ export const Immaterial = new GoalWithFulfillment({
  * Goals instance for Immaterial changes
  */
 export const ImmaterialGoals = goals("Immaterial change").plan(Immaterial);
-
