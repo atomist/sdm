@@ -3237,6 +3237,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -3415,6 +3425,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -13841,6 +13865,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -14019,6 +14053,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -14310,6 +14358,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -14488,6 +14546,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -41828,6 +41900,62 @@
               "defaultValue": null
             },
             {
+              "name": "action",
+              "description": "action",
+              "type": {
+                "kind": "ENUM",
+                "name": "PullRequestAction",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "action_not",
+              "description": "action_not",
+              "type": {
+                "kind": "ENUM",
+                "name": "PullRequestAction",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "action_in",
+              "description": "action_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "action_not_in",
+              "description": "action_not_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
               "name": "merged",
               "description": "merged",
               "type": {
@@ -44114,6 +44242,95 @@
           ],
           "interfaces": null,
           "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "PullRequestAction",
+          "description": "Enum for PullRequestAction",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "assigned",
+              "description": "Value for assigned",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "created",
+              "description": "Value for created",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "unassigned",
+              "description": "Value for unassigned",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "review_requested",
+              "description": "Value for review_requested",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "review_request_removed",
+              "description": "Value for review_request_removed",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "labeled",
+              "description": "Value for labeled",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "unlabeled",
+              "description": "Value for unlabeled",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "opened",
+              "description": "Value for opened",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "edited",
+              "description": "Value for edited",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "closed",
+              "description": "Value for closed",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "reopened",
+              "description": "Value for reopened",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "synchronize",
+              "description": "Value for synchronize",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "submitted",
+              "description": "Value for submitted",
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
           "possibleTypes": null
         },
         {
@@ -74411,6 +74628,18 @@
               "deprecationReason": null
             },
             {
+              "name": "action",
+              "description": "action of  PullRequest",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "PullRequestAction",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "merged",
               "description": "merged of  PullRequest",
               "args": [],
@@ -79744,6 +79973,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -79922,6 +80161,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -81805,6 +82058,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -81983,6 +82246,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -84217,6 +84494,18 @@
             {
               "name": "state_desc",
               "description": "Descending sort for state",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "action_asc",
+              "description": "Ascending sort for action",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "action_desc",
+              "description": "Descending sort for action",
               "isDeprecated": false,
               "deprecationReason": null
             },
@@ -91216,6 +91505,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -91394,6 +91693,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -92490,6 +92803,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -92668,6 +92991,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -93572,6 +93909,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -93750,6 +94097,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -94785,6 +95146,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -94963,6 +95334,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -97868,6 +98253,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -98046,6 +98441,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -100214,6 +100623,14 @@
                 {
                   "name": "channelId",
                   "description": "The id of the channel to link",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "channelName",
+                  "description": "The name of the channel to link. Optional.",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String"
@@ -104475,6 +104892,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "action",
+                  "description": "action of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PullRequestAction",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "merged",
                   "description": "merged of PullRequest",
                   "type": {
@@ -104653,6 +105080,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "actions",
+                  "description": "actions is list variant of action of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "PullRequestAction",
                       "ofType": null
                     }
                   },
@@ -115869,6 +116310,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "3c088b96-4cbf-494a-a9e8-03d64a8fea2e"
+    "correlation_id": "4e8fe01c-e9c9-435f-ba34-eece50b5b1c3"
   }
 }
