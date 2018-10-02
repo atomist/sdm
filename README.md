@@ -43,10 +43,12 @@ behavior to code-of-conduct@atomist.com.
 Please see [docs.atomist.com][atomist-doc] for
 [developer][atomist-sdm] documentation.
 
-API docs on this library: [@atomist/sdm TypeDoc][typedoc].
+* API docs on this project: [@atomist/sdm TypeDoc][typedoc]
+* List of third-party OSS licenses: [@atomist/sdm OSS licenses][licenses]
 
 [atomist-sdm]: https://docs.atomist.com/developer/sdm/ (Atomist - SDM)
 [typedoc]: https://atomist.github.io/sdm/ (@atomist/sdm typedoc)
+[licenses]: legal/THIRD_PARTY.md (@atomist/sdm typedoc)
 
 ## Connect
 
