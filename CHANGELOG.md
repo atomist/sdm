@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.5...HEAD)
 
+### Added
+
+-   Add tags to ExtensionPack metadata. [#543](https://github.com/atomist/sdm/issues/543)
+
 ### Removed
 
 -   **BREAKING** Remove well known goals. [#541](https://github.com/atomist/sdm/issues/541)
