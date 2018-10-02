@@ -20,11 +20,25 @@ import { MachineConfigurer } from "./MachineConfigurer";
 
 export interface ExtensionPackMetadata {
 
+    /**
+     * Name of the extension pack
+     */
     name: string;
 
+    /**
+     * Vendor or author of this extension pack
+     */
     vendor: string;
 
+    /**
+     * Version of extension pack
+     */
     version: string;
+
+    /**
+     * Optional tags of extension pack
+     */
+    tags?: string | string[];
 }
 
 /**
