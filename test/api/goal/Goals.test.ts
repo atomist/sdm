@@ -15,9 +15,11 @@
  */
 
 import * as assert from "power-assert";
+import { Autofix } from "../../../lib/api/goal/common/Autofix";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
 import { goals } from "../../../lib/api/goal/Goals";
 import {
+    ArtifactGoal,
     AutofixGoal,
     BuildGoal,
     CodeInspectionGoal,
@@ -112,4 +114,38 @@ describe("GoalBuilder", () => {
         assert.strictEqual(prodGoal.dependsOn[0].name, BuildGoal.name);
         assert.strictEqual(prodGoal.dependsOn[1].name, StagingEndpointGoal.name);
     });
+
+    it("should not mutate pre conditions across goals instances", () => {
+        const autofix = new Autofix();
+
+        const goals1 = goals("goals #1")
+            .plan(CodeInspectionGoal)
+            .plan(autofix).after(CodeInspectionGoal);
+
+        const goals2 = goals("goals #2")
+            .plan(ArtifactGoal)
+            .plan(autofix).after(ArtifactGoal);
+
+        assert(autofix.dependsOn.length === 0);
+
+        assert.strictEqual((goals1.goals[1] as GoalWithPrecondition).dependsOn[0], CodeInspectionGoal);
+        assert.strictEqual((goals2.goals[1] as GoalWithPrecondition).dependsOn[0], ArtifactGoal);
+    });
+
+    it("should correctly register pre conditions for other goals instance", () => {
+        const autofix = new Autofix();
+
+        const goals1 = goals("goals #1")
+            .plan(CodeInspectionGoal)
+            .plan(ArtifactGoal).after(CodeInspectionGoal);
+
+        const goals2 = goals("goals #2")
+            .plan(autofix).after(goals1);
+
+        assert(autofix.dependsOn.length === 0);
+
+        assert.deepStrictEqual((goals2.goals[0] as GoalWithPrecondition).dependsOn.map(g => g.definition.uniqueName),
+            [CodeInspectionGoal, ArtifactGoal].map(g => g.definition.uniqueName));
+    });
+
 });
