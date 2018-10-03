@@ -76,6 +76,8 @@ export interface ChooseAndSetGoalsRules {
     goalSetter: GoalSetter;
 
     implementationMapping: GoalImplementationMapper;
+
+    enrichGoals?: (goal: SdmGoalMessage) => Promise<SdmGoalMessage>;
 }
 
 /**
@@ -92,6 +94,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                         }): Promise<Goals | undefined> {
     const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver } = rules;
     const { context, credentials, push } = parameters;
+    const enrichGoals = rules.enrichGoals ? rules.enrichGoals : async g => g;
     const id = repoRefResolver.repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
     const goalSetId = guid();
@@ -101,7 +104,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
             credentials, id, context, push, addressChannels, goalSetId,
         });
 
-    await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
+    await Promise.all(goalsToSave.map(async g => storeGoal(context, await enrichGoals(g), push)));
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error
