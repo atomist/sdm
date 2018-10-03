@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   **BREAKING** Remove well known goals. [#541](https://github.com/atomist/sdm/issues/541)
 
+### Fixed
+
+-   For finding changes in the push, use the list of commits and not `before`. [#293](https://github.com/atomist/sdm/issues/293)
+
 ## [1.0.0-M.5](https://github.com/atomist/sdm/compare/1.0.0-M.4...1.0.0-M.5) - 2018-09-26
 
 ### Added
