@@ -117,7 +117,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             g.definition.uniqueName === sdmGoal.uniqueName &&
             // This slice is required because environment is suffixed with /
             (g.definition.environment.slice(0, -1) === g.environment
-                || g.definition.environment === g.environment)
+                || g.definition.environment === g.environment),
         );
     }
 
