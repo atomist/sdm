@@ -27,7 +27,6 @@ import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
-    GoalProjectListener,
     GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
@@ -40,10 +39,6 @@ import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -58,10 +53,6 @@ import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalReq
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
-import {
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
@@ -142,17 +133,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public addGoalApprovalRequestVoter(vote: GoalApprovalRequestVoter): this {
         this.goalApprovalRequestVoters.push(vote);
         return this;
-    }
-
-    public addVerifyImplementation(): this {
-        const stagingVerification: SdmVerification = {
-            verifiers: this.endpointVerificationListeners,
-            endpointGoal: StagingEndpointGoal,
-            requestApproval: true,
-        };
-        return this.addGoalImplementation("VerifyInStaging",
-            StagingVerifiedGoal,
-            executeVerifyEndpoint(stagingVerification));
     }
 
     public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {

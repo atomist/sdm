@@ -42,12 +42,6 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
         FunctionalUnit {
 
     /**
-     * @deprecated
-     * @return {this}
-     */
-    addVerifyImplementation(): this;
-
-    /**
      * Add capabilities from these extension packs.
      * This is the primary SDM extension
      * mechanism. Extension packs are typically brought in as Node modules,

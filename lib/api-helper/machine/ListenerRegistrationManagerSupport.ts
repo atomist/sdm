@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client";
-import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
 import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
-import { DeploymentListener } from "../../api/listener/DeploymentListener";
-import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
@@ -35,14 +31,8 @@ import { StartupListener } from "../../api/listener/StartupListener";
 import { TagListener } from "../../api/listener/TagListener";
 import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
-import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
-import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
-import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
-import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
-import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -51,8 +41,6 @@ import { ReviewListenerRegistration } from "../../api/registration/ReviewListene
 export class ListenerRegistrationManagerSupport implements ListenerRegistrationManager {
 
     public readonly startupListeners: StartupListener[] = [];
-
-    public readonly autofixRegistrations: AutofixRegistration[] = [];
 
     public readonly fingerprintListeners: FingerprintListener[] = [];
 
@@ -86,21 +74,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
-    public readonly autoInspectRegistrations: Array<AutoInspectRegistration<any, any>> = [];
-
-    public readonly reviewListenerRegistrations: ReviewListenerRegistration[] = [];
-
-    public readonly pushImpactListenerRegistrations: PushImpactListenerRegisterable[] = [];
-
-    public readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
-
     protected readonly buildListeners: BuildListener[] = [];
-
-    protected readonly deploymentListeners?: DeploymentListener[] = [];
-
-    protected readonly verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
-
-    protected readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
     public addStartupListener(l: StartupListener): this {
         this.startupListeners.push(l);
@@ -172,41 +146,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addReviewerRegistration<PARAMS = NoParameters>(r: ReviewerRegistration<PARAMS>): this {
-        this.autoInspectRegistrations.push(r);
-        return this;
-    }
-
-    public addAutoInspectRegistration<R, PARAMS = NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this {
-        this.autoInspectRegistrations.push(r);
-        return this;
-    }
-
-    public addReviewListenerRegistration(r: ReviewListenerRegistration): this {
-        this.reviewListenerRegistrations.push(r);
-        return this;
-    }
-
-    public addPushImpactListener(r: PushImpactListenerRegisterable): this {
-        this.pushImpactListenerRegistrations.push(r);
-        return this;
-    }
-
-    public addArtifactListener(l: ArtifactListenerRegisterable): this {
-        this.artifactListenerRegistrations.push(l);
-        return this;
-    }
-
-    /**
-     * Editors automatically invoked on eligible commits.
-     * Note: be sure that these editors check and don't cause
-     * infinite recursion!!
-     */
-    public addAutofix<P>(fix: AutofixRegistration<P>): this {
-        this.autofixRegistrations.push(fix);
-        return this;
-    }
-
     public addFingerprinterRegistration(f: FingerprinterRegistration): this {
         this.fingerprinterRegistrations.push(f);
         return this;
@@ -219,21 +158,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addFingerprintDifferenceListener(fdl: FingerprintDifferenceListener): this {
         this.fingerprintDifferenceListeners.push(fdl);
-        return this;
-    }
-
-    public addDeploymentListener(l: DeploymentListener): this {
-        this.deploymentListeners.push(l);
-        return this;
-    }
-
-    public addVerifiedDeploymentListener(l: VerifiedDeploymentListener): this {
-        this.verifiedDeploymentListeners.push(l);
-        return this;
-    }
-
-    public addEndpointVerificationListener(l: EndpointVerificationListener): this {
-        this.endpointVerificationListeners.push(l);
         return this;
     }
 

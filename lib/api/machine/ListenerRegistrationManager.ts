@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client";
-import { ArtifactListenerRegisterable } from "../listener/ArtifactListener";
 import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../listener/ClosedIssueListener";
-import { DeploymentListener } from "../listener/DeploymentListener";
-import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
 import { GoalCompletionListener } from "../listener/GoalCompletionListener";
@@ -35,12 +31,7 @@ import { StartupListener } from "../listener/StartupListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
-import { VerifiedDeploymentListener } from "../listener/VerifiedDeploymentListener";
-import { AutofixRegistration } from "../registration/AutofixRegistration";
-import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
-import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
-import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -117,43 +108,6 @@ export interface ListenerRegistrationManager {
     addGoalCompletionListener(l: GoalCompletionListener): this;
 
     /**
-     * Register an auto inspection.
-     * @param {AutoInspectRegistration<R, PARAMS>} r
-     * @return {this}
-     */
-    addAutoInspectRegistration<R, PARAMS= NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
-
-    /**
-     * Add a registration to listen to reviews. Will be invoked during execution of a CodeInspectionGoal
-     * @param r registration
-     * @return {this}
-     */
-    addReviewListenerRegistration(r: ReviewListenerRegistration): this;
-
-    /**
-     * Add listener to pushes: That is, a function that runs during execution of a
-     * PushReaction goal.
-     * @param {PushImpactListenerRegistration} prr
-     * @return {this}
-     */
-    addPushImpactListener(prr: PushImpactListenerRegisterable): this;
-
-    addArtifactListener(l: ArtifactListenerRegisterable): this;
-
-    /**
-     * Add a transform automatically invoked on eligible commits.
-     * Note: be sure that the transform checks and cannot cause
-     * infinite recursion!!
-     * @deprecated add autofixes to Autofix goal instance
-     */
-    addAutofix<P>(fix: AutofixRegistration<P>): this;
-
-    /**
-     * @deprecated
-     */
-    autofixRegistrations: AutofixRegistration[];
-
-    /**
      * @param {FingerprinterRegistration} f
      * @return {this}
      * @deprecated add to goal instance
@@ -184,27 +138,6 @@ export interface ListenerRegistrationManager {
      */
     addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
-    /**
-     * @deprecated add to goal instance
-     * @param {DeploymentListener} l
-     * @return {this}
-     */
-    addDeploymentListener(l: DeploymentListener): this;
-
-    /**
-     * @deprecated add to goal instance
-     * @param {VerifiedDeploymentListener} l
-     * @return {this}
-     */
-    addVerifiedDeploymentListener(l: VerifiedDeploymentListener): this;
-
-    /**
-     * @deprecated add to goal instance
-     * @param {EndpointVerificationListener} l
-     * @return {this}
-     */
-    addEndpointVerificationListener(l: EndpointVerificationListener): this;
-
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 
     startupListeners: StartupListener[];
@@ -232,19 +165,5 @@ export interface ListenerRegistrationManager {
     goalsSetListeners: GoalsSetListener[];
 
     goalCompletionListeners: GoalCompletionListener[];
-
-    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>;
-
-    reviewListenerRegistrations: ReviewListenerRegistration[];
-
-    /**
-     * @deprecated
-     */
-    pushImpactListenerRegistrations: PushImpactListenerRegisterable[];
-
-    /**
-     * @deprecated
-     */
-    artifactListenerRegistrations: ArtifactListenerRegisterable[];
 
 }
