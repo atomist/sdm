@@ -33,6 +33,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     private readonly implementations: GoalImplementation[] = [];
     private readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFulfillmentCallback[] = [];
+    private readonly goals: Goal[] = [];
 
     public findImplementationBySdmGoal(goal: SdmGoalEvent): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
@@ -58,11 +59,13 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
                 }' already registered for goal '${implementation.goal.name}'`);
         }
         this.implementations.push(implementation);
+        this.addGoal(implementation.goal);
         return this;
     }
 
     public addSideEffect(sideEffect: GoalSideEffect): this {
         this.sideEffects.push(sideEffect);
+        this.addGoal(sideEffect.goal);
         return this;
     }
 
@@ -103,9 +106,25 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[] {
         return this.callbacks.filter(c =>
-            c.goal.name === g.name &&
+            c.goal.definition.uniqueName === g.uniqueName &&
             // This slice is required because environment is suffixed with /
             (c.goal.definition.environment.slice(0, -1) === g.environment
                 || c.goal.definition.environment === g.environment));
     }
+
+    public findGoalBySdmGoal(sdmGoal: SdmGoalEvent): Goal | undefined {
+        return this.goals.find(g =>
+            g.definition.uniqueName === sdmGoal.uniqueName &&
+            // This slice is required because environment is suffixed with /
+            (g.definition.environment.slice(0, -1) === g.environment
+                || g.definition.environment === g.environment)
+        );
+    }
+
+    private addGoal(goal: Goal): void {
+        if (!this.goals.some(g => g === goal)) {
+            this.goals.push(goal);
+        }
+    }
+
 }

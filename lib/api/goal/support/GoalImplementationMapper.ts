@@ -77,4 +77,6 @@ export interface GoalImplementationMapper {
 
     findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[];
 
+    findGoalBySdmGoal(g: SdmGoalEvent): Goal | undefined;
+
 }
