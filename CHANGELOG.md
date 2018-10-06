@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 -   **BREAKING** Remove well known goals. [#541](https://github.com/atomist/sdm/issues/541)
+-   **BREAKING** Remove SDM-level goal methods. [#545](https://github.com/atomist/sdm/issues/545)
 
 ### Fixed
 
