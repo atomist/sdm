@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger, Maker, NoParameters, } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger, Maker, NoParameters } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
-import { ExecuteGoal, GoalProjectListenerRegistration, } from "../../api/goal/GoalInvocation";
+import { ExecuteGoal, GoalProjectListenerRegistration } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
-import { NoProgressReport, ReportProgress, } from "../../api/goal/progress/ReportProgress";
+import { NoProgressReport, ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
