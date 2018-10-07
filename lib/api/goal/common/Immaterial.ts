@@ -18,7 +18,10 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { goals } from "../Goals";
+import {
+    Goals,
+    goals,
+} from "../Goals";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
 
 /**
@@ -40,4 +43,4 @@ export const Immaterial = new GoalWithFulfillment({
 /**
  * Goals instance for Immaterial changes
  */
-export const ImmaterialGoals = goals("Immaterial change").plan(Immaterial);
+export const ImmaterialGoals: Goals = goals("Immaterial change").plan(Immaterial);
