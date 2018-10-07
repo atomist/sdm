@@ -87,7 +87,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         }
 
         if (matchingFulfillments.length > 1) {
-            throw new Error(`Multiple matching implementations for goal '${goal.name}' found: '${
+            throw new Error(`Multiple matching implementations for goal '${goal.definition.uniqueName}' found: '${
                 matchingFulfillments.map(f => f.implementationName).join(", ")}'`);
         } else if (matchingFulfillments.length === 1) {
             return matchingFulfillments[0];
@@ -122,9 +122,11 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     }
 
     private addGoal(goal: Goal): void {
-        if (!this.goals.some(g => g === goal)) {
+        const existingGoal = this.goals.find(g => g.definition.uniqueName === goal.definition.uniqueName);
+        if (!existingGoal) {
             this.goals.push(goal);
+        } else if (existingGoal !== goal) {
+            throw new Error(`Goal with uniqueName '${goal.definition.uniqueName}' already registered`);
         }
     }
-
 }

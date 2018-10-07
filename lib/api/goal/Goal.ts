@@ -47,6 +47,8 @@ export interface GoalDefinition {
     orderedName?: string;
     displayName?: string;
 
+    plannedDescription?: string;
+    requestedDescription?: string;
     completedDescription?: string;
     workingDescription?: string;
     failedDescription?: string;
@@ -82,19 +84,23 @@ export class Goal {
     }
 
     get successDescription() {
-        return this.definition.completedDescription || ("Complete: " + this.name);
+        return this.definition.completedDescription || `Complete: ${this.name}`;
     }
 
     get inProcessDescription() {
-        return this.definition.workingDescription || ("Working: " + this.name);
+        return this.definition.workingDescription || `Working: ${this.name}`;
     }
 
     get failureDescription() {
-        return this.definition.failedDescription || ("Failed: " + this.name);
+        return this.definition.failedDescription || `Failed: ${this.name}`;
+    }
+
+    get plannedDescription() {
+        return this.definition.plannedDescription || `Planned: ${this.name}`;
     }
 
     get requestedDescription() {
-        return "Planned: " + this.name;
+        return this.definition.requestedDescription || `Ready: ${this.name}`;
     }
 
     get waitingForApprovalDescription() {

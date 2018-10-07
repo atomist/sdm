@@ -183,6 +183,7 @@ function constructProvenance(ctx: HandlerContext): SdmProvenance {
 export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
     switch (state) {
         case SdmGoalState.planned:
+            return goal.plannedDescription;
         case SdmGoalState.requested:
             return goal.requestedDescription;
         case SdmGoalState.in_process:
