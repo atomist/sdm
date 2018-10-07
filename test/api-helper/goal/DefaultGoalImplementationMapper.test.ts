@@ -220,8 +220,47 @@ describe("DefaultGoalImplementationMapper", () => {
                 await mp.findFulfillmentByPush(goal, pli);
                 assert.fail();
             } catch (err) {
-                assert.equal(err.message, "Multiple matching implementations for goal 'bar' found: 'test1, test2'");
+                assert.equal(err.message, "Multiple matching implementations for goal 'foo1' found: 'test1, test2'");
             }
+        });
+
+        it("should throw error uniqueName is not unique", async () => {
+            const mp = new DefaultGoalImplementationMapper();
+
+            const id = new GitHubRepoRef("a", "b");
+            const p = InMemoryProject.from(id);
+            const pli: PushListenerInvocation = fakePush(p);
+
+            const goal = new Goal({
+                uniqueName: "foo1",
+                displayName: "bar",
+            } as any);
+
+            mp.addImplementation({
+                implementationName: "test1",
+                goal,
+                pushTest: AnyPush,
+            } as any);
+
+            mp.addImplementation({
+                implementationName: "test2",
+                goal,
+                pushTest: AnyPush,
+            } as any);
+
+            try {
+                mp.addImplementation({
+                    implementationName: "test3",
+                    goal: new Goal({
+                        uniqueName: "foo1",
+                        displayName: "bar",
+                    } as any),
+                } as any);
+                assert.fail();
+            } catch (err) {
+                assert.equal(err.message, "Goal with uniqueName 'foo1' already registered");
+            }
+
         });
 
     });

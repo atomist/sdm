@@ -58,14 +58,14 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             throw new Error(`Implementation with name '${implementation.implementationName
                 }' already registered for goal '${implementation.goal.name}'`);
         }
-        this.implementations.push(implementation);
         this.addGoal(implementation.goal);
+        this.implementations.push(implementation);
         return this;
     }
 
     public addSideEffect(sideEffect: GoalSideEffect): this {
-        this.sideEffects.push(sideEffect);
         this.addGoal(sideEffect.goal);
+        this.sideEffects.push(sideEffect);
         return this;
     }
 
