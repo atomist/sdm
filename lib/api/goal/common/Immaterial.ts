@@ -19,8 +19,8 @@ import {
     Success,
 } from "@atomist/automation-client";
 import {
-    Goals,
     goals,
+    Goals,
 } from "../Goals";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
 
