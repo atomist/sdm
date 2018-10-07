@@ -108,7 +108,7 @@ export class Goal {
     }
 
     get waitingForPreApprovalDescription() {
-        return this.definition.waitingForPreApprovalDescription || `Start required: ${this.successDescription}`;
+        return this.definition.waitingForPreApprovalDescription || `Start required: ${this.name}`;
     }
 
     get canceledDescription() {
