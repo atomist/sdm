@@ -36,7 +36,7 @@ export class Goals {
      * @return {Goals}
      */
     public and(g: Goal): Goals {
-        return new Goals(this.name + "+" + g.name, ...this.goals.concat(g));
+        return new Goals(this.name + ", " + g.name, ...this.goals.concat(g));
     }
 
     /**

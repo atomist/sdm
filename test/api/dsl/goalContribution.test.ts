@@ -148,7 +148,7 @@ describe("goalContribution", () => {
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
-            assert.equal(goals.name, "SomeGoalSet+lock");
+            assert.equal(goals.name, "SomeGoalSet, lock");
         });
 
         it("should respect sealed goals after adding additional goal", async () => {
