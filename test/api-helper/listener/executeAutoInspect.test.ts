@@ -19,7 +19,7 @@ import {
     GitHubRepoRef,
     InMemoryFile,
     InMemoryProject,
-    saveFromFiles,
+    projectUtils,
 } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { ReviewerRegistration } from "../../../lib/api/registration/ReviewerRegistration";
@@ -40,7 +40,7 @@ const HatesTheWorld: ReviewerRegistration = {
     pushTest: TruePushTest,
     inspection: async project => ({
         repoId: project.id,
-        comments: await saveFromFiles(project, "**/*", async f =>
+        comments: await projectUtils.gatherFromFiles(project, "**/*", async f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {

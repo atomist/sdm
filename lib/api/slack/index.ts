@@ -14,6 +14,5 @@
  * limitations under the License.
  */
 
-export {
-    Configuration,
-} from "@atomist/automation-client";
+import * as slack from "@atomist/slack-messages";
+export { slack };

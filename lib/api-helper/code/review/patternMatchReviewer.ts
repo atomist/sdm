@@ -15,9 +15,9 @@
  */
 
 import {
-    doWithFiles,
     logger,
     ProjectReview,
+    projectUtils,
     Severity,
 } from "@atomist/automation-client";
 import * as _ from "lodash";
@@ -68,7 +68,7 @@ export function patternMatchReviewer(name: string,
         inspection: async (project, cri) => {
             logger.debug("Running regexp review '%s' on %s against %j", name, opts.globPattern, antiPatterns);
             const result: ProjectReview = {repoId: project.id, comments: []};
-            await doWithFiles(project, opts.globPattern, async f => {
+            await projectUtils.doWithFiles(project, opts.globPattern, async f => {
                 const content = await f.getContent();
                 antiPatterns.forEach(problem => {
                     const rex = typeof problem.antiPattern === "string" ?
