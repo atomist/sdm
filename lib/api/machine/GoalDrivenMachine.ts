@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { Goal } from "../goal/Goal";
-import {
-    ExecuteGoal,
-    GoalProjectListener,
-    GoalProjectListenerRegistration,
-} from "../goal/GoalInvocation";
 import { Goals } from "../goal/Goals";
-import { ReportProgress } from "../goal/progress/ReportProgress";
 import { GoalImplementationMapper } from "../goal/support/GoalImplementationMapper";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
-import { PushTest } from "../mapping/PushTest";
 import { GoalApprovalRequestVoter } from "../registration/GoalApprovalRequestVoter";
 import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
@@ -43,40 +34,6 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * @return {PushMapping<Goals>}
      */
     pushMapping: PushMapping<Goals>;
-
-    /**
-     * Provide the implementation for a goal.
-     * The SDM will run it as soon as the goal is ready (all preconditions are met).
-     * If you provide a PushTest, then the SDM can assign different implementations
-     * to the same goal based on the code in the project.
-     * @param {string} implementationName
-     * @param {Goal} goal
-     * @param {ExecuteGoal} goalExecutor
-     * @param options PushTest to narrow matching & InterpretLog that can handle
-     * the log from the goalExecutor function
-     * @return {this}
-     */
-    addGoalImplementation(implementationName: string,
-                          goal: Goal,
-                          goalExecutor: ExecuteGoal,
-                          options?: Partial<{
-                              pushTest: PushTest,
-                              logInterpreter: InterpretLog,
-                              progressReporter: ReportProgress,
-                              projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[],
-                          }>): this;
-
-    /**
-     * Declare that a goal will become successful based on something outside.
-     * For instance, ArtifactGoal succeeds because of an ImageLink event.
-     * This tells the SDM that it does not need to run anything when this
-     * goal becomes ready.
-     * @param {Goal} goal
-     * @param {string} sideEffectName
-     * @param {PushTest} pushTest
-     */
-    addGoalSideEffect(goal: Goal, sideEffectName: string,
-                      pushTest: PushTest): this;
 
     readonly goalFulfillmentMapper: GoalImplementationMapper;
 

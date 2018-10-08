@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     Registerable,
@@ -153,7 +154,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     private registerFulfillment(fulfillment: Fulfillment): void {
         if (isImplementation(fulfillment)) {
-            this.sdm.addGoalImplementation(
+            (this.sdm as AbstractSoftwareDeliveryMachine).addGoalImplementation(
                 fulfillment.name,
                 this,
                 fulfillment.goalExecutor,
@@ -164,7 +165,10 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                     projectListeners: this.projectListeners,
                 });
         } else if (isSideEffect(fulfillment)) {
-            this.sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);
+            (this.sdm as AbstractSoftwareDeliveryMachine).addGoalSideEffect(
+                this,
+                fulfillment.name,
+                fulfillment.pushTest);
         }
     }
 
