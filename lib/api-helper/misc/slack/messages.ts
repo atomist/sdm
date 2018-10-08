@@ -25,7 +25,7 @@ import {
 } from "@atomist/slack-messages";
 import * as base64 from "../base64";
 
-export function success(title: string, text: string, options: Partial<Attachment> = {}): SlackMessage {
+export function slackSuccessMessage(title: string, text: string, options: Partial<Attachment> = {}): SlackMessage {
     const msg: SlackMessage = {
         attachments: [{
             author_icon: `https://images.atomist.com/rug/check-circle.gif?gif=${guid()}`,
@@ -33,14 +33,14 @@ export function success(title: string, text: string, options: Partial<Attachment
             text,
             fallback: text,
             color: "#45B254",
-            mrkdwn_in: [ "text" ],
+            mrkdwn_in: ["text"],
             ...options,
         }],
     };
     return msg;
 }
 
-export function warning(title: string, text: string, ctx: HandlerContext, options: Partial<Attachment> = {}): SlackMessage {
+export function slackWarningMessage(title: string, text: string, ctx: HandlerContext, options: Partial<Attachment> = {}): SlackMessage {
     const msg: SlackMessage = {
         attachments: [{
             author_icon: `https://images.atomist.com/rug/warning-yellow.png`,
@@ -48,15 +48,15 @@ export function warning(title: string, text: string, ctx: HandlerContext, option
             text,
             fallback: text,
             color: "#ffcc00",
-            mrkdwn_in: [ "text" ],
-            footer: supportLink(ctx),
+            mrkdwn_in: ["text"],
+            footer: slackSupportLink(ctx),
             ...options,
         }],
     };
     return msg;
 }
 
-export function error(title: string, text: string, ctx: HandlerContext, options: Partial<Attachment> = {}): SlackMessage {
+export function slackErrorMessage(title: string, text: string, ctx: HandlerContext, options: Partial<Attachment> = {}): SlackMessage {
     const msg: SlackMessage = {
         attachments: [{
             author_icon: "https://images.atomist.com/rug/error-circle.png",
@@ -64,15 +64,15 @@ export function error(title: string, text: string, ctx: HandlerContext, options:
             text,
             fallback: text,
             color: "#D94649",
-            mrkdwn_in: [ "text" ],
-            footer: supportLink(ctx),
+            mrkdwn_in: ["text"],
+            footer: slackSupportLink(ctx),
             ...options,
         }],
     };
     return msg;
 }
 
-export function supportLink(ctx: HandlerContext): string {
+export function slackSupportLink(ctx: HandlerContext): string {
     const supportUrl =
         `https://atomist.typeform.com/to/yvnyOj?message_id=${base64.encode(ctx.invocationId)}`;
     return `${url(supportUrl, "Support")}`;

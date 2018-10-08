@@ -15,7 +15,6 @@
  */
 
 import {
-    GitHubNameRegExp,
     GitHubRepoCreationParameters,
     MappedParameter,
     MappedParameters,
@@ -24,6 +23,7 @@ import {
     Parameters,
     RemoteLocator,
     SeedDrivenGeneratorParameters,
+    validationPatterns,
 } from "@atomist/automation-client";
 import { SemVerRegExp } from "../support/commonValidationPatterns";
 import { GeneratorConfig } from "./GeneratorConfig";
@@ -58,7 +58,7 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
     @Parameter({
         displayName: "Seed repository override",
         description: "Seed repository name",
-        ...GitHubNameRegExp,
+        ...validationPatterns.GitHubNameRegExp,
         minLength: 1,
         maxLength: 50,
         required: false,
@@ -68,7 +68,7 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
     @Parameter({
         displayName: "Seed repository owner override",
         description: "Seed repository owner",
-        ...GitHubNameRegExp,
+        ...validationPatterns.GitHubNameRegExp,
         minLength: 1,
         maxLength: 50,
         required: false,
