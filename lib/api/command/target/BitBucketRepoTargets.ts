@@ -17,17 +17,17 @@
 import {
     BitBucketServerRepoRef,
     FallbackParams,
-    GitBranchRegExp,
     MappedParameter,
     MappedParameters,
     Parameter,
     Parameters,
     ProjectOperationCredentials,
     TargetsParams,
+    validationPatterns,
+    ValidationResult,
 } from "@atomist/automation-client";
 import {
     RepoTargets,
-    ValidationResult,
 } from "../../machine/RepoTargets";
 
 /**
@@ -46,7 +46,7 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false })
+    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
     public sha: string = "master";
 
     @Parameter({ description: "regex", required: false })
@@ -79,8 +79,8 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
             if (!this.repos) {
                 return {
                     message:
-                    "If not executing in a mapped channel, must identify a repo via: `targets.owner` and `targets.repo`, " +
-                    "or a repo name regex via `targets.repos`",
+                        "If not executing in a mapped channel, must identify a repo via: `targets.owner` and `targets.repo`, " +
+                        "or a repo name regex via `targets.repos`",
                 };
             }
             this.repo = this.repos;

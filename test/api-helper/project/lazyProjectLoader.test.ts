@@ -15,12 +15,12 @@
  */
 
 import {
-    doWithFiles,
     GitHubRepoRef,
     GitProject,
     InMemoryFile,
     InMemoryProject,
     Project,
+    projectUtils,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
@@ -57,7 +57,7 @@ describe("LazyProjectLoader", () => {
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
-        await doWithFiles(p, "**", f => {
+        await projectUtils.doWithFiles(p, "**", f => {
             // tslint:disable-next-line:no-console
             ++count;
             assert(!!f.getContentSync());
@@ -74,7 +74,7 @@ describe("LazyProjectLoader", () => {
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
-        await doWithFiles(p, "**", f => {
+        await projectUtils.doWithFiles(p, "**", f => {
             // tslint:disable-next-line:no-console
             ++count;
             assert(!!f.getContentSync());
@@ -89,7 +89,7 @@ describe("LazyProjectLoader", () => {
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
         assert(!f1);
-        await Promise.all([1, 2, 3].map(() => doWithFiles(p, "**", f => {
+        await Promise.all([1, 2, 3].map(() => projectUtils.doWithFiles(p, "**", f => {
             // tslint:disable-next-line:no-console
             assert(!!f.getContentSync());
         })));

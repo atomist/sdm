@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
+import { SpawnCommand } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
-import {
-    spawnAndWatch,
-    SpawnCommand,
-} from "../../../lib/api-helper/misc/spawned";
+import { spawnAndWatch } from "../../../lib/api-helper/misc/spawned";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("spawned", () => {
 
     it("should handle invalid command", async () => {
-        const sc: SpawnCommand = {command: "thisIsNonsense"};
+        const sc: SpawnCommand = { command: "thisIsNonsense" };
         try {
             await spawnAndWatch(sc, {},
-                await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoalEvent),
+                await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
                 {});
             assert.fail("Should have thrown an exception");
         } catch (err) {
@@ -38,18 +36,18 @@ describe("spawned", () => {
     });
 
     it("should handle valid command with no error finder", async () => {
-        const sc: SpawnCommand = {command: "ls"};
+        const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
             { timeout: 10000 });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
     });
 
     it("should use default on attempt to pass in undefined error finder", async () => {
-        const sc: SpawnCommand = {command: "ls"};
+        const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
             {
                 errorFinder: undefined,
                 timeout: 10000,
@@ -59,9 +57,9 @@ describe("spawned", () => {
     });
 
     it("should handle valid command with error finder", async () => {
-        const sc: SpawnCommand = {command: "ls"};
+        const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
             {
                 errorFinder: () => false,
                 timeout: 10000,

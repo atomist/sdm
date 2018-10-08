@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client";
-import { logger } from "../context/exports";
-import { Project } from "../project/exports";
+import {
+    logger,
+    NoParameters,
+    Project,
+} from "@atomist/automation-client";
 import {
     CodeTransform,
     TransformResult,

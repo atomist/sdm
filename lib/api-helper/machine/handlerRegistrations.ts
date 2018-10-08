@@ -23,6 +23,7 @@ import {
     declareSecret,
     doWithAllRepos,
     editAll,
+    editModes,
     EditResult,
     eventHandlerFrom,
     failedEdit,
@@ -39,7 +40,6 @@ import {
     OnCommand,
     Project,
     ProjectEditor,
-    PullRequest,
     RemoteRepoRef,
     RepoFinder,
     RepoLoader,
@@ -81,7 +81,7 @@ import {
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
 import { chattyEditor } from "../command/transform/chattyEditor";
-import { error } from "../misc/slack/messages";
+import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
     isRepoTargetingParameters,
@@ -112,7 +112,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
                 return ci.addressChannels(
-                    error(
+                    slackErrorMessage(
                         `Code Transform`,
                         `Invalid parameters to code transform '${ci.commandName}': \n\n${vr.message}`, ci.context));
             }
@@ -163,7 +163,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
                 return ci.addressChannels(
-                    error(
+                    slackErrorMessage(
                         `Code Inspection`,
                         `Invalid parameters to code inspection '${ci.commandName}': \n\n${vr.message}`, ci.context));
             }
@@ -455,12 +455,12 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
         const tms = ci.parameters;
-        return new PullRequest(
+        return new editModes.PullRequest(
             tms.desiredBranchName,
             tms.desiredPullRequestTitle || description);
     }
     // Default it if not supplied
-    return new PullRequest(
+    return new editModes.PullRequest(
         `transform-${gitBranchCompatible(ctr.name)}-${Date.now()}`,
         description);
 }
