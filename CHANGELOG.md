@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   **BREAKING** Remove well known goals. [#541](https://github.com/atomist/sdm/issues/541)
 -   **BREAKING** Remove SDM-level goal methods. [#545](https://github.com/atomist/sdm/issues/545)
+-   **BREAKING** Remove old style registration methods. [#546](https://github.com/atomist/sdm/issues/546)
 
 ### Fixed
 
