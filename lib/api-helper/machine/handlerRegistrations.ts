@@ -23,6 +23,7 @@ import {
     declareSecret,
     doWithAllRepos,
     editAll,
+    editModes,
     EditResult,
     eventHandlerFrom,
     failedEdit,
@@ -39,7 +40,6 @@ import {
     OnCommand,
     Project,
     ProjectEditor,
-    PullRequest,
     RemoteRepoRef,
     RepoFinder,
     RepoLoader,
@@ -455,12 +455,12 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
         const tms = ci.parameters;
-        return new PullRequest(
+        return new editModes.PullRequest(
             tms.desiredBranchName,
             tms.desiredPullRequestTitle || description);
     }
     // Default it if not supplied
-    return new PullRequest(
+    return new editModes.PullRequest(
         `transform-${gitBranchCompatible(ctr.name)}-${Date.now()}`,
         description);
 }

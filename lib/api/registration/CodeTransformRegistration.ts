@@ -15,7 +15,7 @@
  */
 
 import {
-    EditMode,
+    editModes,
     NoParameters,
     Project,
 } from "@atomist/automation-client";
@@ -36,7 +36,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * @param {CommandListenerInvocation<PARAMS>} ci
      * @return {EditMode}
      */
-    transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
+    transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => editModes.EditMode;
 
     /**
      * React to results from running transform across one or more projects

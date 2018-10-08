@@ -3,11 +3,11 @@
  */
 import {
     FallbackParams,
-    GitBranchRegExp,
     GitHubTargetsParams,
     MappedParameter,
     MappedParameters,
     Parameter,
+    validationPatterns,
 } from "@atomist/automation-client";
 import {
     RepoTargets,
@@ -22,7 +22,7 @@ export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackPa
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false })
+    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
     public sha: string = "master";
 
     @Parameter({ description: "regex", required: false })

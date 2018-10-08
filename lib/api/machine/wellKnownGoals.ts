@@ -52,6 +52,7 @@ export const LockingGoal = new Goal({
  * Goal that performs fingerprinting. Typically invoked
  * early in a delivery flow.
  * @type {Goal}
+ * @deprecated Use Fingerprint typed goal
  */
 export const FingerprintGoal = new Goal({
     uniqueName: "fingerprint",

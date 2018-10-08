@@ -18,7 +18,7 @@ import {
     AllFiles,
     GitCommandGitProject,
     GitHubRepoRef,
-    saveFromFiles,
+    projectUtils,
 } from "@atomist/automation-client";
 
 import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
@@ -49,7 +49,7 @@ describe("filteredView", () => {
     it("should find files", async () => {
         const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => path === "pom.xml");
-        const r = await saveFromFiles(filtered, AllFiles, async f => f.path);
+        const r = await projectUtils.gatherFromFiles(filtered, AllFiles, async f => f.path);
         assert.deepEqual(r, ["pom.xml"]);
     }).timeout(10000);
 
