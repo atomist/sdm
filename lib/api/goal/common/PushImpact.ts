@@ -19,7 +19,10 @@ import {
     PushImpactListener,
     PushImpactListenerRegistration,
 } from "../../registration/PushImpactListenerRegistration";
-import { Goal } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
@@ -37,7 +40,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
                 ...dependsOn: Goal[]) {
 
         super({
-            ...PushImpactGoal.definition,
+            ...PushImpactDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
             displayName: "push-impact",
         }, ...dependsOn);
@@ -56,10 +59,10 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
     }
 }
 
-const PushImpactGoal = new Goal({
+const PushImpactDefinition: GoalDefinition = {
     uniqueName: "code-reaction",
     displayName: "code reaction",
     environment: IndependentOfEnvironment,
     workingDescription: "Running code reactions",
     completedDescription: "Code reactions passed",
-});
+};

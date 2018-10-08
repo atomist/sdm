@@ -21,7 +21,10 @@ import {
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
 import { CodeTransform } from "../../registration/CodeTransform";
-import { Goal } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
@@ -39,7 +42,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
                 ...dependsOn: Goal[]) {
 
         super({
-            ...AutofixGoal.definition,
+            ...AutofixDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
             displayName: "autofix",
         }, ...dependsOn);
@@ -60,7 +63,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
     }
 }
 
-const AutofixGoal = new Goal({
+const AutofixDefinition: GoalDefinition = {
     uniqueName: "autofix",
     displayName: "autofix",
     environment: IndependentOfEnvironment,
@@ -69,4 +72,4 @@ const AutofixGoal = new Goal({
     failedDescription: "Autofixes failed",
     stoppedDescription: "Autofixes applied",
     isolated: true,
-});
+};

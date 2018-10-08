@@ -35,11 +35,12 @@ import { Autofix } from "../../../lib/api/goal/common/Autofix";
 import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { GenericGoal } from "../../../lib/api/goal/common/GenericGoal";
 import { Locking } from "../../../lib/api/goal/common/Locking";
-import { MessageGoal } from "../../../lib/api/goal/common/MessageGoal";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
+import { suggestAction } from "../../../lib/api/goal/common/suggestAction";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
+import { resetRegistrableManager } from "../../../lib/api/machine/Registerable";
 import { GoalSetter } from "../../../lib/api/mapping/GoalSetter";
 import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
 import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
@@ -113,7 +114,7 @@ describe("goalContribution", () => {
         });
 
         it("should add goal to some", async () => {
-            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             const gs: GoalSetter = enrichGoalSetters(old,
                 onAnyPush().setGoals(mg));
@@ -124,7 +125,7 @@ describe("goalContribution", () => {
         });
 
         it("should add two goals to some", async () => {
-            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             let gs: GoalSetter = enrichGoalSetters(old,
                 onAnyPush().setGoals(mg));
@@ -138,7 +139,7 @@ describe("goalContribution", () => {
         });
 
         it("should respect sealed goals", async () => {
-            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             const old: GoalSetter = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet.andLock());
@@ -157,8 +158,8 @@ describe("goalContribution", () => {
                 .setGoals(SomeGoalSet);
 
             // the we create a different goal setter that always sets the MessageGoal + Locks it
-            const mg1 = new MessageGoal("sendSomeMessage1", "Sending message1");
-            const mg2 = new MessageGoal("sendSomeMessage2", "Sending message2");
+            const mg1 = suggestAction({ message: "sendSomeMessage1", displayName: "Sending message1" });
+            const mg2 = suggestAction({ message: "sendSomeMessage2", displayName: "Sending message2" });
 
             const gs: GoalSetter = enrichGoalSetters(old,
                 onAnyPush().setGoals([mg1, LockingGoal]));
@@ -179,6 +180,10 @@ describe("goalContribution", () => {
     });
 
     describe("using SDM", () => {
+
+        beforeEach(() => {
+            resetRegistrableManager();
+        });
 
         it("should accept and add with () => true", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
@@ -214,8 +219,8 @@ describe("goalContribution", () => {
             sdm.addGoalContributions(old);
 
             // the we create a different goal setter that always sets the MessageGoal + Locks it
-            const mg1 = new MessageGoal("sendSomeMessage", "Sending message1");
-            const mg2 = new MessageGoal("sendOtherMessage", "Sending message2");
+            const mg1 = suggestAction({ message: "sendSomeMessage1", displayName: "Sending message1" });
+            const mg2 = suggestAction({ message: "sendSomeMessage2", displayName: "Sending message2" });
 
             sdm.addGoalContributions(
                 onAnyPush().setGoals([mg1, LockingGoal]));
