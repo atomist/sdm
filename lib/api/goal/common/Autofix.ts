@@ -19,16 +19,19 @@ import {
     executeAutofixes,
 } from "../../../api-helper/listener/executeAutofixes";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
-import { AutofixGoal } from "../../machine/wellKnownGoals";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
 import { CodeTransform } from "../../registration/CodeTransform";
-import { Goal } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that performs autofixes: For example, linting and adding license headers.
@@ -39,7 +42,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
                 ...dependsOn: Goal[]) {
 
         super({
-            ...AutofixGoal.definition,
+            ...AutofixDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
             displayName: "autofix",
         }, ...dependsOn);
@@ -59,3 +62,14 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
         });
     }
 }
+
+const AutofixDefinition: GoalDefinition = {
+    uniqueName: "autofix",
+    displayName: "autofix",
+    environment: IndependentOfEnvironment,
+    workingDescription: "Applying autofixes",
+    completedDescription: "No autofixes applied",
+    failedDescription: "Autofixes failed",
+    stoppedDescription: "Autofixes applied",
+    isolated: true,
+};

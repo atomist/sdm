@@ -17,10 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { SdmContext } from "../context/SdmContext";
+import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
-import { LockingGoal } from "../machine/wellKnownGoals";
 import {
     Mapping,
     NeverMatch,
@@ -58,9 +58,9 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
                 } else {
                     names.push(c.name);
                 }
-                contributorGoals.push(goals.goals.filter(g => g !== LockingGoal));
+                contributorGoals.push(goals.goals.filter(g => g !== Locking));
                 // If we find the special locking goal, don't add any further goals
-                if (goals.goals.includes(LockingGoal)) {
+                if (goals.goals.includes(Locking)) {
                     logger.info("Stopping goal contribution analysis, because %s has locked the goal set", c.name);
                     break;
                 }

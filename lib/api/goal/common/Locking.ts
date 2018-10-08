@@ -17,19 +17,9 @@
 import { Goal } from "../Goal";
 import { IndependentOfEnvironment } from "../support/environment";
 
-/**
- * Goal that sends a message
- * @deprecated use suggestAction
- */
-export class MessageGoal extends Goal {
-
-    constructor(uniqueName: string, name?: string) {
-        super({
-            uniqueName,
-            displayName: name ? name : uniqueName,
-            environment: IndependentOfEnvironment,
-            completedDescription: "Sent",
-        });
-    }
-
-}
+export const Locking = new Goal({
+    uniqueName: "lock",
+    displayName: "lock",
+    completedDescription: "Lock goals",
+    environment: IndependentOfEnvironment,
+});

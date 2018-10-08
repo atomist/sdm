@@ -15,16 +15,19 @@
  */
 
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
-import { CodeInspectionGoal } from "../../machine/wellKnownGoals";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
-import { Goal } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrationsAndListeners,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that runs code inspections
@@ -35,7 +38,7 @@ export class AutoCodeInspection
     constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("code-inspection"),
                 ...dependsOn: Goal[]) {
         super({
-            ...CodeInspectionGoal.definition,
+            ...CodeInspectionDefintion,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
             displayName: "code-inspections",
         }, ...dependsOn);
@@ -46,3 +49,11 @@ export class AutoCodeInspection
         });
     }
 }
+
+const CodeInspectionDefintion: GoalDefinition = {
+    uniqueName: "code-inspection",
+    displayName: "code inspection",
+    environment: IndependentOfEnvironment,
+    workingDescription: "Running code inspections",
+    completedDescription: "Code inspections passed",
+};

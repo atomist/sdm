@@ -16,15 +16,18 @@
 
 import { executeFingerprinting } from "../../../api-helper/listener/executeFingerprinting";
 import { FingerprintListener } from "../../listener/FingerprintListener";
-import { FingerprintGoal } from "../../machine/wellKnownGoals";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
-import { Goal } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalDetails,
     FulfillableGoalWithRegistrationsAndListeners,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that performs fingerprinting. Typically invoked early in a delivery flow.
@@ -36,7 +39,7 @@ export class Fingerprint
                 ...dependsOn: Goal[]) {
 
         super({
-            ...FingerprintGoal.definition,
+            ...FingerprintDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
             displayName: "fingerprint",
         }, ...dependsOn);
@@ -48,3 +51,11 @@ export class Fingerprint
         });
     }
 }
+
+const FingerprintDefinition: GoalDefinition = {
+    uniqueName: "fingerprint",
+    displayName: "fingerprint",
+    environment: IndependentOfEnvironment,
+    workingDescription: "Running fingerprint calculations",
+    completedDescription: "Fingerprinted",
+};
