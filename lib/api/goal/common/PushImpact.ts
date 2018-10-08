@@ -15,7 +15,6 @@
  */
 
 import { executePushReactions } from "../../../api-helper/listener/executePushReactions";
-import { PushReactionGoal } from "../../machine/wellKnownGoals";
 import {
     PushImpactListener,
     PushImpactListenerRegistration,
@@ -27,6 +26,7 @@ import {
     FulfillableGoalWithRegistrations,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that invokes PushImpactListener instances. Typically invoked early in a delivery flow.
@@ -37,7 +37,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
                 ...dependsOn: Goal[]) {
 
         super({
-            ...PushReactionGoal.definition,
+            ...PushImpactGoal.definition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
             displayName: "push-impact",
         }, ...dependsOn);
@@ -55,3 +55,11 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
         });
     }
 }
+
+const PushImpactGoal = new Goal({
+    uniqueName: "code-reaction",
+    displayName: "code reaction",
+    environment: IndependentOfEnvironment,
+    workingDescription: "Running code reactions",
+    completedDescription: "Code reactions passed",
+});

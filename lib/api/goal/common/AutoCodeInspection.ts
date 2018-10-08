@@ -15,7 +15,6 @@
  */
 
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
-import { CodeInspectionGoal } from "../../machine/wellKnownGoals";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
 import { Goal } from "../Goal";
@@ -25,6 +24,7 @@ import {
     FulfillableGoalWithRegistrationsAndListeners,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that runs code inspections
@@ -46,3 +46,11 @@ export class AutoCodeInspection
         });
     }
 }
+
+const CodeInspectionGoal = new Goal({
+    uniqueName: "code-inspection",
+    displayName: "code inspection",
+    environment: IndependentOfEnvironment,
+    workingDescription: "Running code inspections",
+    completedDescription: "Code inspections passed",
+});

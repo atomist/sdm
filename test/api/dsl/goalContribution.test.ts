@@ -30,19 +30,16 @@ import {
     onAnyPush,
     whenPushSatisfies,
 } from "../../../lib/api/dsl/goalDsl";
+import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
+import { Autofix } from "../../../lib/api/goal/common/Autofix";
+import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { GenericGoal } from "../../../lib/api/goal/common/GenericGoal";
+import { Locking } from "../../../lib/api/goal/common/Locking";
 import { MessageGoal } from "../../../lib/api/goal/common/MessageGoal";
+import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
-import {
-    AutofixGoal,
-    BuildGoal,
-    CodeInspectionGoal,
-    FingerprintGoal,
-    JustBuildGoal,
-    LockingGoal,
-    PushReactionGoal,
-} from "../../../lib/api/machine/wellKnownGoals";
+import { GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
 import { GoalSetter } from "../../../lib/api/mapping/GoalSetter";
 import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
 import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
@@ -52,6 +49,18 @@ const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
     environment: "0-code/", orderedName: "0-Fred",
 }));
+
+const AutofixGoal = new Autofix();
+const BuildGoal = new GoalWithFulfillment({
+    uniqueName: "build",
+});
+const CodeInspectionGoal = new AutoCodeInspection();
+const FingerprintGoal = new Fingerprint();
+const LockingGoal = Locking;
+const JustBuildGoal = new GoalWithFulfillment({
+    uniqueName: "just-build",
+});
+const PushReactionGoal = new PushImpact();
 
 describe("goalContribution", () => {
 

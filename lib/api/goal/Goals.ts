@@ -15,7 +15,7 @@
  */
 
 import * as _ from "lodash";
-import { LockingGoal } from "../machine/wellKnownGoals";
+import { Locking } from "./common/Locking";
 import {
     Goal,
     GoalDefinition,
@@ -45,7 +45,7 @@ export class Goals {
      * @return {Goals}
      */
     public andLock(): Goals {
-        return this.and(LockingGoal);
+        return this.and(Locking);
     }
 
     // tslint:disable-next-line:no-shadowed-variable

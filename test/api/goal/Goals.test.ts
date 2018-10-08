@@ -15,24 +15,31 @@
  */
 
 import * as assert from "power-assert";
+import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
+import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
+import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
 import { goals } from "../../../lib/api/goal/Goals";
-import {
-    ArtifactGoal,
-    AutofixGoal,
-    BuildGoal,
-    CodeInspectionGoal,
-    ProductionDeploymentGoal,
-    StagingEndpointGoal,
-} from "../../../lib/api/machine/wellKnownGoals";
+import { GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
+
+const ArtifactGoal = new GoalWithFulfillment({
+    uniqueName: "artifact",
+});
+const AutofixGoal = new Autofix();
+const BuildGoal = new GoalWithFulfillment({
+    uniqueName: "build",
+});
+const FingerprintGoal = new Fingerprint();
+const PushImpactGoal = new PushImpact();
+const CodeInspectionGoal = new AutoCodeInspection();
 
 describe("GoalBuilder", () => {
 
     it("should construct simple goal set", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(BuildGoal, AutofixGoal)
-            .plan(StagingEndpointGoal);
+            .plan(FingerprintGoal);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
@@ -41,14 +48,14 @@ describe("GoalBuilder", () => {
     it("should construct simple goal set with one pre condition", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(BuildGoal.definition, AutofixGoal)
-            .plan(StagingEndpointGoal).after(BuildGoal);
+            .plan(FingerprintGoal).after(BuildGoal);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
 
         const g = (simpleGoals.goals[2] as GoalWithPrecondition);
 
-        assert.strictEqual(g.name, StagingEndpointGoal.name);
+        assert.strictEqual(g.name, FingerprintGoal.name);
         assert.strictEqual(g.dependsOn.length, 1);
         assert.strictEqual(g.dependsOn[0].name, BuildGoal.name);
     });
@@ -57,8 +64,8 @@ describe("GoalBuilder", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(CodeInspectionGoal)
             .plan(BuildGoal, AutofixGoal.definition).after(CodeInspectionGoal)
-            .plan(StagingEndpointGoal).after(BuildGoal)
-            .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal.definition);
+            .plan(FingerprintGoal).after(BuildGoal)
+            .plan(PushImpactGoal).after(BuildGoal, FingerprintGoal.definition);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 5);
@@ -73,16 +80,16 @@ describe("GoalBuilder", () => {
         assert.strictEqual(autofixGoal.dependsOn.length, 1);
         assert.strictEqual(autofixGoal.dependsOn[0].name, CodeInspectionGoal.name);
 
-        const stagingGoal = simpleGoals.goals.find(g => g.name === StagingEndpointGoal.name) as GoalWithPrecondition;
-        assert.strictEqual(stagingGoal.name, StagingEndpointGoal.name);
+        const stagingGoal = simpleGoals.goals.find(g => g.name === FingerprintGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(stagingGoal.name, FingerprintGoal.name);
         assert.strictEqual(stagingGoal.dependsOn.length, 1);
         assert.strictEqual(stagingGoal.dependsOn[0].name, BuildGoal.name);
 
-        const prodGoal = simpleGoals.goals.find(g => g.name === ProductionDeploymentGoal.name) as GoalWithPrecondition;
-        assert.strictEqual(prodGoal.name, ProductionDeploymentGoal.name);
+        const prodGoal = simpleGoals.goals.find(g => g.name === PushImpactGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(prodGoal.name, PushImpactGoal.name);
         assert.strictEqual(prodGoal.dependsOn.length, 2);
         assert.strictEqual(prodGoal.dependsOn[0].name, BuildGoal.name);
-        assert.strictEqual(prodGoal.dependsOn[1].name, StagingEndpointGoal.name);
+        assert.strictEqual(prodGoal.dependsOn[1].name, FingerprintGoal.name);
     });
 
     it("should construct goal sets with pre conditions", () => {
@@ -92,8 +99,8 @@ describe("GoalBuilder", () => {
 
         const simpleGoals = goals("Simple Goals")
             .plan(BuildGoal).after(baseGoals)
-            .plan(StagingEndpointGoal).after(BuildGoal)
-            .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal.definition);
+            .plan(FingerprintGoal).after(BuildGoal)
+            .plan(CodeInspectionGoal).after(BuildGoal, FingerprintGoal.definition);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
@@ -103,16 +110,16 @@ describe("GoalBuilder", () => {
         assert.strictEqual(buildGoal.dependsOn.length, 2);
         assert.strictEqual(buildGoal.dependsOn[0].name, CodeInspectionGoal.name);
 
-        const stagingGoal = simpleGoals.goals.find(g => g.name === StagingEndpointGoal.name) as GoalWithPrecondition;
-        assert.strictEqual(stagingGoal.name, StagingEndpointGoal.name);
+        const stagingGoal = simpleGoals.goals.find(g => g.name === FingerprintGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(stagingGoal.name, FingerprintGoal.name);
         assert.strictEqual(stagingGoal.dependsOn.length, 1);
         assert.strictEqual(stagingGoal.dependsOn[0].name, BuildGoal.name);
 
-        const prodGoal = simpleGoals.goals.find(g => g.name === ProductionDeploymentGoal.name) as GoalWithPrecondition;
-        assert.strictEqual(prodGoal.name, ProductionDeploymentGoal.name);
+        const prodGoal = simpleGoals.goals.find(g => g.name === CodeInspectionGoal.name) as GoalWithPrecondition;
+        assert.strictEqual(prodGoal.name, CodeInspectionGoal.name);
         assert.strictEqual(prodGoal.dependsOn.length, 2);
         assert.strictEqual(prodGoal.dependsOn[0].name, BuildGoal.name);
-        assert.strictEqual(prodGoal.dependsOn[1].name, StagingEndpointGoal.name);
+        assert.strictEqual(prodGoal.dependsOn[1].name, FingerprintGoal.name);
     });
 
     it("should not mutate pre conditions across goals instances", () => {
