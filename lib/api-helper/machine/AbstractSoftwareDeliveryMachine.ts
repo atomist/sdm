@@ -23,7 +23,12 @@ import {
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
-import { enrichGoalSetters } from "../../api/dsl/goalContribution";
+import { SdmContext } from "../../api/context/SdmContext";
+import {
+    enrichGoalSetters,
+    GoalContribution,
+    goalContributors,
+} from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
@@ -34,6 +39,7 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
+import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
@@ -192,13 +198,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public addGoalContributions(goalContributions: GoalSetter): this {
         if (!this.pushMap) {
-            logger.info("Setting sole pushMapping '%s'", goalContributions.name);
             this.pushMap = goalContributions;
         } else {
-            logger.info("Adding pushMapping '%s' to '%s'", goalContributions.name, this.pushMap.name);
             this.pushMap = enrichGoalSetters(this.pushMap, goalContributions);
         }
         return this;
+    }
+
+    public withPushRules(contributor: GoalContribution<any>,
+                         ...contributors: Array<GoalContribution<any>>): this {
+        return this.addGoalContributions(goalContributors(contributor, ...contributors));
     }
 
     public addExtensionPacks(...packs: ExtensionPack[]): this {

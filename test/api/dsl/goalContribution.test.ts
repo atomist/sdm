@@ -33,7 +33,6 @@ import {
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
 import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
-import { GenericGoal } from "../../../lib/api/goal/common/GenericGoal";
 import { Locking } from "../../../lib/api/goal/common/Locking";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { suggestAction } from "../../../lib/api/goal/common/suggestAction";
@@ -199,8 +198,8 @@ describe("goalContribution", () => {
 
         it("should accept and add with onAnyPush", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
-            sdm.addGoalContributions(goalContributors(
-                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal))));
+            sdm.withPushRules(
+                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal)));
             const p = fakePush();
             const goals: Goals = await sdm.pushMapping.mapping(p);
             assert.deepEqual(goals.goals.sort(), [CodeInspectionGoal, PushReactionGoal, AutofixGoal].sort());
@@ -241,8 +240,7 @@ describe("goalContribution", () => {
         const IsSdm = predicatePushTest("IsSDM",
             async p => !!(await p.getFile("src/atomist.config.ts")));
 
-        const SdmDeliveryGoal = new GenericGoal({ uniqueName: "sdmDelivery" },
-            "Deliver SDM");
+        const SdmDeliveryGoal = new Goal({ uniqueName: "sdmDelivery" });
 
         it("should handle real-world example", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");

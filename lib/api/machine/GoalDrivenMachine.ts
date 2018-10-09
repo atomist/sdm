@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import { SdmContext } from "../context/SdmContext";
+import { GoalContribution } from "../dsl/goalContribution";
 import { Goals } from "../goal/Goals";
 import { GoalImplementationMapper } from "../goal/support/GoalImplementationMapper";
+import { PushListenerInvocation } from "../listener/PushListener";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { GoalApprovalRequestVoter } from "../registration/GoalApprovalRequestVoter";
@@ -47,12 +50,19 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * Or, sometimes do a custom local deploy goal:
      *   sdm.addGoalContributions(
      *       whenPushSatisfies(IsSdm, IsInLocalMode).setGoals(
-     *          new Goals("delivery", LocalSdmDeliveryGoal)));
-     *   sdm.addGoalImplementation("SDM CD", LocalSdmDeliveryGoal,
-     *          executeLocalSdmDelivery(options)); // tell it how to execute that custom goal
+     *          new Goals("delivery", LocalSdmDelivery)));
      * @param goalContributions contributions to goals
      */
     addGoalContributions(goalContributions: GoalSetter): this;
+
+    /**
+     * Add goal setting contributions that will be added into the SDM goal setting via an
+     * additive goal setter. 
+     * @param contributor contributor to set
+     * @param contributors contributors to set with contributor
+     */
+    withPushRules<F extends SdmContext = PushListenerInvocation>(contributor: GoalContribution<F>,
+                                                                 ...contributors: Array<GoalContribution<F>>): this;
 
     /**
      * Add vote that gets to decide whether to deny or grant goal approval requests.
