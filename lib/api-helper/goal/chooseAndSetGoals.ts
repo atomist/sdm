@@ -60,6 +60,7 @@ import {
     constructSdmGoal,
     constructSdmGoalImplementation,
     storeGoal,
+    storeGoalSet,
 } from "./storeGoals";
 
 /**
@@ -104,9 +105,15 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
             credentials, id, context, push, addressChannels, goalSetId,
         });
 
-    await Promise.all(goalsToSave.map(async g1 => {
-        return enrichGoal(g1).then(g2 => storeGoal(context, g2, push));
-    }));
+    if (goalsToSave.length > 0) {
+        // Store all the goals first
+        await Promise.all(goalsToSave.map(async g1 => {
+            return enrichGoal(g1).then(g2 => storeGoal(context, g2, push));
+        }));
+
+        // And then store the goalSetId
+        await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, push);
+    }
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error

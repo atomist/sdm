@@ -9130,6 +9130,151 @@
               ]
             },
             {
+              "name": "SdmGoalSet",
+              "description": "Auto-generated query for SdmGoalSet",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalSet"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmGoalSet",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_after",
+                  "description": "Search only after this timestamp",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_before",
+                  "description": "Search only before this timestamp",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "branch",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSet",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSetId",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "ts",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "SdmBuildIdentifier",
               "description": "Auto-generated query for SdmBuildIdentifier",
               "type": {
@@ -10230,282 +10375,6 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "Int"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Feedback",
-              "description": "Auto-generated query for Feedback",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Feedback"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this Feedback",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_after",
-                  "description": "Search only after this timestamp",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_before",
-                  "description": "Search only before this timestamp",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "email",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "message",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "invocation_id",
-                  "description": "compositeId",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "SentryAlert",
-              "description": "Auto-generated query for SentryAlert",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SentryAlert"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this SentryAlert",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_after",
-                  "description": "Search only after this timestamp",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_before",
-                  "description": "Search only before this timestamp",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "culprit",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "level",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "message",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "project",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "project_name",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "url",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
                     }
                   }
                 }
@@ -81390,19 +81259,6 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
-            },
-            {
-              "name": "sentryAlerts",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SentryAlert"
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -84051,6 +83907,19 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "SdmGoal"
+                }
+              }
+            },
+            {
+              "name": "goalSets",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalSet"
                 }
               }
             }
@@ -110714,6 +110583,80 @@
               ]
             },
             {
+              "name": "SdmGoalSet",
+              "description": "Auto-generated subscription for SdmGoalSet",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalSet"
+                }
+              },
+              "args": [
+                {
+                  "name": "branch",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSet",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSetId",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "ts",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "SdmBuildIdentifier",
               "description": "Auto-generated subscription for SdmBuildIdentifier",
               "type": {
@@ -111175,140 +111118,6 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "Int"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Feedback",
-              "description": "Auto-generated subscription for Feedback",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Feedback"
-                }
-              },
-              "args": [
-                {
-                  "name": "email",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "message",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "invocation_id",
-                  "description": "compositeId",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "SentryAlert",
-              "description": "Auto-generated subscription for SentryAlert",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SentryAlert"
-                }
-              },
-              "args": [
-                {
-                  "name": "culprit",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "level",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "message",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "project",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "project_name",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "url",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
                     }
                   }
                 }
@@ -112223,6 +112032,291 @@
             },
             {
               "name": "name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": []
+        },
+        {
+          "description": null,
+          "interfaces": [],
+          "name": "SdmGoalSet",
+          "fields": [
+            {
+              "name": "branch",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "goalSet",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "goalSetId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": [
+                {
+                  "name": "compositeId",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "name": "goals",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalName",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "provenance",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmProvenance",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "push",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Push",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": [
+                {
+                  "name": "linkTo",
+                  "args": [
+                    {
+                      "name": "queryName",
+                      "value": "pushBySha"
+                    },
+                    {
+                      "name": "variables",
+                      "value": [
+                        {
+                          "name": "afterSha",
+                          "path": "$.sha"
+                        },
+                        {
+                          "name": "branchName",
+                          "path": "$.branch"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "linkFrom",
+                  "args": [
+                    {
+                      "name": "field",
+                      "value": {
+                        "kind": "LIST",
+                        "name": "goalSets"
+                      }
+                    },
+                    {
+                      "name": "query",
+                      "value": "query goalSets($sha: String!, $branch: String!) {SdmGoalSet(sha: [$sha], branch: [$branch], _first: 500){id}}"
+                    },
+                    {
+                      "name": "variables",
+                      "value": [
+                        {
+                          "name": "sha",
+                          "path": "$.after.sha"
+                        },
+                        {
+                          "name": "branch",
+                          "path": "$.branch"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "repo",
+              "description": null,
+              "args": [
+                {
+                  "name": "name",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "owner",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "providerId",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmRepository",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "sha",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "ts",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmGoalSet",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": [
+            {
+              "name": "rootType",
+              "args": []
+            }
+          ]
+        },
+        {
+          "description": null,
+          "interfaces": [],
+          "name": "SdmGoalName",
+          "fields": [
+            {
+              "name": "name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "uniqueName",
               "description": null,
               "args": [],
               "type": {
@@ -115356,443 +115450,6 @@
         },
         {
           "kind": "OBJECT",
-          "name": "Feedback",
-          "fields": [
-            {
-              "name": "email",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "message",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "invocation_id",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "compositeId",
-              "args": []
-            },
-            {
-              "name": "id",
-              "description": "The ID of this Feedback",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "description": null,
-          "interfaces": [],
-          "name": "SentryEvent",
-          "fields": [
-            {
-              "name": "event_id",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "extra",
-              "description": null,
-              "args": [
-                {
-                  "name": "git_sha",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  },
-                  "defaultValue": null
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "SentryEventExtra",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            }
-          ],
-          "possibleTypes": null,
-          "kind": "OBJECT",
-          "enumValues": null,
-          "inputFields": null,
-          "directives": []
-        },
-        {
-          "description": null,
-          "interfaces": [],
-          "name": "SentryAlert",
-          "fields": [
-            {
-              "name": "commit",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Commit",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": [
-                {
-                  "name": "linkTo",
-                  "args": [
-                    {
-                      "name": "queryName",
-                      "value": "commitBySha"
-                    },
-                    {
-                      "name": "variables",
-                      "value": [
-                        {
-                          "name": "sha",
-                          "path": "$.event.extra.git_sha"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "linkFrom",
-                  "args": [
-                    {
-                      "name": "field",
-                      "value": {
-                        "kind": "LIST",
-                        "name": "sentryAlerts"
-                      }
-                    },
-                    {
-                      "name": "query",
-                      "value": "query sentryAlert($sha: String!) { SentryAlert {id event {extra(git_sha: $sha) {git_sha} } } }"
-                    },
-                    {
-                      "name": "variables",
-                      "value": [
-                        {
-                          "name": "sha",
-                          "path": "$.sha"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "culprit",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "event",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "SentryEvent",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "level",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "message",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": [
-                {
-                  "name": "searchable",
-                  "args": []
-                }
-              ]
-            },
-            {
-              "name": "project",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "project_name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "url",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "id",
-              "description": "The ID of this SentryAlert",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID"
-              },
-              "args": []
-            }
-          ],
-          "possibleTypes": null,
-          "kind": "OBJECT",
-          "enumValues": null,
-          "inputFields": null,
-          "directives": [
-            {
-              "name": "rootType",
-              "args": []
-            }
-          ]
-        },
-        {
-          "description": null,
-          "interfaces": [],
-          "name": "SentryEventExtra",
-          "fields": [
-            {
-              "name": "artifact",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "correlation_id",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "environment",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "git_owner",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "git_repo",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "git_sha",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "invocation_id",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "operation_name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "operation_type",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "team_id",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "team_name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            },
-            {
-              "name": "version",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
-            }
-          ],
-          "possibleTypes": null,
-          "kind": "OBJECT",
-          "enumValues": null,
-          "inputFields": null,
-          "directives": []
-        },
-        {
-          "kind": "OBJECT",
           "name": "AtomistLog",
           "description": "Atomist log messages",
           "fields": [
@@ -116310,6 +115967,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "4e8fe01c-e9c9-435f-ba34-eece50b5b1c3"
+    "correlation_id": "424bb462-4ca7-4f78-abcf-ab981e2121f5"
   }
 }

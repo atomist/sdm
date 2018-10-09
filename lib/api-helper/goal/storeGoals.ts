@@ -35,6 +35,10 @@ import {
     SdmGoalMessage,
     SdmProvenance,
 } from "../../api/goal/SdmGoalMessage";
+import {
+    GoalSetRootType,
+    SdmGoalSetMessage,
+} from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import {
     OnAnyRequestedSdmGoal,
@@ -205,4 +209,29 @@ export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
         default:
             throw new Error("Unknown goal state " + state);
     }
+}
+
+export async function storeGoalSet(ctx: HandlerContext,
+                                   goalSetId: string,
+                                   goalSet: string,
+                                   sdmGoals: SdmGoalMessage[],
+                                   push: OnPushToAnyBranch.Push): Promise<any> {
+    const sdmGoalSet: SdmGoalSetMessage = {
+        sha: push.after.sha,
+        branch: push.branch,
+        goalSetId,
+        goalSet,
+        ts: Date.now(),
+        repo: {
+            name: push.repo.name,
+            owner: push.repo.owner,
+            providerId: push.repo.org.provider.providerId,
+        },
+        goals: sdmGoals.map(g => ({
+            name: g.name,
+            uniqueName: g.uniqueName,
+        })),
+        provenance: constructProvenance(ctx),
+    };
+    return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
 }
