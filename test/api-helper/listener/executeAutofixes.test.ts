@@ -15,11 +15,11 @@
  */
 
 import {
-    fileExists,
     GitHubRepoRef,
     GitProject,
     InMemoryFile,
     InMemoryProject,
+    projectUtils,
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
@@ -47,7 +47,7 @@ export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
     pushTest: pushTest(
         "Is TypeScript",
-        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+        async (pi: PushListenerInvocation) => projectUtils.fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("thing", "1");
@@ -65,7 +65,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
     name: "AddThing",
     pushTest: pushTest(
         "Is TypeScript",
-        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+        async (pi: PushListenerInvocation) => projectUtils.fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("bird", ci.parameters.bird);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client";
+import { projectUtils } from "@atomist/automation-client";
 import * as _ from "lodash";
 import {
     PullRequestsForBranch,
@@ -93,7 +93,7 @@ export function hasFileWithExtension(extension: string): PredicatePushTest {
     }
     const extensionToUse = extension.startsWith(".") ? extension : `.${extension}`;
     return predicatePushTest(`HasFileWithExtension(${extensionToUse}})`,
-        async p => fileExists(p, `**/*${extensionToUse}`, () => true));
+        async p => projectUtils.fileExists(p, `**/*${extensionToUse}`, () => true));
 }
 
 /**

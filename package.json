@@ -26,7 +26,6 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/slack-messages": "1.0.0",
     "@types/lodash": "^4.14.116",
     "@types/node": "^10.7.1",
     "axios": "^0.18.0",
@@ -43,10 +42,12 @@
     "stack-trace": "0.0.10"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "*"
+    "@atomist/automation-client": "*",
+    "@atomist/slack-messages": ">=1.0.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/3239322896",
+    "@atomist/automation-client": "1.0.0-master.20181008113855",
+    "@atomist/slack-messages": "1.0.0",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",
     "apollo-codegen": "^0.20.2",

@@ -29,16 +29,6 @@ import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 
-export {
-    ChildProcessResult,
-    SpawnCommand,
-    SpawnWatchOptions,
-    stringifySpawnCommand,
-    asSpawnCommand,
-    ErrorFinder,
-    poisonAndWait,
-};
-
 /**
  * Spawn a process and watch
  * @param {SpawnCommand} spawnCommand

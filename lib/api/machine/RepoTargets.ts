@@ -19,13 +19,8 @@ import {
     RemoteRepoRef,
     RepoFilter,
     ValidationError,
+    ValidationResult,
 } from "@atomist/automation-client";
-
-export interface ValidationError {
-    message: string;
-}
-
-export type ValidationResult = void | ValidationError;
 
 /**
  * Defines repo targeting for a code inspection or transform

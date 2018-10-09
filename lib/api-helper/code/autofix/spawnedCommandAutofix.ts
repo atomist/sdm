@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { SpawnCommand } from "@atomist/automation-client";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,
     AutofixRegistrationOptions,
 } from "../../../api/registration/AutofixRegistration";
 import { localCommandsCodeTransform } from "../../command/transform/localCommandsCodeTransform";
-import { SpawnCommand } from "../../misc/spawned";
 
 /**
  * Register an autofix based on spawned local shell commands.

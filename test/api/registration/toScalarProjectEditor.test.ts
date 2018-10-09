@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import * as assert from "assert";
+import { InMemoryProject } from "@atomist/automation-client";
+import * as assert from "power-assert";
 import { toScalarProjectEditor } from "../../../lib/api-helper/machine/handlerRegistrations";
-import { InMemoryProject } from "../../../lib/api/project/exports";
 import {
     CodeTransform,
     CodeTransformOrTransforms,
