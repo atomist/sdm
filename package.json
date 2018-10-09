@@ -93,7 +93,7 @@
     "fmt:gql": "prettier --write \"lib/graphql/**/*.graphql\"",
     "gql:gen": "atm-gql-gen",
     "lint": "run-p lint:ts lint:gql",
-    "lint:ts": "tslint --format verbose --project . --exclude \"node_modules/**\" \"**/*.ts\"",
+    "lint:ts": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:gql": "prettier --list-different \"lib/graphql/**/*.graphql\"",
     "lint:fix": "run-p lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
