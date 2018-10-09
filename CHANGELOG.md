@@ -10,14 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Add tags to ExtensionPack metadata. [#543](https://github.com/atomist/sdm/issues/543)
--   **BREAKING** Re-export client exports used by SDMs. [#547](https://github.com/atomist/sdm/issues/547)
--   Re-export useful automation-client exports from SDM. [#544](https://github.com/atomist/sdm/issues/544)
 
 ### Removed
 
 -   **BREAKING** Remove well known goals. [#541](https://github.com/atomist/sdm/issues/541)
 -   **BREAKING** Remove SDM-level goal methods. [#545](https://github.com/atomist/sdm/issues/545)
 -   **BREAKING** Remove old style registration methods. [#546](https://github.com/atomist/sdm/issues/546)
+-   **BREAKING** Remove client exports from SDM. [#547](https://github.com/atomist/sdm/issues/547)
 
 ### Fixed
 
