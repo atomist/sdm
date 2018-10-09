@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Add tags to ExtensionPack metadata. [#543](https://github.com/atomist/sdm/issues/543)
+-   **BREAKING** Re-export client exports used by SDMs. [#547](https://github.com/atomist/sdm/issues/547)
 
 ### Removed
 
