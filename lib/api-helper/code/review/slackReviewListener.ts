@@ -28,7 +28,7 @@ import {
 import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
-import { PushReactionResponse } from "../../../api/registration/PushImpactListenerRegistration";
+import { PushImpactResponse } from "../../../api/registration/PushImpactListenerRegistration";
 
 /**
  * Strategy for deep linking to a source control system.
@@ -36,7 +36,7 @@ import { PushReactionResponse } from "../../../api/registration/PushImpactListen
 export type DeepLink = (grr: RemoteRepoRef, sourceLocation: SourceLocation) => string;
 
 export interface SlackReviewRoutingParams {
-    pushReactionResponse?: PushReactionResponse;
+    pushReactionResponse?: PushImpactResponse;
     deepLink: DeepLink;
 }
 

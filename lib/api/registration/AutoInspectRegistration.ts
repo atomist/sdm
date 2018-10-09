@@ -18,7 +18,7 @@ import { NoParameters } from "@atomist/automation-client";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { CodeInspection } from "./CodeInspectionRegistration";
 import {
-    PushReactionResponse,
+    PushImpactResponse,
     SelectiveCodeActionOptions,
 } from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
@@ -45,10 +45,10 @@ export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushS
     /**
      * Invoked after each inspection result, if provided.
      * A void return means keep processing this push. Return a
-     * PushReactionResponse to demand approval or fail goals.
+     * PushImpactResponse to demand approval or fail goals.
      * @param {R} result
      * @param {ParametersInvocation<PARAMS>} ci
      * @return {Promise<any>}
      */
-    onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<PushReactionResponse | void>;
+    onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<PushImpactResponse | void>;
 }

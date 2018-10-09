@@ -19,14 +19,14 @@ import {
     InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { executePushReactions } from "../../../lib/api-helper/listener/executePushReactions";
+import { executePushImpact } from "../../../lib/api-helper/listener/executePushImpact";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import {
     PushImpactListenerRegistration,
-    PushReactionResponse,
+    PushImpactResponse,
 } from "../../../lib/api/registration/PushImpactListenerRegistration";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
@@ -37,19 +37,19 @@ function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): Pu
         action: async cri => {
             invocations.push(cri);
             if (stopTheWorld) {
-                return PushReactionResponse.failGoals;
+                return PushImpactResponse.failGoals;
             }
         },
     };
 }
 
-describe("executePushReactions", () => {
+describe("executePushImpact", () => {
 
     it("stops the world", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executePushReactions([react(invocations, true)]);
+        const ge = executePushImpact([react(invocations, true)]);
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any)) as ExecuteGoalResult;
@@ -62,7 +62,7 @@ describe("executePushReactions", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executePushReactions([react(invocations, false)]);
+        const ge = executePushImpact([react(invocations, false)]);
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any)) as ExecuteGoalResult;

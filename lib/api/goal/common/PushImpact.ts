@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { executePushReactions } from "../../../api-helper/listener/executePushReactions";
+import { executePushImpact } from "../../../api-helper/listener/executePushImpact";
 import {
     PushImpactListener,
     PushImpactListenerRegistration,
@@ -47,7 +47,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
 
         this.addFulfillment({
             name: `push-impact-${this.definition.uniqueName}`,
-            goalExecutor: executePushReactions(this.registrations),
+            goalExecutor: executePushImpact(this.registrations),
         });
     }
 
@@ -60,9 +60,9 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
 }
 
 const PushImpactDefinition: GoalDefinition = {
-    uniqueName: "code-reaction",
-    displayName: "code reaction",
+    uniqueName: "push-impact",
+    displayName: "push impact",
     environment: IndependentOfEnvironment,
-    workingDescription: "Running code reactions",
-    completedDescription: "Code reactions passed",
+    workingDescription: "Running push impact analysis",
+    completedDescription: "Completed push impact analysis",
 };

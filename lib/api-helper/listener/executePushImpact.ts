@@ -26,7 +26,7 @@ import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListe
 import {
     PushImpactListenerRegisterable,
     PushImpactListenerRegistration,
-    PushReactionResponse,
+    PushImpactResponse,
     toPushReactionRegistration,
 } from "../../api/registration/PushImpactListenerRegistration";
 import { minimalClone } from "../goal/minimalClone";
@@ -38,7 +38,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param {PushImpactListenerRegistration[]} registrations
  * @return {ExecuteGoal}
  */
-export function executePushReactions(registrations: PushImpactListenerRegisterable[]): ExecuteGoal {
+export function executePushImpact(registrations: PushImpactListenerRegisterable[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         if (registrations.length === 0) {
             return Success;
@@ -62,8 +62,8 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             const allReactions: any[] = await Promise.all(relevantCodeReactions
                 .map(reactionReg => reactionReg.action(cri)));
             const result = {
-                code: allReactions.includes(PushReactionResponse.failGoals) ? 1 : 0,
-                requireApproval: allReactions.includes(PushReactionResponse.requireApprovalToProceed),
+                code: allReactions.includes(PushImpactResponse.failGoals) ? 1 : 0,
+                requireApproval: allReactions.includes(PushImpactResponse.requireApprovalToProceed),
             };
             logger.info("PushReaction responses are %j, result=%j", allReactions, result);
             return result;

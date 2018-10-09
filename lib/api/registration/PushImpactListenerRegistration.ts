@@ -22,7 +22,7 @@ import { PushRegistration } from "./PushRegistration";
  * failing the current goal or requiring approval,
  * causing dependent goals to fail or wait.
  */
-export enum PushReactionResponse {
+export enum PushImpactResponse {
 
     /**
      * Everything's good. Keep going.
@@ -42,14 +42,14 @@ export enum PushReactionResponse {
 }
 
 /**
- * Optional PushReactionResponse included in a return value.
+ * Optional PushImpactResponse included in a return value.
  */
 export interface HasCodeActionResponse {
 
     /**
      * Response affecting further execution of the current goalset.
      */
-    response?: PushReactionResponse;
+    response?: PushImpactResponse;
 }
 
 /**

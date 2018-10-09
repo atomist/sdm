@@ -33,7 +33,7 @@ import {
     ReviewListener,
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";
-import { PushReactionResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
+import { PushImpactResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
@@ -73,7 +73,7 @@ function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): 
     return async re => {
         saveTo.push(re);
         if (re.review.comments.length > 0) {
-            return PushReactionResponse.requireApprovalToProceed;
+            return PushImpactResponse.requireApprovalToProceed;
         }
     };
 }

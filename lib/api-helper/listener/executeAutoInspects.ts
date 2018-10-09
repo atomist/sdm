@@ -28,7 +28,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ParametersInvocation } from "../../api/listener/ParametersInvocation";
 import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
-import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
+import { PushImpactResponse } from "../../api/registration/PushImpactListenerRegistration";
 import {
     formatReviewerError,
     ReviewerError,
@@ -73,8 +73,8 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
 
 // tslint:disable
 /**
- * each inspection can return a result, which may be turned into a PushReactionResponse by its onInspectionResult,
- * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushReactionResponse.
+ * each inspection can return a result, which may be turned into a PushImpactResponse by its onInspectionResult,
+ * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushImpactResponse.
  * Each of these PushReactionResponses may instruct the AutoInspect goal to fail or to require approval.
  *
  * ROD: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
@@ -87,7 +87,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
  *                         │                    │                         ProjectReview?                                    │                    │
  *                         │                    │                               Λ                                           │                    │
  *  ┌───────────┐          │                    │           ┌──────────┐       ╱ ╲     ┌────────────┐      consolidate      │      Listener      │          ┌────────────────────┐
- *  │  Project  │─────────▶│     Inspection     │────┬─────▶│   any    │─────▶▕   ▏───▶│   Review   │═════▶ with other ────▶│                    │─────┬───▶│PushReactionResponse│════╗
+ *  │  Project  │─────────▶│     Inspection     │────┬─────▶│   any    │─────▶▕   ▏───▶│   Review   │═════▶ with other ────▶│                    │─────┬───▶│PushImpactResponse│════╗
  *  └───────────┘          │                    │    │      └──────────┘       ╲ ╱     └────────────┘        Reviews        │                    │          └────────────────────┘    ║
  *                         │                    │    │                          V                                           │                    │     │                              ║
  *                         │                    │    │                                                                      │                    │                                    ║
@@ -126,7 +126,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
 
-        const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushReactionResponse }> =
+        const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushImpactResponse }> =
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
@@ -145,7 +145,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             .map(e => e.error);
         sendErrorsToSlack(reviewerErrors, addressChannels);
 
-        const responsesFromOnInspectionResult: PushReactionResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
+        const responsesFromOnInspectionResult: PushImpactResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
             .map(r => r.response);
 
         const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
@@ -154,8 +154,8 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
-                code: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
-                state: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed)
+                code: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.failGoals) ? 1 : 0,
+                state: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.requireApprovalToProceed)
                     ? SdmGoalState.waiting_for_approval : undefined };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
@@ -165,7 +165,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
                                                   reviewListeners: ReviewListenerRegistration[],
                                                   pli: PushListenerInvocation):
-    Promise<PushReactionResponse[]> {
+    Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
     logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
 
@@ -173,13 +173,13 @@ async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
 }
 
 function responseFromOneListener(rli: ReviewListenerInvocation) {
-    return async (l: ReviewListenerRegistration): Promise<PushReactionResponse> => {
+    return async (l: ReviewListenerRegistration): Promise<PushImpactResponse> => {
         try {
-            return (await l.listener(rli)) || PushReactionResponse.proceed;
+            return (await l.listener(rli)) || PushImpactResponse.proceed;
         } catch (err) {
             logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
             await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
-            return PushReactionResponse.failGoals;
+            return PushImpactResponse.failGoals;
         }
     };
 }
