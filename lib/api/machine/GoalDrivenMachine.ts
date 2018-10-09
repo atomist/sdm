@@ -57,7 +57,7 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
 
     /**
      * Add goal setting contributions that will be added into the SDM goal setting via an
-     * additive goal setter. 
+     * additive goal setter.
      * @param contributor contributor to set
      * @param contributors contributors to set with contributor
      */
