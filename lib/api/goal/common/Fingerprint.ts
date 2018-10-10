@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
+import axios from "axios";
 import { executeFingerprinting } from "../../../api-helper/listener/executeFingerprinting";
 import { FingerprintListener } from "../../listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
@@ -49,6 +51,8 @@ export class Fingerprint
             goalExecutor: executeFingerprinting(this.registrations,
                 this.listeners),
         });
+
+        this.listeners.push(SendFingerprintToAtomist);
     }
 }
 
@@ -59,3 +63,40 @@ const FingerprintDefinition: GoalDefinition = {
     workingDescription: "Running fingerprint calculations",
     completedDescription: "Fingerprinted",
 };
+
+/**
+ * Publish the given fingerprint to Atomist in the given team
+ * @return {Promise<any>}
+ */
+const SendFingerprintToAtomist: FingerprintListener = fli => {
+    const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${fli.context.workspaceId}`;
+    const payload = {
+        commit: {
+            provider: fli.id.providerType,
+            owner: fli.id.owner,
+            repo: fli.id.repo,
+            sha: fli.id.sha,
+        },
+        fingerprints: fli.fingerprints,
+    };
+    try {
+        const shortenedPayload = JSON.stringify(payload, limitValueLength);
+        logger.info("Sending up fingerprint to %s: %j", url, shortenedPayload);
+    } catch (err) {
+        return Promise.reject("Unable to stringify your fingerprint. Is it circular? " + err.message);
+    }
+    return axios.post(url, payload)
+        .catch(err => {
+            return Promise.reject(`Axios error calling ${url}: ${err.message}`);
+        });
+};
+
+function limitValueLength(key: string, value: any): string {
+    if (!value) {
+        return;
+    }
+    const stringified = JSON.stringify(value);
+    if (stringified.length > 1000) {
+        return stringified.substr(0, 100) + " ... < plus " + (stringified.length - 100) + " more characters >";
+    }
+}
