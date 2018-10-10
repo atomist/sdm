@@ -42,11 +42,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly startupListeners: StartupListener[] = [];
 
-    public readonly fingerprintListeners: FingerprintListener[] = [];
-
     public readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
-
-    public readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
 
     public readonly userJoiningChannelListeners: UserJoiningChannelListener[] = [];
 
@@ -143,16 +139,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addGoalCompletionListener(l: GoalCompletionListener): this {
         this.goalCompletionListeners.push(l);
-        return this;
-    }
-
-    public addFingerprinterRegistration(f: FingerprinterRegistration): this {
-        this.fingerprinterRegistrations.push(f);
-        return this;
-    }
-
-    public addFingerprintListener(l: FingerprintListener): this {
-        this.fingerprintListeners.push(l);
         return this;
     }
 

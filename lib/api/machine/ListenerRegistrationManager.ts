@@ -107,32 +107,9 @@ export interface ListenerRegistrationManager {
 
     addGoalCompletionListener(l: GoalCompletionListener): this;
 
-    /**
-     * @param {FingerprinterRegistration} f
-     * @return {this}
-     * @deprecated add to goal instance
-     */
-    addFingerprinterRegistration(f: FingerprinterRegistration): this;
-
-    /**
-     * @deprecated
-     */
-    fingerprinterRegistrations: FingerprinterRegistration[];
-
-    /**
-     * @deprecated add to goal instance
-     */
-    addFingerprintListener(l: FingerprintListener): this;
-
-    /**
-     * @deprecated add to goal instance
-     */
-    fingerprintListeners: FingerprintListener[];
-
     goalExecutionListeners: GoalExecutionListener[];
 
     /**
-     * @deprecated add to goal instance
      * @param {FingerprintDifferenceListener} fh
      * @return {this}
      */
