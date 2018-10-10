@@ -15,12 +15,12 @@
  */
 
 import {
-    ProjectFile,
     GitProject,
     GitPushOptions,
     GitStatus,
     InMemoryProjectFile,
     logger,
+    ProjectFile,
     RemoteRepoRef,
     TokenCredentials,
 } from "@atomist/automation-client";

@@ -17,8 +17,8 @@
 import { computeFingerprints } from "../../../lib/api-helper/listener/computeFingerprints";
 
 import {
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
     SimpleRepoId,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";

@@ -15,8 +15,8 @@
  */
 
 import {
+    secured,
     TokenCredentials,
-    secured
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import {

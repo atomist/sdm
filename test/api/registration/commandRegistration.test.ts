@@ -16,8 +16,8 @@
 
 import {
     GitHubRepoRef,
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
     Parameter,
     Parameters,
     SeedDrivenGeneratorParameters,

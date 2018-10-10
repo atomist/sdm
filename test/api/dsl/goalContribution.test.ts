@@ -16,8 +16,8 @@
 
 import {
     GitHubRepoRef,
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
 } from "@atomist/automation-client";
 import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import * as assert from "power-assert";

@@ -16,8 +16,8 @@
 
 import {
     AllFiles,
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { patternMatchReviewer } from "../../../../lib/api-helper/code/review/patternMatchReviewer";

@@ -15,8 +15,8 @@
  */
 
 import {
-    ProjectFile,
     Project,
+    ProjectFile,
 } from "@atomist/automation-client";
 import { FileStream } from "@atomist/automation-client/lib/project/Project";
 import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";

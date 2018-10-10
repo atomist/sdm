@@ -17,8 +17,8 @@
 import {
     DefaultReviewComment,
     GitHubRepoRef,
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
     projectUtils,
 } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";

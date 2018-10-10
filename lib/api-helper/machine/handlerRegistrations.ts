@@ -25,9 +25,9 @@ import {
     OnCommand,
     Project,
     RemoteRepoRef,
-    Success,
     RepoFinder,
     RepoLoader,
+    Success,
 } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";

@@ -17,8 +17,8 @@
 import {
     GitHubRepoRef,
     GitProject,
-    InMemoryProjectFile,
     InMemoryProject,
+    InMemoryProjectFile,
     Project,
     projectUtils,
 } from "@atomist/automation-client";
