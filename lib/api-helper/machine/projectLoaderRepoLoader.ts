@@ -18,8 +18,8 @@ import {
     HandlerContext,
     ProjectOperationCredentials,
     RemoteRepoRef,
-    RepoLoader,
 } from "@atomist/automation-client";
+import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**

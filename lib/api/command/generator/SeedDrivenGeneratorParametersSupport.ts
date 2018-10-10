@@ -15,16 +15,16 @@
  */
 
 import {
-    GitHubRepoCreationParameters,
     MappedParameter,
     MappedParameters,
-    NewRepoCreationParameters,
     Parameter,
     Parameters,
     RemoteLocator,
     SeedDrivenGeneratorParameters,
     validationPatterns,
 } from "@atomist/automation-client";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
+import { NewRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/NewRepoCreationParameters";
 import { SemVerRegExp } from "../support/commonValidationPatterns";
 import { GeneratorConfig } from "./GeneratorConfig";
 

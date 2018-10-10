@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fingerprint } from "@atomist/automation-client";
+import { FingerprintData } from "@atomist/automation-client";
 import { PushImpactListenerRegistration } from "./PushImpactListenerRegistration";
 
 /**
@@ -22,6 +22,6 @@ import { PushImpactListenerRegistration } from "./PushImpactListenerRegistration
  * some fingerprinters can produce multiple results more efficiently
  * than separate computation would be.
  */
-export type FingerprinterResult = Fingerprint | Fingerprint[];
+export type FingerprinterResult = FingerprintData | FingerprintData[];
 
 export type FingerprinterRegistration = PushImpactListenerRegistration<FingerprinterResult>;

@@ -16,10 +16,10 @@
 
 import {
     GitHubRepoRef,
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
-    isGitHubRepoRef,
 } from "@atomist/automation-client";
+import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
@@ -255,7 +255,7 @@ describe("goalContribution", () => {
                 whenPushSatisfies(async () => true)
                     .setGoals(JustBuildGoal)));
             const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryFile("src/atomist.config.ts", "content")));
+                new InMemoryProjectFile("src/atomist.config.ts", "content")));
             const goals: Goals = await sdm.pushMapping.mapping(push);
             assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));
@@ -273,7 +273,7 @@ describe("goalContribution", () => {
                     .setGoals(JustBuildGoal),
             ));
             const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryFile("src/atomist.config.ts", "content")));
+                new InMemoryProjectFile("src/atomist.config.ts", "content")));
             const goals: Goals = await sdm.pushMapping.mapping(push);
             assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));

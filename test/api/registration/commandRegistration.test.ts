@@ -16,14 +16,14 @@
 
 import {
     GitHubRepoRef,
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
     Parameter,
     Parameters,
     SeedDrivenGeneratorParameters,
-    SelfDescribingHandleCommand,
-    toFactory,
 } from "@atomist/automation-client";
+import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
 import {
@@ -363,7 +363,7 @@ describe("command registrations", () => {
     it("should default parameters or in memory project without maker", async () => {
         const g: GeneratorRegistration = {
             name: "foo",
-            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
+            startingPoint: InMemoryProject.of(new InMemoryProjectFile("a", "b")),
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
@@ -377,7 +377,7 @@ describe("command registrations", () => {
     it("should create command handler from generator", async () => {
         const g: GeneratorRegistration = {
             name: "foo",
-            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
+            startingPoint: InMemoryProject.of(new InMemoryProjectFile("a", "b")),
             transform: async p => p,
         };
         generatorRegistrationToCommand(null, g);

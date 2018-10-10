@@ -17,7 +17,7 @@
 import {
     DefaultReviewComment,
     GitHubRepoRef,
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
     projectUtils,
 } from "@atomist/automation-client";
@@ -106,7 +106,7 @@ describe("executeAutoInspects", () => {
 
     it("should hate anything it finds", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeAutoInspects([HatesTheWorld], [{
@@ -126,7 +126,7 @@ describe("executeAutoInspects", () => {
 
     it("should hate anything it finds, without requiring approval", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithoutApproval(reviewEvents);
         const ge = executeAutoInspects([HatesTheWorld], [{
@@ -146,7 +146,7 @@ describe("executeAutoInspects", () => {
 
     it("consolidate reviewers", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeAutoInspects([HatesTheWorld, JustTheOne],

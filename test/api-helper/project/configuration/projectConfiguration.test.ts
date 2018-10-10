@@ -15,7 +15,7 @@
  */
 
 import {
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
@@ -25,7 +25,7 @@ describe("projectConfigurationValue", () => {
 
     it("should read config setting from file", async () => {
         const project = InMemoryProject.of(
-            new InMemoryFile(".atomist/config.json", JSON.stringify({ npm: { publish: { access: "private" }} })));
+            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ npm: { publish: { access: "private" }} })));
         assert.strictEqual(await projectConfigurationValue<string>("npm.publish.access", project), "private");
         return;
     });
@@ -38,14 +38,14 @@ describe("projectConfigurationValue", () => {
 
     it("should return default value when config value doesn't exist", async () => {
         const project = InMemoryProject.of(
-            new InMemoryFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
+            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
         assert.strictEqual(await projectConfigurationValue<string>("npm.publish.access", project, "private"), "private");
         return;
     });
 
     it("should return given type when config value exists", async () => {
         const project = InMemoryProject.of(
-            new InMemoryFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
+            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
         assert.deepEqual(await projectConfigurationValue<string[]>("sdm.enable", project), ["@atomist/atomist-sdm"]);
         return;
     });

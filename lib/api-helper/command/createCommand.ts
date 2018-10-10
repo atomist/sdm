@@ -15,13 +15,13 @@
  */
 
 import {
-    CommandDetails,
-    commandHandlerFrom,
-    HandleCommand,
-    Maker,
     NoParameters,
     OnCommand,
 } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { commandHandlerFrom } from "@atomist/automation-client/lib/onCommand";
+import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { MachineOrMachineOptions } from "../machine/toMachineOptions";
 
 /**

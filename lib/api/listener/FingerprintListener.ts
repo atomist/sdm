@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fingerprint } from "@atomist/automation-client";
+import { FingerprintData } from "@atomist/automation-client";
 import {
     RepoListenerInvocation,
     SdmListener,
@@ -24,7 +24,7 @@ import {
  * Event raised on a computed fingerprint
  */
 export interface FingerprintListenerInvocation extends RepoListenerInvocation {
-    fingerprints: Fingerprint[];
+    fingerprints: FingerprintData[];
 }
 
 /**

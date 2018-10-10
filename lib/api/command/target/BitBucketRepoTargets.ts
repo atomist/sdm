@@ -16,16 +16,16 @@
 
 import {
     BitBucketServerRepoRef,
-    FallbackParams,
     MappedParameter,
     MappedParameters,
     Parameter,
     Parameters,
     ProjectOperationCredentials,
-    TargetsParams,
     validationPatterns,
     ValidationResult,
 } from "@atomist/automation-client";
+import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
+import { TargetsParams } from "@atomist/automation-client/lib/operations/common/params/TargetsParams";
 import {
     RepoTargets,
 } from "../../machine/RepoTargets";

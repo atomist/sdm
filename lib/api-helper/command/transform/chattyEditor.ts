@@ -15,14 +15,16 @@
  */
 
 import {
-    AnyProjectEditor,
-    EditResult,
     GitProject,
     logger,
-    ProjectEditor,
     RemoteRepoRef,
-    toEditor,
 } from "@atomist/automation-client";
+import {
+    AnyProjectEditor,
+    EditResult,
+    ProjectEditor,
+    toEditor,
+} from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { confirmEditedness } from "./confirmEditedness";
 
 /**

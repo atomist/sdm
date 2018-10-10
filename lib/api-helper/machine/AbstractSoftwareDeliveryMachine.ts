@@ -15,15 +15,14 @@
  */
 
 import {
-    HandleCommand,
-    HandleEvent,
     logger,
     Maker,
     NoParameters,
 } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
-import { SdmContext } from "../../api/context/SdmContext";
 import {
     enrichGoalSetters,
     GoalContribution,
@@ -39,7 +38,6 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
-import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";

@@ -15,7 +15,7 @@
  */
 
 import {
-    Fingerprint,
+    FingerprintData,
     logger,
     Success,
 } from "@atomist/automation-client";
@@ -54,7 +54,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
-            const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
+            const fingerprints: FingerprintData[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             await Promise.all(listeners.map(l =>
                 l({
                     id,

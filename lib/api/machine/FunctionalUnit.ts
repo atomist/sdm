@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    Maker,
-} from "@atomist/automation-client";
+import { Maker } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
 
 /**
  * Unit of functionality that can be added to an Atomist automation.

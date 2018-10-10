@@ -17,10 +17,10 @@
 import {
     ProjectOperationCredentials,
     RemoteRepoRef,
-    RepoFilter,
     ValidationError,
     ValidationResult,
 } from "@atomist/automation-client";
+import { RepoFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
 
 /**
  * Defines repo targeting for a code inspection or transform

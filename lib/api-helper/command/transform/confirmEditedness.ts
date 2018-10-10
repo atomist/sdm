@@ -15,10 +15,10 @@
  */
 
 import {
-    EditResult,
     GitProject,
     logger,
 } from "@atomist/automation-client";
+import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import * as stringify from "json-stringify-safe";
 
 /**

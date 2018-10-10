@@ -2,14 +2,14 @@
  * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping
  */
 import {
-    FallbackParams,
-    GitHubTargetsParams,
     MappedParameter,
     MappedParameters,
     Parameter,
     validationPatterns,
     ValidationResult,
 } from "@atomist/automation-client";
+import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
+import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
 import {
     RepoTargets,
 } from "../../machine/RepoTargets";

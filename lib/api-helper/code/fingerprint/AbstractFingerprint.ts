@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Fingerprint } from "@atomist/automation-client";
+import { FingerprintData } from "@atomist/automation-client";
 import { computeShaOf } from "../../misc/sha";
 
 /**
  * Convenient superclass for fingerprints.
  */
-export abstract class AbstractFingerprint implements Fingerprint {
+export abstract class AbstractFingerprint implements FingerprintData {
 
     protected constructor(public readonly name,
                           public readonly abbreviation,

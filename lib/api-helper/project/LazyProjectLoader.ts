@@ -15,21 +15,23 @@
  */
 
 import {
-    AbstractProject,
-    File,
-    fileContent,
-    FileStream,
-    GitHubDotComBase,
+    ProjectFile,
     GitProject,
     GitPushOptions,
     GitStatus,
-    InMemoryFile,
-    isGitHubRepoRef,
+    InMemoryProjectFile,
     logger,
-    ReleaseFunction,
     RemoteRepoRef,
     TokenCredentials,
 } from "@atomist/automation-client";
+import {
+    GitHubDotComBase,
+    isGitHubRepoRef,
+} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
+import { FileStream } from "@atomist/automation-client/lib/project/Project";
+import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
+import { fileContent } from "@atomist/automation-client/lib/util/gitHub";
 import * as stream from "stream";
 import {
     ProjectLoader,
@@ -136,7 +138,7 @@ class LazyProject extends AbstractProject implements GitProject {
         throw new Error("sync methods not supported");
     }
 
-    public async findFile(path: string): Promise<File> {
+    public async findFile(path: string): Promise<ProjectFile> {
         const file = await this.getFile(path);
         if (!file) {
             throw new Error(`No file found: '${path}'`);
@@ -144,11 +146,11 @@ class LazyProject extends AbstractProject implements GitProject {
         return file;
     }
 
-    public findFileSync(path: string): File {
+    public findFileSync(path: string): ProjectFile {
         throw new Error("sync methods not supported");
     }
 
-    public async getFile(path: string): Promise<File | undefined> {
+    public async getFile(path: string): Promise<ProjectFile | undefined> {
         if (this.materializing) {
             return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
@@ -160,7 +162,7 @@ class LazyProject extends AbstractProject implements GitProject {
                 this.id.owner,
                 this.id.repo,
                 path);
-            return !!content ? new InMemoryFile(path, content) : undefined;
+            return !!content ? new InMemoryProjectFile(path, content) : undefined;
         }
         this.materializeIfNecessary(`getFile(${path})`);
         return this.projectPromise.then(mp => mp.getFile(path)) as any;

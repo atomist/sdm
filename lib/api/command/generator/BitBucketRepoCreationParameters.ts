@@ -18,12 +18,12 @@ import {
     BitBucketServerRepoRef,
     MappedParameter,
     MappedParameters,
-    NewRepoCreationParameters,
     ProjectOperationCredentials,
     RemoteRepoRef,
     Secret,
     Secrets,
 } from "@atomist/automation-client";
+import { NewRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/NewRepoCreationParameters";
 
 // TODO could this be universal
 export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {

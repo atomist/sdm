@@ -16,30 +16,30 @@
 
 import {
     addAtomistWebhook,
-    AnyProjectEditor,
-    CommandDetails,
-    commandHandlerFrom,
-    generate,
     GitProject,
-    HandleCommand,
     HandlerContext,
-    isGitHubRepoRef,
-    isProject,
-    isRemoteRepoRef,
     Maker,
     OnCommand,
     Project,
-    ProjectAction,
     ProjectPersister,
     QueryNoCacheOptions,
-    RedirectResult,
     RemoteRepoRef,
     RepoCreationParameters,
-    RepoLoader,
     RepoRef,
     SeedDrivenGeneratorParameters,
-    toFactory,
 } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { RedirectResult } from "@atomist/automation-client/lib/HandlerResult";
+import { commandHandlerFrom } from "@atomist/automation-client/lib/onCommand";
+import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { ProjectAction } from "@atomist/automation-client/lib/operations/common/projectAction";
+import { isRemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
+import { AnyProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { generate } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
+import { isProject } from "@atomist/automation-client/lib/project/Project";
+import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";

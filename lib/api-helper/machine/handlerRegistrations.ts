@@ -15,38 +15,42 @@
  */
 
 import {
-    andFilter,
-    chainEditors,
-    CommandDetails,
-    declareMappedParameter,
-    declareParameter,
-    declareSecret,
-    doWithAllRepos,
-    editAll,
     editModes,
-    EditResult,
-    eventHandlerFrom,
-    failedEdit,
-    GitHubRepoCreationParameters,
     GitHubRepoRef,
     GitProject,
-    HandleCommand,
-    HandleEvent,
     HandlerContext,
-    isProject,
     logger,
     Maker,
     NoParameters,
     OnCommand,
     Project,
-    ProjectEditor,
     RemoteRepoRef,
+    Success,
     RepoFinder,
     RepoLoader,
-    Success,
-    successfulEdit,
-    toFactory,
 } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import {
+    declareMappedParameter,
+    declareParameter,
+    declareSecret,
+} from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
+import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
+import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+import { doWithAllRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
+import { editAll } from "@atomist/automation-client/lib/operations/edit/editAll";
+import {
+    EditResult,
+    failedEdit,
+    ProjectEditor,
+    successfulEdit,
+} from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
+import { isProject } from "@atomist/automation-client/lib/project/Project";
+import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";

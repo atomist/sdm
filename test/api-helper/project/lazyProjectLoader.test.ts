@@ -17,7 +17,7 @@
 import {
     GitHubRepoRef,
     GitProject,
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
     Project,
     projectUtils,
@@ -97,7 +97,7 @@ describe("LazyProjectLoader", () => {
 
     it("should commit and push", async () => {
         const id = GitHubRepoRef.from({ owner: "this.is.invalid", repo: "nonsense", branch: "master" });
-        const raw = InMemoryProject.from(id, new InMemoryFile("a", "b")) as any as GitProject;
+        const raw = InMemoryProject.from(id, new InMemoryProjectFile("a", "b")) as any as GitProject;
         let commits = 0;
         let pushes = 0;
         raw.commit = async () => {

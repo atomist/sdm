@@ -15,8 +15,8 @@
  */
 
 import {
-    isGitHubTeamMember,
     TokenCredentials,
+    secured
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import {
@@ -47,7 +47,7 @@ export function githubTeamVoter(team: string = "atomist-automation"): GoalApprov
         const login = _.get(result, "Team[0].chatTeams[0].members[0].person.gitHubId.login", approval.userId);
         const apiUrl = _.get(result, "Team[0].orgs[0].provider.apiUrl");
 
-        if (await isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
+        if (await secured.isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
             return {
                 vote: GoalApprovalRequestVote.Granted,
             };

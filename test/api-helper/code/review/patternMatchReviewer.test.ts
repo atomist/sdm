@@ -16,7 +16,7 @@
 
 import {
     AllFiles,
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
@@ -33,7 +33,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: /t.*/,
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryFile("a", "b"));
+        const project = InMemoryProject.of(new InMemoryProjectFile("a", "b"));
         const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 0);
     });
@@ -46,7 +46,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: /t.*/,
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
+        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
         const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
@@ -60,7 +60,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
+        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
         const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 0);
     });
@@ -73,7 +73,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs suck test"));
+        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs suck test"));
         const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
@@ -87,7 +87,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs /[&(* suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs /[&(* suck test"));
+        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs /[&(* suck test"));
         const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");

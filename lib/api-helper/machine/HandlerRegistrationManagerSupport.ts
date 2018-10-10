@@ -15,11 +15,11 @@
  */
 
 import {
-    HandleCommand,
-    HandleEvent,
-    Maker,
     NoParameters,
 } from "@atomist/automation-client";
+import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
 import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";

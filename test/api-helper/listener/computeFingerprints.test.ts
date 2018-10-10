@@ -17,7 +17,7 @@
 import { computeFingerprints } from "../../../lib/api-helper/listener/computeFingerprints";
 
 import {
-    InMemoryFile,
+    InMemoryProjectFile,
     InMemoryProject,
     SimpleRepoId,
 } from "@atomist/automation-client";
@@ -49,7 +49,7 @@ describe("computeFingerprints", () => {
         const cri: PushImpactListenerInvocation = {
             project: InMemoryProject.from(
                 new SimpleRepoId("a", "b"),
-                new InMemoryFile("thing", "1")),
+                new InMemoryProjectFile("thing", "1")),
         } as any as PushImpactListenerInvocation;
         const r = await computeFingerprints(cri, [async i => ({
             name: "foo",

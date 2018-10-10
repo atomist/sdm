@@ -15,10 +15,10 @@
  */
 
 import {
-    EditResult,
     NoParameters,
     Project,
 } from "@atomist/automation-client";
+import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 export type TransformResult = EditResult;

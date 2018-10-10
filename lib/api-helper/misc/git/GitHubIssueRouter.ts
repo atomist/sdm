@@ -16,11 +16,11 @@
 
 import {
     Issue,
-    isTokenCredentials,
     ProjectOperationCredentials,
     raiseIssue,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 /**
