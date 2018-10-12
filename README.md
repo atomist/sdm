@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/SDM-Logo-Dark.png">
+  <img src="https://images.atomist.com/sdm/SDM-Logo-Dark.png">
 </p>
 
 # Software Delivery Machine - `@atomist/sdm`
@@ -11,9 +11,10 @@ This is the home of the Software Delivery Machine (SDM) framework and
 related projects.
 
 The SDM framework enables you to control your delivery process in
-code.  Think of it as an API for your software delivery.  See this
-[introduction][atomist-doc] for more information on the concept of a
-Software Delivery Machine and how to create and develop on an SDM.
+code.  Think of it as an API for your software delivery.  See the
+[Atomist documentation][atomist-doc] for more information on the
+concept of a software delivery machine and how to create and develop
+an SDM.
 
 [atomist-doc]: https://docs.atomist.com/ (Atomist Documentation)
 
@@ -43,12 +44,12 @@ behavior to code-of-conduct@atomist.com.
 Please see [docs.atomist.com][atomist-doc] for
 [developer][atomist-sdm] documentation.
 
-* API docs on this project: [@atomist/sdm TypeDoc][typedoc]
-* List of third-party OSS licenses: [@atomist/sdm OSS licenses][licenses]
+-   API documentation for this project: [@atomist/sdm TypeDoc][typedoc]
+-   List of third-party OSS licenses used in this project: [@atomist/sdm OSS licenses][licenses]
 
-[atomist-sdm]: https://docs.atomist.com/developer/sdm/ (Atomist - SDM)
-[typedoc]: https://atomist.github.io/sdm/ (@atomist/sdm typedoc)
-[licenses]: legal/THIRD_PARTY.md (@atomist/sdm typedoc)
+[atomist-sdm]: https://docs.atomist.com/developer/sdm/ (Atomist Documentation - SDM Developer)
+[typedoc]: https://atomist.github.io/sdm/ (@atomist/sdm TypeDoc)
+[licenses]: legal/THIRD_PARTY.md (@atomist/sdm Third-Party Licenses)
 
 ## Connect
 
@@ -103,4 +104,3 @@ Need Help?  [Join our Slack workspace][slack].
 
 [atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
 [slack]: https://join.atomist.com/ (Atomist Community Slack)
-
