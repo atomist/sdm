@@ -46,8 +46,8 @@
     "@atomist/slack-messages": ">=1.0.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.0-master.20181010081045",
-    "@atomist/slack-messages": "1.0.0",
+    "@atomist/automation-client": "1.0.0-master.20181010204819",
+    "@atomist/slack-messages": "1.0.1-master.20180830190736",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",
     "apollo-codegen": "^0.20.2",
