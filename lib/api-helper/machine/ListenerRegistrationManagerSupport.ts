@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
-import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import { GoalsSetListener } from "../../api/listener/GoalsSetListener";
 import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
@@ -32,7 +30,6 @@ import { TagListener } from "../../api/listener/TagListener";
 import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
-import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -70,8 +67,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
-    protected readonly buildListeners: BuildListener[] = [];
-
     public addStartupListener(l: StartupListener): this {
         this.startupListeners.push(l);
         return this;
@@ -104,11 +99,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addChannelLinkListener(e: ChannelLinkListener): this {
         this.channelLinkListeners.push(e);
-        return this;
-    }
-
-    public addBuildListener(e: BuildListener): this {
-        this.buildListeners.push(e);
         return this;
     }
 

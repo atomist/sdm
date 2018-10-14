@@ -67,13 +67,6 @@ export interface ListenerRegistrationManager {
     addChannelLinkListener(l: ChannelLinkListener);
 
     /**
-     * Add a listener that react to builds. Listeners will get multiple
-     * calls for each build as builds start and complete.
-     * @param {BuildListener} l
-     */
-    addBuildListener(l: BuildListener);
-
-    /**
      * You probably mean to use addFirstPushListener!
      * This responds to a repo creation, but there may be no
      * code in it. The invocation's addressChannels method with have no effect:
