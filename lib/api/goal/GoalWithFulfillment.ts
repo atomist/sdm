@@ -117,7 +117,7 @@ export interface FulfillableGoalDetails {
         waitingForPreApproval?: string;
         canceled?: string;
         stopped?: string;
-    }
+    };
 }
 
 /**
@@ -270,7 +270,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
             retryFeasible: goalDetails.retry,
             isolated: goalDetails.isolate,
             ...descriptions,
-        }
+        };
     }
 }
 
