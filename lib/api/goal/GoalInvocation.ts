@@ -72,3 +72,27 @@ export interface GoalInvocation extends RepoContext {
     progressLog: ProgressLog;
 
 }
+
+/**
+ * Convenience function that takes a PrepareForGoalExecution and invokes it for after goal project events.
+ * @param listener
+ */
+export function afterListener(listener: PrepareForGoalExecution): GoalProjectListener {
+    return async (p, r, event) => {
+        if (event === GoalProjectListenerEvent.after) {
+            return listener(p, r);
+        }
+    };
+}
+
+/**
+ * Convenience function that takes a PrepareForGoalExecution and invokes it for before goal project events.
+ * @param listener
+ */
+export function beforeListener(listener: PrepareForGoalExecution): GoalProjectListener {
+    return async (p, r, event) => {
+        if (event === GoalProjectListenerEvent.before) {
+            return listener(p, r);
+        }
+    };
+}
