@@ -15,6 +15,7 @@
  */
 
 import {
+    configurationValue,
     HandlerContext,
     logger,
     QueryNoCacheOptions,
@@ -49,12 +50,15 @@ export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef
 
 export async function fetchCommitForSdmGoal(ctx: HandlerContext,
                                             goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
-    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
+    const variables = { sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch };
     const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
         {
-            options: QueryNoCacheOptions,
             name: "CommitForSdmGoal",
-            variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch},
+            variables: { sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch },
+            options: {
+                ...QueryNoCacheOptions,
+                log: configurationValue<boolean>("sdm.goal.logging", false),
+            },
         });
     if (!result || !result.Commit || result.Commit.length === 0) {
         throw new Error("No commit found for goal " + stringify(variables));
@@ -104,6 +108,9 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
                 branch: goals[0].branch,
                 sha: goals[0].sha,
             },
+            options: {
+                log: configurationValue<boolean>("sdm.goal.logging", false),
+            },
         });
         return goals.map(g => {
             const goal = (_.cloneDeep(g) as SdmGoalEvent);
@@ -146,7 +153,10 @@ function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: st
                 qty: size,
                 offset,
             },
-            options: QueryNoCacheOptions,
+            options: {
+                ...QueryNoCacheOptions,
+                log: configurationValue<boolean>("sdm.goal.logging", false),
+            },
         });
     };
 }
