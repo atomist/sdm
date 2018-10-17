@@ -32,7 +32,7 @@ import {
     SdmGoalRepo,
     SdmGoalsForCommit,
 } from "../../typings/types";
-import { goalKeyString } from "./sdmGoal";
+import { goalKeyString } from "./sdmGoal";                   
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoalEvent> {
@@ -57,7 +57,7 @@ export async function fetchCommitForSdmGoal(ctx: HandlerContext,
             variables: { sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch },
             options: {
                 ...QueryNoCacheOptions,
-                log: configurationValue<boolean>("sdm.goal.logging", false),
+                log: configurationValue<boolean>("sdm.query.logging", false),
             },
         });
     if (!result || !result.Commit || result.Commit.length === 0) {
@@ -109,7 +109,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
                 sha: goals[0].sha,
             },
             options: {
-                log: configurationValue<boolean>("sdm.goal.logging", false),
+                log: configurationValue<boolean>("sdm.query.logging", false),
             },
         });
         return goals.map(g => {
@@ -155,7 +155,7 @@ function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: st
             },
             options: {
                 ...QueryNoCacheOptions,
-                log: configurationValue<boolean>("sdm.goal.logging", false),
+                log: configurationValue<boolean>("sdm.query.logging", false),
             },
         });
     };
