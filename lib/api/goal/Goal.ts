@@ -56,6 +56,7 @@ export interface GoalDefinition {
     waitingForPreApprovalDescription?: string;
     canceledDescription?: string;
     stoppedDescription?: string;
+    skippedDescription?: string;
 
     // when set to true, this goal will execute in its own container/client
     isolated?: boolean;
@@ -77,6 +78,7 @@ export class Goal {
 
     public readonly context: GitHubStatusContext;
     public readonly name: string;
+    public readonly uniqueName: string;
     public readonly definition: GoalDefinition;
 
     get environment() {
@@ -116,7 +118,11 @@ export class Goal {
     }
 
     get stoppedDescription() {
-        return this.definition.stoppedDescription || `Goals stopped: ${this.name}`;
+        return this.definition.stoppedDescription || `Stopped: ${this.name}`;
+    }
+
+    get skippedDescription() {
+        return this.definition.skippedDescription || `Skipped: ${this.name}`;
     }
 
     get retryIntent() {
@@ -131,6 +137,7 @@ export class Goal {
         }
         this.context = BaseContext + definition.environment + definition.uniqueName;
         this.name = definition.displayName || definition.uniqueName;
+        this.uniqueName = definition.uniqueName;
     }
 }
 

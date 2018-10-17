@@ -137,6 +137,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         preConditions.push(...goal.dependsOn.map(d => ({
             goalSet,
             name: d.name,
+            uniqueName: d.uniqueName,
             environment: environmentFromGoal(d),
         })));
     }
@@ -145,7 +146,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         goalSet,
         goalSetId,
         name: goal.name,
-        uniqueName: goal.definition.uniqueName,
+        uniqueName: goal.uniqueName,
         environment,
         fulfillment,
         sha: id.sha,
@@ -201,7 +202,7 @@ export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
         case SdmGoalState.failure:
             return goal.failureDescription;
         case SdmGoalState.skipped:
-            return "Skipped";
+            return goal.skippedDescription;
         case SdmGoalState.canceled:
             return goal.canceledDescription;
         case SdmGoalState.stopped:

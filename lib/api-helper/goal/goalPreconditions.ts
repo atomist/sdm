@@ -18,6 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { sprintf } from "sprintf-js";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
+import { SdmGoalState } from "../../typings/types";
 import {
     goalKeyString,
     mapKeyToGoal,
@@ -36,7 +37,7 @@ export function preconditionsAreMet(goal: SdmGoalEvent, info: { goalsForCommit: 
         logger.debug("Precondition not met for %s: %s", goalKeyString(goal), goalKeyString(falsification));
         return false;
     }
-    logger.debug("All %d preconditions satisfied for %s", goal.preConditions.length);
+    logger.debug("All %d preconditions satisfied for %s", goal.preConditions.length, goalKeyString(goal));
     return true;
 }
 
@@ -47,15 +48,20 @@ function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoalEvent[]):
         return true;
     }
     switch (preconditionGoal.state) {
-        case "failure":
-        case "skipped":
+        case SdmGoalState.failure:
+        case SdmGoalState.skipped:
+        case SdmGoalState.canceled:
+        case SdmGoalState.stopped:
             logger.info("Precondition %s in state %s, won't be met", goalKeyString(preconditionKey),
                 preconditionGoal.state);
             return false;
-        case "planned":
-        case "requested":
-        case "waiting_for_approval":
-        case "in_process":
+        case SdmGoalState.planned:
+        case SdmGoalState.requested:
+        case SdmGoalState.waiting_for_approval:
+        case SdmGoalState.approved:
+        case SdmGoalState.waiting_for_pre_approval:
+        case SdmGoalState.pre_approved:
+        case SdmGoalState.in_process:
             logger.debug("Not yet. %s in state %s", goalKeyString(preconditionKey),
                 preconditionGoal.state);
             return false;

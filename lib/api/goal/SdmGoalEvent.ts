@@ -31,7 +31,6 @@ import {
  * change this to be a type alias for SdmGoalFields.Fragment.
  */
 export interface SdmGoalEvent extends SdmGoalKey {
-    uniqueName: string;
     sha: string;
     branch: string;
 

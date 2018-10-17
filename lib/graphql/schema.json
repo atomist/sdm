@@ -111245,6 +111245,19 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "directives": []
+            },
+            {
+              "name": "uniqueName",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
             }
           ],
           "possibleTypes": null,
@@ -115967,6 +115980,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "424bb462-4ca7-4f78-abcf-ab981e2121f5"
+    "correlation_id": "2cc05151-9f57-4b84-b947-ebb5a723fefd"
   }
 }

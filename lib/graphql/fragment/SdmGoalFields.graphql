@@ -21,6 +21,7 @@ fragment SdmGoalFields on SdmGoal {
   retryFeasible
   preConditions {
     environment
+    uniqueName
     name
   }
   approval {

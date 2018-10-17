@@ -41,15 +41,15 @@ export interface SdmProvenance {
 }
 
 export interface SdmGoalKey {
-    environment: string;
     name: string;
+    environment: string;
+    uniqueName: string;
 }
 
 /**
  * Data persisted in the Atomist Cortex
  */
 export interface SdmGoalMessage extends SdmGoalKey {
-    uniqueName: string;
     sha: string;
     branch: string;
 

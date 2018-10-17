@@ -99,11 +99,25 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  * specifying some aspect of the Goal that are specific to the current use case.
  */
 export interface FulfillableGoalDetails {
+    displayName?: string;
     uniqueName?: string;
     environment?: string | GoalEnvironment;
     approval?: boolean;
     preApproval?: boolean;
     retry?: boolean;
+    isolate?: boolean;
+
+    descriptions?: {
+        planned?: string;
+        requested?: string;
+        completed?: string;
+        inProcess?: string;
+        failed?: string;
+        waitingForApproval?: string;
+        waitingForPreApproval?: string;
+        canceled?: string;
+        stopped?: string;
+    }
 }
 
 /**
@@ -229,24 +243,34 @@ export class GoalWithFulfillment extends FulfillableGoal {
 }
 
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string): {
-                                            uniqueName: string,
-                                            environment?: GoalEnvironment,
-                                            approvalRequired?: boolean,
-                                            preApprovalRequired?: boolean,
-                                            retryFeasible?: boolean }  {
+                                      uniqueName: string): { uniqueName: string } | GoalDefinition {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
         };
     } else {
+        const descriptions: Partial<GoalDefinition> = {};
+        if (goalDetails.descriptions) {
+            descriptions.canceledDescription = goalDetails.descriptions.canceled;
+            descriptions.completedDescription = goalDetails.descriptions.completed;
+            descriptions.failedDescription = goalDetails.descriptions.failed;
+            descriptions.plannedDescription = goalDetails.descriptions.planned;
+            descriptions.requestedDescription = goalDetails.descriptions.requested;
+            descriptions.stoppedDescription = goalDetails.descriptions.stopped;
+            descriptions.waitingForApprovalDescription = goalDetails.descriptions.waitingForApproval;
+            descriptions.waitingForPreApprovalDescription = goalDetails.descriptions.waitingForPreApproval;
+            descriptions.workingDescription = goalDetails.descriptions.inProcess;
+        }
         return {
+            displayName: goalDetails.displayName,
             uniqueName: goalDetails.uniqueName || uniqueName,
             environment: getEnvironment(goalDetails),
             approvalRequired: goalDetails.approval,
             preApprovalRequired: goalDetails.preApproval,
             retryFeasible: goalDetails.retry,
-        };
+            isolated: goalDetails.isolate,
+            ...descriptions,
+        }
     }
 }
 

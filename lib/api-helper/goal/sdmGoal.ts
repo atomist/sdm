@@ -26,9 +26,9 @@ export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) 
 
 export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
     return a.environment === b.environment &&
-        a.name === b.name;
+        a.uniqueName === b.uniqueName;
 }
 
 export function goalKeyString(gk: SdmGoalKey): string {
-    return sprintf("%s in %s", gk.name, gk.environment);
+    return sprintf("%s in %s", gk.uniqueName, gk.environment);
 }

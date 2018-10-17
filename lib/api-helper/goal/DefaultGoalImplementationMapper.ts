@@ -53,7 +53,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     public addImplementation(implementation: GoalImplementation): this {
         if (this.implementations.some(i =>
             i.implementationName === implementation.implementationName &&
-            i.goal.definition.uniqueName === implementation.goal.definition.uniqueName &&
+            i.goal.uniqueName === implementation.goal.uniqueName &&
             i.goal.environment === implementation.goal.environment)) {
             throw new Error(`Implementation with name '${implementation.implementationName
                 }' already registered for goal '${implementation.goal.name}'`);
@@ -76,7 +76,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
         const implementationsForGoal = this.implementations.filter(
-            m => m.goal.definition.uniqueName === goal.definition.uniqueName &&
+            m => m.goal.uniqueName === goal.uniqueName &&
                 m.goal.environment === goal.environment);
 
         const matchingFulfillments: GoalImplementation[] = [];
@@ -87,14 +87,14 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         }
 
         if (matchingFulfillments.length > 1) {
-            throw new Error(`Multiple matching implementations for goal '${goal.definition.uniqueName}' found: '${
+            throw new Error(`Multiple matching implementations for goal '${goal.uniqueName}' found: '${
                 matchingFulfillments.map(f => f.implementationName).join(", ")}'`);
         } else if (matchingFulfillments.length === 1) {
             return matchingFulfillments[0];
         }
 
         const knownSideEffects = this.sideEffects.filter(
-            m => m.goal.definition.uniqueName === goal.definition.uniqueName &&
+            m => m.goal.uniqueName === goal.uniqueName &&
                 m.goal.environment === goal.environment);
         for (const sideEffect of knownSideEffects) {
             if (await sideEffect.pushTest.mapping(inv)) {
@@ -106,7 +106,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[] {
         return this.callbacks.filter(c =>
-            c.goal.definition.uniqueName === g.uniqueName &&
+            c.goal.uniqueName === g.uniqueName &&
             // This slice is required because environment is suffixed with /
             (c.goal.definition.environment.slice(0, -1) === g.environment
                 || c.goal.definition.environment === g.environment));
@@ -114,7 +114,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public findGoalBySdmGoal(sdmGoal: SdmGoalEvent): Goal | undefined {
         return this.goals.find(g =>
-            g.definition.uniqueName === sdmGoal.uniqueName &&
+            g.uniqueName === sdmGoal.uniqueName &&
             // This slice is required because environment is suffixed with /
             (g.definition.environment.slice(0, -1) === g.environment
                 || g.definition.environment === g.environment),
@@ -122,11 +122,11 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     }
 
     private addGoal(goal: Goal): void {
-        const existingGoal = this.goals.find(g => g.definition.uniqueName === goal.definition.uniqueName);
+        const existingGoal = this.goals.find(g => g.uniqueName === goal.uniqueName);
         if (!existingGoal) {
             this.goals.push(goal);
         } else if (existingGoal !== goal) {
-            throw new Error(`Goal with uniqueName '${goal.definition.uniqueName}' already registered`);
+            throw new Error(`Goal with uniqueName '${goal.uniqueName}' already registered`);
         }
     }
 }
