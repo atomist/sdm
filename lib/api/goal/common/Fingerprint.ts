@@ -43,7 +43,6 @@ export class Fingerprint
         super({
             ...FingerprintDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
-            displayName: "fingerprint",
         }, ...dependsOn);
 
         this.addFulfillment({

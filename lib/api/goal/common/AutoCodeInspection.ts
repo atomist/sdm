@@ -40,7 +40,6 @@ export class AutoCodeInspection
         super({
             ...CodeInspectionDefintion,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
-            displayName: "code-inspections",
         }, ...dependsOn);
 
         this.addFulfillment({

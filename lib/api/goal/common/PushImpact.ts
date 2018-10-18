@@ -42,7 +42,6 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
         super({
             ...PushImpactDefinition,
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
-            displayName: "push-impact",
         }, ...dependsOn);
 
         this.addFulfillment({
