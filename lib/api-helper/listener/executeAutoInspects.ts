@@ -73,11 +73,11 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
 
 // tslint:disable
 /**
- * each inspection can return a result, which may be turned into a PushImpactResponse by its onInspectionResult,
+ * Each inspection can return a result, which may be turned into a PushImpactResponse by its onInspectionResult,
  * OR it may return a ProjectReview, which will be processed by each ProjectReviewListener. The Listener may also return a PushImpactResponse.
  * Each of these PushReactionResponses may instruct the AutoInspect goal to fail or to require approval.
  *
- * ROD: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
+ * confirm: which of these paths is deprecated? I'm guessing the ReviewListener is deprecated
  * and the onInspectionResult is the way to do this in the future.
  *
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼     per AutoInspectRegistration      ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼              ▽▽▽▽▽▽▽▽  per Listener  ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
@@ -110,10 +110,13 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
  *                              │  Error   │                (errors are
  *                              └──────────┘                  ignored)
  */
-
 // tslint:enable
+
 /**
- * Apply code inspections
+ * Apply code inspections.
+ *
+ * Check the source code for a diagram.
+ *
  * @param goalInvocation
  * @param autoInspectRegistrations
  * @param reviewListeners
