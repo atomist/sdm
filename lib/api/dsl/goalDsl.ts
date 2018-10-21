@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Goals, goals } from "../goal/Goals";
+import {
+    goals,
+    Goals,
+} from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
