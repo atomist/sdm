@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Reading projectConfigurationValue falls back to SDM config. [49d928a](https://github.com/atomist/sdm/commit/49d928a5e1fa57d3e0e0fe22afcad5ebcf3a521c)
 -   Add convenience goal project listeners for after and before. [4b8ab7e](https://github.com/atomist/sdm/commit/4b8ab7ef410d2965377f52ea9bde23314639d3ef)
+-   Add `setNoMoreGoals` to push rule DSL
 
 ## [1.0.0-RC.1](https://github.com/atomist/sdm/compare/1.0.0-M.5...1.0.0-RC.1) - 2018-10-15
 

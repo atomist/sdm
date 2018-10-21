@@ -43,14 +43,14 @@ export class GoalSetterMapping extends PushRule<Goals> {
         super(guard1, guards, reason);
     }
 
-    public setGoals(goals: GoalComponent): this {
-        if (goals && (goals as Goals).name) {
-            this.goalsName = (goals as Goals).name;
+    public setGoals(goalComponent: GoalComponent): this {
+        if (!!goalComponent && (goalComponent as Goals).name) {
+            this.goalsName = (goalComponent as Goals).name;
         }
-        if (!goals) {
-            return this.set(goals as Goals);
+        if (!goalComponent) {
+            return this.set(goalComponent as Goals);
         }
-        return this.set(toGoals(goals));
+        return this.set(toGoals(goalComponent));
     }
 
     /**
