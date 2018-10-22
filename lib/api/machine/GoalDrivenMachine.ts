@@ -41,6 +41,8 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
     readonly goalFulfillmentMapper: GoalImplementationMapper;
 
     /**
+     * (hint: prefer `withPushRules`)
+     *
      * Add goal setting contributions that will be added into SDM goal setting.
      * Decorates other goal setting behavior.
      *
@@ -51,15 +53,17 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      *   sdm.addGoalContributions(
      *       whenPushSatisfies(IsSdm, IsInLocalMode).setGoals(
      *          new Goals("delivery", LocalSdmDelivery)));
+     *
      * @param goalContributions contributions to goals
      */
     addGoalContributions(goalContributions: GoalSetter): this;
 
     /**
-     * Add goal setting contributions that will be added into the SDM goal setting via an
-     * additive goal setter.
+     * Add to the list of things an SDM
+     * can do on a push.
+     *
      * @param contributor contributor to set
-     * @param contributors contributors to set with contributor
+     * @param contributors additional contributors
      */
     withPushRules<F extends SdmContext = PushListenerInvocation>(contributor: GoalContribution<F>,
                                                                  ...contributors: Array<GoalContribution<F>>): this;

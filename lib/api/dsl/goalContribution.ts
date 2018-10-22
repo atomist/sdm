@@ -83,7 +83,11 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
 /**
  * Contribute goals based on a series of contribution rules.
+ *
+ * Instead of stopping at the first match, each push will get _all_ the goals it qualifies for.
+ *
  * Duplicates will be removed.
+ *
  * @param contributor first contributor
  * @param {GoalContribution<F>} contributors
  * @return a mapping to goals
