@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Goals } from "../goal/Goals";
+import {
+    goals,
+    Goals,
+} from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
@@ -28,6 +31,9 @@ import {
     toGoals,
 } from "./GoalComponent";
 
+/**
+ * PushRule implementation exposed in DSL. Continues fluent API.
+ */
 export class GoalSetterMapping extends PushRule<Goals> {
 
     private goalsName: string;
@@ -40,14 +46,23 @@ export class GoalSetterMapping extends PushRule<Goals> {
         super(guard1, guards, reason);
     }
 
-    public setGoals(goals: GoalComponent): this {
-        if (goals && (goals as Goals).name) {
-            this.goalsName = (goals as Goals).name;
+    public setGoals(goalComponent: GoalComponent): this {
+        if (!!goalComponent && (goalComponent as Goals).name) {
+            this.goalsName = (goalComponent as Goals).name;
         }
-        if (!goals) {
-            return this.set(goals as Goals);
+        if (!goalComponent) {
+            return this.set(goalComponent as Goals);
         }
-        return this.set(toGoals(goals));
+        return this.set(toGoals(goalComponent));
+    }
+
+    /**
+     * Prevent setting any further goals on this push. Ordering matters:
+     * goals may previously have been set.
+     * @param name name of the empty Goals. Default is "No Goals"
+     */
+    public setNoMoreGoals(name?: string): void {
+        this.setGoals(goals(name || "No Goals").andLock());
     }
 
 }
@@ -68,6 +83,6 @@ export function whenPushSatisfies(
  * PushRule that matches every push
  * @type {GoalSetterMapping}
  */
-export function onAnyPush() {
+export function onAnyPush(): GoalSetterMapping {
     return new GoalSetterMapping(AnyPush, [], "On any push");
 }
