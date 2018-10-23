@@ -33,20 +33,20 @@ export enum MockGoalSize {
  * Options to configure mocks for one particular goal
  */
 export interface MockGoal {
-    goal: Goal,
-    size: MockGoalSize | number,
-    result?: number,
-    mock?: ExecuteGoal,
+    goal: Goal;
+    size: MockGoalSize | number;
+    result?: number;
+    mock?: ExecuteGoal;
 }
 
 /**
  * Options for the mock goal executor support
  */
 export interface MockOptions {
-    enabled: boolean,
-    defaultSize?: MockGoalSize | number,
-    goals?: Array<MockGoal>,
-    randomBy?: number,
+    enabled: boolean;
+    defaultSize?: MockGoalSize | number;
+    goals?: MockGoal[];
+    randomBy?: number;
 }
 
 /**
@@ -103,10 +103,10 @@ function createGoalExecutor(seconds: number, code: number = 0): ExecuteGoal {
     return async gi => {
         gi.progressLog.write(`Waiting for ${seconds}s`);
         await wait(seconds);
-        gi.progressLog.write(`Finished waiting for ${seconds}s`)
+        gi.progressLog.write(`Finished waiting for ${seconds}s`);
         return {
             code,
-        }
+        };
     };
 }
 
