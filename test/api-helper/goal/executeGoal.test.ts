@@ -115,7 +115,8 @@ describe("executeGoal", () => {
                     //   const result = Success;
                     assert.equal(result.code, 0, result.message);
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
-                });
+                })
+                .catch(err => assert.fail(err));
         }).then(done, done);
     }).timeout(10000);
 
