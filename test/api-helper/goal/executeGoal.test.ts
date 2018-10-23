@@ -86,8 +86,7 @@ describe("executeGoal", () => {
         delete (global as any).__runningAutomationClient;
     });
 
-    // I can't work why this fails in the cloud SDM
-    it.skip("calls a pre-hook and sends output to the log", done => {
+    it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
         createEphemeralProgressLog(fakeContext(),
@@ -117,9 +116,8 @@ describe("executeGoal", () => {
                     assert.equal(result.code, 0, result.message);
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 })
-                .catch(err => assert.fail(err));
         }).then(done, done);
-    }).timeout(10000);
+    }).timeout(40000);
 
     describe("prepareGoalInvocation", () => {
 
