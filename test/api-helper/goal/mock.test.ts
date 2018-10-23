@@ -77,7 +77,7 @@ describe("mock", () => {
             assert(!!mockGoalExecutor(new Autofix(), goal, config as any));
         });
 
-        it("should return provided mock goal executor", () => {
+        it("should return provided mock goal executor", async () => {
             const autofix = new Autofix();
             let executed = false;
             const config = {
@@ -98,7 +98,7 @@ describe("mock", () => {
 
                 },
             };
-            mockGoalExecutor(autofix, goal, config as any)({} as any);
+            await mockGoalExecutor(autofix, goal, config as any)({} as any);
             assert(executed);
         });
 
@@ -106,7 +106,7 @@ describe("mock", () => {
             const config = {
                 sdm: {
                     mock: {
-                        enabled: (goal: SdmGoalEvent) => goal.push.after.message.includes("test"),
+                        enabled: (g: SdmGoalEvent) => g.push.after.message.includes("test"),
                     },
                 },
             };
