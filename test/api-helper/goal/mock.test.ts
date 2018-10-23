@@ -29,10 +29,9 @@ describe("mock", () => {
             const verify = (size, randomBy = 0.2) => {
                 const min = size - (size * randomBy);
                 const max = size + (size * randomBy);
-                const number = randomize(size, randomBy);
-                assert(number => min);
-                assert(number <= max);
-                console.log(number);
+                const result = randomize(size, randomBy);
+                assert(result >= min);
+                assert(result <= max);
             };
 
             verify(MockGoalSize.ExtraLarge);
