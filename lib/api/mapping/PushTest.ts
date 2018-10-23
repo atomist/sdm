@@ -21,7 +21,9 @@ import { PushMapping } from "./PushMapping";
 /**
  * Special PushMapping. Return true if we like this push. Used in goal setting etc.
  */
-export type PushTest = PushMapping<boolean>;
+export interface PushTest extends PushMapping<boolean> {
+
+}
 
 /**
  * Test against a project
