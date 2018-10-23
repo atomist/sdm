@@ -36,6 +36,9 @@ export function fakePush(project?: Project, pli: Partial<PushListenerInvocation>
         push: {
             id: new Date().getTime() + "_",
             branch: "master",
+            after: {
+                message: "Some fake commit",
+            },
         },
         project: project as GitProject,
         context: fakeContext(),
