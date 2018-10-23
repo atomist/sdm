@@ -41,6 +41,7 @@ import {
     GoalExecutionListener,
     GoalExecutionListenerInvocation,
 } from "../../api/listener/GoalStatusListener";
+import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -52,6 +53,7 @@ import { reportFailureInterpretation } from "../misc/reportFailureInterpretation
 import { serializeResult } from "../misc/result";
 import { spawnAndWatch } from "../misc/spawned";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
+import { mockGoalExecutor } from "./mock";
 import {
     descriptionFromState,
     updateGoal,
@@ -88,8 +90,8 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   implementation: GoalImplementation,
                                   goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
-    const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials } = goalInvocation;
-    const { progressReporter, goalExecutor, logInterpreter, projectListeners } = implementation;
+    const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
+    const { progressReporter, logInterpreter, projectListeners } = implementation;
     const implementationName = sdmGoal.fulfillment.name;
 
     if (!!progressReporter) {
@@ -124,7 +126,8 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await goalExecutor(prepareGoalInvocation(goalInvocation, projectListeners))
+        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, configuration)
+            (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -351,6 +354,16 @@ async function reportGoalError(parameters: {
     } else {
         // We don't have an interpretation available. Just report
         await addressChannels("Failure executing goal: " + err.message);
+    }
+}
+
+export function prepareGoalExecutor(gi: GoalImplementation,
+                                    configuration: SoftwareDeliveryMachineConfiguration): ExecuteGoal {
+    const mge = mockGoalExecutor(gi.goal, configuration);
+    if (mge) {
+        return mge;
+    } else {
+        return gi.goalExecutor;
     }
 }
 
