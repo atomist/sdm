@@ -70,11 +70,14 @@ export function mockGoalExecutor(goal: Goal,
                                  configuration: SoftwareDeliveryMachineConfiguration): ExecuteGoal | undefined {
     const options = _.merge(DefaultMockOptions, _.get(configuration, "sdm.mock", {})) as MockOptions;
 
+    let enabled;
     if (typeof options.enabled === "boolean") {
-        options.enabled = () => options.enabled as boolean;
+        enabled = options.enabled;
+    } else {
+        enabled = options.enabled(sdmGoal);
     }
 
-    if (options && options.enabled(sdmGoal)) {
+    if (enabled) {
         const mock = options.goals.find(g => g.goal === goal);
         if (mock) {
             if (mock.mock) {

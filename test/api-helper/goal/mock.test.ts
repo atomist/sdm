@@ -16,15 +16,19 @@
 
 import assert = require("power-assert");
 import {
+    mockGoalExecutor,
     MockGoalSize,
     randomize,
 } from "../../../lib/api-helper/goal/mock";
+import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
+import { Autofix } from "../../../lib/api/goal/common/Autofix";
+import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("mock", () => {
 
     describe("randomize", () => {
 
-        it("test size", () => {
+        it("should return correct random period", () => {
 
             const verify = (size, randomBy = 0.2) => {
                 const min = size - (size * randomBy);
@@ -48,6 +52,68 @@ describe("mock", () => {
             verify(MockGoalSize.Medium);
             verify(MockGoalSize.Medium);
 
+        });
+
+    });
+
+    describe("mockGoalExecutor", () => {
+
+        const goal: SdmGoalEvent = {
+            push: fakePush().push,
+        } as any;
+
+        it("should return no mock goal executor if not enabled", () => {
+            assert(!mockGoalExecutor(new Autofix(), goal, {} as any));
+        });
+
+        it("should return mock goal executor with boolean enable", () => {
+            const config = {
+                sdm: {
+                    mock: {
+                        enabled: true,
+                    },
+                },
+            };
+            assert(!!mockGoalExecutor(new Autofix(), goal, config as any));
+        });
+
+        it("should return provided mock goal executor", () => {
+            const autofix = new Autofix();
+            let executed = false;
+            const config = {
+                sdm: {
+                    mock: {
+                        enabled: true,
+                        goals: [{
+                            goal: autofix,
+                            mock: () => {
+                                executed = true;
+                                return {
+                                    code: 0,
+                                };
+                            },
+                        },
+                        ],
+                    },
+
+                },
+            };
+            mockGoalExecutor(autofix, goal, config as any)({} as any);
+            assert(executed);
+        });
+
+        it("should return mock goal executor with enable function", () => {
+            const config = {
+                sdm: {
+                    mock: {
+                        enabled: (goal: SdmGoalEvent) => goal.push.after.message.includes("test"),
+                    },
+                },
+            };
+            goal.push.after.message = "Fix tests";
+            assert(!!mockGoalExecutor(new Autofix(), goal, config as any));
+            goal.push.after.message = "No more";
+            assert(!mockGoalExecutor(new Autofix(), goal, config as any));
         });
 
     });
