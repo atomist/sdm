@@ -23,6 +23,8 @@ import {
     FalsePushTest,
     TruePushTest,
 } from "../mapping/support/pushTestUtils.test";
+import { CompositionStyle } from "../../../lib/api/mapping/PredicateMapping";
+import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
@@ -31,53 +33,77 @@ const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
 
 describe("whenPushSatisfies", () => {
 
-    it("should satisfy function returning true", async () => {
-        const test = whenPushSatisfies(() => true).itMeans("war").setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), SomeGoalSet);
+    describe("basic operation", () => {
+
+        it("should satisfy function returning true", async () => {
+            const test = whenPushSatisfies(() => true).itMeans("war").setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), SomeGoalSet);
+        });
+
+        it("should not satisfy function returning false", async () => {
+            const test = whenPushSatisfies(() => false).itMeans("war").setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), undefined);
+        });
+
+        it("should satisfy function returning promise true", async () => {
+            const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), SomeGoalSet);
+        });
+
+        it("should allow setting array of goals", async () => {
+            const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet.goals);
+            assert.deepEqual((await test.mapping(fakePush())).goals, SomeGoalSet.goals);
+        });
+
+        it("should not satisfy function returning promise false", async () => {
+            const test = whenPushSatisfies(async () => false).itMeans("war").setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), undefined);
+        });
+
+        it("should default name with one", async () => {
+            const test = whenPushSatisfies(TruePushTest).setGoals(SomeGoalSet);
+            assert.equal(test.name, TruePushTest.name);
+        });
+
+        it("should override name with one", async () => {
+            const test = whenPushSatisfies(TruePushTest).itMeans("something").setGoals(SomeGoalSet);
+            assert.equal(test.name, "something");
+        });
+
+        it("should default name with two", async () => {
+            const test = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
+            assert.equal(test.name, TruePushTest.name + " && " + FalsePushTest.name);
+        });
+
+        it("should allow simple function", async () => {
+            const test = whenPushSatisfies(async p => true).setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), SomeGoalSet);
+        });
+
+        it("should allow simple function returning false", async () => {
+            const test = whenPushSatisfies(async p => p.push.id === "notThis").setGoals(SomeGoalSet);
+            assert.equal(await test.mapping(fakePush()), undefined);
+        });
+
     });
 
-    it("should not satisfy function returning false", async () => {
-        const test = whenPushSatisfies(() => false).itMeans("war").setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), undefined);
-    });
+    describe("internal structure", () => {
 
-    it("should satisfy function returning promise true", async () => {
-        const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), SomeGoalSet);
-    });
+        it("should expose structure", async () => {
+            const wps = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
+            const structure = wps.pushTest.structure;
+            assert(!!structure);
+            assert.equal(structure.compositionStyle, CompositionStyle.And);
+            assert.equal(structure.components.length, 2);
+        });
 
-    it("should allow setting array of goals", async () => {
-        const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet.goals);
-        assert.deepEqual((await test.mapping(fakePush())).goals, SomeGoalSet.goals);
-    });
+        it("should expose nested structure", async () => {
+            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
+            const structure = wps.pushTest.structure;
+            assert(!!structure);
+            assert.equal(structure.compositionStyle, CompositionStyle.And);
+            assert.equal(structure.components.length, 2);
+        });
 
-    it("should not satisfy function returning promise false", async () => {
-        const test = whenPushSatisfies(async () => false).itMeans("war").setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), undefined);
-    });
-
-    it("should default name with one", async () => {
-        const test = whenPushSatisfies(TruePushTest).setGoals(SomeGoalSet);
-        assert.equal(test.name, TruePushTest.name);
-    });
-
-    it("should override name with one", async () => {
-        const test = whenPushSatisfies(TruePushTest).itMeans("something").setGoals(SomeGoalSet);
-        assert.equal(test.name, "something");
-    });
-
-    it("should default name with two", async () => {
-        const test = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
-        assert.equal(test.name, TruePushTest.name + " && " + FalsePushTest.name);
-    });
-
-    it("should allow simple function", async () => {
-        const test = whenPushSatisfies(async p => true).setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), SomeGoalSet);
-    });
-
-    it("should allow simple function returning false", async () => {
-        const test = whenPushSatisfies(async p => p.push.id === "notThis").setGoals(SomeGoalSet);
-        assert.equal(await test.mapping(fakePush()), undefined);
     });
 });

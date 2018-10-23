@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PredicateMapping } from "../PredicateMapping";
+import { CompositionStyle, PredicateMapping } from "../PredicateMapping";
 import { DefaultPredicateMappingCostAnalyzer } from "./defaultPredicateMappingCostAnalyzer";
 import {
     ExpectedPredicateMappingCost,
@@ -29,6 +29,10 @@ export function whenNot<F>(t: PredicateMapping<F>): PredicateMapping<F> {
     return {
         name: `not (${t.name})`,
         mapping: async pi => !(await t.mapping(pi)),
+        structure: {
+            components: [t],
+            compositionStyle: CompositionStyle.Not,
+        },
     };
 }
 
@@ -44,6 +48,10 @@ export function all<F>(predicates: Array<PredicateMapping<F>>,
     return {
         name: predicates.map(g => g.name).join(" && "),
         mapping: async pci => optimizedAndEvaluation(predicates, analyzer)(pci),
+        structure: {
+            components: predicates,
+            compositionStyle: CompositionStyle.And,
+        },
     };
 }
 
@@ -62,6 +70,10 @@ export function any<F>(predicates: Array<PredicateMapping<F>>,
             // Cannot short-circuit this
             const allResults: boolean[] = await gatherResults(predicates)(pci);
             return allResults.includes(true);
+        },
+        structure: {
+            components: predicates,
+            compositionStyle: CompositionStyle.Or,
         },
     };
 
