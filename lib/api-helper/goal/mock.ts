@@ -74,7 +74,7 @@ export function mockGoalExecutor(goal: Goal,
         options.enabled = () => options.enabled as boolean;
     }
 
-    if (options && options.enabled(sdmGoal) === true) {
+    if (options && options.enabled(sdmGoal)) {
         const mock = options.goals.find(g => g.goal === goal);
         if (mock) {
             if (mock.mock) {
