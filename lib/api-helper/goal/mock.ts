@@ -17,6 +17,7 @@
 import * as _ from "lodash";
 import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 
 /**
@@ -43,7 +44,7 @@ export interface MockGoal {
  * Options for the mock goal executor support
  */
 export interface MockOptions {
-    enabled: boolean;
+    enabled: boolean | ((goal: SdmGoalEvent) => boolean);
     defaultSize?: MockGoalSize | number;
     goals?: MockGoal[];
     randomBy?: number;
@@ -64,10 +65,12 @@ export const DefaultMockOptions: MockOptions = {
  * @param goal
  * @param configuration
  */
-export function mockGoalExecutor(goal: Goal, configuration: SoftwareDeliveryMachineConfiguration): ExecuteGoal | undefined {
+export function mockGoalExecutor(goal: Goal,
+                                 sdmGoal: SdmGoalEvent,
+                                 configuration: SoftwareDeliveryMachineConfiguration): ExecuteGoal | undefined {
     const options = _.merge(DefaultMockOptions, _.get(configuration, "sdm.mock", {})) as MockOptions;
 
-    if (options && options.enabled) {
+    if (options && (options.enabled === true || (options.enabled as any)(sdmGoal) === true)) {
         const mock = options.goals.find(g => g.goal === goal);
         if (mock) {
             if (mock.mock) {

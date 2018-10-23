@@ -126,7 +126,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, configuration)
+        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, sdmGoal, configuration)
             (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
@@ -358,8 +358,9 @@ async function reportGoalError(parameters: {
 }
 
 export function prepareGoalExecutor(gi: GoalImplementation,
+                                    sdmGoal: SdmGoalEvent,
                                     configuration: SoftwareDeliveryMachineConfiguration): ExecuteGoal {
-    const mge = mockGoalExecutor(gi.goal, configuration);
+    const mge = mockGoalExecutor(gi.goal, sdmGoal, configuration);
     if (mge) {
         return mge;
     } else {
