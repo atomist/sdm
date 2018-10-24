@@ -43,7 +43,7 @@ import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { GoalSetter } from "../../api/mapping/GoalSetter";
+import { GoalSetter, GoalSettingStructure } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
@@ -60,6 +60,7 @@ import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementati
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
+import { PushListenerInvocation } from "../../api/listener/PushListener";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.

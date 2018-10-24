@@ -59,3 +59,33 @@ export function isMapping(a: any): a is Mapping<any, any> {
     const maybe = a as Mapping<any, any>;
     return !!maybe.name && !!maybe.mapping;
 }
+
+export enum MappingCompositionStyle {
+    ApplyFunctionToOutput = "like Array.map"
+}
+
+/**
+ * Possible inner structure of Mapping, based on generic Mapping composition.
+ * F = input
+ * V = output
+ * V1 = output type of the structural components
+ */
+export interface ExplicableMapping<F, V, V1 = V> {
+    structure: {
+        components: Array<Mapping<F,V1>>,
+        compositionStyle: MappingCompositionStyle,
+    }
+}
+
+export function mapMapping<F, V1, V2>(inputMapping: Mapping<F, V1>, f: (v1: V1) => V2): Mapping<F, V2> & ExplicableMapping<F, V2, V1> {
+    return {
+        name: inputMapping.name,
+        mapping: (input: F) => {
+            return inputMapping.mapping(input).then(f);
+        },
+        structure: {
+            components: [inputMapping],
+            compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput,
+        }
+    };
+}

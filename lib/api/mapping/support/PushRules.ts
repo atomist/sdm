@@ -17,14 +17,23 @@
 import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushMapping } from "../PushMapping";
+import { toGoals } from "../../dsl/GoalComponent";
+import { GoalSettingCompositionStyle, GoalSettingStructure } from "../GoalSetter";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.
  * The value from the first matching rule will be used.
  */
-export class PushRules<V> implements PushMapping<V> {
+export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushListenerInvocation, V> {
 
     public choices: Array<PushMapping<V>> = [];
+
+    get structure() {
+        return {
+            components: this.rules,
+            compositionStyle: GoalSettingCompositionStyle.FirstMatch,
+        };
+    }
 
     /**
      * Return all possible values
@@ -33,7 +42,7 @@ export class PushRules<V> implements PushMapping<V> {
      * Passing an empty array will result in an instance that always maps to undefined,
      * and is not an error.
      */
-    constructor(public readonly name: string, rules: Array<PushMapping<V>> = []) {
+    constructor(public readonly name: string, private rules: Array<PushMapping<V>> = []) {
         if (!name) {
             throw new Error("PushRule name must be specified");
         }
