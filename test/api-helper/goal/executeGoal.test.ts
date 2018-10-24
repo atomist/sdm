@@ -117,7 +117,7 @@ describe("executeGoal", () => {
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 });
         }).then(done, done);
-    });
+    }).timeout(40000);
 
     describe("prepareGoalInvocation", () => {
 
