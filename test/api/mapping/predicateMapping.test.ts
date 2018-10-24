@@ -16,9 +16,15 @@
 
 import * as assert from "assert";
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
-import { PredicateMappingVisitor, visitPredicateMappings } from "../../../lib/api/mapping/PredicateMapping";
+import {
+    PredicateMappingVisitor,
+    visitPredicateMappings,
+} from "../../../lib/api/mapping/PredicateMapping";
 import { not } from "../../../lib/api/mapping/support/pushTestUtils";
-import { FalsePushTest, TruePushTest } from "./support/pushTestUtils.test";
+import {
+    FalsePushTest,
+    TruePushTest,
+} from "./support/pushTestUtils.test";
 
 describe("predicateMappingVisitor", () => {
 

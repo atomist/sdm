@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { CompositionStyle, PredicateMapping } from "../mapping/PredicateMapping";
+import {
+    CompositionStyle,
+    PredicateMapping,
+} from "../mapping/PredicateMapping";
 import {
     PredicateMappingTerm,
     toPredicateMapping,
