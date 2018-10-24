@@ -15,8 +15,8 @@
  */
 
 import {
-    PredicateMappingCompositionStyle,
     PredicateMapping,
+    PredicateMappingCompositionStyle,
 } from "../mapping/PredicateMapping";
 import {
     PredicateMappingTerm,

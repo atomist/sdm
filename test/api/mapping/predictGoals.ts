@@ -15,16 +15,27 @@
  */
 
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
-import { GitProject, RemoteRepoRef, HandlerContext, ProjectOperationCredentials } from "@atomist/automation-client";
+import {
+    GitProject,
+    HandlerContext,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
 import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { Goals } from "../../../lib/api/goal/Goals";
-import { hasGoalSettingStructure, GoalSettingCompositionStyle } from "../../../lib/api/mapping/GoalSetter";
+import {
+    GoalSettingCompositionStyle,
+    hasGoalSettingStructure,
+} from "../../../lib/api/mapping/GoalSetter";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
-import { Predicated, PredicateMapping } from "../../../lib/api/mapping/PredicateMapping";
+import {
+    Predicated,
+    PredicateMapping,
+} from "../../../lib/api/mapping/PredicateMapping";
 import { OnPushToAnyBranch } from "../../../lib/typings/types";
 
 // Model for what we could do in a pack

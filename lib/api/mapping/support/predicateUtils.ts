@@ -16,8 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import {
-    PredicateMappingCompositionStyle,
     PredicateMapping,
+    PredicateMappingCompositionStyle,
 } from "../PredicateMapping";
 import { DefaultPredicateMappingCostAnalyzer } from "./defaultPredicateMappingCostAnalyzer";
 import {
