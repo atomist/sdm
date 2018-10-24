@@ -15,12 +15,18 @@
  */
 
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
-import { onAnyPush, whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
+import {
+    onAnyPush,
+    whenPushSatisfies,
+} from "../../../lib/api/dsl/goalDsl";
 import { createGoal } from "../../../lib/api/goal/common/createGoal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import * as assert from "assert";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
-import { FalsePushTest, TruePushTest } from "./support/pushTestUtils.test";
+import {
+    FalsePushTest,
+    TruePushTest,
+} from "./support/pushTestUtils.test";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { predictGoals } from "../../../lib/pack/interpret-push-map/interpret";
 

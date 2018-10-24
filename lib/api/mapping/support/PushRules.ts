@@ -18,7 +18,10 @@ import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushMapping } from "../PushMapping";
 import { toGoals } from "../../dsl/GoalComponent";
-import { GoalSettingCompositionStyle, GoalSettingStructure } from "../GoalSetter";
+import {
+    GoalSettingCompositionStyle,
+    GoalSettingStructure,
+} from "../GoalSetter";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.

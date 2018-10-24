@@ -21,7 +21,11 @@ import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
-import { GoalSetter, GoalSettingCompositionStyle, GoalSettingStructure } from "../mapping/GoalSetter";
+import {
+    GoalSetter,
+    GoalSettingCompositionStyle,
+    GoalSettingStructure,
+} from "../mapping/GoalSetter";
 import {
     mapMapping,
     Mapping,

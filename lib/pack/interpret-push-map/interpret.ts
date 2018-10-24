@@ -18,16 +18,27 @@
 // File: throwingPushListenerInvocation
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { OnPushToAnyBranch } from "../../typings/types";
-import { GitProject, HandlerContext, ProjectOperationCredentials, RemoteRepoRef } from "@atomist/automation-client";
+import {
+    GitProject,
+    HandlerContext,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { Goal } from "../../api/goal/Goal";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { Goals } from "../../api/goal/Goals";
-import { GoalSettingCompositionStyle, hasGoalSettingStructure } from "../../api/mapping/GoalSetter";
+import {
+    GoalSettingCompositionStyle,
+    hasGoalSettingStructure,
+} from "../../api/mapping/GoalSetter";
 import { isPredicatedStaticValue } from "../../api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
-import { Predicated, PredicateMapping } from "../../api/mapping/PredicateMapping";
+import {
+    Predicated,
+    PredicateMapping,
+} from "../../api/mapping/PredicateMapping";
 
 class InsufficientDataError extends Error {
     public readonly kind = "InsufficientDataError";
