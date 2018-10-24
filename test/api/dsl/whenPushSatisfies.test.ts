@@ -23,7 +23,7 @@ import {
     FalsePushTest,
     TruePushTest,
 } from "../mapping/support/pushTestUtils.test";
-import { CompositionStyle } from "../../../lib/api/mapping/PredicateMapping";
+import { CompositionStyle, PredicateMappingVisitor, visitPredicateMappings } from "../../../lib/api/mapping/PredicateMapping";
 import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
@@ -103,6 +103,27 @@ describe("whenPushSatisfies", () => {
             assert(!!structure);
             assert.equal(structure.compositionStyle, CompositionStyle.And);
             assert.equal(structure.components.length, 2);
+        });
+
+        it("should updated nested structure", async () => {
+            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
+            const structure = wps.pushTest.structure;
+            assert(!!structure);
+            assert.equal(await wps.mapping(fakePush()), undefined);
+            // Now modify it. Get into terminal and make it return true if it didn't already
+            const happyVisitor: PredicateMappingVisitor<any> = pm => {
+                if (!pm.structure) {
+                    // It's a terminal
+                    const oldMapping = pm.mapping;
+                    pm.mapping = async pu => {
+                        const r = await oldMapping(pu);
+                        return r || true;
+                    }
+                }
+                return true;
+            };
+            visitPredicateMappings(wps.pushTest, happyVisitor);
+            assert.equal(await wps.mapping(fakePush()), SomeGoalSet);
         });
 
     });

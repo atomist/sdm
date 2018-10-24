@@ -48,8 +48,9 @@ export interface PredicateMapping<F> extends Mapping<F, boolean> {
 export type PredicateMappingVisitor<F> = (pm: PredicateMapping<F>) => boolean;
 
 /**
- * Visit the node, returning whether to continue
- * @param pm predicate mapping to visit
+ * Visit the PredicateMappings, returning whether to continue
+ * @param pm predicate mapping to visit. Always visits root,
+ * and any subcomponents as long as the visitor returns true
  * @param v visitor
  * @return {boolean} whether to visit the mapping's structure, if any
  */
