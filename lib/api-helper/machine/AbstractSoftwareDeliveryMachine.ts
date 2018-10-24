@@ -63,7 +63,6 @@ import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementati
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
-import { PushListenerInvocation } from "../../api/listener/PushListener";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.

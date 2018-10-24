@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import {
-    CompositionStyle,
+    PredicateMappingCompositionStyle,
     PredicateMapping,
 } from "../PredicateMapping";
 import { DefaultPredicateMappingCostAnalyzer } from "./defaultPredicateMappingCostAnalyzer";
@@ -34,7 +34,7 @@ export function whenNot<F>(t: PredicateMapping<F>): PredicateMapping<F> {
         mapping: async pi => !(await t.mapping(pi)),
         structure: {
             components: [t],
-            compositionStyle: CompositionStyle.Not,
+            compositionStyle: PredicateMappingCompositionStyle.Not,
         },
     };
 }
@@ -53,7 +53,7 @@ export function all<F>(predicates: Array<PredicateMapping<F>>,
         mapping: async pci => optimizedAndEvaluation(predicates, analyzer)(pci),
         structure: {
             components: predicates,
-            compositionStyle: CompositionStyle.And,
+            compositionStyle: PredicateMappingCompositionStyle.And,
         },
     };
 }
@@ -76,7 +76,7 @@ export function any<F>(predicates: Array<PredicateMapping<F>>,
         },
         structure: {
             components: predicates,
-            compositionStyle: CompositionStyle.Or,
+            compositionStyle: PredicateMappingCompositionStyle.Or,
         },
     };
 

@@ -15,7 +15,7 @@
  */
 
 import {
-    CompositionStyle,
+    PredicateMappingCompositionStyle,
     PredicateMapping,
 } from "../mapping/PredicateMapping";
 import {
@@ -41,7 +41,7 @@ export function allOf<F>(
         },
         structure: {
             components: asPredicateMappings,
-            compositionStyle: CompositionStyle.And,
+            compositionStyle: PredicateMappingCompositionStyle.And,
         },
     };
 }

@@ -20,7 +20,7 @@ import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import {
-    CompositionStyle,
+    PredicateMappingCompositionStyle,
     PredicateMappingVisitor,
     visitPredicateMappings,
 } from "../../../lib/api/mapping/PredicateMapping";
@@ -97,7 +97,7 @@ describe("whenPushSatisfies", () => {
             const wps = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
             assert(!!structure);
-            assert.equal(structure.compositionStyle, CompositionStyle.And);
+            assert.equal(structure.compositionStyle, PredicateMappingCompositionStyle.And);
             assert.equal(structure.components.length, 2);
         });
 
@@ -105,7 +105,7 @@ describe("whenPushSatisfies", () => {
             const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
             assert(!!structure);
-            assert.equal(structure.compositionStyle, CompositionStyle.And);
+            assert.equal(structure.compositionStyle, PredicateMappingCompositionStyle.And);
             assert.equal(structure.components.length, 2);
         });
 

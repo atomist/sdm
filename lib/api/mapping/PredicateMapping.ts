@@ -19,7 +19,7 @@ import { Mapping } from "./Mapping";
 /**
  * Style of logical composition
  */
-export enum CompositionStyle {
+export enum PredicateMappingCompositionStyle {
     And = "and",
     Or = "or",
     Not = "not",
@@ -37,7 +37,7 @@ export interface PredicateMapping<F> extends Mapping<F, boolean> {
      */
     readonly structure?: {
         components: Array<PredicateMapping<F>>,
-        readonly compositionStyle: CompositionStyle,
+        readonly compositionStyle: PredicateMappingCompositionStyle,
     };
 }
 
