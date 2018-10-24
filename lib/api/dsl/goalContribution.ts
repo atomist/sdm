@@ -21,16 +21,16 @@ import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { GoalSetter } from "../mapping/GoalSetter";
 import {
     Mapping,
     NeverMatch,
 } from "../mapping/Mapping";
+import { Predicated } from "../mapping/PredicateMapping";
 import {
     GoalComponent,
     toGoals,
 } from "./GoalComponent";
-import { Predicated } from "../mapping/PredicateMapping";
-import { GoalSetter } from "../mapping/GoalSetter";
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 

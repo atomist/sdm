@@ -16,10 +16,10 @@
 
 import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
+import { Predicated } from "../PredicateMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
-import { Predicated } from "../PredicateMapping";
 
 /**
  * Generic DSL support for returning an object on a push

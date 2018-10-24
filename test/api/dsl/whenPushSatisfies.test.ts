@@ -19,12 +19,12 @@ import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
+import { CompositionStyle, PredicateMappingVisitor, visitPredicateMappings } from "../../../lib/api/mapping/PredicateMapping";
+import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import {
     FalsePushTest,
     TruePushTest,
 } from "../mapping/support/pushTestUtils.test";
-import { CompositionStyle, PredicateMappingVisitor, visitPredicateMappings } from "../../../lib/api/mapping/PredicateMapping";
-import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
@@ -118,7 +118,7 @@ describe("whenPushSatisfies", () => {
                     pm.mapping = async pu => {
                         const r = await oldMapping(pu);
                         return r || true;
-                    }
+                    };
                 }
                 return true;
             };

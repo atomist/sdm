@@ -38,7 +38,7 @@ export interface PredicateMapping<F> extends Mapping<F, boolean> {
     readonly structure?: {
         components: Array<PredicateMapping<F>>,
         readonly compositionStyle: CompositionStyle,
-    }
+    };
 }
 
 /**

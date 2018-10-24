@@ -15,7 +15,7 @@
  */
 
 import { PushListenerInvocation } from "../listener/PushListener";
-import { Mapping, NeverMatch, } from "./Mapping";
+import { Mapping, NeverMatch } from "./Mapping";
 
 /**
  * Constant to indicate we should never match.
