@@ -35,6 +35,9 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
         return this.reason;
     }
 
+    /**
+     * The test for this rule
+     */
     public readonly pushTest: PushTest;
 
     private reason: string;

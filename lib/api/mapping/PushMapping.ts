@@ -21,8 +21,9 @@ import {
 } from "./Mapping";
 
 /**
- * Constant to indicate we should never match
+ * Constant to indicate we should never match.
  * @type {any}
+ * @deprecated use GoalSetterMapping.setNoMoreGoals()
  */
 export const DoNotSetAnyGoals: NeverMatch = null;
 
