@@ -29,13 +29,17 @@ import {
     GoalComponent,
     toGoals,
 } from "./GoalComponent";
+import { Predicated } from "../mapping/PredicateMapping";
+import { GoalSetter } from "../mapping/GoalSetter";
 
-export type GoalContribution<F> = Mapping<F, GoalComponent>;
+export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
+
+}
 
 /**
  * An additive goal setter assembles the goals contributed by all the contributors.
  */
-class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
+class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F> {
 
     public get label(): string {
         return this.contributors.filter(c => (c as any).label)

@@ -42,6 +42,18 @@ export interface PredicateMapping<F> extends Mapping<F, boolean> {
 }
 
 /**
+ * Implemented by types whose behavior is potentially explicable by a single PredicateMapping
+ */
+export interface Predicated<F> {
+
+    /**
+     * The test for the contribution. Contributions may be
+     * applied in various ways.
+     */
+    test?: PredicateMapping<F>;
+}
+
+/**
  * Function that can visit a PredicateMappings.
  * @return whether to visit the mapping's subcomponents, if any
  */
