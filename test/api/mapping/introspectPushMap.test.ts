@@ -28,7 +28,7 @@ import {
     TruePushTest,
 } from "./support/pushTestUtils.test";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
-import { predictGoals } from "../../../lib/pack/interpret-push-map/interpret";
+import { predictGoals } from "./predictGoals";
 
 
 describe("making use of the pushMap structure", function () {

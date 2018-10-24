@@ -14,31 +14,20 @@
  * limitations under the License.
  */
 
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { GitProject, RemoteRepoRef, HandlerContext, ProjectOperationCredentials } from "@atomist/automation-client";
+import { AddressChannels } from "../../../lib/api/context/addressChannels";
+import { Goal } from "../../../lib/api/goal/Goal";
+import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
+import { PushMapping } from "../../../lib/api/mapping/PushMapping";
+import { Goals } from "../../../lib/api/goal/Goals";
+import { hasGoalSettingStructure, GoalSettingCompositionStyle } from "../../../lib/api/mapping/GoalSetter";
+import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
+import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
+import { Predicated, PredicateMapping } from "../../../lib/api/mapping/PredicateMapping";
+import { OnPushToAnyBranch } from "../../../lib/typings/types";
 
-// File: throwingPushListenerInvocation
-import { PushListenerInvocation } from "../../api/listener/PushListener";
-import { OnPushToAnyBranch } from "../../typings/types";
-import {
-    GitProject,
-    HandlerContext,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
-import { AddressChannels } from "../../api/context/addressChannels";
-import { Goal } from "../../api/goal/Goal";
-import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
-import { PushMapping } from "../../api/mapping/PushMapping";
-import { Goals } from "../../api/goal/Goals";
-import {
-    GoalSettingCompositionStyle,
-    hasGoalSettingStructure,
-} from "../../api/mapping/GoalSetter";
-import { isPredicatedStaticValue } from "../../api/mapping/support/PushRule";
-import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
-import {
-    Predicated,
-    PredicateMapping,
-} from "../../api/mapping/PredicateMapping";
+// Model for what we could do in a pack
 
 class InsufficientDataError extends Error {
     public readonly kind = "InsufficientDataError";
@@ -131,7 +120,6 @@ async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushList
             case GoalSettingCompositionStyle.FirstMatch:
                 console.log("look, a first match");
                 return possibleResultsOfFirstMatch(pushMapping.structure.components, pli);
-                break;
             case GoalSettingCompositionStyle.AllMatches:
                 console.log("We want all matches");
                 break;
@@ -141,7 +129,6 @@ async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushList
         return deconstructPushRule(pushMapping, pli);
     } else {
         console.log("No goals detected");
-        const reason = "";
         return {
             ...EmptyGoalPrediction,
             unknownRoads: [{ name: pushMapping.name, reason: "Could not see into mapping" }]
