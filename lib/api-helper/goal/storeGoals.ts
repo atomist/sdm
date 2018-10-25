@@ -70,6 +70,7 @@ export function updateGoal(ctx: HandlerContext,
     const data = params.data ?
         params.data :
         !!before ? before.data : undefined;
+    before.version = (before.version || 1) + 1;
     const sdmGoal: SdmGoalMessage = {
         ...eventToMessage(before),
         state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
@@ -83,7 +84,7 @@ export function updateGoal(ctx: HandlerContext,
         error: _.get(params, "error.message"),
         data,
         push: before.push,
-        version: before.version + 1,
+        version: before.version,
     } as SdmGoalMessage;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
