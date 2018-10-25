@@ -25,8 +25,15 @@ import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
-import { allSatisfied, anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
-import { EmptyGoalPrediction, GoalPrediction, predictGoals } from "./predictGoals";
+import {
+    allSatisfied,
+    anySatisfied,
+} from "../../../lib/api/mapping/support/pushTestUtils";
+import {
+    EmptyGoalPrediction,
+    GoalPrediction,
+    predictGoals,
+} from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,

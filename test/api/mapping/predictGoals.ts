@@ -26,8 +26,15 @@ import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
-import { GoalSettingCompositionStyle, hasGoalSettingStructure } from "../../../lib/api/mapping/GoalSetter";
-import { Predicated, PredicateMapping, PredicateMappingCompositionStyle } from "../../../lib/api/mapping/PredicateMapping";
+import {
+    GoalSettingCompositionStyle,
+    hasGoalSettingStructure,
+} from "../../../lib/api/mapping/GoalSetter";
+import {
+    Predicated,
+    PredicateMapping,
+    PredicateMappingCompositionStyle,
+} from "../../../lib/api/mapping/PredicateMapping";
 import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
