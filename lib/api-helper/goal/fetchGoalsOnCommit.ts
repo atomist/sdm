@@ -35,6 +35,14 @@ import {
 import { goalKeyString } from "./sdmGoal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
+export function fetchGoalsFromPush(sdmGoal: SdmGoalEvent): SdmGoalEvent[] {
+    const goals = sumSdmGoalEvents((sdmGoal.push as any).goals.filter(g => g.goalSetId === sdmGoal.goalSetId));
+    const push = _.cloneDeep(sdmGoal.push);
+    delete (push as any).goals;
+    goals.forEach(g => g.push = push);
+    return goals;
+}
+
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoalEvent> {
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);
     const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g));
