@@ -17,23 +17,17 @@
 import {
     GitProject,
     HandlerContext,
-    logger,
     ProjectOperationCredentials,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
-import {
-    GoalSettingCompositionStyle,
-    hasGoalSettingStructure,
-} from "../../../lib/api/mapping/GoalSetter";
-import {
-    Predicated,
-    PredicateMapping,
-} from "../../../lib/api/mapping/PredicateMapping";
+import { GoalSettingCompositionStyle, hasGoalSettingStructure } from "../../../lib/api/mapping/GoalSetter";
+import { Predicated, PredicateMapping, PredicateMappingCompositionStyle } from "../../../lib/api/mapping/PredicateMapping";
 import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
@@ -75,6 +69,7 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
 
 // File: GoalPrediction
 export interface GoalPrediction {
+    definiteNull: boolean;
     definiteGoals: Goal[];
     possibleGoals: Goal[];
     unknownRoads: Array<{
@@ -89,6 +84,7 @@ export function definitelyNoGoals(gp: GoalPrediction): boolean {
 
 export function combineGoalPredictions(gp1: GoalPrediction, gp2: GoalPrediction): GoalPrediction {
     return {
+        definiteNull: gp1.definiteNull || gp2.definiteNull,
         definiteGoals: gp1.definiteGoals.concat(gp2.definiteGoals),
         possibleGoals: gp1.possibleGoals.concat(gp2.possibleGoals),
         unknownRoads: gp1.unknownRoads.concat(gp2.unknownRoads),
@@ -96,6 +92,7 @@ export function combineGoalPredictions(gp1: GoalPrediction, gp2: GoalPrediction)
 }
 
 export const EmptyGoalPrediction: GoalPrediction = {
+    definiteNull: false,
     definiteGoals: [],
     possibleGoals: [],
     unknownRoads: [],
@@ -112,20 +109,6 @@ export async function predictGoals(sdm: SoftwareDeliveryMachine, known: Partial<
 }
 
 async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListenerInvocation): Promise<GoalPrediction> {
-    try {
-        // optimistic
-        return {
-            ...EmptyGoalPrediction,
-            definiteGoals: (await pushMapping.mapping(pli)).goals,
-        };
-    } catch (e) {
-         logger.warn("Failed to run mapping: " + pushMapping.name + " with error: " + e.message);
-        // try to break it down further; see what info we can get.
-         return deconstructMapping(pushMapping, pli);
-    }
-}
-
-async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushListenerInvocation): Promise<GoalPrediction> {
     if (hasGoalSettingStructure(pushMapping)) {
         switch (pushMapping.structure.compositionStyle) {
             case GoalSettingCompositionStyle.FirstMatch:
@@ -137,11 +120,24 @@ async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushList
     if (isPredicatedStaticValue(pushMapping)) {
         return deconstructPushRule(pushMapping, pli);
     } else {
-        logger.info("No goals detected");
-        return {
-            ...EmptyGoalPrediction,
-            unknownRoads: [{ name: pushMapping.name, reason: "Could not see into mapping" }],
-        };
+        try {
+            const result = await pushMapping.mapping(pli);
+            if (result === null) {
+                return {
+                    ...EmptyGoalPrediction,
+                    definiteNull: true,
+                };
+            }
+            return {
+                ...EmptyGoalPrediction,
+                definiteGoals: result.goals,
+            };
+        } catch (e) {
+            return {
+                ...EmptyGoalPrediction,
+                unknownRoads: [{ name: pushMapping.name, reason: e.message }],
+            };
+        }
     }
 }
 
@@ -162,17 +158,54 @@ async function deconstructPushRule(psm: StaticPushMapping<Goals> & Predicated<Pu
     }
 }
 
-type TestPrediction = { result: boolean } | { unknownRoads: [{ name: string, reason: string }] };
+interface UnknownTestPrediction { unknownRoads: Array<{ name: string, reason: string }>; }
+type TestPrediction = { result: boolean } | UnknownTestPrediction;
 
 function hasPredictedResult(tp: TestPrediction): tp is { result: boolean } {
     return (tp as any).result !== undefined;
 }
 
+function combineTestPredictionUnknowns(tps: TestPrediction[]): UnknownTestPrediction {
+    const unknowns: UnknownTestPrediction[] = tps.filter(tp => !hasPredictedResult(tp)).map(t => t as UnknownTestPrediction);
+    return { unknownRoads: _.flatten(unknowns.map(utp => utp.unknownRoads)) };
+}
+
 async function deconstructTest<T>(pushTest: PredicateMapping<T>, pli: T): Promise<TestPrediction> {
+
+    if (pushTest.structure) {
+        const innerResults = await Promise.all(
+            pushTest.structure.components.map(inner => deconstructTest(inner, pli)));
+        const results = innerResults.filter(hasPredictedResult);
+        const unknowns = combineTestPredictionUnknowns(innerResults);
+        switch (pushTest.structure.compositionStyle) {
+            case PredicateMappingCompositionStyle.And:
+                if (results.find(ir => !ir.result)) {
+                    // any false => false
+                    return { result: false };
+                } else if (unknowns.unknownRoads.length > 0) {
+                    // any error => error
+                    return unknowns;
+                } else {
+                    // guess everything was true
+                    return { result: true };
+                }
+            case PredicateMappingCompositionStyle.Or:
+                if (results.find(ir => ir.result)) {
+                    // any true => true
+                    return { result: true };
+                } else if (unknowns.unknownRoads.length > 0) {
+                    // any error => error
+                    return unknowns;
+                } else {
+                    // guess everything was false
+                    return { result: false };
+                }
+        }
+    }
+    // we can't dig into it, so try it
     try {
         return { result: await pushTest.mapping(pli) };
     } catch (e) {
-        // TODO: write tests, then break down predicates. We might be able to short-circuit?
         return { unknownRoads: [{ name: pushTest.name, reason: e.message }] };
     }
 }
@@ -184,44 +217,28 @@ async function possibleResultsOfFirstMatch(rules: Array<PushMapping<Goals>>, pli
     }
     const [first, ...rest] = rules;
 
-    let firstResult: GoalPrediction;
-    try {
-        const result = await first.mapping(pli);
-        if (result === null) {
-            // if we definitely get null, then that signals "stop processing rules" (sadly)
-            return EmptyGoalPrediction;
-        } else if (result === undefined) {
-            // definitely no goals from here. keep going
-            firstResult = EmptyGoalPrediction;
-        } else {
-            // we got real rules back
-            return {
-                ...EmptyGoalPrediction,
-                definiteGoals: result.goals,
-            };
-        }
-    } catch (e) {
-        // undetermined. break it down farther, then keep going
-        firstResult = await deconstructMapping(first, pli);
+    const firstResult: GoalPrediction = await predictMapping(first, pli);
+
+    if (firstResult.definiteNull) {
+        // if we definitely get null, then that signals "stop processing rules" (sadly)
+        // this is the only place where null has meaning
+        return EmptyGoalPrediction;
+    }
+    if (firstResult.definiteGoals.length > 0) {
+        // we definitely got something. stop here.
+        return firstResult;
     }
 
     // Try the rest of the rules.
     const restResult = await possibleResultsOfFirstMatch(rest, pli);
 
-    if (definitelyNoGoals(firstResult)) {
-        return restResult;
-    }
-
-    // special combination. if we have possible goals, further ones are never definite.
+    // If the first result has possible goals, further ones are never definite.
     // ... unless the possible goals are possible in all possible rule returns, then they would be definite ... :-/ (not implemented)
 
-    function allPossibleGoals(gp: GoalPrediction) {
-        return gp.definiteGoals.concat(gp.possibleGoals);
+    if (firstResult.possibleGoals.length > 0) {
+        restResult.possibleGoals = restResult.possibleGoals.concat(restResult.definiteGoals);
+        restResult.definiteGoals = [];
     }
 
-    return {
-        definiteGoals: [],
-        possibleGoals: allPossibleGoals(firstResult).concat(allPossibleGoals(restResult)),
-        unknownRoads: firstResult.unknownRoads.concat(restResult.unknownRoads),
-    };
+    return combineGoalPredictions(firstResult, restResult);
 }

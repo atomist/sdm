@@ -23,12 +23,10 @@ import { createGoal } from "../../../lib/api/goal/common/createGoal";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
-import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
-import {
-    GoalPrediction,
-    predictGoals,
-} from "./predictGoals";
+
+import { allSatisfied, anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
+import { EmptyGoalPrediction, GoalPrediction, predictGoals } from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,
@@ -41,6 +39,11 @@ function goalsToNames(gp: GoalPrediction) {
         unknownRoads: gp.unknownRoads,
     };
 }
+const EmptyGoalNames = {
+    definiteGoalNames: [],
+    possibleGoalNames: [],
+    unknownRoads: [],
+};
 
 describe("making use of the pushMap structure", async () => {
     const doNothing: ExecuteGoal = async () => { // do nothing
@@ -70,7 +73,7 @@ describe("making use of the pushMap structure", async () => {
 
         const result = await predictGoals(sdm, {});
 
-        assert.deepStrictEqual(result, { definiteGoals: [], possibleGoals: [myGoal], unknownRoads: [] });
+        assert.deepStrictEqual(result, { ...EmptyGoalPrediction, possibleGoals: [myGoal] });
     });
 
     it("Skips over a definitely-unmatching PushRule", async () => {
@@ -116,9 +119,8 @@ describe("making use of the pushMap structure", async () => {
 
         assert.deepStrictEqual(result,
             {
-                definiteGoals: [],
-                possibleGoals: [],
-                unknownRoads: [{ name: "My custom goal setter", reason: "Could not see into mapping" }],
+                ...EmptyGoalPrediction,
+                unknownRoads: [{ name: "My custom goal setter", reason: "push" }],
             });
     });
 
@@ -130,13 +132,12 @@ describe("making use of the pushMap structure", async () => {
         const result = goalsToNames(await predictGoals(sdm, {}));
 
         assert.deepStrictEqual(result, {
+            ...EmptyGoalNames,
             definiteGoalNames: [myGoal.name],
-            possibleGoalNames: [],
-            unknownRoads: [],
         });
     });
 
-    it.skip("Can drill down and notice that and(ERROR, false) == false", async () => {
+    it("Can drill down and notice that and(ERROR, false) == false", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
             whenPushSatisfies(allSatisfied(LooksAtPush, FalsePushTest)).setGoals(notSetGoal),
             whenPushSatisfies(TruePushTest).setGoals(myGoal));
@@ -148,7 +149,20 @@ describe("making use of the pushMap structure", async () => {
             possibleGoalNames: [],
             unknownRoads: [],
         });
+    });
 
+    it("Can drill down and notice that or(ERROR, true) == true", async () => {
+        const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
+            whenPushSatisfies(anySatisfied(LooksAtPush, TruePushTest)).setGoals(myGoal),
+            whenPushSatisfies(TruePushTest).setGoals(notSetGoal));
+
+        const result = goalsToNames(await predictGoals(sdm, {}));
+
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name],
+            possibleGoalNames: [],
+            unknownRoads: [],
+        });
     });
 
     it("works with AdditiveGoalSetter");
