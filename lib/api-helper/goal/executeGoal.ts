@@ -277,7 +277,7 @@ export function markStatus(parameters: {
         newState = SdmGoalState.waiting_for_approval;
     }
 
-    // Needed for backwards compatibility 
+    // Needed for backwards compatibility
     const externalUrls: Array<{ label?: string, url: string }> = result.targetUrls || [];
     if (result.targetUrl) {
         externalUrls.push({ label: "Link", url: result.targetUrl });
