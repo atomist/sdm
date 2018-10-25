@@ -2031,7 +2031,7 @@ describe("fetchGoalsOnCommit", () => {
         it("should correctly find goals", () => {
             const goals = fetchGoalsFromPush(JSON.parse(goal));
             assert.strictEqual(goals.length, 6);
-            assert(!goals.some(g => !g.push));
+            assert(goals.every(g => !!g.push));
             assert(!goals.some(g => g.goalSetId !== JSON.parse(goal).goalSetId));
             assert(goals.some(g => g.uniqueName === "autofix#machine.ts:69"));
             assert(goals.some(g => g.uniqueName === "build#machine.ts:77"));
