@@ -54,7 +54,7 @@ export interface UpdateSdmGoalParams {
     state: SdmGoalState;
     description: string;
     url?: string;
-    externalUrl?: string;
+    externalUrls?: Array<{ label?: string, url: string }>;
     approved?: boolean;
     error?: Error;
     data?: string;
@@ -76,13 +76,14 @@ export function updateGoal(ctx: HandlerContext,
         phase: params.phase,
         description,
         url: params.url ? params.url : before.url,
-        externalUrl: params.externalUrl ? params.externalUrl : before.externalUrl,
+        externalUrls: params.externalUrls ? params.externalUrls : before.externalUrls,
         approval,
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),
         error: _.get(params, "error.message"),
         data,
         push: before.push,
+        version: before.version + 1,
     } as SdmGoalMessage;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
@@ -166,6 +167,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         retryFeasible: goal.definition.retryFeasible ? goal.definition.retryFeasible : false,
         provenance: [constructProvenance(ctx)],
         preConditions,
+        version: 1,
     };
 }
 

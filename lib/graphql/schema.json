@@ -9126,6 +9126,18 @@
                       "name": "String"
                     }
                   }
+                },
+                {
+                  "name": "version",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
                 }
               ]
             },
@@ -110579,6 +110591,18 @@
                       "name": "String"
                     }
                   }
+                },
+                {
+                  "name": "version",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
                 }
               ]
             },
@@ -111218,6 +111242,44 @@
         {
           "description": null,
           "interfaces": [],
+          "name": "SdmExternalUrl",
+          "fields": [
+            {
+              "name": "label",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "url",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": []
+        },
+        {
+          "description": null,
+          "interfaces": [],
           "name": "SdmCondition",
           "fields": [
             {
@@ -111359,12 +111421,7 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "directives": [
-                {
-                  "name": "compositeId",
-                  "args": []
-                }
-              ]
+              "directives": []
             },
             {
               "name": "data",
@@ -111450,6 +111507,23 @@
               "directives": []
             },
             {
+              "name": "externalUrls",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmExternalUrl",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
               "name": "fulfillment",
               "description": null,
               "args": [
@@ -111515,10 +111589,28 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "directives": []
+              "directives": [
+                {
+                  "name": "compositeId",
+                  "args": []
+                }
+              ]
             },
             {
               "name": "name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "phase",
               "description": null,
               "args": [],
               "type": {
@@ -111534,19 +111626,6 @@
                   "args": []
                 }
               ]
-            },
-            {
-              "name": "phase",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "directives": []
             },
             {
               "name": "preApproval",
@@ -111753,12 +111832,7 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "directives": [
-                {
-                  "name": "compositeId",
-                  "args": []
-                }
-              ]
+              "directives": []
             },
             {
               "name": "state",
@@ -111771,7 +111845,12 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "directives": []
+              "directives": [
+                {
+                  "name": "compositeId",
+                  "args": []
+                }
+              ]
             },
             {
               "name": "ts",
@@ -111802,7 +111881,12 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "directives": []
+              "directives": [
+                {
+                  "name": "compositeId",
+                  "args": []
+                }
+              ]
             },
             {
               "name": "url",
@@ -111816,6 +111900,24 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "directives": []
+            },
+            {
+              "name": "version",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": [
+                {
+                  "name": "compositeId",
+                  "args": []
+                }
+              ]
             },
             {
               "name": "id",
@@ -115980,6 +116082,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "2cc05151-9f57-4b84-b947-ebb5a723fefd"
+    "correlation_id": "cab84f22-0f16-4262-8bcf-c36b5e7fcb99"
   }
 }

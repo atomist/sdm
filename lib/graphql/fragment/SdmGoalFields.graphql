@@ -11,6 +11,10 @@ fragment SdmGoalFields on SdmGoal {
   description
   url
   externalUrl
+  externalUrls {
+    label
+    url
+  }
   state
   phase
   externalKey
@@ -54,4 +58,5 @@ fragment SdmGoalFields on SdmGoal {
     channelId
   }
   data
+  version
 }

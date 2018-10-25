@@ -277,12 +277,18 @@ export function markStatus(parameters: {
         newState = SdmGoalState.waiting_for_approval;
     }
 
+    // Needed for backwards compatibility 
+    const externalUrls: Array<{ label?: string, url: string }> = result.targetUrls || [];
+    if (result.targetUrl) {
+        externalUrls.push({ label: "Link", url: result.targetUrl });
+    }
+
     return updateGoal(
         context,
         sdmGoal,
         {
             url: progressLogUrl,
-            externalUrl: result.targetUrl,
+            externalUrls,
             state: newState,
             phase: result.phase ? result.phase : sdmGoal.phase,
             description: result.description ? result.description : descriptionFromState(goal, newState),

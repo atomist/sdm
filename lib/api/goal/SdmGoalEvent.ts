@@ -56,7 +56,7 @@ export interface SdmGoalEvent extends SdmGoalKey {
      */
     description?: string;
     url?: string;
-    externalUrl?: string;
+    externalUrls?: Array<{ label?: string, url: string }>;
     goalSet: string;
     goalSetId: string;
     state: SdmGoalState;
@@ -83,4 +83,6 @@ export interface SdmGoalEvent extends SdmGoalKey {
     externalKey?: string;
 
     data?: string;
+
+    version?: number;
 }

@@ -43,6 +43,11 @@ export interface GoalDetails {
     targetUrl?: string;
 
     /**
+     * Optional targetUrls to be set on the goal as externalUrls
+     */
+    targetUrls?: Array<{ label?: string, url: string}>;
+
+    /**
      * Optional flag to indicate if this goal requires approval now
      * @deprecated use state = SdmGoalState.waiting_for_approval instead
      */
