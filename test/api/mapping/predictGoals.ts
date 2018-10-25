@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import {
     GitProject,
     HandlerContext,
@@ -23,19 +22,20 @@ import {
 } from "@atomist/automation-client";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
 import { Goal } from "../../../lib/api/goal/Goal";
-import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
-import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { Goals } from "../../../lib/api/goal/Goals";
+import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
+import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
 import {
     GoalSettingCompositionStyle,
     hasGoalSettingStructure,
 } from "../../../lib/api/mapping/GoalSetter";
-import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
-import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
 import {
     Predicated,
     PredicateMapping,
 } from "../../../lib/api/mapping/PredicateMapping";
+import { PushMapping } from "../../../lib/api/mapping/PushMapping";
+import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
+import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
 import { OnPushToAnyBranch } from "../../../lib/typings/types";
 
 // Model for what we could do in a pack
@@ -68,19 +68,18 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
         get credentials(): ProjectOperationCredentials {
             throw new InsufficientDataError("credentials");
         },
-        ...knownBits
+        ...knownBits,
     };
 }
 
-
 // File: GoalPrediction
-export type GoalPrediction = {
-    definiteGoals: Goal[],
-    possibleGoals: Goal[],
+export interface GoalPrediction {
+    definiteGoals: Goal[];
+    possibleGoals: Goal[];
     unknownRoads: Array<{
         name: string,
-        reason: string
-    }>
+        reason: string,
+    }>;
 }
 
 export function definitelyNoGoals(gp: GoalPrediction): boolean {
@@ -98,7 +97,7 @@ export function combineGoalPredictions(gp1: GoalPrediction, gp2: GoalPrediction)
 export const EmptyGoalPrediction: GoalPrediction = {
     definiteGoals: [],
     possibleGoals: [],
-    unknownRoads: []
+    unknownRoads: [],
 };
 
 // File: predictGoals
@@ -119,7 +118,7 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
             definiteGoals: (await pushMapping.mapping(pli)).goals,
         };
     } catch (e) {
-        console.log("Failed to run mapping: " + pushMapping.name + " with error: " + e.message);
+         console.log("Failed to run mapping: " + pushMapping.name + " with error: " + e.message);
         // try to break it down further; see what info we can get.
         return deconstructMapping(pushMapping, pli);
     }
@@ -142,7 +141,7 @@ async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushList
         console.log("No goals detected");
         return {
             ...EmptyGoalPrediction,
-            unknownRoads: [{ name: pushMapping.name, reason: "Could not see into mapping" }]
+            unknownRoads: [{ name: pushMapping.name, reason: "Could not see into mapping" }],
         };
     }
 }
@@ -164,7 +163,7 @@ async function deconstructPushRule(psm: StaticPushMapping<Goals> & Predicated<Pu
     }
 }
 
-type TestPrediction = { result: boolean } | { unknownRoads: [{ name: string, reason: string }] }
+type TestPrediction = { result: boolean } | { unknownRoads: [{ name: string, reason: string }] };
 
 function hasPredictedResult(tp: TestPrediction): tp is { result: boolean } {
     return (tp as any).result !== undefined;
@@ -224,6 +223,6 @@ async function possibleResultsOfFirstMatch(rules: Array<PushMapping<Goals>>, pli
     return {
         definiteGoals: [],
         possibleGoals: allPossibleGoals(firstResult).concat(allPossibleGoals(restResult)),
-        unknownRoads: firstResult.unknownRoads.concat(restResult.unknownRoads)
+        unknownRoads: firstResult.unknownRoads.concat(restResult.unknownRoads),
     };
 }

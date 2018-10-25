@@ -17,10 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { Predicated } from "../PredicateMapping";
+import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
-import { PushMapping } from "../PushMapping";
 
 /**
  * Generic DSL support for returning an object on a push
@@ -87,5 +87,5 @@ export class PushRule<V = any> implements StaticPushMapping<V>, Predicated<PushL
 
 export function isPredicatedStaticValue<T>(pushMapping: PushMapping<T>): pushMapping is StaticPushMapping<T> & Predicated<PushListenerInvocation> {
     const maybe = pushMapping as PushRule;
-   return maybe.test && maybe.value;
+    return maybe.test && maybe.value;
 }

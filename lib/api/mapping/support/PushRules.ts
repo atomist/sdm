@@ -15,13 +15,13 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushListenerInvocation } from "../../listener/PushListener";
-import { PushMapping } from "../PushMapping";
 import { toGoals } from "../../dsl/GoalComponent";
+import { PushListenerInvocation } from "../../listener/PushListener";
 import {
     GoalSettingCompositionStyle,
     GoalSettingStructure,
 } from "../GoalSetter";
+import { PushMapping } from "../PushMapping";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.
@@ -45,7 +45,7 @@ export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushLi
      * Passing an empty array will result in an instance that always maps to undefined,
      * and is not an error.
      */
-    constructor(public readonly name: string, private rules: Array<PushMapping<V>> = []) {
+    constructor(public readonly name: string, private readonly rules: Array<PushMapping<V>> = []) {
         if (!name) {
             throw new Error("PushRule name must be specified");
         }

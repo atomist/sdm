@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
+import * as assert from "assert";
 import {
     onAnyPush,
     whenPushSatisfies,
 } from "../../../lib/api/dsl/goalDsl";
 import { createGoal } from "../../../lib/api/goal/common/createGoal";
+import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
-import * as assert from "assert";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
+import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
+import { predictGoals } from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
-import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
-import { predictGoals } from "./predictGoals";
 
-
-describe("making use of the pushMap structure", function () {
+describe("making use of the pushMap structure", async () => {
     const doNothing: ExecuteGoal = async () => { // do nothing
     };
     const myGoal = createGoal({ displayName: "myGoal" }, doNothing);
@@ -47,7 +46,7 @@ describe("making use of the pushMap structure", function () {
         assert.deepStrictEqual(result.definiteGoals, [myGoal]);
     });
 
-    const LooksAtPush: PushTest = { name: "looks at push", mapping: async (pli) => !!pli.push };
+    const LooksAtPush: PushTest = { name: "looks at push", mapping: async pli => !!pli.push };
 
     it("Can guess at a push-dependent test", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
@@ -87,11 +86,11 @@ describe("making use of the pushMap structure", function () {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
             [{
                 name: "My custom goal setter",
-                mapping: async (pli) => {
+                mapping: async pli => {
                     if (pli.push) {
                         return new Goals("this is mysterious");
                     }
-                }
+                },
             }]);
 
         const result = await predictGoals(sdm, {});
@@ -100,13 +99,12 @@ describe("making use of the pushMap structure", function () {
             {
                 definiteGoals: [],
                 possibleGoals: [],
-                unknownRoads: [{ name: "My custom goal setter", reason: "Could not see into mapping" }]
+                unknownRoads: [{ name: "My custom goal setter", reason: "Could not see into mapping" }],
             });
     });
 
     it("Stops after a matching PushRules");
 
     it("works with AdditiveGoalSetter");
-
 
 });

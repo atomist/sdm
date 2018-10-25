@@ -41,8 +41,6 @@ export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicat
 
 }
 
-
-
 /**
  * An additive goal setter assembles the goals contributed by all the contributors.
  */

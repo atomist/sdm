@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import * as _ from "lodash";
 import { SdmContext } from "../context/SdmContext";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { Mapping } from "./Mapping";
-import * as _ from "lodash";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics
@@ -30,10 +30,9 @@ import * as _ from "lodash";
  */
 export type GoalSetter<F extends SdmContext = PushListenerInvocation> = Mapping<F, Goals>;
 
-
 export enum GoalSettingCompositionStyle {
     FirstMatch = "take the first one",
-    AllMatches = "take all the ones that match"
+    AllMatches = "take all the ones that match",
 }
 
 /**
@@ -41,15 +40,15 @@ export enum GoalSettingCompositionStyle {
  *
  * It only extends Mapping<F,V> because it's expected to apply only to those
  */
-export interface GoalSettingStructure<F, V> extends Mapping<F,V> {
+export interface GoalSettingStructure<F, V> extends Mapping<F, V> {
     structure: {
         compositionStyle: GoalSettingCompositionStyle,
         components: Array<Mapping<F, V>>,
-    }
+    };
 }
 
-export function hasGoalSettingStructure<F,V>(m: Mapping<F,V>): m is GoalSettingStructure<F,V> {
-    const maybe = m as GoalSettingStructure<F,V>;
+export function hasGoalSettingStructure<F, V>(m: Mapping<F, V>): m is GoalSettingStructure<F, V> {
+    const maybe = m as GoalSettingStructure<F, V>;
     return maybe.structure &&
         maybe.structure.compositionStyle &&
         Object.values(GoalSettingCompositionStyle).includes(maybe.structure.compositionStyle);

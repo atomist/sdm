@@ -31,7 +31,7 @@ export const UndefinedPushTest: PushTest = pushTest("true", async () => undefine
 export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {
-    
+
     const SomeRepoRef = {id: new GitHubRepoRef("a", "b")} as any;
 
     it("should be undefined none", async () => {

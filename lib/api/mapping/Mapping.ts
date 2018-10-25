@@ -61,7 +61,7 @@ export function isMapping(a: any): a is Mapping<any, any> {
 }
 
 export enum MappingCompositionStyle {
-    ApplyFunctionToOutput = "like Array.map"
+    ApplyFunctionToOutput = "like Array.map",
 }
 
 /**
@@ -72,9 +72,9 @@ export enum MappingCompositionStyle {
  */
 export interface ExplicableMapping<F, V, V1 = V> {
     structure: {
-        components: Array<Mapping<F,V1>>,
+        components: Array<Mapping<F, V1>>,
         compositionStyle: MappingCompositionStyle,
-    }
+    };
 }
 
 export function mapMapping<F, V1, V2>(inputMapping: Mapping<F, V1>, f: (v1: V1) => V2): Mapping<F, V2> & ExplicableMapping<F, V2, V1> {
@@ -86,6 +86,6 @@ export function mapMapping<F, V1, V2>(inputMapping: Mapping<F, V1>, f: (v1: V1) 
         structure: {
             components: [inputMapping],
             compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput,
-        }
+        },
     };
 }
