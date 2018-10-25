@@ -103,7 +103,16 @@ describe("making use of the pushMap structure", async () => {
             });
     });
 
-    it("Stops after a matching PushRules");
+    it("Stops after a matching PushRules", async () => {
+        const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
+            whenPushSatisfies(TruePushTest).setGoals(myGoal),
+            whenPushSatisfies(TruePushTest).setGoals(notSetGoal));
+
+        const result = await predictGoals(sdm, {});
+
+        const definiteGoalNames = result.definiteGoals.map(g => g.name);
+        assert.deepStrictEqual(definiteGoalNames, [myGoal.name]);
+    });
 
     it("works with AdditiveGoalSetter");
 
