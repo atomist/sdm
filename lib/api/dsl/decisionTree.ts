@@ -34,7 +34,7 @@ import { allSatisfied } from "../mapping/support/pushTestUtils";
  *           .compute(() => count++)   // Increment the counter for this branch
  *           .then(
  *              // Compute terminal rules
- *              whenPushSatisfies(count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
+ *              whenPushSatisfies(count > 0, falsePushTest()).itMeans("nope").setGoals(NoGoals),
  *              whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
  *           ),
  *       );

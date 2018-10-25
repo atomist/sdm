@@ -31,7 +31,7 @@ import {
 
 export const TruePushTest: PushTest = pushTest("true", async () => true);
 
-export const FalsePushTest: PushTest = pushTest("false", async () => false);
+export function falsePushTest(): PushTest { return  pushTest("false", async () => false)};
 
 export const TrueProjectPredicate: ProjectPredicate = async () => true;
 
@@ -51,7 +51,7 @@ describe("pushTestUtilsTest", () => {
         });
 
         it("should handle one false", async () => {
-            const r = await not(FalsePushTest).mapping({id} as any as PushListenerInvocation);
+            const r = await not(falsePushTest()).mapping({id} as any as PushListenerInvocation);
             assert(r);
         });
 
@@ -72,7 +72,7 @@ describe("pushTestUtilsTest", () => {
             });
 
             it("should handle one true and one false", async () => {
-                const r = await allSatisfied(TruePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TruePushTest, falsePushTest()).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
         });
@@ -112,12 +112,12 @@ describe("pushTestUtilsTest", () => {
             });
 
             it("should handle one true and one false", async () => {
-                const r = await anySatisfied(TruePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TruePushTest, falsePushTest()).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two false", async () => {
-                const r = await anySatisfied(FalsePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(falsePushTest(), falsePushTest()).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
 

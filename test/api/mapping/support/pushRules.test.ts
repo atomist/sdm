@@ -16,14 +16,14 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client";
 
-import * as assert from "power-assert";
+import * as assert from "assert";
 import {
     pushTest,
     PushTest,
 } from "../../../../lib/api/mapping/PushTest";
 import { PushRules } from "../../../../lib/api/mapping/support/PushRules";
 import {
-    FalsePushTest,
+    falsePushTest,
     TruePushTest,
 } from "./pushTestUtils.test";
 
@@ -31,50 +31,58 @@ export const UndefinedPushTest: PushTest = pushTest("true", async () => undefine
 export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {
+    
+    const SomeRepoRef = {id: new GitHubRepoRef("a", "b")} as any;
 
     it("should be undefined none", async () => {
         const pr = new PushRules<string>("t1", []);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        assert.equal(await pr.mapping(SomeRepoRef), undefined);
     });
 
     it("should match true", async () => {
         const pr = new PushRules("t2", [TruePushTest]);
-        assert(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any));
+        assert(await pr.mapping(SomeRepoRef));
     });
 
     it("should be undefined on false", async () => {
-        const pr = new PushRules("t3", [FalsePushTest]);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        const pr = new PushRules("t3", [falsePushTest()]);
+        const result = await pr.mapping(SomeRepoRef);
+        assert.strictEqual(result, undefined);
     });
 
     it("should not match undefined", async () => {
         const pr = new PushRules("t4", [UndefinedPushTest]);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        const result = await pr.mapping(SomeRepoRef);
+        assert.strictEqual(result, undefined);
     });
 
     it("should match undefined and true", async () => {
         const pr = new PushRules("t5", [UndefinedPushTest, TruePushTest]);
-        assert(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any));
+        const result = await pr.mapping(SomeRepoRef);
+        assert(result);
     });
 
     it("should return undefined on null", async () => {
         const pr = new PushRules("t6", [NullPushTest]);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        const result = await pr.mapping(SomeRepoRef);
+        assert.strictEqual(result, undefined);
     });
 
     it("should return undefined on null and true", async () => {
         const pr = new PushRules("t7", [NullPushTest, TruePushTest]);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        assert.strictEqual(await pr.mapping(SomeRepoRef), undefined);
     });
 
     it("should return defined on true and null", async () => {
         const pr = new PushRules("t8", [TruePushTest, NullPushTest]);
-        assert(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any));
+        const result = await pr.mapping(SomeRepoRef);
+        assert(result);
     });
 
     it("should return undefined on false and null and true", async () => {
-        const pr = new PushRules("t9", [FalsePushTest, NullPushTest, TruePushTest]);
-        assert.equal(await pr.mapping({id: new GitHubRepoRef("a", "b")} as any), undefined);
+        const pr = new PushRules("t9", [falsePushTest(), NullPushTest, TruePushTest]);
+        const result = await pr.mapping(SomeRepoRef);
+        assert.strictEqual(result, undefined);
     });
 
 });

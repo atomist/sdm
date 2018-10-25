@@ -24,7 +24,7 @@ import { Goals } from "../../../lib/api/goal/Goals";
 import * as assert from "assert";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import {
-    FalsePushTest,
+    falsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
@@ -60,12 +60,13 @@ describe("making use of the pushMap structure", function () {
 
     it("Skips over a definitely-unmatching PushRule", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
-            whenPushSatisfies(FalsePushTest).setGoals(notSetGoal),
+            whenPushSatisfies(falsePushTest()).setGoals(notSetGoal),
             whenPushSatisfies(TruePushTest).setGoals(myGoal));
 
         const result = await predictGoals(sdm, {});
 
-        assert.deepStrictEqual(result, { definiteGoals: [myGoal], possibleGoals: [], unknownRoads: [] });
+        const definiteGoalNames = result.definiteGoals.map(g => g.name);
+        assert.deepStrictEqual(definiteGoalNames, [myGoal.name]);
     });
 
     it("Reports all goals as possible when PushRules are undetermined", async () => {
@@ -75,11 +76,11 @@ describe("making use of the pushMap structure", function () {
 
         const result = await predictGoals(sdm, {});
 
-        assert.deepStrictEqual(result, {
-            definiteGoals: [],
-            possibleGoals: [anotherGoal, myGoal], // order doesn't really matter afaik
-            unknownRoads: []
-        });
+        assert(result.definiteGoals.length === 0, "No definite goals");
+
+        const possibleGoalNames = result.possibleGoals.map(g => g.name).sort();
+        assert.deepStrictEqual(possibleGoalNames,
+            [anotherGoal.name, myGoal.name]);
     });
 
     it("Reports that it cannot follow a custom PushRule", async () => {

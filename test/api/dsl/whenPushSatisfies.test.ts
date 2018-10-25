@@ -26,7 +26,7 @@ import {
 } from "../../../lib/api/mapping/PredicateMapping";
 import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import {
-    FalsePushTest,
+    falsePushTest,
     TruePushTest,
 } from "../mapping/support/pushTestUtils.test";
 
@@ -75,8 +75,8 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should default name with two", async () => {
-            const test = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
-            assert.equal(test.name, TruePushTest.name + " && " + FalsePushTest.name);
+            const test = whenPushSatisfies(TruePushTest, falsePushTest()).setGoals(SomeGoalSet);
+            assert.equal(test.name, TruePushTest.name + " && " + falsePushTest().name);
         });
 
         it("should allow simple function", async () => {
@@ -94,7 +94,7 @@ describe("whenPushSatisfies", () => {
     describe("internal structure", () => {
 
         it("should expose structure", async () => {
-            const wps = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
+            const wps = whenPushSatisfies(TruePushTest, falsePushTest()).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
             assert(!!structure);
             assert.equal(structure.compositionStyle, PredicateMappingCompositionStyle.And);
@@ -102,7 +102,7 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should expose nested structure", async () => {
-            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
+            const wps = whenPushSatisfies(allSatisfied(TruePushTest, falsePushTest()), falsePushTest()).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
             assert(!!structure);
             assert.equal(structure.compositionStyle, PredicateMappingCompositionStyle.And);
@@ -110,7 +110,7 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should updated nested structure", async () => {
-            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
+            const wps = whenPushSatisfies(allSatisfied(TruePushTest, falsePushTest()), falsePushTest()).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
             assert(!!structure);
             assert.equal(await wps.mapping(fakePush()), undefined);

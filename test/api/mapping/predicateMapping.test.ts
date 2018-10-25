@@ -22,7 +22,7 @@ import {
 } from "../../../lib/api/mapping/PredicateMapping";
 import { not } from "../../../lib/api/mapping/support/pushTestUtils";
 import {
-    FalsePushTest,
+    falsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
 
@@ -39,7 +39,7 @@ describe("predicateMappingVisitor", () => {
     });
 
     it("should visit some", () => {
-        const wps = whenPushSatisfies(TruePushTest, FalsePushTest, not(TruePushTest));
+        const wps = whenPushSatisfies(TruePushTest, falsePushTest(), not(TruePushTest));
         let count = 0;
         const v: PredicateMappingVisitor<any> = () => {
             ++count;
