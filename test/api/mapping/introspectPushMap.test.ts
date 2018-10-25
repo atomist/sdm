@@ -24,11 +24,20 @@ import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
-import { predictGoals } from "./predictGoals";
+import { GoalPrediction, predictGoals } from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
+import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
+
+function goalsToNames(gp: GoalPrediction) {
+    return {
+        definiteGoalNames: gp.definiteGoals.map(g => g.name),
+        possibleGoalNames: gp.possibleGoals.map(g => g.name),
+        unknownRoads: gp.unknownRoads,
+    };
+}
 
 describe("making use of the pushMap structure", async () => {
     const doNothing: ExecuteGoal = async () => { // do nothing
@@ -41,9 +50,13 @@ describe("making use of the pushMap structure", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
             onAnyPush().setGoals(myGoal));
 
-        const result = await predictGoals(sdm, {});
+        const result = goalsToNames(await predictGoals(sdm, {}));
 
-        assert.deepStrictEqual(result.definiteGoals, [myGoal]);
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name],
+            possibleGoalNames: [],
+            unknownRoads: []
+        });
     });
 
     const LooksAtPush: PushTest = { name: "looks at push", mapping: async pli => !!pli.push };
@@ -62,10 +75,13 @@ describe("making use of the pushMap structure", async () => {
             whenPushSatisfies(FalsePushTest).setGoals(notSetGoal),
             whenPushSatisfies(TruePushTest).setGoals(myGoal));
 
-        const result = await predictGoals(sdm, {});
+        const result = goalsToNames(await predictGoals(sdm, {}));
 
-        const definiteGoalNames = result.definiteGoals.map(g => g.name);
-        assert.deepStrictEqual(definiteGoalNames, [myGoal.name]);
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name],
+            possibleGoalNames: [],
+            unknownRoads: []
+        });
     });
 
     it("Reports all goals as possible when PushRules are undetermined", async () => {
@@ -108,10 +124,28 @@ describe("making use of the pushMap structure", async () => {
             whenPushSatisfies(TruePushTest).setGoals(myGoal),
             whenPushSatisfies(TruePushTest).setGoals(notSetGoal));
 
-        const result = await predictGoals(sdm, {});
+        const result = goalsToNames(await predictGoals(sdm, {}));
 
-        const definiteGoalNames = result.definiteGoals.map(g => g.name);
-        assert.deepStrictEqual(definiteGoalNames, [myGoal.name]);
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name],
+            possibleGoalNames: [],
+            unknownRoads: []
+        });
+    });
+
+    it.skip("Can drill down and notice that and(ERROR, false) == false", async () => {
+        const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
+            whenPushSatisfies(allSatisfied(LooksAtPush, FalsePushTest)).setGoals(notSetGoal),
+            whenPushSatisfies(TruePushTest).setGoals(myGoal));
+
+        const result = goalsToNames(await predictGoals(sdm, {}));
+
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name],
+            possibleGoalNames: [],
+            unknownRoads: []
+        });
+
     });
 
     it("works with AdditiveGoalSetter");
