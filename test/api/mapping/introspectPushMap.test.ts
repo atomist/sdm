@@ -23,6 +23,7 @@ import { createGoal } from "../../../lib/api/goal/common/createGoal";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
+import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 import {
     GoalPrediction,
@@ -32,7 +33,6 @@ import {
     FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
-import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 
 function goalsToNames(gp: GoalPrediction) {
     return {
@@ -58,7 +58,7 @@ describe("making use of the pushMap structure", async () => {
         assert.deepStrictEqual(result, {
             definiteGoalNames: [myGoal.name],
             possibleGoalNames: [],
-            unknownRoads: []
+            unknownRoads: [],
         });
     });
 
@@ -83,7 +83,7 @@ describe("making use of the pushMap structure", async () => {
         assert.deepStrictEqual(result, {
             definiteGoalNames: [myGoal.name],
             possibleGoalNames: [],
-            unknownRoads: []
+            unknownRoads: [],
         });
     });
 
@@ -132,7 +132,7 @@ describe("making use of the pushMap structure", async () => {
         assert.deepStrictEqual(result, {
             definiteGoalNames: [myGoal.name],
             possibleGoalNames: [],
-            unknownRoads: []
+            unknownRoads: [],
         });
     });
 
@@ -146,7 +146,7 @@ describe("making use of the pushMap structure", async () => {
         assert.deepStrictEqual(result, {
             definiteGoalNames: [myGoal.name],
             possibleGoalNames: [],
-            unknownRoads: []
+            unknownRoads: [],
         });
 
     });

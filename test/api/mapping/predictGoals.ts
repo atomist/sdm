@@ -17,6 +17,7 @@
 import {
     GitProject,
     HandlerContext,
+    logger,
     ProjectOperationCredentials,
     RemoteRepoRef,
 } from "@atomist/automation-client";
@@ -118,9 +119,9 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
             definiteGoals: (await pushMapping.mapping(pli)).goals,
         };
     } catch (e) {
-         console.log("Failed to run mapping: " + pushMapping.name + " with error: " + e.message);
+         logger.warn("Failed to run mapping: " + pushMapping.name + " with error: " + e.message);
         // try to break it down further; see what info we can get.
-        return deconstructMapping(pushMapping, pli);
+         return deconstructMapping(pushMapping, pli);
     }
 }
 
@@ -128,17 +129,15 @@ async function deconstructMapping(pushMapping: PushMapping<Goals>, pli: PushList
     if (hasGoalSettingStructure(pushMapping)) {
         switch (pushMapping.structure.compositionStyle) {
             case GoalSettingCompositionStyle.FirstMatch:
-                console.log("look, a first match");
                 return possibleResultsOfFirstMatch(pushMapping.structure.components, pli);
             case GoalSettingCompositionStyle.AllMatches:
-                console.log("We want all matches");
                 break;
         }
     }
     if (isPredicatedStaticValue(pushMapping)) {
         return deconstructPushRule(pushMapping, pli);
     } else {
-        console.log("No goals detected");
+        logger.info("No goals detected");
         return {
             ...EmptyGoalPrediction,
             unknownRoads: [{ name: pushMapping.name, reason: "Could not see into mapping" }],
