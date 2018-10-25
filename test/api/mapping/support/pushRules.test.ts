@@ -23,7 +23,7 @@ import {
 } from "../../../../lib/api/mapping/PushTest";
 import { PushRules } from "../../../../lib/api/mapping/support/PushRules";
 import {
-    falsePushTest,
+    FalsePushTest,
     TruePushTest,
 } from "./pushTestUtils.test";
 
@@ -45,7 +45,7 @@ describe("PushRules", () => {
     });
 
     it("should be undefined on false", async () => {
-        const pr = new PushRules("t3", [falsePushTest()]);
+        const pr = new PushRules("t3", [FalsePushTest]);
         const result = await pr.mapping(SomeRepoRef);
         assert.strictEqual(result, undefined);
     });
@@ -80,7 +80,7 @@ describe("PushRules", () => {
     });
 
     it("should return undefined on false and null and true", async () => {
-        const pr = new PushRules("t9", [falsePushTest(), NullPushTest, TruePushTest]);
+        const pr = new PushRules("t9", [FalsePushTest, NullPushTest, TruePushTest]);
         const result = await pr.mapping(SomeRepoRef);
         assert.strictEqual(result, undefined);
     });

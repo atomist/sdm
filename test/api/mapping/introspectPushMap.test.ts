@@ -24,7 +24,7 @@ import { Goals } from "../../../lib/api/goal/Goals";
 import * as assert from "assert";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import {
-    falsePushTest,
+    FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
@@ -60,7 +60,7 @@ describe("making use of the pushMap structure", function () {
 
     it("Skips over a definitely-unmatching PushRule", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
-            whenPushSatisfies(falsePushTest()).setGoals(notSetGoal),
+            whenPushSatisfies(FalsePushTest).setGoals(notSetGoal),
             whenPushSatisfies(TruePushTest).setGoals(myGoal));
 
         const result = await predictGoals(sdm, {});

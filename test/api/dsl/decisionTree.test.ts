@@ -22,7 +22,7 @@ import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import {
-    falsePushTest,
+    FalsePushTest,
     TruePushTest,
 } from "../mapping/support/pushTestUtils.test";
 
@@ -49,7 +49,7 @@ describe("given", () => {
     });
 
     it("should combine false with one", async () => {
-        const pm: PushMapping<any> = given(falsePushTest())
+        const pm: PushMapping<any> = given(FalsePushTest)
             .itMeans("no frogs coming")
             .then(FrogPushMapping);
         const mapped = await pm.mapping(fakePush());
@@ -86,7 +86,7 @@ describe("given", () => {
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
             .itMeans("no frogs coming")
             .then(
-                whenPushSatisfies(falsePushTest()).itMeans("nope").setGoals(NoGoals),
+                whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
                 whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
             );
         const mapped = await pm.mapping(fakePush());
@@ -98,7 +98,7 @@ describe("given", () => {
             .itMeans("no frogs coming")
             .then(
                 given<Goals>(TruePushTest).itMeans("case1").then(
-                    whenPushSatisfies(falsePushTest()).itMeans("nope").setGoals(NoGoals),
+                    whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
                     whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
                 ),
             );
@@ -115,7 +115,7 @@ describe("given", () => {
                 given<Goals>(TruePushTest).itMeans("case1")
                     .compute(() => count++)
                     .then(
-                        whenPushSatisfies(() => count > 0, falsePushTest()).itMeans("nope").setGoals(NoGoals),
+                        whenPushSatisfies(() => count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
                         whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
                     ),
             );
