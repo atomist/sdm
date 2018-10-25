@@ -24,7 +24,10 @@ import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
-import { GoalPrediction, predictGoals } from "./predictGoals";
+import {
+    GoalPrediction,
+    predictGoals,
+} from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,
