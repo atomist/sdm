@@ -27,7 +27,7 @@ import { GitHubLogin } from "../../typings/types";
 
 /**
  * Goal approval request vote implementation that checks for GitHub team membership of the
- * person who is requesting the approval.
+ * person who is requesting the approval .
  * @param {string} team
  */
 export function githubTeamVoter(team: string = "atomist-automation"): GoalApprovalRequestVoter {
