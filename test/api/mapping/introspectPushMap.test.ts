@@ -46,6 +46,7 @@ function goalsToNames(gp: GoalPrediction) {
         unknownRoads: gp.unknownRoads,
     };
 }
+
 const EmptyGoalNames = {
     definiteGoalNames: [],
     possibleGoalNames: [],
@@ -172,6 +173,21 @@ describe("making use of the pushMap structure", async () => {
         });
     });
 
-    it("works with AdditiveGoalSetter");
+    it("works with AdditiveGoalSetter", async () => {
+        const sdm = new TestSoftwareDeliveryMachine("test goal setting structure");
+        sdm.withPushRules(
+            whenPushSatisfies(anySatisfied(LooksAtPush, TruePushTest)).setGoals(myGoal));
+        sdm.withPushRules(whenPushSatisfies(TruePushTest).setGoals(anotherGoal));
+
+        const result = goalsToNames(await predictGoals(sdm, {}));
+
+        assert.deepStrictEqual(result, {
+            definiteGoalNames: [myGoal.name, anotherGoal],
+            possibleGoalNames: [],
+            unknownRoads: [],
+        });
+    });
+
+    it("can give me all the goals with duplicates removed and preconditions populated");
 
 });

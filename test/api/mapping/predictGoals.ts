@@ -39,6 +39,7 @@ import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
 import { OnPushToAnyBranch } from "../../../lib/typings/types";
+import { isExplicableMapping, MappingCompositionStyle } from "../../../lib/api/mapping/Mapping";
 
 // Model for what we could do in a pack
 
@@ -106,12 +107,10 @@ export const EmptyGoalPrediction: GoalPrediction = {
 };
 
 // File: predictGoals
-export async function predictGoals(sdm: SoftwareDeliveryMachine, known: Partial<PushListenerInvocation>): Promise<GoalPrediction> {
-
+export async function predictGoals(sdm: SoftwareDeliveryMachine,
+                                   known: Partial<PushListenerInvocation>): Promise<GoalPrediction> {
     const pushMapping = sdm.pushMapping;
-
     const pushListenerInvocation = throwingPushListenerInvocation(known);
-
     return predictMapping(pushMapping, pushListenerInvocation);
 }
 
@@ -121,7 +120,14 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
             case GoalSettingCompositionStyle.FirstMatch:
                 return possibleResultsOfFirstMatch(pushMapping.structure.components, pli);
             case GoalSettingCompositionStyle.AllMatches:
-                break;
+                console.log("all matches time");
+                return accumulateAdditiveResults(pushMapping.structure.components, pli);
+        }
+    }
+    if (isExplicableMapping(pushMapping)) {
+        switch(pushMapping.structure.compositionStyle) {
+            case MappingCompositionStyle.ApplyFunctionToOutput:
+                throw new Error("unimplemented");
         }
     }
     if (isPredicatedStaticValue(pushMapping)) {
@@ -146,6 +152,11 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
             };
         }
     }
+}
+
+async function accumulateAdditiveResults(pms: PushMapping<Goals>[], pli: PushListenerInvocation): Promise<GoalPrediction> {
+    const predictions = await Promise.all(pms.map(pm => predictMapping(pm, pli)));
+    return predictions.reduce(combineGoalPredictions, EmptyGoalPrediction);
 }
 
 async function deconstructPushRule(psm: StaticPushMapping<Goals> & Predicated<PushListenerInvocation>,
