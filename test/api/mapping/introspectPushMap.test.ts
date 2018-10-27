@@ -31,18 +31,19 @@ import {
 } from "../../../lib/api/mapping/support/pushTestUtils";
 import {
     EmptyGoalPrediction,
-    GoalPrediction,
+    MappingPrediction,
     predictGoals,
 } from "./predictGoals";
 import {
     FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
+import * as _ from "lodash";
 
-function goalsToNames(gp: GoalPrediction) {
+function goalsToNames(gp: MappingPrediction<Goals>) {
     return {
-        definiteGoalNames: gp.definiteGoals.map(g => g.name),
-        possibleGoalNames: gp.possibleGoals.map(g => g.name),
+        definiteGoalNames: _.flatten(gp.definiteGoals.map(gg => gg.goals.map(g => g.name))),
+        possibleGoalNames: _.flatten(gp.possibleGoals.map(gg => gg.goals.map(g => g.name))),
         unknownRoads: gp.unknownRoads,
     };
 }
@@ -79,9 +80,9 @@ describe("making use of the pushMap structure", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",
             whenPushSatisfies(LooksAtPush).setGoals(myGoal));
 
-        const result = await predictGoals(sdm, {});
+        const result = goalsToNames(await predictGoals(sdm, {}));
 
-        assert.deepStrictEqual(result, { ...EmptyGoalPrediction, possibleGoals: [myGoal] });
+        assert.deepStrictEqual(result, { ...EmptyGoalNames, possibleGoalNames: [myGoal.name] });
     });
 
     it("Skips over a definitely-unmatching PushRule", async () => {

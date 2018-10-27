@@ -22,7 +22,6 @@ import {
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
-import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
@@ -76,21 +75,17 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
 }
 
 // File: GoalPrediction
-export interface GoalPrediction {
+export interface MappingPrediction<T> {
     definiteNull: boolean;
-    definiteGoals: Goal[];
-    possibleGoals: Goal[];
+    definiteGoals: T[];
+    possibleGoals: T[];
     unknownRoads: Array<{
         name: string,
         reason: string,
     }>;
 }
 
-export function definitelyNoGoals(gp: GoalPrediction): boolean {
-    return gp.definiteGoals.length === 0 && gp.possibleGoals.length === 0 && (gp.unknownRoads.length === 0);
-}
-
-export function combineGoalPredictions(gp1: GoalPrediction, gp2: GoalPrediction): GoalPrediction {
+export function combinePredictions<T>(gp1: MappingPrediction<T>, gp2: MappingPrediction<T>): MappingPrediction<T> {
     return {
         definiteNull: gp1.definiteNull || gp2.definiteNull,
         definiteGoals: gp1.definiteGoals.concat(gp2.definiteGoals),
@@ -99,7 +94,7 @@ export function combineGoalPredictions(gp1: GoalPrediction, gp2: GoalPrediction)
     };
 }
 
-export const EmptyGoalPrediction: GoalPrediction = {
+export const EmptyGoalPrediction: MappingPrediction<any> = {
     definiteNull: false,
     definiteGoals: [],
     possibleGoals: [],
@@ -108,13 +103,13 @@ export const EmptyGoalPrediction: GoalPrediction = {
 
 // File: predictGoals
 export async function predictGoals(sdm: SoftwareDeliveryMachine,
-                                   known: Partial<PushListenerInvocation>): Promise<GoalPrediction> {
+                                   known: Partial<PushListenerInvocation>): Promise<MappingPrediction<Goals>> {
     const pushMapping = sdm.pushMapping;
     const pushListenerInvocation = throwingPushListenerInvocation(known);
     return predictMapping(pushMapping, pushListenerInvocation);
 }
 
-async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListenerInvocation): Promise<GoalPrediction> {
+async function predictMapping<T>(pushMapping: PushMapping<T>, pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     if (hasGoalSettingStructure(pushMapping)) {
         switch (pushMapping.structure.compositionStyle) {
             case GoalSettingCompositionStyle.FirstMatch:
@@ -143,7 +138,7 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
             }
             return {
                 ...EmptyGoalPrediction,
-                definiteGoals: result.goals,
+                definiteGoals: [result],
             };
         } catch (e) {
             return {
@@ -154,25 +149,25 @@ async function predictMapping(pushMapping: PushMapping<Goals>, pli: PushListener
     }
 }
 
-async function accumulateAdditiveResults(pms: PushMapping<Goals>[], pli: PushListenerInvocation): Promise<GoalPrediction> {
+async function accumulateAdditiveResults<T>(pms: PushMapping<T>[], pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     const predictions = await Promise.all(pms.map(pm => predictMapping(pm, pli)));
-    return predictions.reduce(combineGoalPredictions, EmptyGoalPrediction);
+    return predictions.reduce(combinePredictions, EmptyGoalPrediction);
 }
 
-async function deconstructPushRule(psm: StaticPushMapping<Goals> & Predicated<PushListenerInvocation>,
-                                   pli: PushListenerInvocation): Promise<GoalPrediction> {
+async function deconstructPushRule<T>(psm: StaticPushMapping<T> & Predicated<PushListenerInvocation>,
+                                   pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     const testPrediction = await deconstructTest(psm.test, pli);
     if (hasPredictedResult(testPrediction)) {
         // we know what we are going to return
         if (testPrediction.result) {
-            return { ...EmptyGoalPrediction, definiteGoals: psm.value.goals };
+            return { ...EmptyGoalPrediction, definiteGoals: [psm.value] };
         } else {
             // we know we are going to return nothing
             return EmptyGoalPrediction;
         }
     } else {
         // well, we might return these
-        return { ...EmptyGoalPrediction, possibleGoals: psm.value.goals };
+        return { ...EmptyGoalPrediction, possibleGoals: [psm.value] };
     }
 }
 
@@ -229,13 +224,13 @@ async function deconstructTest<T>(pushTest: PredicateMapping<T>, pli: T): Promis
 }
 
 // this is coupled to the implementation of PushRules.mapping
-async function possibleResultsOfFirstMatch(rules: Array<PushMapping<Goals>>, pli: PushListenerInvocation): Promise<GoalPrediction> {
+async function possibleResultsOfFirstMatch<T>(rules: Array<PushMapping<T>>, pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     if (rules.length === 0) {
         return EmptyGoalPrediction;
     }
     const [first, ...rest] = rules;
 
-    const firstResult: GoalPrediction = await predictMapping(first, pli);
+    const firstResult: MappingPrediction<T> = await predictMapping(first, pli);
 
     if (firstResult.definiteNull) {
         // if we definitely get null, then that signals "stop processing rules" (sadly)
@@ -258,5 +253,5 @@ async function possibleResultsOfFirstMatch(rules: Array<PushMapping<Goals>>, pli
         restResult.definiteGoals = [];
     }
 
-    return combineGoalPredictions(firstResult, restResult);
+    return combinePredictions(firstResult, restResult);
 }
