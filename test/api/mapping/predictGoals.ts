@@ -85,6 +85,15 @@ export interface MappingPrediction<T> {
     }>;
 }
 
+export function mapMappingPrediction<T, T2>(mp: MappingPrediction<T>, f: (t: T) => T2): MappingPrediction<T2> {
+    return {
+        definiteNull: mp.definiteNull,
+        definiteGoals: mp.definiteGoals.map(f),
+        possibleGoals: mp.possibleGoals.map(f),
+        unknownRoads: mp.unknownRoads,
+    }
+}
+
 export function combinePredictions<T>(gp1: MappingPrediction<T>, gp2: MappingPrediction<T>): MappingPrediction<T> {
     return {
         definiteNull: gp1.definiteNull || gp2.definiteNull,
@@ -122,7 +131,8 @@ async function predictMapping<T>(pushMapping: PushMapping<T>, pli: PushListenerI
     if (isExplicableMapping(pushMapping)) {
         switch(pushMapping.structure.compositionStyle) {
             case MappingCompositionStyle.ApplyFunctionToOutput:
-                throw new Error("unimplemented");
+                const innerResult = await predictMapping(pushMapping.structure.component, pli);
+                return mapMappingPrediction(innerResult, pushMapping.structure.applyFunction);
         }
     }
     if (isPredicatedStaticValue(pushMapping)) {
@@ -224,7 +234,8 @@ async function deconstructTest<T>(pushTest: PredicateMapping<T>, pli: T): Promis
 }
 
 // this is coupled to the implementation of PushRules.mapping
-async function possibleResultsOfFirstMatch<T>(rules: Array<PushMapping<T>>, pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
+async function possibleResultsOfFirstMatch<T>(rules: Array<PushMapping<T>>,
+                                              pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     if (rules.length === 0) {
         return EmptyGoalPrediction;
     }

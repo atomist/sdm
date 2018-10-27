@@ -178,12 +178,13 @@ describe("making use of the pushMap structure", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure");
         sdm.withPushRules(
             whenPushSatisfies(anySatisfied(LooksAtPush, TruePushTest)).setGoals(myGoal));
-        sdm.withPushRules(whenPushSatisfies(TruePushTest).setGoals(anotherGoal));
+        sdm.withPushRules(whenPushSatisfies(TruePushTest).setGoals(anotherGoal),
+            whenPushSatisfies(FalsePushTest, LooksAtPush).setGoals(notSetGoal));
 
         const result = goalsToNames(await predictGoals(sdm, {}));
 
         assert.deepStrictEqual(result, {
-            definiteGoalNames: [myGoal.name, anotherGoal],
+            definiteGoalNames: [myGoal.name, anotherGoal.name],
             possibleGoalNames: [],
             unknownRoads: [],
         });

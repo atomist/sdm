@@ -68,7 +68,7 @@ export enum MappingCompositionStyle {
  * This will be a union type when we add another one
  */
 export type ExplicableMappingStructure<F, V, V1 = V> = {
-    components: Array<Mapping<F, V1>>,
+    component: Mapping<F, V1>,
     applyFunction: (v: V1) => V,
     compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput,
 }
@@ -96,7 +96,7 @@ export function mapMapping<F, V1, V2>(inputMapping: Mapping<F, V1>, f: (v1: V1) 
             return inputMapping.mapping(input).then(f);
         },
         structure: {
-            components: [inputMapping],
+            component: inputMapping,
             applyFunction: f,
             compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput,
         },
