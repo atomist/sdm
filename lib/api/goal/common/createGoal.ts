@@ -19,7 +19,10 @@ import {
     Goal,
     GoalDefinition,
 } from "../Goal";
-import { ExecuteGoal, GoalInvocation } from "../GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
 
