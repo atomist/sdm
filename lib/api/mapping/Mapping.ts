@@ -67,10 +67,10 @@ export enum MappingCompositionStyle {
 /**
  * This will be a union type when we add another one
  */
-export type ExplicableMappingStructure<F, V, V1 = V> = {
-    component: Mapping<F, V1>,
-    applyFunction: (v: V1) => V,
-    compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput,
+export interface ExplicableMappingStructure<F, V, V1 = V> {
+    component: Mapping<F, V1>;
+    applyFunction: (v: V1) => V;
+    compositionStyle: MappingCompositionStyle.ApplyFunctionToOutput;
 }
 
 /**
@@ -79,15 +79,14 @@ export type ExplicableMappingStructure<F, V, V1 = V> = {
  * V = output
  * V1 = output type of the structural components
  */
-export interface ExplicableMapping<F, V, V1 = V> extends Mapping<F,V> {
-    structure: ExplicableMappingStructure<F,V,V1>;
+export interface ExplicableMapping<F, V, V1 = V> extends Mapping<F, V> {
+    structure: ExplicableMappingStructure<F, V, V1>;
 }
 
-export function isExplicableMapping<F,V>(input: Mapping<F,V>): input is ExplicableMapping<F,V> {
-    const maybe = input as ExplicableMapping<F,V>;
+export function isExplicableMapping<F, V>(input: Mapping<F, V>): input is ExplicableMapping<F, V> {
+    const maybe = input as ExplicableMapping<F, V>;
     return !!maybe.structure;
 }
-
 
 export function mapMapping<F, V1, V2>(inputMapping: Mapping<F, V1>, f: (v1: V1) => V2): Mapping<F, V2> & ExplicableMapping<F, V2, V1> {
     return {

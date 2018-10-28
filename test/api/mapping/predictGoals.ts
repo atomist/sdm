@@ -30,6 +30,10 @@ import {
     hasGoalSettingStructure,
 } from "../../../lib/api/mapping/GoalSetter";
 import {
+    isExplicableMapping,
+    MappingCompositionStyle,
+} from "../../../lib/api/mapping/Mapping";
+import {
     Predicated,
     PredicateMapping,
     PredicateMappingCompositionStyle,
@@ -38,10 +42,6 @@ import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
 import { OnPushToAnyBranch } from "../../../lib/typings/types";
-import {
-    isExplicableMapping,
-    MappingCompositionStyle,
-} from "../../../lib/api/mapping/Mapping";
 
 // Model for what we could do in a pack
 
@@ -94,7 +94,7 @@ export function mapMappingPrediction<T, T2>(mp: MappingPrediction<T>, f: (t: T) 
         definiteGoals: mp.definiteGoals.map(f),
         possibleGoals: mp.possibleGoals.map(f),
         unknownRoads: mp.unknownRoads,
-    }
+    };
 }
 
 export function combinePredictions<T>(gp1: MappingPrediction<T>, gp2: MappingPrediction<T>): MappingPrediction<T> {
@@ -127,12 +127,11 @@ async function predictMapping<T>(pushMapping: PushMapping<T>, pli: PushListenerI
             case GoalSettingCompositionStyle.FirstMatch:
                 return possibleResultsOfFirstMatch(pushMapping.structure.components, pli);
             case GoalSettingCompositionStyle.AllMatches:
-                console.log("all matches time");
                 return accumulateAdditiveResults(pushMapping.structure.components, pli);
         }
     }
     if (isExplicableMapping(pushMapping)) {
-        switch(pushMapping.structure.compositionStyle) {
+        switch (pushMapping.structure.compositionStyle) {
             case MappingCompositionStyle.ApplyFunctionToOutput:
                 const innerResult = await predictMapping(pushMapping.structure.component, pli);
                 return mapMappingPrediction(innerResult, pushMapping.structure.applyFunction);
@@ -162,13 +161,13 @@ async function predictMapping<T>(pushMapping: PushMapping<T>, pli: PushListenerI
     }
 }
 
-async function accumulateAdditiveResults<T>(pms: PushMapping<T>[], pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
+async function accumulateAdditiveResults<T>(pms: Array<PushMapping<T>>, pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     const predictions = await Promise.all(pms.map(pm => predictMapping(pm, pli)));
     return predictions.reduce(combinePredictions, EmptyGoalPrediction);
 }
 
 async function deconstructPushRule<T>(psm: StaticPushMapping<T> & Predicated<PushListenerInvocation>,
-                                   pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
+                                      pli: PushListenerInvocation): Promise<MappingPrediction<T>> {
     const testPrediction = await deconstructTest(psm.test, pli);
     if (hasPredictedResult(testPrediction)) {
         // we know what we are going to return

@@ -25,6 +25,7 @@ import { Goals } from "../../../lib/api/goal/Goals";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
+import * as _ from "lodash";
 import {
     allSatisfied,
     anySatisfied,
@@ -38,7 +39,6 @@ import {
     FalsePushTest,
     TruePushTest,
 } from "./support/pushTestUtils.test";
-import * as _ from "lodash";
 
 function goalsToNames(gp: MappingPrediction<Goals>) {
     return {
