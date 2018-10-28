@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import {
     Goal,
     GoalDefinition,
@@ -21,7 +22,6 @@ import {
 import { ExecuteGoal, GoalInvocation } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
-import { logger } from "@atomist/automation-client";
 
 /**
  * Minimum information needed to create a goal
