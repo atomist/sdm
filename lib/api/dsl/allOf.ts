@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { PredicateMapping } from "../mapping/PredicateMapping";
+import {
+    PredicateMapping,
+    PredicateMappingCompositionStyle,
+} from "../mapping/PredicateMapping";
 import {
     PredicateMappingTerm,
     toPredicateMapping,
@@ -35,6 +38,10 @@ export function allOf<F>(
         mapping: async pu => {
             const result = await Promise.all(asPredicateMappings.map(pm => pm.mapping(pu)));
             return !result.includes(false);
+        },
+        structure: {
+            components: asPredicateMappings,
+            compositionStyle: PredicateMappingCompositionStyle.And,
         },
     };
 }

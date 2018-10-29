@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as _ from "lodash";
 import { SdmContext } from "../context/SdmContext";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
@@ -28,3 +29,27 @@ import { Mapping } from "./Mapping";
  * understand the repo
  */
 export type GoalSetter<F extends SdmContext = PushListenerInvocation> = Mapping<F, Goals>;
+
+export enum GoalSettingCompositionStyle {
+    FirstMatch = "take the first one",
+    AllMatches = "take all the ones that match",
+}
+
+/**
+ * Some (composed) mappings contain information about their internal structure.
+ *
+ * It only extends Mapping<F,V> because it's expected to apply only to those
+ */
+export interface GoalSettingStructure<F, V> extends Mapping<F, V> {
+    structure: {
+        compositionStyle: GoalSettingCompositionStyle,
+        components: Array<Mapping<F, V>>,
+    };
+}
+
+export function hasGoalSettingStructure<F, V>(m: Mapping<F, V>): m is GoalSettingStructure<F, V> {
+    const maybe = m as GoalSettingStructure<F, V>;
+    return maybe.structure &&
+        maybe.structure.compositionStyle &&
+        Object.values(GoalSettingCompositionStyle).includes(maybe.structure.compositionStyle);
+}

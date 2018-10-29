@@ -43,7 +43,10 @@ import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { GoalSetter } from "../../api/mapping/GoalSetter";
+import {
+    GoalSetter,
+    GoalSettingStructure,
+} from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";

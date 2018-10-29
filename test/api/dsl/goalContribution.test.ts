@@ -40,7 +40,6 @@ import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
 import { resetRegistrableManager } from "../../../lib/api/machine/Registerable";
-import { GoalSetter } from "../../../lib/api/mapping/GoalSetter";
 import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
 import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
@@ -96,7 +95,7 @@ describe("goalContribution", () => {
     describe("enrichGoalSetters", () => {
 
         it("should set no goals", async () => {
-            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
+            const gs = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
                 whenPushSatisfies(() => false).setGoals(SomeGoalSet));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
@@ -104,7 +103,7 @@ describe("goalContribution", () => {
         });
 
         it("should add goal to none", async () => {
-            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
+            const gs = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
                 whenPushSatisfies(() => true).setGoals(SomeGoalSet));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
@@ -114,8 +113,8 @@ describe("goalContribution", () => {
 
         it("should add goal to some", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
-            const gs: GoalSetter = enrichGoalSetters(old,
+            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
+            const gs = enrichGoalSetters(old,
                 onAnyPush().setGoals(mg));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
@@ -125,8 +124,8 @@ describe("goalContribution", () => {
 
         it("should add two goals to some", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
-            let gs: GoalSetter = enrichGoalSetters(old,
+            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
+            let gs = enrichGoalSetters(old,
                 onAnyPush().setGoals(mg));
             gs = enrichGoalSetters(gs,
                 onAnyPush().setGoals(FingerprintGoal));
@@ -139,10 +138,10 @@ describe("goalContribution", () => {
 
         it("should respect sealed goals", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old: GoalSetter = whenPushSatisfies(() => true)
+            const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet.andLock());
-            const gs: GoalSetter = enrichGoalSetters(old,
+            const gs = enrichGoalSetters(old,
                 onAnyPush().setGoals(mg));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
@@ -152,7 +151,7 @@ describe("goalContribution", () => {
 
         it("should respect sealed goals after adding additional goal", async () => {
             // we create a goal setter that always sets a Fred goal
-            const old: GoalSetter = whenPushSatisfies(() => true)
+            const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet);
 
@@ -160,7 +159,7 @@ describe("goalContribution", () => {
             const mg1 = suggestAction({ message: "sendSomeMessage1", displayName: "Sending message1" });
             const mg2 = suggestAction({ message: "sendSomeMessage2", displayName: "Sending message2" });
 
-            const gs: GoalSetter = enrichGoalSetters(old,
+            const gs = enrichGoalSetters(old,
                 onAnyPush().setGoals([mg1, LockingGoal]));
             const gs1 = enrichGoalSetters(gs,
                 whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
@@ -211,7 +210,7 @@ describe("goalContribution", () => {
         it("should respect sealed goals after adding additional goal", async () => {
             // we create a goal setter that always sets a Fred goal
             const sdm = new TestSoftwareDeliveryMachine("test");
-            const old: GoalSetter = whenPushSatisfies(() => true)
+            const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet);
 

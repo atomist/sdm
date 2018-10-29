@@ -79,6 +79,7 @@ export function memoize(pt: PushTest): PushTest {
             }
             return result;
         },
+        structure: pt.structure,
     };
 }
 

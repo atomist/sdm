@@ -22,20 +22,29 @@ import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
 import {
+    GoalSetter,
+    GoalSettingCompositionStyle,
+    GoalSettingStructure,
+} from "../mapping/GoalSetter";
+import {
+    mapMapping,
     Mapping,
     NeverMatch,
 } from "../mapping/Mapping";
+import { Predicated } from "../mapping/PredicateMapping";
 import {
     GoalComponent,
     toGoals,
 } from "./GoalComponent";
 
-export type GoalContribution<F> = Mapping<F, GoalComponent>;
+export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
+
+}
 
 /**
  * An additive goal setter assembles the goals contributed by all the contributors.
  */
-class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
+class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSettingStructure<F, Goals> {
 
     public get label(): string {
         return this.contributors.filter(c => (c as any).label)
@@ -43,6 +52,13 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
     }
 
     constructor(public readonly name: string, public readonly contributors: Array<GoalContribution<F>>) {
+    }
+
+    get structure() {
+        return {
+            components: this.contributors.map(vague => mapMapping(vague, toGoals)),
+            compositionStyle: GoalSettingCompositionStyle.AllMatches,
+        };
     }
 
     public async mapping(p: F): Promise<NeverMatch | Goals | undefined> {
@@ -96,10 +112,7 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     if (contributors.length === 0) {
-        return {
-            name: contributor.name,
-            mapping: async f => toGoals(await contributor.mapping(f)),
-        };
+        return mapMapping(contributor, toGoals);
     }
     return enrichGoalSetters(contributor, contributors[0], ...contributors.slice(1));
 }
@@ -114,10 +127,10 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
 export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>(
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
-    ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
+    ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> & GoalSettingStructure<F, Goals> {
     if (isAdditiveGoalSetter(mapping)) {
         return new AdditiveGoalSetter(`${mapping.name}-enriched`,
-            mapping.contributors.concat([contributor]).concat(contributors),
+            [...mapping.contributors, contributor, ...contributors],
         );
     }
     return new AdditiveGoalSetter(`${mapping.name}-enriched`,

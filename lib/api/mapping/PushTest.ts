@@ -16,12 +16,14 @@
 
 import { Project } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../listener/PushListener";
-import { PushMapping } from "./PushMapping";
+import { PredicateMapping } from "./PredicateMapping";
 
 /**
  * Special PushMapping. Return true if we like this push. Used in goal setting etc.
  */
-export type PushTest = PushMapping<boolean>;
+export interface PushTest extends PredicateMapping<PushListenerInvocation> {
+
+}
 
 /**
  * Test against a project

@@ -16,6 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
+import { Predicated } from "../PredicateMapping";
+import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
@@ -23,7 +25,7 @@ import { StaticPushMapping } from "./StaticPushMapping";
 /**
  * Generic DSL support for returning an object on a push
  */
-export class PushRule<V = any> implements StaticPushMapping<V> {
+export class PushRule<V = any> implements StaticPushMapping<V>, Predicated<PushListenerInvocation> {
 
     private staticValue: V;
 
@@ -35,7 +37,14 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
         return this.reason;
     }
 
+    /**
+     * The test for this rule
+     */
     public readonly pushTest: PushTest;
+
+    get test() {
+        return this.pushTest;
+    }
 
     private reason: string;
 
@@ -74,4 +83,9 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
         }
     }
 
+}
+
+export function isPredicatedStaticValue<T>(pushMapping: PushMapping<T>): pushMapping is StaticPushMapping<T> & Predicated<PushListenerInvocation> {
+    const maybe = pushMapping as PushRule;
+    return maybe.test && maybe.value;
 }

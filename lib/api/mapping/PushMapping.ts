@@ -21,8 +21,9 @@ import {
 } from "./Mapping";
 
 /**
- * Constant to indicate we should never match
+ * Constant to indicate we should never match.
  * @type {any}
+ * @deprecated use GoalSetterMapping.setNoMoreGoals()
  */
 export const DoNotSetAnyGoals: NeverMatch = null;
 
@@ -30,4 +31,6 @@ export const DoNotSetAnyGoals: NeverMatch = null;
  * Mapper from push to value, id it can be resolved.
  * This is a central interface used throughout the SDM.
  */
-export type PushMapping<V> = Mapping<PushListenerInvocation, V>;
+export interface PushMapping<V> extends Mapping<PushListenerInvocation, V> {
+
+}
