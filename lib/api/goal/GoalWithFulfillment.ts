@@ -24,6 +24,10 @@ import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
+    createPredicatedGoalExecutor,
+    WaitRules,
+} from "./common/createGoal";
+import {
     Goal,
     GoalDefinition,
     GoalWithPrecondition,
@@ -118,6 +122,16 @@ export interface FulfillableGoalDetails {
         canceled?: string;
         stopped?: string;
     };
+
+    waitRules?: WaitRules;
+}
+
+/**
+ * Extension to GoalDefinition that allows to specify additional WaitRules.
+ */
+export interface PredicatedGoalDefinition extends GoalDefinition {
+
+    waitRules?: WaitRules;
 }
 
 /**
@@ -132,7 +146,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     public sdm: SoftwareDeliveryMachine;
 
-    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+    constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(isGoalDefiniton(definitionOrGoal) ? definitionOrGoal : definitionOrGoal.definition, ...dependsOn);
         registerRegistrable(this);
     }
@@ -168,10 +182,20 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     private registerFulfillment(fulfillment: Fulfillment): void {
         if (isImplementation(fulfillment)) {
+            let goalExecutor = fulfillment.goalExecutor;
+
+            // Wrap the ExecuteGoal instance with WaitRules if provided
+            if (isGoalDefiniton(this.definitionOrGoal) && this.definitionOrGoal.waitRules) {
+                goalExecutor = createPredicatedGoalExecutor(
+                    this.definitionOrGoal.uniqueName,
+                    goalExecutor,
+                    this.definitionOrGoal.waitRules);
+            }
+
             (this.sdm as AbstractSoftwareDeliveryMachine).addGoalImplementation(
                 fulfillment.name,
                 this,
-                fulfillment.goalExecutor,
+                goalExecutor,
                 {
                     pushTest: fulfillment.pushTest || AnyPush,
                     progressReporter: fulfillment.progressReporter,
@@ -198,7 +222,7 @@ export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoa
 
     protected registrations: R[] = [];
 
-    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+    constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(definitionOrGoal, ...dependsOn);
     }
 
@@ -215,7 +239,7 @@ export abstract class FulfillableGoalWithRegistrationsAndListeners<R, L> extends
 
     protected listeners: L[] = [];
 
-    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+    constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(definitionOrGoal, ...dependsOn);
     }
 
@@ -243,7 +267,7 @@ export class GoalWithFulfillment extends FulfillableGoal {
 }
 
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string): { uniqueName: string } | GoalDefinition {
+                                      uniqueName: string): { uniqueName: string } | PredicatedGoalDefinition {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
@@ -269,6 +293,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
             preApprovalRequired: goalDetails.preApproval,
             retryFeasible: goalDetails.retry,
             isolated: goalDetails.isolate,
+            waitRules: goalDetails.waitRules,
             ...descriptions,
         };
     }

@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import {
     Goal,
     GoalDefinition,
 } from "../Goal";
-import { ExecuteGoal } from "../GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
 
+/**
+ * Minimum information needed to create a goal
+ */
 export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 
     displayName: string;
@@ -40,5 +47,78 @@ export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): G
     return g.with({
         name: g.definition.uniqueName,
         goalExecutor,
+    });
+}
+
+/**
+ * Rules for waiting for a predicated goal.
+ * Specify timeout in seconds or milliseconds.
+ */
+export interface WaitRules {
+
+    timeoutSeconds?: number;
+
+    timeoutMillis?: number;
+
+    retries?: number;
+
+    condition: (gi: GoalInvocation) => Promise<boolean>;
+}
+
+const DefaultWaitRules: Partial<WaitRules> = {
+    timeoutSeconds: 1,
+    retries: 1000,
+};
+
+/**
+ * Create a goal from the given executor, waiting until a condition is satisfied,
+ * with a given timeout.
+ * @param {EssentialGoalInfo} egi
+ * @param {ExecuteGoal} goalExecutor
+ * @param w rules for waiting
+ * @return {Goal}
+ */
+export function createPredicatedGoal(egi: EssentialGoalInfo,
+                                     goalExecutor: ExecuteGoal,
+                                     w: WaitRules): Goal {
+    return createGoal(egi, createPredicatedGoalExecutor(egi.displayName, goalExecutor, w));
+}
+
+/**
+ * Wrap provided ExecuteGoal instance with WaitRules processing
+ * @param {string} uniqueName
+ * @param {ExecuteGoal} goalExecutor
+ * @param w rules for waiting
+ * @return {ExecuteGoal}
+ */
+export function createPredicatedGoalExecutor(uniqueName: string,
+                                             goalExecutor: ExecuteGoal,
+                                             w: WaitRules): ExecuteGoal {
+    if (!!w.timeoutSeconds && !!w.timeoutMillis) {
+        throw new Error("Invalid combination: Cannot specify timeoutSeconds and timeoutMillis: Choose one");
+    }
+    const waitRulesToUse: WaitRules = {
+        ...DefaultWaitRules,
+        ...w,
+    };
+    waitRulesToUse.timeoutMillis = waitRulesToUse.timeoutMillis || 1000 * w.timeoutSeconds;
+
+    return async gi => {
+        for (let tries = 0; tries++;) {
+            if (tries > w.retries) {
+                throw new Error(`Goal '${uniqueName}' timed out after max retries: ${JSON.stringify(waitRulesToUse)}`);
+            }
+            if (await w.condition(gi)) {
+                return goalExecutor(gi);
+            }
+            logger.info("Waiting %d seconds for '%s'", w.timeoutSeconds, uniqueName);
+            await wait(w.timeoutMillis);
+        }
+    };
+}
+
+function wait(timeoutMillis: number): Promise<void> {
+    return new Promise<void>(resolve => {
+        setTimeout(() => resolve(), timeoutMillis).unref();
     });
 }
