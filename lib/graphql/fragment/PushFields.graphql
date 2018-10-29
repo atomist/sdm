@@ -25,6 +25,10 @@ fragment PushFields on Push {
       image
       imageName
     }
+    images {
+      image
+      imageName
+    }
     tags {
       name
       description

@@ -58,19 +58,17 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
-        const artifactCheckout = await checkOutArtifact(_.get(sdmGoal, "push.after.image.imageName"),
-            artifactStore, id, credentials, progressLog);
+        const targetUrls: string[] = _.get(sdmGoal, "push.after.images.imageName");
+        await Promise.all(targetUrls.map(async targetUrl => {
+            const artifactCheckout = await checkOutArtifact(targetUrl, artifactStore, id, credentials, progressLog);
+            artifactCheckout.id.branch = sdmGoal.branch;
 
-        artifactCheckout.id.branch = sdmGoal.branch;
-        const deployments = await target.deployer.deploy(
-            artifactCheckout,
-            target.targeter(id, id.branch),
-            progressLog,
-            credentials,
-            atomistTeam);
+            const deployments = await target.deployer.deploy(artifactCheckout, target.targeter(id, id.branch),
+                progressLog, credentials, atomistTeam);
 
-        await Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
-            {endpointGoal, goalInvocation, deployment, repoRefResolver})));
+            return Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
+                { endpointGoal, goalInvocation, deployment, repoRefResolver })));
+        }));
 
         return Success;
     };
@@ -112,17 +110,17 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
     goalInvocation: GoalInvocation,
     deployment: Deployment,
 }) {
-    const {goalInvocation, deployment, endpointGoal} = params;
+    const { goalInvocation, deployment, endpointGoal } = params;
     const sdmGoal = await findSdmGoalOnCommit(goalInvocation.context, goalInvocation.id, goalInvocation.sdmGoal.repo.providerId, endpointGoal);
     // Only update the endpoint goal if it actually exists in the goal set
     if (sdmGoal) {
         if (deployment.endpoint) {
             const newState = SdmGoalState.success;
-            await markEndpointStatus({context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
+            await markEndpointStatus({ context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint });
         } else {
             const error = new Error("Deploy finished with success, but the endpoint was not found");
             const newState = SdmGoalState.failure;
-            await markEndpointStatus({context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
+            await markEndpointStatus({ context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error });
         }
     }
 }
@@ -131,7 +129,7 @@ function markEndpointStatus(parameters: {
     context: HandlerContext, sdmGoal: SdmGoalEvent, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
     error?: Error,
 }) {
-    const {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;
+    const { context, sdmGoal, endpointGoal, newState, endpoint, error } = parameters;
     return updateGoal(context, sdmGoal, {
         description: descriptionFromState(endpointGoal, newState),
         url: endpoint,

@@ -23,5 +23,9 @@ query CommitForSdmGoal(
       image
       imageName
     }
+    images {
+      image
+      imageName
+    }
   }
 }
