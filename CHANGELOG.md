@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add createPredicatedGoal. [#560](https://github.com/atomist/sdm/issues/560)
 -   Expose structure of push tests and push rules. [#558](https://github.com/atomist/sdm/issues/558)
 
+### Fixed
+
+-   Set goal state command doesn't get goals for multiple goal sets correct. [#563](https://github.com/atomist/sdm/issues/563)
+
 ## [1.0.0-RC.1](https://github.com/atomist/sdm/compare/1.0.0-M.5...1.0.0-RC.1) - 2018-10-15
 
 ### Added
