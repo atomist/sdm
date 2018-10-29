@@ -43,6 +43,7 @@ import { GoalImplementation } from "../../api/goal/support/GoalImplementationMap
 import {
     OnAnyRequestedSdmGoal,
     OnPushToAnyBranch,
+    PushFields,
     SdmGoalState,
 } from "../../typings/types";
 
@@ -83,7 +84,7 @@ export function updateGoal(ctx: HandlerContext,
         provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),
         error: _.get(params, "error.message"),
         data,
-        push: before.push,
+        push: cleanPush(before.push),
         version: before.version,
     } as SdmGoalMessage;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
@@ -173,7 +174,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 }
 
 export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage, push: OnPushToAnyBranch.Push) {
-    (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).push = push;
+    (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).push = cleanPush(push);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
 }
@@ -238,4 +239,10 @@ export async function storeGoalSet(ctx: HandlerContext,
         provenance: constructProvenance(ctx),
     };
     return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
+}
+
+function cleanPush(push: PushFields.Fragment): PushFields.Fragment {
+    const newPush = _.cloneDeep(push);
+    delete (newPush as any).goals;
+    return newPush
 }
