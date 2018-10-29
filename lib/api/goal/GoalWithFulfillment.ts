@@ -130,7 +130,7 @@ export interface FulfillableGoalDetails {
  * Extension to GoalDefinition that allows to specify additional WaitRules.
  */
 export interface PredicatedGoalDefinition extends GoalDefinition {
-    
+
     waitRules?: WaitRules;
 }
 
