@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add fetchGoalsFromPush method to read goals from subscription. [#559](https://github.com/atomist/sdm/issues/559)
 -   Store multiple external urls per goal with link and label. [#557](https://github.com/atomist/sdm/issues/557)
 -   Add version number to SdmGoal and use in compositeId instead of ts. [#552](https://github.com/atomist/sdm/issues/552)
+-   Add createPredicatedGoal. [#560](https://github.com/atomist/sdm/issues/560)
 
 ## [1.0.0-RC.1](https://github.com/atomist/sdm/compare/1.0.0-M.5...1.0.0-RC.1) - 2018-10-15
 
