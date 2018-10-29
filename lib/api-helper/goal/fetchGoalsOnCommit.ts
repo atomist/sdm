@@ -136,7 +136,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
 export function sumSdmGoalEvents(some: SdmGoalEvent[]): SdmGoalEvent[] {
     // For some reason this won't compile with the obvious fix
     // tslint:disable-next-line:no-unnecessary-callback-wrapper
-    const byKey = _.groupBy(some, sg => goalKeyString(sg));
+    const byKey = _.groupBy(some, sg => `${sg.goalSetId}-${goalKeyString(sg)}`);
     const summedGoals = Object.keys(byKey).map(k => sumEventsForOneSdmGoal(byKey[k]));
     return summedGoals;
 }
