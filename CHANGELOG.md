@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add version number to SdmGoal and use in compositeId instead of ts. [#552](https://github.com/atomist/sdm/issues/552)
 -   Add createPredicatedGoal. [#560](https://github.com/atomist/sdm/issues/560)
 -   Expose structure of push tests and push rules. [#558](https://github.com/atomist/sdm/issues/558)
+-   Add commit-images link to GraphQL. [#561](https://github.com/atomist/sdm/issues/561)
 
 ### Fixed
 
