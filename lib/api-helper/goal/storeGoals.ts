@@ -244,5 +244,5 @@ export async function storeGoalSet(ctx: HandlerContext,
 function cleanPush(push: PushFields.Fragment): PushFields.Fragment {
     const newPush = _.cloneDeep(push);
     delete (newPush as any).goals;
-    return newPush
+    return newPush;
 }
