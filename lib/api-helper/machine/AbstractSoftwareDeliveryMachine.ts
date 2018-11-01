@@ -212,10 +212,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     public addExtensionPacks(...packs: ExtensionPack[]): this {
-        for (const configurer of packs) {
-            this.addExtensionPack(configurer);
-            if (!!configurer.goalContributions) {
-                this.addGoalContributions(configurer.goalContributions);
+        for (const pack of packs) {
+            const found = this.extensionPacks.find(existing => existing.name === pack.name && existing.vendor === pack.vendor);
+            if (!!found) {
+                logger.warn("Cannot add extension pack '%s' version %s from %s: We already have version %s of it",
+                    pack.name, pack.version, pack.vendor, found.version);
+            } else {
+                this.addExtensionPack(pack);
+                if (!!pack.goalContributions) {
+                    this.addGoalContributions(pack.goalContributions);
+                }
             }
         }
         return this;
