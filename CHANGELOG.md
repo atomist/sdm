@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-RC.2...HEAD)
 
+### Added
+
+-   Add WellKnownGoals. [#566](https://github.com/atomist/sdm/issues/566)
+
 ## [1.0.0-RC.2](https://github.com/atomist/sdm/compare/1.0.0-RC.1...1.0.0-RC.2) - 2018-10-30
 
 ### Added
