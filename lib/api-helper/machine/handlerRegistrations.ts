@@ -95,6 +95,7 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
+import { SdmContext } from "../../api/context/SdmContext";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
@@ -286,7 +287,8 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
 }
 
 function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
-    let credentials; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+    // It may already be there
+    let credentials = !!context ? (context as any as SdmContext).credentials : undefined;
     let ids: RemoteRepoRef[];
     if (isSeedDrivenGeneratorParameters(parameters)) {
         credentials = parameters.target.credentials;

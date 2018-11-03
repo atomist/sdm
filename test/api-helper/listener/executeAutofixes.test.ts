@@ -52,6 +52,8 @@ export const AddThingAutofix: AutofixRegistration = {
     transform: async (project, ci) => {
         await project.addFile("thing", "1");
         assert(!!ci.context.workspaceId);
+        assert(project === ci.push.project);
+        assert(!!ci.credentials);
         assert(!ci.parameters);
         return { edited: true, success: true, target: project };
     },
@@ -158,10 +160,12 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).push = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
+        const gi = fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
-        } as any)) as ExecuteGoalResult;
+        } as any);
+        assert(!!gi.credentials);
+        const r = await executeAutofixes([AddThingAutofix])(gi) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");
@@ -188,6 +192,36 @@ describe("executeAutofixes", () => {
         const foundFile = p.findFileSync("bird");
         assert(!!foundFile, r.description);
         assert.equal(foundFile.getContentSync(), "ibis");
+    }).timeout(10000);
+
+    it("should execute with parameter and find push", async () => {
+        const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
+        const initialContent = "public class Thing {}";
+        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
+        (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).commit = async () => null;
+        (p as any as GitProject).push = async () => null;
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
+        const pl = new SingleProjectLoader(p);
+        const gi = fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any);
+        const errors: string[] = [];
+        const testFix: AutofixRegistration = {
+            name: "test",
+            transform: async (project, ci) => {
+                if (project !== p) {
+                    errors.push("Project not the same");
+                }
+                if (!ci.push || ci.push.push !== gi.sdmGoal.push) {
+                    errors.push("push should be set");
+                }
+            },
+        };
+        await executeAutofixes([testFix])(gi);
+        assert.deepEqual(errors, []);
     }).timeout(10000);
 
     describe("filterImmediateAutofixes", () => {

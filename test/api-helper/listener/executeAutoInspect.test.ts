@@ -34,6 +34,7 @@ import {
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";
 import { PushImpactResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
+import { AutoInspectRegistration } from "../../../lib/api/registration/AutoInspectRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
@@ -122,6 +123,31 @@ describe("executeAutoInspects", () => {
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
         assert(r.state);
+    });
+
+    it("should find push", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const rwlc = fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any);
+        const errors: string[] = [];
+        const reg: AutoInspectRegistration<void> = {
+            name: "reg",
+            inspection: async (project, ci) => {
+                if (project !== p) {
+                    errors.push("Project not the same");
+                }
+                if (!ci.push || ci.push.push !== rwlc.sdmGoal.push) {
+                    errors.push("push should not be set");
+                }
+                assert(!ci);
+            },
+        };
+        const ge = executeAutoInspects([reg], []);
+
+        await ge(rwlc);
+        assert.deepEqual(errors, []);
     });
 
     it("should hate anything it finds, without requiring approval", async () => {
