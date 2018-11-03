@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { NoParameters, Project } from "@atomist/automation-client";
+import {
+    NoParameters,
+    Project,
+} from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";
 
