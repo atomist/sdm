@@ -28,6 +28,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ParametersInvocation } from "../../api/listener/ParametersInvocation";
 import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
+import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { PushImpactResponse } from "../../api/registration/PushImpactListenerRegistration";
 import {
     formatReviewerError,
@@ -40,7 +41,6 @@ import { PushListenerInvocation } from "./../../api/listener/PushListener";
 import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners

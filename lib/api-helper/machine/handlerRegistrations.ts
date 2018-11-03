@@ -53,6 +53,7 @@ import { isProject } from "@atomist/automation-client/lib/project/Project";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
+import { SdmContext } from "../../api/context/SdmContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import {
     isValidationError,
@@ -95,7 +96,6 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
-import { SdmContext } from "../../api/context/SdmContext";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";

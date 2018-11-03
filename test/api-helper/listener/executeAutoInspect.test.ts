@@ -33,8 +33,8 @@ import {
     ReviewListener,
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";
-import { PushImpactResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 import { AutoInspectRegistration } from "../../../lib/api/registration/AutoInspectRegistration";
+import { PushImpactResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",

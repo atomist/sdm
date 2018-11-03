@@ -32,6 +32,7 @@ import {
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
@@ -43,7 +44,6 @@ import {
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 
 /**
  * Execute autofixes against this push
