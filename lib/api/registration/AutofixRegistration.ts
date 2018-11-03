@@ -16,10 +16,9 @@
 
 import { NoParameters } from "@atomist/automation-client";
 import { CodeTransformOrTransforms } from "./CodeTransform";
-import { SelectiveCodeActionOptions } from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
 
-export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
+export interface AutofixRegistrationOptions {
 
     ignoreFailure: boolean;
 }

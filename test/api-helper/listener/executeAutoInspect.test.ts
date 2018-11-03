@@ -50,7 +50,6 @@ const HatesTheWorld: ReviewerRegistration = {
                     offset: -1,
                 })),
     }),
-    options: { considerOnlyChangedFiles: false },
 };
 
 const JustTheOne: ReviewerRegistration = {
@@ -67,7 +66,6 @@ const JustTheOne: ReviewerRegistration = {
                     offset: -1,
                 })],
     }),
-    options: { considerOnlyChangedFiles: false },
 };
 
 function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): ReviewListener {
