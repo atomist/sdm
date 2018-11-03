@@ -40,7 +40,7 @@ import { PushListenerInvocation } from "./../../api/listener/PushListener";
 import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { CodeInspectionInvocation } from "../../api/registration/CodeInspectionRegistration";
+import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -131,12 +131,12 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
-                    const cii: CodeInspectionInvocation<any> = {
+                    const papi: PushAwareParametersInvocation<any> = {
                         ...cli,
                         push: cri,
                     };
                     try {
-                        const inspectionResult = await autoInspect.inspection(project, cii);
+                        const inspectionResult = await autoInspect.inspection(project, papi);
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
                             await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors

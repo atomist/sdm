@@ -14,33 +14,17 @@
  * limitations under the License.
  */
 
-import {
-    NoParameters,
-    Project,
-    RepoRef,
-} from "@atomist/automation-client";
+import { NoParameters, Project, RepoRef, } from "@atomist/automation-client";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
-import { PushImpactListenerInvocation } from "../listener/PushImpactListener";
-
-/**
- * Code inspections may be invoked in response to a push, or otherwise
- */
-export interface CodeInspectionInvocation<P> extends ParametersInvocation<P> {
-
-    /**
-     * The push invocation. Will be undefined if we are not invoked on a push.
-     */
-    push?: PushImpactListenerInvocation;
-}
+import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";
 
 /**
  * Function that can run against a project without mutating it to
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   cli: CodeInspectionInvocation<P>) => Promise<R>;
+                                                   papi: PushAwareParametersInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project
