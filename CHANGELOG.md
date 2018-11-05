@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Expose push to inspection and autofixes and remove broken considerOnlyChangedFiles option. [#568](https://github.com/atomist/sdm/issues/568)
+-   **BREAKING** Remove `considerOnlyChangedFiles` setting on autofix and inspection registrations. This should be handled specific registrations. [#568](https://github.com/atomist/sdm/issues/568)
 
 ## [1.0.0-RC.2](https://github.com/atomist/sdm/compare/1.0.0-RC.1...1.0.0-RC.2) - 2018-10-30
 
@@ -46,7 +47,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** Remove SDM-level goal methods. [#545](https://github.com/atomist/sdm/issues/545)
 -   **BREAKING** Remove old style registration methods. [#546](https://github.com/atomist/sdm/issues/546)
 -   **BREAKING** Remove client exports from SDM. [#547](https://github.com/atomist/sdm/issues/547)
--   **BREAKING** Remove `considerOnlyChangedFiles` setting on autofix and inspection registrations. This should be handled
 
 ### Fixed
 
