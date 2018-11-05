@@ -15,6 +15,7 @@
  */
 
 import {
+    HandlerContext,
     logger,
     RemoteRepoRef,
     Success,
@@ -31,6 +32,7 @@ import {
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
@@ -60,12 +62,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             const push = sdmGoal.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
-                credentials,
-                id,
-                context,
-                readOnly: false,
-                cloneOptions: minimalClone(push),
-            },
+                    credentials,
+                    id,
+                    context,
+                    readOnly: false,
+                    cloneOptions: minimalClone(push),
+                },
                 async project => {
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
@@ -141,11 +143,16 @@ async function runOne(cri: PushImpactListenerInvocation,
                       autofix: AutofixRegistration,
                       progressLog: ProgressLog): Promise<EditResult> {
     const project = cri.project;
-    progressLog.write(sprintf("About to edit %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name));
+    progressLog.write(sprintf("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name));
     try {
+        const arg2: HandlerContext & PushAwareParametersInvocation<any> = {
+            ...cri.context,
+            ...cri,
+            push: cri,
+        } as any;
         const tentativeEditResult = await toScalarProjectEditor(autofix.transform)(
             project,
-            cri.context,
+            arg2,
             autofix.parametersInstance);
         const editResult = await confirmEditedness(tentativeEditResult);
 

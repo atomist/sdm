@@ -19,18 +19,13 @@ import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { CodeInspection } from "./CodeInspectionRegistration";
 import {
     PushImpactResponse,
-    SelectiveCodeActionOptions,
 } from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
-
-export type AutoInspectRegistrationOptions = SelectiveCodeActionOptions;
 
 /**
  * Register an automatic inspection.
  */
 export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushSelector {
-
-    options?: AutoInspectRegistrationOptions;
 
     /**
      * Inspection function to run on each project

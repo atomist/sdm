@@ -88,14 +88,3 @@ export function toPushReactionRegistration(prr: PushImpactListenerRegisterable<a
         action: prr,
     };
 }
-
-/**
- * Base options object for registrations that process selective files
- */
-export interface SelectiveCodeActionOptions {
-
-    /**
-     * Run only on affected files?
-     */
-    considerOnlyChangedFiles: boolean;
-}

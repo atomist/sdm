@@ -19,7 +19,7 @@ import {
     Project,
 } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { ParametersInvocation } from "../listener/ParametersInvocation";
+import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";
 
 export type TransformResult = EditResult;
 
@@ -32,7 +32,7 @@ export type TransformReturnable = Project | TransformResult | void;
  * Projects are naturally mutable.
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
-                                               sdmc: ParametersInvocation<P>,
+                                               papi: PushAwareParametersInvocation<P>,
                                                params?: P) => Promise<TransformReturnable>;
 
 /**
@@ -40,7 +40,7 @@ export type CodeTransform<P = NoParameters> = (p: Project,
  * At the cost of greater ceremony, guarantees the return of more information.
  */
 export type ExplicitCodeTransform<P = NoParameters> = (p: Project,
-                                                       sdmc: ParametersInvocation<P>,
+                                                       papi: PushAwareParametersInvocation<P>,
                                                        params?: P) => Promise<TransformResult>;
 
 /**

@@ -28,6 +28,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ParametersInvocation } from "../../api/listener/ParametersInvocation";
 import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
+import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { PushImpactResponse } from "../../api/registration/PushImpactListenerRegistration";
 import {
     formatReviewerError,
@@ -130,8 +131,12 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
+                    const papi: PushAwareParametersInvocation<any> = {
+                        ...cli,
+                        push: cri,
+                    };
                     try {
-                        const inspectionResult = await autoInspect.inspection(project, cli);
+                        const inspectionResult = await autoInspect.inspection(project, papi);
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
                             await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors

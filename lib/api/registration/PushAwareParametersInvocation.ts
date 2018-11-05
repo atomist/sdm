@@ -14,27 +14,17 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client";
-import { CodeTransformOrTransforms } from "./CodeTransform";
-import { PushSelector } from "./PushRegistration";
-
-export interface AutofixRegistrationOptions {
-
-    ignoreFailure: boolean;
-}
+import { ParametersInvocation } from "../listener/ParametersInvocation";
+import { PushImpactListenerInvocation } from "../listener/PushImpactListener";
 
 /**
- * Register an autofix. This is a transform run on every commit that will make a
- * commit if necessary to the same branch.
+ * Code inspections or autofixes may be invoked in response to a push,
+ * or just with Parameters
  */
-export interface AutofixRegistration<P = NoParameters> extends PushSelector {
-
-    transform: CodeTransformOrTransforms<P>;
-
-    options?: AutofixRegistrationOptions;
+export interface PushAwareParametersInvocation<P> extends ParametersInvocation<P> {
 
     /**
-     * Parameters used for all transforms
+     * The push invocation. Will be undefined if we are not invoked from a push.
      */
-    parametersInstance?: P;
+    push?: PushImpactListenerInvocation;
 }

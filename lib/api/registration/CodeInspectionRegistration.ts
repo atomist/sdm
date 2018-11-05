@@ -20,15 +20,15 @@ import {
     RepoRef,
 } from "@atomist/automation-client";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
+import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";
 
 /**
  * Function that can run against a project without mutating it to
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   cli: ParametersInvocation<P>) => Promise<R>;
+                                                   papi: PushAwareParametersInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project
