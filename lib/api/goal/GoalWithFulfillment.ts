@@ -140,9 +140,9 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
  */
 export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable {
 
-    protected readonly fulfillments: Fulfillment[] = [];
-    protected readonly callbacks: GoalFulfillmentCallback[] = [];
-    protected readonly projectListeners: GoalProjectListenerRegistration[] = [];
+    public readonly fulfillments: Fulfillment[] = [];
+    public readonly callbacks: GoalFulfillmentCallback[] = [];
+    public readonly projectListeners: GoalProjectListenerRegistration[] = [];
 
     public sdm: SoftwareDeliveryMachine;
 
@@ -220,7 +220,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
  */
 export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoal {
 
-    protected registrations: R[] = [];
+    public readonly registrations: R[] = [];
 
     constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(definitionOrGoal, ...dependsOn);
@@ -237,7 +237,7 @@ export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoa
  */
 export abstract class FulfillableGoalWithRegistrationsAndListeners<R, L> extends FulfillableGoalWithRegistrations<R> {
 
-    protected listeners: L[] = [];
+    public readonly listeners: L[] = [];
 
     constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(definitionOrGoal, ...dependsOn);
