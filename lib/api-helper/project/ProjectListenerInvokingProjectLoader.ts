@@ -82,7 +82,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             push: this.gi.sdmGoal.push,
         };
 
-        let result;
+        let result = Success;
         for (const lr of this.listeners) {
             if (await lr.pushTest.mapping(pli)) {
 
@@ -110,6 +110,6 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
                 }
             }
         }
-        return Success;
+        return result;
     }
 }
