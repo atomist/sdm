@@ -24,10 +24,10 @@ describe("goalApprovalRequestVote", () => {
 
     describe("UnanimousGoalApprovalRequestVoteDecisionManager", () => {
 
-        const vote = (vote: GoalApprovalRequestVote) => {
+        const vote = (v: GoalApprovalRequestVote) => {
             return {
-                vote,
-                reason: `Voted ${vote}`,
+                vote: v,
+                reason: `Voted ${v}`,
             };
         };
 
