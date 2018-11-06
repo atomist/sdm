@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Add WellKnownGoals. [#566](https://github.com/atomist/sdm/issues/566)
 -   Expose push to inspection and autofixes and remove broken considerOnlyChangedFiles option. [#568](https://github.com/atomist/sdm/issues/568)
+-   Add decision manager to decide on final approval vote. [68ff03e](https://github.com/atomist/sdm/commit/68ff03e49e8476537aed382a3cf6a6c5f9b57d57)
 
 ### Changed
 
