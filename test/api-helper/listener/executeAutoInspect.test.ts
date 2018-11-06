@@ -21,20 +21,19 @@ import {
     InMemoryProjectFile,
     projectUtils,
 } from "@atomist/automation-client";
-import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
-import { ReviewerRegistration } from "../../../lib/api/registration/ReviewerRegistration";
-import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
-
 import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../lib/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
+import { ExecuteGoalResult } from "../../../lib/api/goal/ExecuteGoalResult";
 import {
     ReviewListener,
     ReviewListenerInvocation,
 } from "../../../lib/api/listener/ReviewListener";
 import { AutoInspectRegistration } from "../../../lib/api/registration/AutoInspectRegistration";
 import { PushImpactResponse } from "../../../lib/api/registration/PushImpactListenerRegistration";
+import { ReviewerRegistration } from "../../../lib/api/registration/ReviewerRegistration";
+import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
@@ -80,6 +79,13 @@ function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): 
 function loggingReviewListenerWithoutApproval(saveTo: ReviewListenerInvocation[]): ReviewListener {
     return async re => {
         saveTo.push(re);
+    };
+}
+
+function loggingReviewListenerFailingTheGoal(saveTo: ReviewListenerInvocation[]): ReviewListener {
+    return async re => {
+        saveTo.push(re);
+        return PushImpactResponse.failGoals;
     };
 }
 
@@ -165,6 +171,25 @@ describe("executeAutoInspects", () => {
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
+        assert(!r.state);
+    });
+
+    it("should hate anything it finds and return a goal failure", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const reviewEvents: ReviewListenerInvocation[] = [];
+        const listener = loggingReviewListenerFailingTheGoal(reviewEvents);
+        const ge = executeAutoInspects([HatesTheWorld], [{
+            name: "thing",
+            listener,
+        }]);
+        const rwlc = fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any);
+        const r = await ge(rwlc) as ExecuteGoalResult;
+        assert.equal(reviewEvents.length, 1);
+        assert.equal(reviewEvents[0].review.comments.length, 1);
+        assert.equal(r.code, 1);
         assert(!r.state);
     });
 
