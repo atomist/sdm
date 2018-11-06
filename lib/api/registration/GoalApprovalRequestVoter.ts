@@ -78,7 +78,6 @@ export type GoalApprovalRequestVoter =
 export type GoalApprovalRequestVoteDecisionManager =
     (votes: GoalApprovalRequestVoteResult[]) => GoalApprovalRequestVote;
 
-
 /**
  * Default GoalApprovalRequestVoteDecisionManager that decides unanimously on votes.
  * One denied vote will deny the approval request; all granted votes with grant the request.
