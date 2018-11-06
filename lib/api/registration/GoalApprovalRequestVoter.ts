@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { RepoContext } from "../context/SdmContext";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 
 /**
- * Represents a vote on a approval request.
+ * Represents a vote on a approval request
  */
 export enum GoalApprovalRequestVote {
 
     /**
-     * Voter decided to abstain from voting.
+     * Voter decided to abstain from voting
      */
-    Abstain,
+    Abstain = "abstain",
 
     /**
-     * Voter decided to grant the approval request.
+     * Voter decided to grant the approval request
      */
-    Granted,
+    Granted = "granted",
 
     /**
-     * Voter decided to deny the approval request.
+     * Voter decided to deny the approval request
      */
-    Denied,
+    Denied = "denied",
 }
 
 /**
- * Result from executing GoalApprovalRequestVoter.
+ * Result from executing GoalApprovalRequestVoter
  */
 export interface GoalApprovalRequestVoteResult {
 
@@ -60,13 +61,41 @@ export interface GoalApprovalRequestVoteResult {
 export interface GoalApprovalRequestVoterInvocation extends RepoContext {
 
     /**
-     * Goal that was requested for approval.
+     * Goal that was requested for approval
      */
     goal: SdmGoalEvent;
 }
 
 /**
- * Voter on a request to approve a goal.
+ * Voter on a request to approve a goal
  */
 export type GoalApprovalRequestVoter =
     (garvi: GoalApprovalRequestVoterInvocation) => Promise<GoalApprovalRequestVoteResult>;
+
+/**
+ * Decide resulting vote on a set of votes
+ */
+export type GoalApprovalRequestVoteDecisionManager =
+    (votes: GoalApprovalRequestVoteResult[]) => GoalApprovalRequestVote;
+
+
+/**
+ * Default GoalApprovalRequestVoteDecisionManager that decides unanimously on votes.
+ * One denied vote will deny the approval request; all granted votes with grant the request.
+ * All other votes with result in an abstained approval request.
+ * @param votes
+ */
+export const UnanimousGoalApprovalRequestVoteDecisionManager: GoalApprovalRequestVoteDecisionManager =
+    (votes: GoalApprovalRequestVoteResult[]) => {
+        logger.debug(`Deciding on provided votes '${votes.map(v => v.vote).join(", ")}'`);
+        if (votes.some(v => v.vote === GoalApprovalRequestVote.Denied)) {
+            logger.debug("At least one denied vote. Denying approval request");
+            return GoalApprovalRequestVote.Denied;
+        } else if (!votes.some(v => v.vote !== GoalApprovalRequestVote.Granted)) {
+            logger.debug("All votes granted. Granting approval request");
+            return GoalApprovalRequestVote.Granted;
+        } else {
+            logger.debug("Some abstain and granted votes. Abstaining approval request");
+            return GoalApprovalRequestVote.Abstain;
+        }
+    };

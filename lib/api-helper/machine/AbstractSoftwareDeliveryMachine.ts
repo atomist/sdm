@@ -43,10 +43,7 @@ import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    GoalSetter,
-    GoalSettingStructure,
-} from "../../api/mapping/GoalSetter";
+import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
@@ -56,7 +53,11 @@ import { CodeTransformRegistration } from "../../api/registration/CodeTransformR
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalRequestVoter";
+import {
+    GoalApprovalRequestVoteDecisionManager,
+    GoalApprovalRequestVoter,
+    UnanimousGoalApprovalRequestVoteDecisionManager,
+} from "../../api/registration/GoalApprovalRequestVoter";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
@@ -84,6 +85,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 
     protected readonly goalApprovalRequestVoters: GoalApprovalRequestVoter[] = [];
+
+    private goalApprovalRequestVoteDecisionManager: GoalApprovalRequestVoteDecisionManager =
+        UnanimousGoalApprovalRequestVoteDecisionManager;
 
     private pushMap: GoalSetter;
 
@@ -139,6 +143,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public addGoalApprovalRequestVoter(vote: GoalApprovalRequestVoter): this {
         this.goalApprovalRequestVoters.push(vote);
+        return this;
+    }
+
+    public setGoalApprovalRequestVoteDecisionManager(manager: GoalApprovalRequestVoteDecisionManager): this {
+        this.goalApprovalRequestVoteDecisionManager = manager;
         return this;
     }
 

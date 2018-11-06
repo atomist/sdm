@@ -21,7 +21,10 @@ import { GoalImplementationMapper } from "../goal/support/GoalImplementationMapp
 import { PushListenerInvocation } from "../listener/PushListener";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
-import { GoalApprovalRequestVoter } from "../registration/GoalApprovalRequestVoter";
+import {
+    GoalApprovalRequestVoteDecisionManager,
+    GoalApprovalRequestVoter,
+} from "../registration/GoalApprovalRequestVoter";
 import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
@@ -73,5 +76,11 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * @param vote
      */
     addGoalApprovalRequestVoter(vote: GoalApprovalRequestVoter): this;
+
+    /**
+     * Set the decision manager used to make final decision on GoalApprovalRequestVoteResult instances.
+     * @param manager
+     */
+    setGoalApprovalRequestVoteDecisionManager(manager: GoalApprovalRequestVoteDecisionManager): this;
 
 }
