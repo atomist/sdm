@@ -57,7 +57,7 @@ import {
     GoalApprovalRequestVoteDecisionManager,
     GoalApprovalRequestVoter,
     UnanimousGoalApprovalRequestVoteDecisionManager,
-} from "../../api/registration/GoalApprovalRequestVoter";
+} from "../../api/registration/goalApprovalRequestVote";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";

@@ -76,7 +76,7 @@ export type GoalApprovalRequestVoter =
  * Decide resulting vote on a set of votes
  */
 export type GoalApprovalRequestVoteDecisionManager =
-    (votes: GoalApprovalRequestVoteResult[]) => GoalApprovalRequestVote;
+    (...votes: GoalApprovalRequestVoteResult[]) => GoalApprovalRequestVote;
 
 /**
  * Default GoalApprovalRequestVoteDecisionManager that decides unanimously on votes.
@@ -85,7 +85,7 @@ export type GoalApprovalRequestVoteDecisionManager =
  * @param votes
  */
 export const UnanimousGoalApprovalRequestVoteDecisionManager: GoalApprovalRequestVoteDecisionManager =
-    (votes: GoalApprovalRequestVoteResult[]) => {
+    (...votes: GoalApprovalRequestVoteResult[]) => {
         logger.debug(`Deciding on provided votes '${votes.map(v => v.vote).join(", ")}'`);
         if (votes.some(v => v.vote === GoalApprovalRequestVote.Denied)) {
             logger.debug("At least one denied vote. Denying approval request");

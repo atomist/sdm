@@ -22,7 +22,7 @@ import * as _ from "lodash";
 import {
     GoalApprovalRequestVote,
     GoalApprovalRequestVoter,
-} from "../../api/registration/GoalApprovalRequestVoter";
+} from "../../api/registration/goalApprovalRequestVote";
 import { GitHubLogin } from "../../typings/types";
 
 /**

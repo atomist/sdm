@@ -24,7 +24,7 @@ import { PushMapping } from "../mapping/PushMapping";
 import {
     GoalApprovalRequestVoteDecisionManager,
     GoalApprovalRequestVoter,
-} from "../registration/GoalApprovalRequestVoter";
+} from "../registration/goalApprovalRequestVote";
 import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
