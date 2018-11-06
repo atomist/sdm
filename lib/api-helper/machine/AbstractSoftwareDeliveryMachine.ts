@@ -86,7 +86,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     protected readonly goalApprovalRequestVoters: GoalApprovalRequestVoter[] = [];
 
-    private goalApprovalRequestVoteDecisionManager: GoalApprovalRequestVoteDecisionManager =
+    protected goalApprovalRequestVoteDecisionManager: GoalApprovalRequestVoteDecisionManager =
         UnanimousGoalApprovalRequestVoteDecisionManager;
 
     private pushMap: GoalSetter;
