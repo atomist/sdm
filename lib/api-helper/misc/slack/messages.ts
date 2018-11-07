@@ -32,7 +32,22 @@ export function slackSuccessMessage(title: string, text: string, options: Partia
             author_name: title,
             text,
             fallback: text,
-            color: "#45B254",
+            color: "#767676",
+            mrkdwn_in: ["text"],
+            ...options,
+        }],
+    };
+    return msg;
+}
+
+export function slackQuestionMessage(title: string, text: string, options: Partial<Attachment> = {}): SlackMessage {
+    const msg: SlackMessage = {
+        attachments: [{
+            author_icon: `https://images.atomist.com/rug/question.png`,
+            author_name: title,
+            text,
+            fallback: text,
+            color: "#767676",
             mrkdwn_in: ["text"],
             ...options,
         }],
