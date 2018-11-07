@@ -30,7 +30,7 @@ import { GitHubLogin } from "../../typings/types";
  * person who is requesting the approval .
  * @param {string} team
  */
-export function githubTeamVoter(team: string = "atomist-automation"): GoalApprovalRequestVoter {
+export function gitHubTeamVoter(team: string = "atomist-automation"): GoalApprovalRequestVoter {
     return async gai => {
         const approval = gai.goal.approval ? gai.goal.approval : gai.goal.preApproval;
         const repo = gai.goal.repo;
@@ -59,3 +59,8 @@ export function githubTeamVoter(team: string = "atomist-automation"): GoalApprov
         }
     };
 }
+
+/**
+ * @Deprecated since 1.0.0 use gitHubTeamVoter instead
+ */
+export const githubTeamVoter = gitHubTeamVoter;
