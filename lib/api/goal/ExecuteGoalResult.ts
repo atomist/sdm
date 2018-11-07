@@ -39,13 +39,20 @@ export interface GoalDetails {
 
     /**
      * Optional targetUrl to be set on the goal as externalUrl
+     * @deprecated use externalsUrls
      */
     targetUrl?: string;
 
     /**
      * Optional targetUrls to be set on the goal as externalUrls
+     * @deprecated use externalsUrls
      */
     targetUrls?: Array<{ label?: string, url: string}>;
+
+    /**
+     * Optional externalUrls to be set on the goal
+     */
+    externalUrls?: Array<{ label?: string, url: string}>;
 
     /**
      * Optional flag to indicate if this goal requires approval now

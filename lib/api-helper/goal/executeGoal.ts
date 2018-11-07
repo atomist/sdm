@@ -278,7 +278,10 @@ export function markStatus(parameters: {
     }
 
     // Needed for backwards compatibility
-    const externalUrls: Array<{ label?: string, url: string }> = result.targetUrls || [];
+    const externalUrls: Array<{ label?: string, url: string }> = result.externalUrls || [];
+    if (result.targetUrls) {
+        externalUrls.push(...result.targetUrls);
+    }
     if (result.targetUrl) {
         externalUrls.push({ label: "Link", url: result.targetUrl });
     }
