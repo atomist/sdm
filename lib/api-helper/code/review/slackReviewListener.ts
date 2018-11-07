@@ -61,7 +61,7 @@ export function slackReviewListenerRegistration(opts: Partial<SlackReviewRouting
     return {
         name: "SlackReviewListener",
         listener: slackReviewListener(opts),
-    }
+    };
 }
 
 async function sendReviewToSlack(title: string,
