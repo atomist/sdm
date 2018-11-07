@@ -29,6 +29,7 @@ import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
 import { PushImpactResponse } from "../../../api/registration/PushImpactListenerRegistration";
+import { ReviewListenerRegistration } from "../../../api/registration/ReviewListenerRegistration";
 
 /**
  * Strategy for deep linking to a source control system.
@@ -54,6 +55,13 @@ export function slackReviewListener(opts: Partial<SlackReviewRoutingParams> = {}
             return paramsToUse.pushReactionResponse;
         }
     };
+}
+
+export function slackReviewListenerRegistration(opts: Partial<SlackReviewRoutingParams> = {}): ReviewListenerRegistration {
+    return {
+        name: "SlackReviewListener",
+        listener: slackReviewListener(opts),
+    }
 }
 
 async function sendReviewToSlack(title: string,
