@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Remove `considerOnlyChangedFiles` setting on autofix and inspection registrations. This should be handled specific registrations. [#568](https://github.com/atomist/sdm/issues/568)
+-   Add externalUrls on ExecuteGoalResult and deperate targetUrls. [687a9ed](https://github.com/atomist/sdm/commit/687a9edb96e402202a212f5f55442e4eed008110)
 
 ## [1.0.0-RC.2](https://github.com/atomist/sdm/compare/1.0.0-RC.1...1.0.0-RC.2) - 2018-10-30
 
