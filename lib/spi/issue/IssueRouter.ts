@@ -30,9 +30,9 @@ export interface IssueRouter {
      * @param {ProjectOperationCredentials} credentials
      * @param {RemoteRepoRef} id
      * @param {Issue} issue
-     * @return {Promise<any>}
+     * @return {Promise<void>}
      */
     raiseIssue(credentials: ProjectOperationCredentials,
                id: RemoteRepoRef,
-               issue: Issue): Promise<any>;
+               issue: Issue): Promise<void>;
 }

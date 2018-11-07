@@ -25,11 +25,11 @@ class ListProgressLog implements ProgressLog {
 
     public readonly name: string = "ListProgressLog";
 
-    public close(): Promise<any> {
+    public close(): Promise<void> {
         return Promise.resolve();
     }
 
-    public flush(): Promise<any> {
+    public flush(): Promise<void> {
         return Promise.resolve();
     }
 

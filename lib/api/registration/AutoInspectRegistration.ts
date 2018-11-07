@@ -43,7 +43,7 @@ export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushS
      * PushImpactResponse to demand approval or fail goals.
      * @param {R} result
      * @param {ParametersInvocation<PARAMS>} ci
-     * @return {Promise<any>}
+     * @return {Promise<void>}
      */
     onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<PushImpactResponse | void>;
 }

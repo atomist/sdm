@@ -248,14 +248,17 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     /**
      * Invoke StartupListeners.
      */
-    public async notifyStartupListeners(): Promise<any> {
+    public async notifyStartupListeners(): Promise<void> {
         const i: AdminCommunicationContext = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
                 logger.warn("STARTUP PROBLEM: %j", msg);
             }),
             sdm: this,
         };
-        return Promise.all(this.startupListeners.map(l => l(i)));
+        return Promise.all(this.startupListeners.map(l => l(i)))
+            .then(() => {
+                // Empty to return void
+            });
     }
 
     /**

@@ -288,7 +288,7 @@ interface QueryablePromise<T> extends Promise<T> {
  * Based on: http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
  * But modified according to the specs of promises : https://promisesaplus.com/
  */
-function makeQueryablePromise<T>(ppromise: Promise<any>): QueryablePromise<T> {
+function makeQueryablePromise<T>(ppromise: Promise<T>): QueryablePromise<T> {
     const promise = ppromise as any;
     // Don't modify any promise that has been already modified.
     if (promise.isResolved) {

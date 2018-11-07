@@ -58,9 +58,9 @@ export interface CodeInspectionActions<R, PARAMS> {
      * React to computed values from running across one or more projects
      * @param {R[]} results
      * @param ci context
-     * @return {Promise<any>}
+     * @return {Promise<void>}
      */
-    onInspectionResults?(results: Array<CodeInspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onInspectionResults?(results: Array<CodeInspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<void>;
 }
 
 /**

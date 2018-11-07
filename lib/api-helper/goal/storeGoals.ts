@@ -220,7 +220,7 @@ export async function storeGoalSet(ctx: HandlerContext,
                                    goalSetId: string,
                                    goalSet: string,
                                    sdmGoals: SdmGoalMessage[],
-                                   push: OnPushToAnyBranch.Push): Promise<any> {
+                                   push: OnPushToAnyBranch.Push): Promise<void> {
     const sdmGoalSet: SdmGoalSetMessage = {
         sha: push.after.sha,
         branch: push.branch,

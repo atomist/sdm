@@ -33,7 +33,9 @@ export type AddressChannels = (msg: string | SlackMessage | SlackFileMessage, op
  * Throw away contents. Use when we know that there can be no linked channels.
  * @constructor
  */
-export const AddressNoChannels: AddressChannels = async () => {};
+export const AddressNoChannels: AddressChannels = async () => {
+    // Empty to return void
+};
 
 /**
  * Interface for anything, like a repo, that has associated chat channel information

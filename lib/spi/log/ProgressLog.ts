@@ -32,9 +32,9 @@ export interface ProgressLog {
 
     write(what: string): void;
 
-    flush(): Promise<any>;
+    flush(): Promise<void>;
 
-    close(): Promise<any>;
+    close(): Promise<void>;
 
     /**
      * Some implementations expose their log as a string.

@@ -30,11 +30,11 @@ export class GitHubIssueRouter implements IssueRouter {
 
     public async raiseIssue(credentials: ProjectOperationCredentials,
                             id: RemoteRepoRef,
-                            issue: Issue): Promise<any> {
+                            issue: Issue): Promise<void> {
         if (!isTokenCredentials(credentials)) {
             throw new Error("Only token credentials are supported");
         }
-        return raiseIssue(credentials.token, id, issue);
+        await raiseIssue(credentials.token, id, issue);
     }
 
 }
