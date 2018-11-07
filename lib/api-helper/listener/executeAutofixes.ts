@@ -206,7 +206,8 @@ export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
  * @returns {string}
  */
 export function generateCommitMessageForAutofix(autofix: AutofixRegistration): string {
-    return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${autofix.name.toLowerCase()}]`;
+    const name = autofix.name.toLowerCase().replace(" ", "_");
+    return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${name}]`;
 }
 
 export const AutofixProgressTests: ProgressTest[] = [{
