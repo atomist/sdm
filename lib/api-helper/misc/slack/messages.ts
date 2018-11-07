@@ -32,7 +32,7 @@ export function slackSuccessMessage(title: string, text: string, options: Partia
             author_name: title,
             text,
             fallback: text,
-            color: "#767676",
+            color: "#45B254",
             mrkdwn_in: ["text"],
             ...options,
         }],
