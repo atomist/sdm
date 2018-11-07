@@ -54,9 +54,15 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
         });
     }
 
-    public withTransform(transform: CodeTransform<any>) {
+    /**
+     * Add given transform to this Autofix goal
+     * @param transform
+     * @param name
+     */
+    public withTransform(transform: CodeTransform<any>,
+                         name: string = DefaultGoalNameGenerator.generateName("autofix-transform")) {
         this.with({
-            name: DefaultGoalNameGenerator.generateName("autofix-transform"),
+            name,
             transform,
         });
     }
