@@ -96,10 +96,14 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id);
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects([HatesTheWorld], [{
-            name: "thing",
-            listener: l,
-        }]);
+        const ge = executeAutoInspects({
+            registrations: [HatesTheWorld],
+            listeners: [{
+                name: "thing",
+                listener: l,
+            }],
+            reportToSlack: true,
+        });
         const r = await ge(fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any)) as ExecuteGoalResult;
@@ -114,10 +118,14 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects([HatesTheWorld], [{
-            name: "thing",
-            listener: l,
-        }]);
+        const ge = executeAutoInspects({
+            registrations: [HatesTheWorld],
+            listeners: [{
+                name: "thing",
+                listener: l,
+            }],
+            reportToSlack: true,
+        });
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
@@ -148,7 +156,7 @@ describe("executeAutoInspects", () => {
                 assert(!ci);
             },
         };
-        const ge = executeAutoInspects([reg], []);
+        const ge = executeAutoInspects({ registrations: [reg], listeners: [], reportToSlack: true });
 
         await ge(rwlc);
         assert.deepEqual(errors, []);
@@ -159,10 +167,13 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithoutApproval(reviewEvents);
-        const ge = executeAutoInspects([HatesTheWorld], [{
-            name: "thing",
-            listener,
-        }]);
+        const ge = executeAutoInspects({
+            registrations: [HatesTheWorld],
+            listeners: [{
+                name: "thing",
+                listener,
+            }], reportToSlack: true,
+        });
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
@@ -179,10 +190,12 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerFailingTheGoal(reviewEvents);
-        const ge = executeAutoInspects([HatesTheWorld], [{
-            name: "thing",
-            listener,
-        }]);
+        const ge = executeAutoInspects({
+            registrations: [HatesTheWorld], listeners: [{
+                name: "thing",
+                listener,
+            }], reportToSlack: true,
+        });
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
@@ -198,11 +211,13 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects([HatesTheWorld, JustTheOne],
-            [{
+        const ge = executeAutoInspects({
+            registrations: [HatesTheWorld, JustTheOne],
+            listeners: [{
                 name: "thing",
                 listener,
-            }]);
+            }], reportToSlack: true,
+        });
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
