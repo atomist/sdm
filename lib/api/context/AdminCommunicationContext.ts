@@ -24,9 +24,6 @@ export interface AdminCommunicationContext {
 
     /**
      * Address the admin of this SDM
-     * @param {string} message
-     * @param args
-     * @return {Promise<any>}
      */
     addressAdmin: AddressChannels;
 

@@ -49,5 +49,5 @@ export interface Builder extends LogInterpretation {
                   push: PushThatTriggersBuild,
                   log: ProgressLog,
                   context: HandlerContext,
-                  configuration: SoftwareDeliveryMachineConfiguration): Promise<any>;
+                  configuration: SoftwareDeliveryMachineConfiguration): Promise<void>;
 }

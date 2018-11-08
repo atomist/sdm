@@ -42,9 +42,9 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * React to results from running transform across one or more projects
      * @param results
      * @param ci context
-     * @return {Promise<any>}
+     * @return {Promise<void>}
      */
-    onTransformResults?(results: TransformResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onTransformResults?(results: TransformResult[], ci: CommandListenerInvocation<PARAMS>): Promise<void>;
 
 }
 

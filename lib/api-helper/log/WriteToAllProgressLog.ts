@@ -28,24 +28,24 @@ export class WriteToAllProgressLog implements ProgressLog {
         this.logs = [log1, log2].concat(others);
     }
 
-    public async isAvailable() {
+    public async isAvailable(): Promise<boolean> {
         return true;
     }
 
-    public write(what: string) {
+    public write(what: string): void {
         this.logs.forEach(log => log.write(what));
     }
 
-    public flush() {
-        return Promise.all(this.logs.map(log => log.flush()));
+    public async flush(): Promise<void> {
+        await Promise.all(this.logs.map(log => log.flush()));
     }
 
-    public close() {
+    public async close(): Promise<void> {
         if (!this.logs) {
             logger.error("This is unexpected! How did I get here without logs?");
             return;
         }
-        return Promise.all(this.logs.map(log => log.close()));
+        await Promise.all(this.logs.map(log => log.close()));
     }
 
     get log(): string {

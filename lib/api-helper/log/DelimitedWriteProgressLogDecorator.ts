@@ -54,12 +54,12 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
         }
     }
 
-    public flush(): Promise<any> {
+    public flush(): Promise<void> {
         this.writeRemainder();
         return this.delegate.flush();
     }
 
-    public close(): Promise<any> {
+    public close(): Promise<void> {
         this.writeRemainder();
         return this.delegate.close();
     }

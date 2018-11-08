@@ -27,13 +27,15 @@ import { SlackMessage } from "@atomist/slack-messages";
  * Allows us to address channels for a particular repo or any GraphQL
  * type with channels
  */
-export type AddressChannels = (msg: string | SlackMessage | SlackFileMessage, opts?: MessageOptions) => Promise<any>;
+export type AddressChannels = (msg: string | SlackMessage | SlackFileMessage, opts?: MessageOptions) => Promise<void>;
 
 /**
  * Throw away contents. Use when we know that there can be no linked channels.
  * @constructor
  */
-export const AddressNoChannels: AddressChannels = async () => undefined;
+export const AddressNoChannels: AddressChannels = async () => {
+    return;
+};
 
 /**
  * Interface for anything, like a repo, that has associated chat channel information

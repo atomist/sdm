@@ -413,16 +413,16 @@ class ProgressReportingProgressLog implements ProgressLog {
         this.name = sdmGoal.name;
     }
 
-    public close(): Promise<any> {
-        return Promise.resolve();
+    public async close(): Promise<void> {
+        return;
     }
 
-    public flush(): Promise<any> {
-        return Promise.resolve();
+    public async flush(): Promise<void> {
+        return;
     }
 
-    public isAvailable(): Promise<boolean> {
-        return Promise.resolve(true);
+    public async isAvailable(): Promise<boolean> {
+        return true;
     }
 
     public write(what: string): void {

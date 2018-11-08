@@ -26,11 +26,11 @@ export class StringCapturingProgressLog implements ProgressLog {
 
     public log: string = "";
 
-    public close(): Promise<any> {
+    public close(): Promise<void> {
         return Promise.resolve();
     }
 
-    public flush(): Promise<any> {
+    public flush(): Promise<void> {
         return Promise.resolve();
     }
 

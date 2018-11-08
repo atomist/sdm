@@ -34,9 +34,9 @@ export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deploymen
 
     /**
      * Remove a deployment. Very useful for project cleanup
-     * @return {Promise<any>}
+     * @return {Promise<void>}
      */
-    undeploy(ti: T, deployment: U, log: ProgressLog): Promise<any>;
+    undeploy(ti: T, deployment: U, log: ProgressLog): Promise<void>;
 
     /**
      * Find all deployments of the artifact or app

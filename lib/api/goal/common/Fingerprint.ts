@@ -65,7 +65,7 @@ const FingerprintDefinition: GoalDefinition = {
 
 /**
  * Publish the given fingerprint to Atomist in the given team
- * @return {Promise<any>}
+ * @return {Promise<void>}
  */
 const SendFingerprintToAtomist: FingerprintListener = fli => {
     const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${fli.context.workspaceId}`;

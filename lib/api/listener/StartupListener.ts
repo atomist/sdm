@@ -25,4 +25,4 @@ export type StartupListenerInvocation = AdminCommunicationContext;
 /**
  * Listener invoked on SDM startup
  */
-export type StartupListener = Function1<AdminCommunicationContext, Promise<any>>;
+export type StartupListener = Function1<AdminCommunicationContext, Promise<void>>;

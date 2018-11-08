@@ -45,7 +45,6 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
 
     public async doWithProject(params: ProjectLoadingParameters, action: WithLoadedProject): Promise<any> {
         return this.gi.configuration.sdm.projectLoader.doWithProject(params, async p => {
-
             let result;
             try {
 
