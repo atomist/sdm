@@ -58,20 +58,27 @@ export function fakeContext(workspaceId: string = "T123"): HandlerContext & Auto
  */
 class DevNullMessageClient implements MessageClient, SlackMessageClient {
 
-    public async addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<void> {
-        // Empty to return void
+    public async addressChannels(msg: string | SlackMessage,
+                                 channels: string | string[],
+                                 options?: MessageOptions): Promise<void> {
+        return;
     }
 
-    public async addressUsers(msg: string | SlackMessage, users: string | string[], options?: MessageOptions): Promise<void> {
-        // Empty to return void
+    public async addressUsers(msg: string | SlackMessage,
+                              users: string | string[],
+                              options?: MessageOptions): Promise<void> {
+        return;
     }
 
-    public async respond(msg: any, options?: MessageOptions): Promise<void> {
-        // Empty to return void
+    public async respond(msg: any,
+                         options?: MessageOptions): Promise<void> {
+        return;
     }
 
-    public async send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<void> {
-        // Empty to return void
+    public async send(msg: any,
+                      destinations: Destination | Destination[],
+                      options?: MessageOptions): Promise<void> {
+        return;
     }
 
 }
