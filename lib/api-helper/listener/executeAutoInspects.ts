@@ -174,7 +174,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
         return result;
     }
         ;
-};
+}
 
 async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
                                                   reviewListeners: ReviewListenerRegistration[],
