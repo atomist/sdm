@@ -15,6 +15,15 @@ subscription OnPullRequest {
     createdAt
     updatedAt
     mergeStatus
+    author {
+      login
+      person {
+        name
+        chatId {
+          screenName
+        }
+      }
+    }
     head {
       sha
       message
@@ -23,7 +32,6 @@ subscription OnPullRequest {
         person {
           name
           chatId {
-            userId
             screenName
           }
         }
