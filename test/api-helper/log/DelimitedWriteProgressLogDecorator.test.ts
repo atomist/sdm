@@ -25,20 +25,20 @@ class ListProgressLog implements ProgressLog {
 
     public readonly name: string = "ListProgressLog";
 
-    public close(): Promise<void> {
-        return Promise.resolve();
+    public async close(): Promise<void> {
+        return;
     }
 
-    public flush(): Promise<void> {
-        return Promise.resolve();
+    public async flush(): Promise<void> {
+        return;
     }
 
     public write(what: string): void {
         this.logList.push(what);
     }
 
-    public isAvailable(): Promise<boolean> {
-        return Promise.resolve(true);
+    public async isAvailable(): Promise<boolean> {
+        return true;
     }
 }
 
