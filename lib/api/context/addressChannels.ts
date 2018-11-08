@@ -34,7 +34,7 @@ export type AddressChannels = (msg: string | SlackMessage | SlackFileMessage, op
  * @constructor
  */
 export const AddressNoChannels: AddressChannels = async () => {
-    // Empty to return void
+    return;
 };
 
 /**
