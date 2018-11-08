@@ -42,30 +42,35 @@ import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
+export interface AutoInspectOptions {
+    registrations: Array<AutoInspectRegistration<any, any>>;
+    listeners: ReviewListenerRegistration[];
+    reportToSlack: boolean;
+}
+
 /**
  * Execute auto inspections and route or react to review results using review listeners
  * @param autoInspectRegistrations
  * @param reviewListeners listeners to respond to reviews
  * @return {ExecuteGoal}
  */
-export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id } = goalInvocation;
         try {
-            if (autoInspectRegistrations.length === 0) {
+            if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
             }
-            logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
+            logger.info("Planning inspection of %j with %d AutoInspects", id, options.registrations.length);
             return configuration.sdm.projectLoader.doWithProject({
                 credentials,
                 id,
                 readOnly: true,
                 cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
-            }, applyCodeInspections(goalInvocation, autoInspectRegistrations, reviewListeners));
+            }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: %s",
-                id, autoInspectRegistrations.length, err.message);
+                id, options.registrations.length, err.message);
             logger.warn(err.stack);
             return failure(err);
         }
@@ -120,12 +125,11 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
  * @param reviewListeners
  */
 function applyCodeInspections(goalInvocation: GoalInvocation,
-                              autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                              reviewListeners: ReviewListenerRegistration[]) {
+                              options: AutoInspectOptions) {
     return async project => {
         const { addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
-        const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
+        const relevantAutoInspects = await relevantCodeActions(options.registrations, cri);
 
         const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushImpactResponse }> =
             await Promise.all(relevantAutoInspects
@@ -148,24 +152,29 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 
         const reviewerErrors = inspectionReviewsAndResults.filter(e => !!e.error)
             .map(e => e.error);
-        sendErrorsToSlack(reviewerErrors, addressChannels);
+        // tslint:disable-next-line:no-boolean-literal-compare
+        if (options.reportToSlack === true) {
+            sendErrorsToSlack(reviewerErrors, addressChannels);
+        }
 
         const responsesFromOnInspectionResult: PushImpactResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
             .map(r => r.response);
 
         const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
             .map(r => r.review);
-        const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(reviews, reviewListeners, cri);
+        const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(reviews, options.listeners, cri);
 
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
-                code: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.failGoals) ? 1 : 0,
-                state: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.requireApprovalToProceed)
-                    ? SdmGoalState.waiting_for_approval : undefined };
+            code: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.failGoals) ? 1 : 0,
+            state: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.requireApprovalToProceed)
+                ? SdmGoalState.waiting_for_approval : undefined,
+        };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
-    };
-}
+    }
+        ;
+};
 
 async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
                                                   reviewListeners: ReviewListenerRegistration[],
