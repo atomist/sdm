@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Expose push to inspection and autofixes and remove broken considerOnlyChangedFiles option. [#568](https://github.com/atomist/sdm/issues/568)
 -   Add decision manager to decide on final approval vote. [68ff03e](https://github.com/atomist/sdm/commit/68ff03e49e8476537aed382a3cf6a6c5f9b57d57)
 -   Add slackQuestionMessage. [1cb71e2](https://github.com/atomist/sdm/commit/1cb71e29eebfcaa2942571966502c7c10c70d2bd)
+-   Allow to disable sending of review errors to slack. [04da438](https://github.com/atomist/sdm/commit/04da4386bb1c15bd83b482321ae67fc3a615d9bd)
 
 ### Changed
 
