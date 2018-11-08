@@ -14,9 +14,20 @@ subscription OnPullRequest {
     action
     createdAt
     updatedAt
+    mergeStatus
     head {
       sha
       message
+      committer {
+        login
+        person {
+          name
+          chatId {
+            userId
+            screenName
+          }
+        }
+      }
       pushes {
         before {
           sha
