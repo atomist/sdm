@@ -151,5 +151,3 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
 
     };
 }
-
-const cancel = new Cancel();
