@@ -123,41 +123,44 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
             const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
             const cancelableGoals = currentGoals.filter(
                 g => g.state === SdmGoalState.in_process ||
+                    g.state === SdmGoalState.planned ||
                     g.state === SdmGoalState.requested ||
                     g.state === SdmGoalState.waiting_for_pre_approval ||
                     g.state === SdmGoalState.pre_approved)
                 .filter(g => options.goalSetFilter(g.goalSet));
 
-            const canceledGoalSets = _.uniq(cancelableGoals.map(g => g.goalSetId));
+            if (cancelableGoals.length > 0) {
+                const canceledGoalSets = _.uniq(cancelableGoals.map(g => g.goalSetId));
 
-            for (const goal of cancelableGoals) {
+                for (const goal of cancelableGoals) {
 
-                gi.progressLog.write(
-                    `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state}' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
+                    gi.progressLog.write(
+                        `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state}' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
 
-                const updatedGoal = _.cloneDeep(goal);
-                updatedGoal.ts = Date.now();
-                updatedGoal.version = updatedGoal.version + 1;
-                updatedGoal.state = SdmGoalState.canceled;
-                updatedGoal.description = `Canceled ${goal.name}`;
+                    const updatedGoal = _.cloneDeep(goal);
+                    updatedGoal.ts = Date.now();
+                    updatedGoal.version = updatedGoal.version + 1;
+                    updatedGoal.state = SdmGoalState.canceled;
+                    updatedGoal.description = `Canceled ${goal.name}`;
 
-                const actx = gi.context as any as AutomationContextAware;
-                const prov: SdmGoalByShaAndBranch.Provenance = {
-                    name,
-                    registration: actx.context.name,
-                    version: actx.context.version,
-                    correlationId: actx.context.correlationId,
-                    ts: Date.now(),
+                    const actx = gi.context as any as AutomationContextAware;
+                    const prov: SdmGoalByShaAndBranch.Provenance = {
+                        name,
+                        registration: actx.context.name,
+                        version: actx.context.version,
+                        correlationId: actx.context.correlationId,
+                        ts: Date.now(),
+                    };
+                    updatedGoal.provenance.push(prov);
+
+                    await gi.context.messageClient.send(updatedGoal, addressEvent(GoalRootType));
+                }
+
+                return {
+                    code: 0,
+                    description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
                 };
-                updatedGoal.provenance.push(prov);
-
-                await gi.context.messageClient.send(updatedGoal, addressEvent(GoalRootType));
             }
-
-            return {
-                code: 0,
-                description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
-            };
         }
 
     };
