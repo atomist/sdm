@@ -37,7 +37,7 @@ export interface AutoCodeInspectionOptions {
 }
 
 const DefaultAutoCodeInspectionOptions: AutoCodeInspectionOptions = {
-    reportToSlack: false,
+    reportToSlack: true,
 };
 
 /**
