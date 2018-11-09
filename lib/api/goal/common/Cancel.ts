@@ -135,7 +135,8 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
                 for (const goal of cancelableGoals) {
 
                     gi.progressLog.write(
-                        `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state}' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
+                        `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state
+                        }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
 
                     const updatedGoal = _.cloneDeep(goal);
                     updatedGoal.ts = Date.now();
