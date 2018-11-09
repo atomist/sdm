@@ -1,12 +1,17 @@
 query SdmGoalByShaAndBranch(
-$repo: String!
-$owner: String!
-$providerId: String!
-$sha: String!
-$branch: String!
-$uniqueNames: [String]!
+  $repo: String!
+  $owner: String!
+  $providerId: String!
+  $sha: String!
+  $branch: String!
+  $uniqueNames: [String]!
 ) {
-  SdmGoal(sha: [$sha], branch: [$branch], uniqueName: $uniqueNames, _first: 500) {
+  SdmGoal(
+    sha: [$sha]
+    branch: [$branch]
+    uniqueName: $uniqueNames
+    _first: 500
+  ) {
     goalSet
     goalSetId
     environment
@@ -70,4 +75,3 @@ $uniqueNames: [String]!
     version
   }
 }
-
