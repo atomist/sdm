@@ -34,6 +34,10 @@ import {
 import { ExecuteGoal } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
+    Goals,
+    isGoals,
+} from "../Goals";
+import {
     FulfillableGoal,
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
@@ -45,10 +49,12 @@ import { IndependentOfEnvironment } from "../support/environment";
  * Options to configure the Cancel goal
  */
 export interface CancelOptions {
+    goals: Array<Goal | Goals>;
     goalSetFilter?: (goalSet: string) => Promise<boolean>;
 }
 
 const DefaultCancelOptions: CancelOptions = {
+    goals: [],
     goalSetFilter: async () => true,
 };
 
@@ -57,7 +63,7 @@ const DefaultCancelOptions: CancelOptions = {
  */
 export class Cancel extends FulfillableGoal {
 
-    constructor(private readonly options: FulfillableGoalDetails & CancelOptions = {},
+    constructor(private readonly options: FulfillableGoalDetails & CancelOptions = DefaultCancelOptions,
                 ...dependsOn: Goal[]) {
 
         super({
@@ -102,6 +108,13 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
                 repo: gi.sdmGoal.repo.name,
                 owner: gi.sdmGoal.repo.owner,
                 providerId: gi.sdmGoal.repo.providerId,
+                uniqueNames: _.uniq(_.flatten(options.goals.map(g => {
+                    if (isGoals(g)) {
+                        return g.goals.map(gg => gg.uniqueName);
+                    } else {
+                        return g.uniqueName;
+                    }
+                }))),
             },
             options: QueryNoCacheOptions,
         });
@@ -109,11 +122,9 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
         if (goals && goals.SdmGoal && goals.SdmGoal.length > 0) {
             const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
             const cancelableGoals = currentGoals.filter(
-                g => g.state === SdmGoalState.planned ||
+                g => g.state === SdmGoalState.in_process ||
                     g.state === SdmGoalState.requested ||
                     g.state === SdmGoalState.waiting_for_pre_approval ||
-                    g.state === SdmGoalState.waiting_for_approval ||
-                    g.state === SdmGoalState.approved ||
                     g.state === SdmGoalState.pre_approved)
                 .filter(g => options.goalSetFilter(g.goalSet));
 
@@ -122,7 +133,7 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
             for (const goal of cancelableGoals) {
 
                 gi.progressLog.write(
-                    `Canceling goal '${goal.uniqueName}' in state '${goal.state}' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
+                    `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state}' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
 
                 const updatedGoal = _.cloneDeep(goal);
                 updatedGoal.ts = Date.now();
@@ -145,7 +156,7 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
 
             return {
                 code: 0,
-                description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs)).join(", ")}`,
+                description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
             };
         }
 
