@@ -159,7 +159,7 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
 
                 return {
                     code: 0,
-                    description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
+                    description: `Canceled goals ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
                 };
             }
         }
