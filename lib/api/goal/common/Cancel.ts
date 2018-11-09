@@ -57,12 +57,11 @@ const DefaultCancelOptions: CancelOptions = {
  */
 export class Cancel extends FulfillableGoal {
 
-    constructor(private readonly options: FulfillableGoalDetails & CancelOptions,
+    constructor(private readonly options: FulfillableGoalDetails & CancelOptions = {},
                 ...dependsOn: Goal[]) {
 
         super({
-            ...CancelDefinition,
-            ...getGoalDefinitionFrom(options, DefaultGoalNameGenerator.generateName("cancel")),
+            ...getGoalDefinitionFrom(options, DefaultGoalNameGenerator.generateName("cancel"), CancelDefinition),
         }, ...dependsOn);
 
         const optsToUse: CancelOptions = {
@@ -80,7 +79,7 @@ export class Cancel extends FulfillableGoal {
 
 const CancelDefinition: GoalDefinition = {
     uniqueName: "cancel",
-    displayName: "cancel",
+    displayName: "cancel pending goals",
     environment: IndependentOfEnvironment,
     workingDescription: "Canceling pending goals",
     completedDescription: "No pending goals canceled",
@@ -110,11 +109,12 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
         if (goals && goals.SdmGoal && goals.SdmGoal.length > 0) {
             const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
             const cancelableGoals = currentGoals.filter(
-                g => g.state !== SdmGoalState.in_process &&
-                    g.state !== SdmGoalState.stopped &&
-                    g.state !== SdmGoalState.canceled &&
-                    g.state !== SdmGoalState.failure &&
-                    g.state !== SdmGoalState.success)
+                g => g.state === SdmGoalState.planned ||
+                    g.state === SdmGoalState.requested ||
+                    g.state === SdmGoalState.waiting_for_pre_approval ||
+                    g.state === SdmGoalState.waiting_for_approval ||
+                    g.state === SdmGoalState.approved ||
+                    g.state === SdmGoalState.pre_approved)
                 .filter(g => options.goalSetFilter(g.goalSet));
 
             const canceledGoalSets = _.uniq(cancelableGoals.map(g => g.goalSetId));
@@ -128,7 +128,7 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
                 updatedGoal.ts = Date.now();
                 updatedGoal.version = updatedGoal.version + 1;
                 updatedGoal.state = SdmGoalState.canceled;
-                updatedGoal.description = `Canceled ${goal.name} because of newer goals`;
+                updatedGoal.description = `Canceled ${goal.name}`;
 
                 const actx = gi.context as any as AutomationContextAware;
                 const prov: SdmGoalByShaAndBranch.Provenance = {
@@ -145,9 +145,11 @@ function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoa
 
             return {
                 code: 0,
-                message: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs)).join(", ")}`,
+                description: `Canceled goals | ${canceledGoalSets.map(gs => codeLine(gs)).join(", ")}`,
             };
         }
 
     };
 }
+
+const cancel = new Cancel();

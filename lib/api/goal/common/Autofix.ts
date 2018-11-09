@@ -42,8 +42,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
                 ...dependsOn: Goal[]) {
 
         super({
-            ...AutofixDefinition,
-            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix"), AutofixDefinition),
         }, ...dependsOn);
 
         this.addFulfillment({
