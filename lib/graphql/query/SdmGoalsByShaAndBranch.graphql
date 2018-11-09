@@ -1,0 +1,71 @@
+query SdmGoalByShaAndBranch(
+  $repo: String!
+  $owner: String!
+  $providerId: String!
+  $sha: String!
+  $branch: String!
+) {
+  SdmGoal(sha: [$sha], branch: [$branch]) {
+    goalSet
+    goalSetId
+    environment
+    uniqueName
+    name
+    sha
+    branch
+    repo(name: [$repo], owner: [$owner], providerId: [$providerId]) {
+      name
+      owner
+      providerId
+    }
+    fulfillment {
+      method
+      name
+    }
+    description
+    url
+    externalUrl
+    externalUrls {
+      label
+      url
+    }
+    state
+    externalKey
+    ts
+    error
+    retryFeasible
+    preConditions {
+      environment
+      name
+    }
+    approval {
+      correlationId
+      registration
+      name
+      version
+      ts
+      userId
+      channelId
+    }
+    preApproval {
+      correlationId
+      registration
+      name
+      version
+      ts
+      userId
+      channelId
+    }
+    provenance {
+      correlationId
+      registration
+      name
+      version
+      ts
+      userId
+      channelId
+    }
+    data
+    version
+  }
+}
