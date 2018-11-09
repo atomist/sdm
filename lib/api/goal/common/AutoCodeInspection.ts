@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    AutoInspectOptions,
-    executeAutoInspects,
-} from "../../../api-helper/listener/executeAutoInspects";
+import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
 import {
@@ -49,23 +46,22 @@ const DefaultAutoCodeInspectionOptions: AutoCodeInspectionOptions = {
 export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
 
-    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("code-inspection"),
-                options?: AutoCodeInspectionOptions,
+    constructor(private readonly details: FulfillableGoalDetails & AutoCodeInspectionOptions,
                 ...dependsOn: Goal[]) {
         super({
             ...CodeInspectionDefintion,
-            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
+            ...getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName("code-inspection")),
         }, ...dependsOn);
 
         const optsToUse = {
             reportToSlack: DefaultAutoCodeInspectionOptions.reportToSlack,
-            ...options,
+            ...details,
         };
 
         this.addFulfillment({
             name: `code-inspections-${this.definition.uniqueName}`,
             goalExecutor: executeAutoInspects({
-                ...optsToUse,
+                reportToSlack: optsToUse.reportToSlack,
                 registrations: this.registrations,
                 listeners: this.listeners,
             }),
