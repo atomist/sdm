@@ -272,6 +272,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
                                       definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
     if (typeof goalDetails === "string") {
         return {
+            ...(definition || {}),
             uniqueName: goalDetails || uniqueName,
         };
     } else {
