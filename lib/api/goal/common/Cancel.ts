@@ -14,36 +14,21 @@
  * limitations under the License.
  */
 
-import {
-    addressEvent,
-    AutomationContextAware,
-    QueryNoCacheOptions,
-} from "@atomist/automation-client";
-import { codeLine } from "@atomist/slack-messages";
-import * as _ from "lodash";
-import { sumSdmGoalEvents } from "../../../api-helper/goal/fetchGoalsOnCommit";
+import { executeCancelGoalSets } from "../../../api-helper/listener/executeCancel";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
-import {
-    SdmGoalByShaAndBranch,
-    SdmGoalState,
-} from "../../../typings/types";
+import { SdmGoalState } from "../../../typings/types";
 import {
     Goal,
     GoalDefinition,
 } from "../Goal";
-import { ExecuteGoal } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import {
-    Goals,
-    isGoals,
-} from "../Goals";
+import { Goals } from "../Goals";
 import {
     FulfillableGoal,
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
 import { SdmGoalEvent } from "../SdmGoalEvent";
-import { GoalRootType } from "../SdmGoalMessage";
 import { IndependentOfEnvironment } from "../support/environment";
 
 /**
@@ -106,70 +91,4 @@ const CancelDefinition: GoalDefinition = {
     failedDescription: "Failed to cancel pending goals",
 };
 
-/**
- * Cancel any pending goals that are on the previous commit of the goal's branch
- * @param options
- * @param name
- */
-function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoal {
-    return async gi => {
 
-        const goals = await gi.context.graphClient.query<SdmGoalByShaAndBranch.Query, SdmGoalByShaAndBranch.Variables>({
-            name: "SdmGoalByShaAndBranch",
-            variables: {
-                sha: gi.sdmGoal.push.before.sha,
-                branch: gi.sdmGoal.branch,
-                repo: gi.sdmGoal.repo.name,
-                owner: gi.sdmGoal.repo.owner,
-                providerId: gi.sdmGoal.repo.providerId,
-                uniqueNames: _.uniq(_.flatten(options.goals.map(g => {
-                    if (isGoals(g)) {
-                        return g.goals.map(gg => gg.uniqueName);
-                    } else {
-                        return g.uniqueName;
-                    }
-                }))),
-            },
-            options: QueryNoCacheOptions,
-        });
-
-        if (goals && goals.SdmGoal && goals.SdmGoal.length > 0) {
-            const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
-            const cancelableGoals = currentGoals.filter(g => options.goalFilter(g as any));
-
-            if (cancelableGoals.length > 0) {
-                const canceledGoalSets = _.uniq(cancelableGoals.map(g => g.goalSetId));
-
-                for (const goal of cancelableGoals) {
-
-                    gi.progressLog.write(
-                        `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state
-                            }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
-
-                    const updatedGoal = _.cloneDeep(goal);
-                    updatedGoal.ts = Date.now();
-                    updatedGoal.version = updatedGoal.version + 1;
-                    updatedGoal.state = SdmGoalState.canceled;
-                    updatedGoal.description = `Canceled ${goal.name}`;
-
-                    const actx = gi.context as any as AutomationContextAware;
-                    const prov: SdmGoalByShaAndBranch.Provenance = {
-                        name,
-                        registration: actx.context.name,
-                        version: actx.context.version,
-                        correlationId: actx.context.correlationId,
-                        ts: Date.now(),
-                    };
-                    updatedGoal.provenance.push(prov);
-
-                    await gi.context.messageClient.send(updatedGoal, addressEvent(GoalRootType));
-                }
-
-                return {
-                    code: 0,
-                    description: `Canceled goals ${canceledGoalSets.map(gs => codeLine(gs.slice(0, 7))).join(", ")}`,
-                };
-            }
-        }
-    };
-}
