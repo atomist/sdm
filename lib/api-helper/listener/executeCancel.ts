@@ -21,7 +21,10 @@ import {
 } from "@atomist/automation-client";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
-import { CancelOptions } from "../../api/goal/common/Cancel";
+import {
+    CancelOptions,
+    DefaultCancelOptions,
+} from "../../api/goal/common/Cancel";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { isGoals } from "../../api/goal/Goals";
 import { GoalRootType } from "../../api/goal/SdmGoalMessage";
@@ -38,7 +41,12 @@ import { sumSdmGoalEvents } from "../goal/fetchGoalsOnCommit";
  */
 export function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoal {
     return async gi => {
+
         const registration = gi.configuration.name;
+        const optsToUse: CancelOptions = {
+            goalFilter: DefaultCancelOptions.goalFilter,
+            ...options,
+        };
 
         const goals = await gi.context.graphClient.query<SdmGoalByShaAndBranch.Query, SdmGoalByShaAndBranch.Variables>({
             name: "SdmGoalByShaAndBranch",
@@ -48,7 +56,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                 repo: gi.sdmGoal.repo.name,
                 owner: gi.sdmGoal.repo.owner,
                 providerId: gi.sdmGoal.repo.providerId,
-                uniqueNames: _.uniq(_.flatten(options.goals.map(g => {
+                uniqueNames: _.uniq(_.flatten(optsToUse.goals.map(g => {
                     if (isGoals(g)) {
                         return g.goals.map(gg => gg.uniqueName);
                     } else {
@@ -62,7 +70,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
         if (goals && goals.SdmGoal && goals.SdmGoal.length > 0) {
             const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
             const cancelableGoals = currentGoals.filter(g => provenanceFilter(g, registration))
-                .filter(g => options.goalFilter(g as any));
+                .filter(g => optsToUse.goalFilter(g as any));
 
             if (cancelableGoals.length > 0) {
                 const canceledGoalSets = _.uniq(cancelableGoals.map(g => g.goalSetId));

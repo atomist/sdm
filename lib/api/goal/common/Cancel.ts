@@ -48,7 +48,7 @@ export interface CancelOptions {
     goalFilter?: (goal: SdmGoalEvent) => boolean;
 }
 
-const DefaultCancelOptions: CancelOptions = {
+export const DefaultCancelOptions: CancelOptions = {
     goals: [],
     goalFilter: g => g.state === SdmGoalState.in_process ||
         g.state === SdmGoalState.planned ||
@@ -69,15 +69,10 @@ export class Cancel extends FulfillableGoal {
             ...getGoalDefinitionFrom(options, DefaultGoalNameGenerator.generateName("cancel"), CancelDefinition),
         }, ...dependsOn);
 
-        const optsToUse: CancelOptions = {
-            goalFilter: DefaultCancelOptions.goalFilter,
-            ...this.options,
-        };
-
         this.addFulfillment({
             name: `cancel-${this.definition.uniqueName}`,
             logInterpreter: LogSuppressor,
-            goalExecutor: executeCancelGoalSets(optsToUse, this.definition.uniqueName),
+            goalExecutor: executeCancelGoalSets(this.options, this.definition.uniqueName),
         });
     }
 }
