@@ -15,6 +15,7 @@
  */
 
 import {
+    automationClientInstance,
     guid,
     HandlerContext,
 } from "@atomist/automation-client";
@@ -34,6 +35,7 @@ export function slackSuccessMessage(title: string, text: string, options: Partia
             fallback: text,
             color: "#45B254",
             mrkdwn_in: ["text"],
+            footer: footer(),
             ...options,
         }],
     };
@@ -49,6 +51,7 @@ export function slackQuestionMessage(title: string, text: string, options: Parti
             fallback: text,
             color: "#767676",
             mrkdwn_in: ["text"],
+            footer: footer(),
             ...options,
         }],
     };
@@ -90,5 +93,9 @@ export function slackErrorMessage(title: string, text: string, ctx: HandlerConte
 export function slackSupportLink(ctx: HandlerContext): string {
     const supportUrl =
         `https://atomist.typeform.com/to/yvnyOj?message_id=${base64.encode(ctx.invocationId)}`;
-    return `${url(supportUrl, "Support")}`;
+    return `${footer} | ${url(supportUrl, "Support")}`;
+}
+
+export function footer(): string {
+    return `${automationClientInstance().configuration.name}:${automationClientInstance().configuration.version}`;
 }
