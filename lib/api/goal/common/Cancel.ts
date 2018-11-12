@@ -90,5 +90,3 @@ const CancelDefinition: GoalDefinition = {
     completedDescription: "No pending goals canceled",
     failedDescription: "Failed to cancel pending goals",
 };
-
-

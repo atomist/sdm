@@ -16,12 +16,12 @@
 
 import { guid } from "@atomist/automation-client";
 import { fail } from "power-assert";
+import assert = require("power-assert");
 import { executeCancelGoalSets } from "../../../lib/api-helper/listener/executeCancel";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
 import { CancelOptions } from "../../../lib/api/goal/common/Cancel";
 import { SdmGoalState } from "../../../lib/typings/types";
-import assert = require("power-assert");
 
 const autofix = new Autofix();
 const codeInspection = new AutoCodeInspection();
@@ -54,7 +54,16 @@ describe("executeCancelGoalSets", () => {
             },
             context: {
                 graphClient: {
-                    query: async (optionsOrName: { variables: { sha: string, branch: string, repo: string, owner: string, providerId: string, uniqueNames: string[] } }) => {
+                    query: async (optionsOrName: {
+                        variables: {
+                            sha: string,
+                            branch: string,
+                            repo: string,
+                            owner: string,
+                            providerId: string,
+                            uniqueNames: string[],
+                        },
+                    }) => {
                         assert.strictEqual(optionsOrName.variables.sha, "015f119ccb0af8096ab08364dcccfa7149c36ea7");
                         assert.strictEqual(optionsOrName.variables.branch, "some-branch");
                         assert.strictEqual(optionsOrName.variables.repo, "foo");
@@ -113,7 +122,7 @@ describe("executeCancelGoalSets", () => {
                                 provenance: [{
                                     ts: Date.now(),
                                     registration: "@atomist/my-sdm",
-                                }]
+                                }],
                             }, {
                                 name: autofix.definition.displayName,
                                 uniqueName: autofix.definition.uniqueName,
@@ -124,7 +133,7 @@ describe("executeCancelGoalSets", () => {
                                 provenance: [{
                                     ts: Date.now(),
                                     registration: "@atomist/my-sdm",
-                                }]
+                                }],
                             }],
                         };
                     },
@@ -138,10 +147,12 @@ describe("executeCancelGoalSets", () => {
                     name: "test",
                     version: "1.0.0",
                     correlationId: guid(),
-                }
+                },
             },
             progressLog: {
-                write: () => {},
+                write: () => {
+                    // intentionally left empty
+                },
             },
         } as any);
 
@@ -190,7 +201,7 @@ describe("executeCancelGoalSets", () => {
                                 provenance: [{
                                     ts: Date.now(),
                                     registration: "@atomist/my-sdm",
-                                }]
+                                }],
                             }, {
                                 name: autofix.definition.displayName,
                                 uniqueName: autofix.definition.uniqueName,
@@ -201,7 +212,7 @@ describe("executeCancelGoalSets", () => {
                                 provenance: [{
                                     ts: Date.now(),
                                     registration: "@atomist/my-sdm",
-                                }]
+                                }],
                             }, {
                                 name: codeInspection.definition.displayName,
                                 uniqueName: codeInspection.definition.uniqueName,
@@ -215,7 +226,7 @@ describe("executeCancelGoalSets", () => {
                                 }, {
                                     ts: Date.now() - 2,
                                     registration: "@atomist/sdm",
-                                }]
+                                }],
                             }],
                         };
                     },
@@ -231,15 +242,17 @@ describe("executeCancelGoalSets", () => {
                     name: "test",
                     version: "1.0.0",
                     correlationId: guid(),
-                }
+                },
             },
             progressLog: {
-                write: () => {},
+                write: () => {
+                    // intentionally left empty
+                },
             },
         } as any);
 
         assert(result && result.code === 0);
-        assert(result && result.description.includes(goalSetId.slice(0, 7)))
+        assert(result && result.description.includes(goalSetId.slice(0, 7)));
         assert(senrAutofixCancelation);
     });
 });

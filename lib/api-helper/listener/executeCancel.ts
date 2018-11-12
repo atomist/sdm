@@ -39,7 +39,7 @@ import { sumSdmGoalEvents } from "../goal/fetchGoalsOnCommit";
 export function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoal {
     return async gi => {
         const registration = gi.configuration.name;
-        
+
         const goals = await gi.context.graphClient.query<SdmGoalByShaAndBranch.Query, SdmGoalByShaAndBranch.Variables>({
             name: "SdmGoalByShaAndBranch",
             variables: {
