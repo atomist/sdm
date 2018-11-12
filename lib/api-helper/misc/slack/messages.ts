@@ -15,7 +15,7 @@
  */
 
 import {
-    automationClientInstance,
+    configurationValue,
     guid,
     HandlerContext,
 } from "@atomist/automation-client";
@@ -97,5 +97,5 @@ export function slackSupportLink(ctx: HandlerContext): string {
 }
 
 export function footer(): string {
-    return `${automationClientInstance().configuration.name}:${automationClientInstance().configuration.version}`;
+    return `${configurationValue<string>("name")}:${configurationValue<string>("version")}`;
 }
