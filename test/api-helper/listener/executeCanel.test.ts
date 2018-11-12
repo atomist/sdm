@@ -32,9 +32,12 @@ describe("executeCancelGoalSets", () => {
         const options: CancelOptions = {
             goals: [autofix, codeInspection],
         };
-        const cancel = executeCancelGoalSets(options, "CancelGoal", "@atomist/my-sdm");
+        const cancel = executeCancelGoalSets(options, "CancelGoal");
 
         const result = await cancel({
+            configuration: {
+                name: "@atomist/my-sdm",
+            },
             sdmGoal: {
                 push: {
                     before: {
@@ -75,9 +78,12 @@ describe("executeCancelGoalSets", () => {
             goals: [autofix, codeInspection],
             goalFilter: goal => goal.state === SdmGoalState.in_process,
         };
-        const cancel = executeCancelGoalSets(options, "CancelGoal", "@atomist/my-sdm");
+        const cancel = executeCancelGoalSets(options, "CancelGoal");
 
         const result = await cancel({
+            configuration: {
+                name: "@atomist/my-sdm",
+            },
             sdmGoal: {
                 push: {
                     before: {
@@ -147,11 +153,14 @@ describe("executeCancelGoalSets", () => {
             goals: [autofix, codeInspection],
             goalFilter: goal => goal.state === SdmGoalState.in_process,
         };
-        const cancel = executeCancelGoalSets(options, "CancelGoal", "@atomist/my-sdm");
+        const cancel = executeCancelGoalSets(options, "CancelGoal");
         const goalSetId = guid();
         let senrAutofixCancelation = false;
 
         const result = await cancel({
+            configuration: {
+                name: "@atomist/my-sdm",
+            },
             sdmGoal: {
                 push: {
                     before: {
