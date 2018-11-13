@@ -45,6 +45,7 @@ import {
     OnPushToAnyBranch,
     PushFields,
     SdmGoalState,
+    SdmGoalWithPushFields,
 } from "../../typings/types";
 
 export function environmentFromGoal(goal: Goal) {
@@ -174,7 +175,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 }
 
 export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage, push: OnPushToAnyBranch.Push) {
-    (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).push = cleanPush(push);
+    (sdmGoal as SdmGoalWithPushFields.Fragment).push = cleanPush(push);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
 }
