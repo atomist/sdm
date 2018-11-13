@@ -19,11 +19,11 @@ import {
     HandlerResult,
 } from "@atomist/automation-client";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { OnAnyRequestedSdmGoal } from "../../../typings/types";
+import { SdmGoalEvent } from "../SdmGoalEvent";
 
 /**
  * Launch a goal in an isolated environment (container or process) for fulfillment.
  */
-export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
+export type IsolatedGoalLauncher = (goal: SdmGoalEvent,
                                     ctx: HandlerContext,
                                     progressLog: ProgressLog) => Promise<HandlerResult>;
