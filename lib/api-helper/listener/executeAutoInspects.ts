@@ -20,6 +20,7 @@ import {
     ProjectReview,
     RepoRef,
 } from "@atomist/automation-client";
+import { codeBlock } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import {
@@ -37,6 +38,7 @@ import {
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { SdmGoalState } from "../../typings/types";
 import { minimalClone } from "../goal/minimalClone";
+import { slackErrorMessage } from "../misc/slack/messages";
 import { PushListenerInvocation } from "./../../api/listener/PushListener";
 import { ReviewListenerInvocation } from "./../../api/listener/ReviewListener";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
@@ -192,7 +194,10 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
             return (await l.listener(rli)) || PushImpactResponse.proceed;
         } catch (err) {
             logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
-            await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
+            await rli.addressChannels(
+                slackErrorMessage(
+                    "Review Listener",
+                    `Review listener '${l.name}' failed${err.message ? `:\n\n${codeBlock(err.message)}` : ""}`, rli.context));
             return PushImpactResponse.failGoals;
         }
     };
