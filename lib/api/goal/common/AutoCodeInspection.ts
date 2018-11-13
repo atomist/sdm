@@ -15,6 +15,7 @@
  */
 
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
+import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
 import {
@@ -64,6 +65,7 @@ export class AutoCodeInspection
                 registrations: this.registrations,
                 listeners: this.listeners,
             }),
+            logInterpreter: LogSuppressor,
         });
     }
 }
