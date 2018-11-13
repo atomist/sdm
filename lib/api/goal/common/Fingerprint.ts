@@ -41,8 +41,7 @@ export class Fingerprint
                 ...dependsOn: Goal[]) {
 
         super({
-            ...FingerprintDefinition,
-            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
+            ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint"), FingerprintDefinition),
         }, ...dependsOn);
 
         this.addFulfillment({

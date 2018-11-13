@@ -49,8 +49,7 @@ export class AutoCodeInspection
     constructor(private readonly details: FulfillableGoalDetails & AutoCodeInspectionOptions = {},
                 ...dependsOn: Goal[]) {
         super({
-            ...CodeInspectionDefintion,
-            ...getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName("code-inspection")),
+            ...getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName("code-inspection"), CodeInspectionDefintion),
         }, ...dependsOn);
 
         const optsToUse = {

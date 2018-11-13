@@ -42,11 +42,11 @@
     "stack-trace": "0.0.10"
   },
   "peerDependencies": {
-    "@atomist/automation-client": ">=1.0.1",
+    "@atomist/automation-client": ">=1.1.0",
     "@atomist/slack-messages": ">=1.0.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.1",
+    "@atomist/automation-client": "1.1.0-master.20181110132646",
     "@atomist/slack-messages": "^1.0.1",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",

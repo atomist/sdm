@@ -266,35 +266,42 @@ export class GoalWithFulfillment extends FulfillableGoal {
     }
 }
 
+// tslint:disable:cyclomatic-complexity
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-                                      uniqueName: string): { uniqueName: string } | PredicatedGoalDefinition {
+                                      uniqueName: string,
+                                      definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
     if (typeof goalDetails === "string") {
         return {
-            uniqueName : goalDetails || uniqueName,
+            ...(definition || {}),
+            uniqueName: goalDetails || uniqueName,
         };
     } else {
-        const descriptions: Partial<GoalDefinition> = {};
+        const defaultDefinition: Partial<GoalDefinition> = {
+            ...(definition || {}),
+        };
         if (goalDetails.descriptions) {
-            descriptions.canceledDescription = goalDetails.descriptions.canceled;
-            descriptions.completedDescription = goalDetails.descriptions.completed;
-            descriptions.failedDescription = goalDetails.descriptions.failed;
-            descriptions.plannedDescription = goalDetails.descriptions.planned;
-            descriptions.requestedDescription = goalDetails.descriptions.requested;
-            descriptions.stoppedDescription = goalDetails.descriptions.stopped;
-            descriptions.waitingForApprovalDescription = goalDetails.descriptions.waitingForApproval;
-            descriptions.waitingForPreApprovalDescription = goalDetails.descriptions.waitingForPreApproval;
-            descriptions.workingDescription = goalDetails.descriptions.inProcess;
+            defaultDefinition.canceledDescription = goalDetails.descriptions.canceled || defaultDefinition.canceledDescription;
+            defaultDefinition.completedDescription = goalDetails.descriptions.completed || defaultDefinition.completedDescription;
+            defaultDefinition.failedDescription = goalDetails.descriptions.failed || defaultDefinition.failedDescription;
+            defaultDefinition.plannedDescription = goalDetails.descriptions.planned || defaultDefinition.plannedDescription;
+            defaultDefinition.requestedDescription = goalDetails.descriptions.requested || defaultDefinition.requestedDescription;
+            defaultDefinition.stoppedDescription = goalDetails.descriptions.stopped || defaultDefinition.stoppedDescription;
+            defaultDefinition.waitingForApprovalDescription =
+                goalDetails.descriptions.waitingForApproval || defaultDefinition.waitingForApprovalDescription;
+            defaultDefinition.waitingForPreApprovalDescription =
+                goalDetails.descriptions.waitingForPreApproval || defaultDefinition.waitingForPreApprovalDescription;
+            defaultDefinition.workingDescription = goalDetails.descriptions.inProcess || defaultDefinition.workingDescription;
         }
         return {
-            displayName: goalDetails.displayName,
+            ...defaultDefinition,
+            displayName: goalDetails.displayName || defaultDefinition.displayName,
             uniqueName: goalDetails.uniqueName || uniqueName,
             environment: getEnvironment(goalDetails),
-            approvalRequired: goalDetails.approval,
-            preApprovalRequired: goalDetails.preApproval,
-            retryFeasible: goalDetails.retry,
-            isolated: goalDetails.isolate,
+            approvalRequired: goalDetails.approval || defaultDefinition.approvalRequired,
+            preApprovalRequired: goalDetails.preApproval || defaultDefinition.preApprovalRequired,
+            retryFeasible: goalDetails.retry || defaultDefinition.retryFeasible,
+            isolated: goalDetails.isolate || defaultDefinition.isolated,
             waitRules: goalDetails.waitRules,
-            ...descriptions,
         };
     }
 }
