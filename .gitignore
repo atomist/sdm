@@ -15,5 +15,6 @@ node_modules/
 /coverage/
 /doc/
 /log/
+/lib/typings/
 git-info.json
 /index.ts
