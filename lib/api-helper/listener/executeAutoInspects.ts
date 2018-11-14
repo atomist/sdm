@@ -20,7 +20,10 @@ import {
     ProjectReview,
     RepoRef,
 } from "@atomist/automation-client";
-import { codeBlock } from "@atomist/slack-messages";
+import {
+    codeBlock,
+    italic,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import {
@@ -197,7 +200,7 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
             await rli.addressChannels(
                 slackErrorMessage(
                     "Review Listener",
-                    `Review listener '${l.name}' failed${err.message ? `:\n\n${codeBlock(err.message)}` : ""}`, rli.context));
+                    `Review listener ${italic(l.name)} failed${err.message ? `:\n\n${codeBlock(err.message)}` : ""}`, rli.context));
             return PushImpactResponse.failGoals;
         }
     };
