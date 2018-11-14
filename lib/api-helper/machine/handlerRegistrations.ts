@@ -51,6 +51,10 @@ import { chainEditors } from "@atomist/automation-client/lib/operations/edit/pro
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
 import { isProject } from "@atomist/automation-client/lib/project/Project";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    codeBlock,
+    italic,
+} from "@atomist/slack-messages";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { SdmContext } from "../../api/context/SdmContext";
@@ -119,7 +123,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Invalid parameters to code transform '${ci.commandName}': \n\n${vr.message}`, ci.context));
+                        `Invalid parameters to code transform ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
             }
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -170,7 +174,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Inspection`,
-                        `Invalid parameters to code inspection '${ci.commandName}': \n\n${vr.message}`, ci.context));
+                        `Invalid parameters to code inspection ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
             }
             const action: (p: Project, params: any) => Promise<CodeInspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
