@@ -62,7 +62,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
                     "Code Transform",
                     `Code transform ${italic(editorName)} failed while changing ${bold(`${id.owner}/${id.repo}`)}:\n\n${codeBlock(err.message)}`, context));
             logger.warn("Editor error acting on %j: %s", project.id, err);
-            return <EditResult> { target: project, edited: false, success: false };
+            return { target: project, edited: false, success: false };
         }
     };
 }
