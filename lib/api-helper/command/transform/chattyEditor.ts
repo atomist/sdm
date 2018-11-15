@@ -25,6 +25,15 @@ import {
     ProjectEditor,
     toEditor,
 } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import {
+    bold,
+    codeBlock,
+    italic,
+} from "@atomist/slack-messages";
+import {
+    slackErrorMessage,
+    slackInfoMessage,
+} from "../../misc/slack/messages";
 import { confirmEditedness } from "./confirmEditedness";
 
 /**
@@ -41,11 +50,17 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
             const editResult = await confirmEditedness(tentativeEditResult);
             logger.debug("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
             if (!editResult.edited) {
-                await context.messageClient.respond(`*${editorName}*: Nothing to do on \`${id.url}\``);
+                await context.messageClient.respond(
+                    slackInfoMessage(
+                        "Code Transform",
+                        `Code transform ${italic(editorName)} made no changes to ${bold(`${id.owner}/${id.repo}`)}`));
             }
             return editResult;
         } catch (err) {
-            await context.messageClient.respond(`*${editorName}*: Nothing done on \`${id.url}\``);
+            await context.messageClient.respond(
+                slackErrorMessage(
+                    "Code Transform",
+                    `Code transform ${italic(editorName)} failed while changing ${bold(`${id.owner}/${id.repo}`)}:\n\n${codeBlock(err.message)}`, context));
             logger.warn("Editor error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false } as EditResult;
         }
