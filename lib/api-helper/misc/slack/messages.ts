@@ -58,6 +58,22 @@ export function slackQuestionMessage(title: string, text: string, options: Parti
     return msg;
 }
 
+export function slackInfoMessage(title: string, text: string, options: Partial<Attachment> = {}): SlackMessage {
+    const msg: SlackMessage = {
+        attachments: [{
+            author_icon: `https://images.atomist.com/rug/info.png`,
+            author_name: title,
+            text,
+            fallback: text,
+            color: "#767676",
+            mrkdwn_in: ["text"],
+            footer: footer(),
+            ...options,
+        }],
+    };
+    return msg;
+}
+
 export function slackWarningMessage(title: string, text: string, ctx: HandlerContext, options: Partial<Attachment> = {}): SlackMessage {
     const msg: SlackMessage = {
         attachments: [{
