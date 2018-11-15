@@ -21,7 +21,6 @@ import {
 } from "@atomist/automation-client";
 import {
     AnyProjectEditor,
-    EditResult,
     ProjectEditor,
     toEditor,
 } from "@atomist/automation-client/lib/operations/edit/projectEditor";
