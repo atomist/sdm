@@ -35,7 +35,8 @@ export function slackSuccessMessage(title: string, text: string, options: Partia
             fallback: text,
             color: "#45B254",
             mrkdwn_in: ["text"],
-            footer: footer(),
+            footer: slackFooter(),
+            ts: slackTs(),
             ...options,
         }],
     };
@@ -51,7 +52,8 @@ export function slackQuestionMessage(title: string, text: string, options: Parti
             fallback: text,
             color: "#767676",
             mrkdwn_in: ["text"],
-            footer: footer(),
+            footer: slackFooter(),
+            ts: slackTs(),
             ...options,
         }],
     };
@@ -67,7 +69,8 @@ export function slackInfoMessage(title: string, text: string, options: Partial<A
             fallback: text,
             color: "#767676",
             mrkdwn_in: ["text"],
-            footer: footer(),
+            footer: slackFooter(),
+            ts: slackTs(),
             ...options,
         }],
     };
@@ -84,6 +87,7 @@ export function slackWarningMessage(title: string, text: string, ctx: HandlerCon
             color: "#ffcc00",
             mrkdwn_in: ["text"],
             footer: slackSupportLink(ctx),
+            ts: slackTs(),
             ...options,
         }],
     };
@@ -100,6 +104,7 @@ export function slackErrorMessage(title: string, text: string, ctx: HandlerConte
             color: "#D94649",
             mrkdwn_in: ["text"],
             footer: slackSupportLink(ctx),
+            ts: slackTs(),
             ...options,
         }],
     };
@@ -109,9 +114,13 @@ export function slackErrorMessage(title: string, text: string, ctx: HandlerConte
 export function slackSupportLink(ctx: HandlerContext): string {
     const supportUrl =
         `https://atomist.typeform.com/to/yvnyOj?message_id=${base64.encode(ctx.invocationId)}`;
-    return `${footer()} | ${url(supportUrl, "Support")}`;
+    return `${slackFooter()} | ${url(supportUrl, "Support")}`;
 }
 
-export function footer(): string {
+export function slackFooter(): string {
     return `${configurationValue<string>("name")}:${configurationValue<string>("version")}`;
+}
+
+export function slackTs(): number {
+    return Math.floor(Date.now() / 1000);;
 }
