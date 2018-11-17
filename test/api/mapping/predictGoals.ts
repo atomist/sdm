@@ -38,7 +38,10 @@ import { PushMapping } from "../../../lib/api/mapping/PushMapping";
 import { isPredicatedStaticValue } from "../../../lib/api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../../lib/api/mapping/support/StaticPushMapping";
 import { OnPushToAnyBranch } from "../../../lib/typings/types";
-import { isExplicableMapping, MappingCompositionStyle } from "../../../lib/api/mapping/Mapping";
+import {
+    isExplicableMapping,
+    MappingCompositionStyle,
+} from "../../../lib/api/mapping/Mapping";
 
 // Model for what we could do in a pack
 
