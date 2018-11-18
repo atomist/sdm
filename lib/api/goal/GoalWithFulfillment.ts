@@ -306,7 +306,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
     }
 }
 
-function getEnvironment(details?: { environment?: string }): GoalEnvironment {
+function getEnvironment(details?: { environment?: string | GoalEnvironment}): GoalEnvironment {
     if (details && details.environment && typeof details.environment === "string") {
         switch (details.environment) {
             case "testing":
@@ -316,6 +316,8 @@ function getEnvironment(details?: { environment?: string }): GoalEnvironment {
             default:
                 return IndependentOfEnvironment;
         }
+    } else if (details && typeof details.environment !== "string") {
+         return details.environment;
     } else {
         return IndependentOfEnvironment;
     }
