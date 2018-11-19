@@ -74,7 +74,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                             success: true,
                             edited: false,
                             target: project,
-                            description: "Autofixes not executing: new commits on branch",
+                            description: "Autofixes not executing | new commits on branch",
                         };
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
