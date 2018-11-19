@@ -79,9 +79,9 @@ export class Cancel extends FulfillableGoal {
 
 const CancelDefinition: GoalDefinition = {
     uniqueName: "cancel",
-    displayName: "cancel pending goals",
+    displayName: "cancel goals",
     environment: IndependentOfEnvironment,
-    workingDescription: "Canceling pending goals",
-    completedDescription: "No pending goals canceled",
-    failedDescription: "Failed to cancel pending goals",
+    workingDescription: "Canceling goals",
+    completedDescription: "No goals canceled",
+    failedDescription: "Failed to cancel goals",
 };
