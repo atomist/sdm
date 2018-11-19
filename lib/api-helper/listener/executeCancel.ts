@@ -42,6 +42,15 @@ import { sumSdmGoalEvents } from "../goal/fetchGoalsOnCommit";
 export function executeCancelGoalSets(options: CancelOptions, name: string): ExecuteGoal {
     return async gi => {
 
+        const { sdmGoal } = gi;
+
+        if (!sdmGoal.push.before) {
+            return {
+                code: 0,
+                description: `No goals canceled (first push on branch)`,
+            };
+        }
+
         const registration = gi.configuration.name;
         const optsToUse: CancelOptions = {
             goalFilter: DefaultCancelOptions.goalFilter,
@@ -51,11 +60,11 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
         const goals = await gi.context.graphClient.query<SdmGoalByShaAndBranch.Query, SdmGoalByShaAndBranch.Variables>({
             name: "SdmGoalByShaAndBranch",
             variables: {
-                sha: gi.sdmGoal.push.before.sha,
-                branch: gi.sdmGoal.branch,
-                repo: gi.sdmGoal.repo.name,
-                owner: gi.sdmGoal.repo.owner,
-                providerId: gi.sdmGoal.repo.providerId,
+                sha: sdmGoal.push.before.sha,
+                branch: sdmGoal.branch,
+                repo: sdmGoal.repo.name,
+                owner: sdmGoal.repo.owner,
+                providerId: sdmGoal.repo.providerId,
                 uniqueNames: _.uniq(_.flatten(optsToUse.goals.map(g => {
                     if (isGoals(g)) {
                         return g.goals.map(gg => gg.uniqueName);
