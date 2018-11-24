@@ -46,6 +46,11 @@ export interface CommandRegistration<PARAMS> {
     intent?: string | string[];
     tags?: string | string[];
 
+    /**
+     * Configure command to submit without confirmation
+     */
+    autoSubmit?: boolean;
+
     repoFinder?: RepoFinder;
 
     repoLoader?: (p: PARAMS) => RepoLoader;

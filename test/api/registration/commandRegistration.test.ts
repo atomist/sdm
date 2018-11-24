@@ -23,6 +23,8 @@ import {
     SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
 import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
+import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
@@ -384,6 +386,19 @@ describe("command registrations", () => {
         const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         instance.freshParametersInstance();
+    });
+
+    it("should create command handler with autoSubmit", async () => {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+            name: "test",
+            listener: async ci => {},
+            autoSubmit: true,
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        const md = metadataFromInstance(instance) as CommandHandlerMetadata;
+        assert(md.auto_submit);
+        assert.strictEqual(md.name, "test");
     });
 
 });
