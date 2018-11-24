@@ -131,4 +131,15 @@ describe("validateConfigurationValues", () => {
         }
         done();
     });
+
+    it("should validate value with correct number type", done => {
+        const config = { sdm: { test: 3 } };
+        const requiredValues = [{ path: "sdm.test", type: ConfigurationValueType.Number }];
+        try {
+            validateConfigurationValues(config, { requiredConfigurationValues: requiredValues });
+        } catch (err) {
+            assert.fail();
+        }
+        done();
+    });
 });

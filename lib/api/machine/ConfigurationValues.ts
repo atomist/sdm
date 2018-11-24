@@ -54,7 +54,7 @@ export function validateConfigurationValues(config: any, options: ConfigurationV
         } else {
             switch (type) {
                 case ConfigurationValueType.Number:
-                    if (!Number.isNaN(value)) {
+                    if (typeof value !== "number") {
                         invalidValues.push(`${path} ${JSON.stringify(value)} is not a 'number'`);
                     }
                     break;
