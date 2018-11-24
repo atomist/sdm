@@ -122,5 +122,5 @@ export function slackFooter(): string {
 }
 
 export function slackTs(): number {
-    return Math.floor(Date.now() / 1000);;
+    return Math.floor(Date.now() / 1000);
 }
