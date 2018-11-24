@@ -66,8 +66,9 @@ const FingerprintDefinition: GoalDefinition = {
  * Publish the given fingerprint to Atomist in the given team
  * @return {Promise<void>}
  */
-const SendFingerprintToAtomist: FingerprintListener = fli => {
-    const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${fli.context.workspaceId}`;
+export const SendFingerprintToAtomist: FingerprintListener = fli => {
+    const baseUrl = process.env.ATOMIST_WEBHOOK_BASEURL || "https://webhook.atomist.com";
+    const url = `${baseUrl}/atomist/fingerprints/teams/${fli.context.workspaceId}`;
     const payload = {
         commit: {
             provider: fli.id.providerType,
@@ -78,23 +79,13 @@ const SendFingerprintToAtomist: FingerprintListener = fli => {
         fingerprints: fli.fingerprints,
     };
     try {
-        const shortenedPayload = JSON.stringify(payload, limitValueLength);
-        logger.info("Sending up fingerprint to %s: %j", url, shortenedPayload);
+        logger.debug("Sending fingerprint to %s: %j", url, JSON.stringify(payload));
     } catch (err) {
-        return Promise.reject("Unable to stringify your fingerprint. Is it circular? " + err.message);
+        logger.error(`Unable to serialize fingerprint: %s`, err.message);
     }
     return axios.post(url, payload)
         .catch(err => {
-            return Promise.reject(`Axios error calling ${url}: ${err.message}`);
+            logger.error(`Failed to send fingerprint: %s`, err.message);
+            return Promise.reject(err);
         });
 };
-
-function limitValueLength(key: string, value: any): string {
-    if (!value) {
-        return;
-    }
-    const stringified = JSON.stringify(value);
-    if (stringified.length > 1000) {
-        return stringified.substr(0, 100) + " ... < plus " + (stringified.length - 100) + " more characters >";
-    }
-}
