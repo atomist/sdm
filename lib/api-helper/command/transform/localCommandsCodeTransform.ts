@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* tslint:disable:deprecation */
+
 import {
     ChildProcessResult,
     GitProject,
@@ -33,6 +35,7 @@ import { LoggingProgressLog } from "../../log/LoggingProgressLog";
  * @param {SpawnCommand[]} commands to execute
  * @param log progress log (optional, stream to console if not passed in)
  * @return {ProjectEditor}
+ * @deprecated use spawnCodeTransform
  */
 export function localCommandsCodeTransform(commands: SpawnCommand[],
                                            log: ProgressLog = new LoggingProgressLog("commands")): CodeTransform {

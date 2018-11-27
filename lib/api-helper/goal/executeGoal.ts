@@ -47,11 +47,11 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
+import { spawnAndLog } from "../misc/child_process";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
-import { spawnAndWatch } from "../misc/spawned";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
 import { mockGoalExecutor } from "./mock";
 import {
@@ -225,14 +225,8 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 },
             };
 
-            let result: HandlerResult = await spawnAndWatch(
-                { command: path.join(p.baseDir, ".atomist", "hooks", hook), args: [] },
-                opts,
-                progressLog,
-                {
-                    errorFinder: code => code !== 0,
-                });
-
+            const cmd = path.join(p.baseDir, ".atomist", "hooks", hook);
+            let result: HandlerResult = await spawnAndLog(progressLog, cmd, [], opts);
             if (!result) {
                 result = Success;
             }
@@ -266,6 +260,7 @@ export function markStatus(parameters: {
 }) {
     const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
 
+    /* tslint:disable:deprecation */
     let newState = SdmGoalState.success;
     if (result.state) {
         newState = result.state;
@@ -285,6 +280,7 @@ export function markStatus(parameters: {
     if (result.targetUrl) {
         externalUrls.push({ label: "Link", url: result.targetUrl });
     }
+    /* tslint:enable:deprecation */
 
     return updateGoal(
         context,
@@ -439,8 +435,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                    // Intentionally empty
-                })
+                        // Intentionally empty
+                    })
                     .catch(err => {
                         logger.warn(`Error occurred reporting progress: %s`, err.message);
                     });

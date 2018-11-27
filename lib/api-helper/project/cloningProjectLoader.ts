@@ -23,6 +23,7 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
 export const CloningProjectLoader: ProjectLoader = {
     async doWithProject(coords, action) {
         // coords.depth is deprecated; populate it for backwards compatibility
+        // tslint:disable-next-line:deprecation
         const cloneOptions = coords.cloneOptions ? coords.cloneOptions : { depth: coords.depth };
         const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, cloneOptions);
         return action(p);

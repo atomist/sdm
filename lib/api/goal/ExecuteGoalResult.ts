@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HandlerResult } from "@atomist/automation-client";
 import { SdmGoalState } from "../../typings/types";
 
 /**
@@ -47,12 +48,12 @@ export interface GoalDetails {
      * Optional targetUrls to be set on the goal as externalUrls
      * @deprecated use externalsUrls
      */
-    targetUrls?: Array<{ label?: string, url: string}>;
+    targetUrls?: Array<{ label?: string, url: string }>;
 
     /**
      * Optional externalUrls to be set on the goal
      */
-    externalUrls?: Array<{ label?: string, url: string}>;
+    externalUrls?: Array<{ label?: string, url: string }>;
 
     /**
      * Optional flag to indicate if this goal requires approval now
@@ -64,16 +65,4 @@ export interface GoalDetails {
 /**
  * Result from goal execution
  */
-export interface ExecuteGoalResult extends GoalDetails {
-
-    /**
-     * 0 is success; non-zero exit codes will mark the goal as failed,
-     * if state is not defined
-     */
-    code: number;
-
-    /**
-     * The simple text message describing the result
-     */
-    message?: string;
-}
+export interface ExecuteGoalResult extends GoalDetails, HandlerResult { }

@@ -44,6 +44,7 @@ import { confirmEditedness } from "./confirmEditedness";
 export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
+        const slug = `${id.owner}/${id.repo}`;
         try {
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
             const editResult = await confirmEditedness(tentativeEditResult);
@@ -52,15 +53,15 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
                 await context.messageClient.respond(
                     slackInfoMessage(
                         "Code Transform",
-                        `Code transform ${italic(editorName)} made no changes to ${bold(`${id.owner}/${id.repo}`)}`));
+                        `Code transform ${italic(editorName)} made no changes to ${bold(slug)}`));
             }
             return editResult;
         } catch (err) {
             await context.messageClient.respond(
                 slackErrorMessage(
                     "Code Transform",
-                    `Code transform ${italic(editorName)} failed while changing ${
-                        bold(`${id.owner}/${id.repo}`)}:\n\n${codeBlock(err.message)}`, context));
+                    `Code transform ${italic(editorName)} failed while changing ${bold(slug)}:\n\n${codeBlock(err.message)}`,
+                    context));
             logger.warn("Editor error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false };
         }

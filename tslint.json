@@ -16,6 +16,7 @@
       true,
       12
     ],
+    "deprecation": true,
     "interface-name": [
       true,
       "never-prefix"
@@ -32,7 +33,6 @@
       150
     ],
     "no-any": false,
-    "no-boolean-literal-compare": true,
     "no-conditional-assignment": true,
     "no-console": [
       true,

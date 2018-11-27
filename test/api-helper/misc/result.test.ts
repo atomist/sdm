@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import { ChildProcessResult } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { serializeResult } from "../../../lib/api-helper/misc/result";
 
 describe("result", () => {
 
     it("should strip childProcess from string", () => {
-        const result: ChildProcessResult = {
+        const result = {
             childProcess: {
                 foo: "bar",
             },
             message: "test",
             error: "error",
             code: 100,
-        } as any;
+        };
         const safeResult = JSON.parse(serializeResult(result));
         delete result.childProcess;
         assert.deepEqual(safeResult, result);
