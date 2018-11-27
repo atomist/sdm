@@ -95,8 +95,8 @@ const FakeRepoRefResolver: RepoRefResolver = {
 
     toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string }): RemoteRepoRef {
         return {
+            kind: "fake",
             remoteBase: "unreal",
-            kind: "",
             providerType: 0,
             url: "not-here",
             cloneUrl() {

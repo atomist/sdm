@@ -23,13 +23,13 @@ describe("actionableButton", () => {
 
     it("should handle undefined", () => {
         const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CodeTransformRegistration) as any;
-        assert.deepEqual(button.command.parameters, {});
-        assert.equal(button.command.name, "someCommand");
+        assert.deepStrictEqual(button.command.parameters, {});
+        assert(button.command.name === "someCommand");
     });
 
     it("should handle simple property", () => {
         const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, { name: "Fred" }) as any;
-        assert.deepEqual(button.command.parameters, { name: "Fred" });
+        assert.deepStrictEqual(button.command.parameters, { name: "Fred" });
     });
 
     it("should handle nested property", () => {
@@ -37,7 +37,7 @@ describe("actionableButton", () => {
             name: "Fred",
             address: { street: "somewhere" },
         }) as any;
-        assert.deepEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
+        assert.deepStrictEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
     });
 
     it("should handle nested nested property", () => {
@@ -45,7 +45,7 @@ describe("actionableButton", () => {
             name: "Fred",
             address: { street: "somewhere", zip: { code: "12345" } },
         }) as any;
-        assert.deepEqual(button.command.parameters, {
+        assert.deepStrictEqual(button.command.parameters, {
             "name": "Fred",
             "address.street": "somewhere",
             "address.zip.code": "12345",

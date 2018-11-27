@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    WritableLog,
+} from "@atomist/automation-client";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 /**
@@ -23,24 +26,16 @@ import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
  * Not a technical log of this project but a log of meaningful activity
  * on behalf of users.
  */
-export interface ProgressLog {
+export interface ProgressLog extends WritableLog {
 
     /**
      * Name. Should relate to the immediate activity we're logging.
      */
     readonly name: string;
 
-    write(what: string): void;
-
     flush(): Promise<void>;
 
     close(): Promise<void>;
-
-    /**
-     * Some implementations expose their log as a string.
-     * Others may not, as it could be too long etc.
-     */
-    log?: string;
 
     /**
      * Return the url of the log if it is persisted

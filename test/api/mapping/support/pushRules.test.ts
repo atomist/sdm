@@ -32,11 +32,11 @@ export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {
 
-    const SomeRepoRef = {id: new GitHubRepoRef("a", "b")} as any;
+    const SomeRepoRef = { id: new GitHubRepoRef("a", "b") } as any;
 
     it("should be undefined none", async () => {
         const pr = new PushRules<string>("t1", []);
-        assert.equal(await pr.mapping(SomeRepoRef), undefined);
+        assert.strictEqual(await pr.mapping(SomeRepoRef), undefined);
     });
 
     it("should match true", async () => {
