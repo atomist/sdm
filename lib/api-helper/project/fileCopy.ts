@@ -23,7 +23,7 @@ import {
     SimpleProjectEditor,
 } from "@atomist/automation-client";
 import axios from "axios";
-import { CodeTransform } from "../../api/registration/CodeTransform";
+import {CodeTransform} from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
@@ -40,6 +40,10 @@ export function copyFileFromUrl(url: string, path: string): CodeTransform {
 
 export interface FileMapping {
     donorPath: string;
+    recipientPath: string;
+}
+export interface FileGlobMapping {
+    donorPath: string[];
     recipientPath: string;
 }
 
@@ -72,5 +76,33 @@ export function copyFiles(donorProject: Project,
             }
         }
         return p;
+    };
+}
+
+/**
+ * Take the specified files from the donor project
+ * @param {RemoteRepoRef} donorProjectId
+ * @param {FileGlobMapping} fileGlobMapping - treated as globs as defined in Project.streamFiles
+ * @param {ProjectOperationCredentials} credentials
+ * @return {SimpleProjectEditor}
+ */
+export function streamFilesFrom(donorProjectId: RemoteRepoRef,
+                                fileGlobMapping: FileGlobMapping,
+                                credentials: ProjectOperationCredentials): CodeTransform {
+    return async (p, i) => {
+        const donorProject = await GitCommandGitProject.cloned(credentials, donorProjectId);
+        return streamFiles(donorProject, fileGlobMapping)(p, i);
+    };
+}
+
+export function streamFiles(donorProject: Project,
+                            fileGlobMapping: FileGlobMapping): CodeTransform {
+    logger.debug("fileGlobMappings: %s", fileGlobMapping);
+    return async p => {
+        p.streamFilesRaw(fileGlobMapping.donorPath, { debug: true })
+            .on("data", f => {
+                logger.debug("file: %v", f);
+                p.addFileSync(f.path, f.getContentSync());
+            });
     };
 }

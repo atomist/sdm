@@ -22,6 +22,7 @@ import * as assert from "power-assert";
 import {
     copyFileFromUrl,
     copyFilesFrom,
+    streamFiles,
 } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
@@ -45,7 +46,26 @@ describe("fileCopy", () => {
         const filesToSteal = [ { donorPath: "pom.xml", recipientPath: "foo" }];
         const recipient = InMemoryProject.of();
         await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient, undefined);
+        assert(0 < (await recipient.totalFileCount()));
         assert(!(await recipient.getFile(filesToSteal[0].donorPath)));
         assert(!!(await recipient.getFile(filesToSteal[0].recipientPath)));
+    }).timeout(5000);
+
+    it("should copy a subset of files from donor project according to glob", async () => {
+        const donorProject = InMemoryProject.of(
+            {path: "/", content: "root file"},
+            {path: "a/b/a", content: "b/a file"},
+            {path: "a/b/b", content: "b/b file"},
+        );
+
+        const filesToSteal = { donorPath: ["a/**"], recipientPath: "c/" };
+        const recipient = InMemoryProject.of();
+
+        await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
+
+        assert(3 === (await donorProject.totalFileCount()));
+        assert(2 === (await recipient.totalFileCount()));
+        assert(!!(await recipient.getFile("c/a/b/a")));
+        assert(!!(await recipient.getFile("c/a/b/b")));
     }).timeout(5000);
 });
