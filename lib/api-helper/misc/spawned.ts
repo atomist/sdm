@@ -29,6 +29,8 @@ import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 
+/* tslint:disable:deprecation */
+
 /**
  * Spawn a process and watch
  * @param {SpawnCommand} spawnCommand
@@ -36,6 +38,7 @@ import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgres
  * @param {ProgressLog} log
  * @param {Partial<SpawnWatchOptions>} spOpts
  * @return {Promise<ChildProcessResult>}
+ * @deprecated use spawnAndLog
  */
 export async function spawnAndWatch(spawnCommand: SpawnCommand,
                                     options: SpawnOptions,

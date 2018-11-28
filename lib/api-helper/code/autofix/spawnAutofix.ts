@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-/* tslint:disable:deprecation */
-
-import { SpawnCommand } from "@atomist/automation-client";
+import { SpawnLogCommand } from "../../../api-helper/misc/child_process";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,
     AutofixRegistrationOptions,
 } from "../../../api/registration/AutofixRegistration";
-import { localCommandsCodeTransform } from "../../command/transform/localCommandsCodeTransform";
+import { spawnCodeTransform } from "../../command/transform/spawnCodeTransform";
 
 /**
- * Register an autofix based on spawned local shell commands.
- * For example, could wrap a linter
- * @deprecated use spawnCommandAutofix
+ * Create an autofix registration from one or more external commands.
  */
-export function spawnedCommandAutofix(name: string,
-                                      pushTest: PushTest,
-                                      options: AutofixRegistrationOptions,
-                                      command1: SpawnCommand,
-                                      ...additionalCommands: SpawnCommand[]): AutofixRegistration {
+export function spawnAutofix(name: string,
+                             pushTest: PushTest,
+                             options: AutofixRegistrationOptions,
+                             command1: SpawnLogCommand,
+                             ...additionalCommands: SpawnLogCommand[]): AutofixRegistration {
     return {
         name,
-        transform: localCommandsCodeTransform([command1].concat(additionalCommands)),
+        transform: spawnCodeTransform([command1, ...additionalCommands]),
         pushTest,
         options,
     };

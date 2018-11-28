@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* tslint:disable:deprecation */
+
 import { SpawnCommand } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";

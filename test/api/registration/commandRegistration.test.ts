@@ -70,10 +70,10 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
             parameters:
-                {
-                    foo: {},
-                    bar: { required: true },
-                },
+            {
+                foo: {},
+                bar: { required: true },
+            },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -96,10 +96,10 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<FooBar> = {
             name: "test",
             parameters:
-                {
-                    foo: {},
-                    bar: {required: true, defaultValue: "carrot"},
-                },
+            {
+                foo: {},
+                bar: { required: true, defaultValue: "carrot" },
+            },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -114,7 +114,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameters", () => {
-        const reg: CommandHandlerRegistration<{foo: string, bar: string}> = {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
             parameters:
                 addParameters({ name: "foo" },
@@ -134,7 +134,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set secret", () => {
-        const reg: CommandHandlerRegistration<{foo: string, bar: string}> = {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
             parameters:
                 addParameters({ name: "foo" })
@@ -157,12 +157,12 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<any> = {
             name: "test",
             parameters:
-                {
-                    foo: {},
-                    bar: { required: true },
-                    x: { declarationType: DeclarationType.secret, uri: "http://thing1" },
-                    y: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
-                },
+            {
+                foo: {},
+                bar: { required: true },
+                x: { declarationType: DeclarationType.secret, uri: "http://thing1" },
+                y: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
+            },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -194,12 +194,12 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<any> = {
             name: "test",
             parameters:
-                {
-                    foo: {},
-                    x2: { declarationType: DeclarationType.secret, uri: "http://thing1" },
-                    y2: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
-                    ...halfOfParameters,
-                },
+            {
+                foo: {},
+                x2: { declarationType: DeclarationType.secret, uri: "http://thing1" },
+                y2: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
+                ...halfOfParameters,
+            },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -289,10 +289,10 @@ describe("command registrations", () => {
             name: "test",
             startingPoint: new GitHubRepoRef("a", "b"),
             parameters:
-                {
-                    foo: {},
-                    bar: { required: true, defaultValue: "carrot" },
-                },
+            {
+                foo: {},
+                bar: { required: true, defaultValue: "carrot" },
+            },
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
@@ -321,10 +321,10 @@ describe("command registrations", () => {
             paramsMaker: FooParams,
             startingPoint: new GitHubRepoRef("a", "b"),
             parameters:
-                {
-                    foo: {},
-                    bar: { required: true, defaultValue: "carrot" },
-                },
+            {
+                foo: {},
+                bar: { required: true, defaultValue: "carrot" },
+            },
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
@@ -391,7 +391,7 @@ describe("command registrations", () => {
     it("should create command handler with autoSubmit", async () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
-            listener: async ci => {},
+            listener: async ci => { return; },
             autoSubmit: true,
         };
         const maker = commandHandlerRegistrationToCommand(null, reg);
