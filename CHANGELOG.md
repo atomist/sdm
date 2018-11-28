@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add support for canceling goals. [#572](https://github.com/atomist/sdm/issues/572)
 -   Add review listeners that set goal result state. [#573](https://github.com/atomist/sdm/issues/573)
 -   Fingerprints do not support deployments to staging. [#579](https://github.com/atomist/sdm/issues/579)
+-   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
+
+### Deprecated
+
+-   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
 
 ### Fixed
 
