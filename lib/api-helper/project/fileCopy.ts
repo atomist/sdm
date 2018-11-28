@@ -99,10 +99,10 @@ export function streamFiles(donorProject: Project,
                             fileGlobMapping: FileGlobMapping): CodeTransform {
     logger.debug("fileGlobMappings: %s", fileGlobMapping);
     return async p => {
-        p.streamFilesRaw(fileGlobMapping.donorPath, { debug: true })
+        donorProject.streamFilesRaw(fileGlobMapping.donorPath, { })
             .on("data", f => {
-                logger.debug("file: %v", f);
-                p.addFileSync(f.path, f.getContentSync());
+                logger.debug("file: %s", f);
+                p.addFileSync(fileGlobMapping.recipientPath + f.path, f.getContentSync());
             });
     };
 }

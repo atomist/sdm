@@ -15,8 +15,9 @@
  */
 
 import {
+    configureLogging,
     GitHubRepoRef,
-    InMemoryProject,
+    InMemoryProject, MinimalLogging,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
