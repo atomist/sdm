@@ -44,7 +44,11 @@ export interface FileMapping {
 }
 
 export interface FileGlobMapping {
-    donorPath: string[];
+    globPatterns: string[];
+
+    /**
+     * This recipientPath will only be prefixed verbatim to any path returned from the globs.
+     */
     recipientPath: string;
 }
 
@@ -99,9 +103,9 @@ export function streamFilesFrom(donorProjectId: RemoteRepoRef,
 export function streamFiles(donorProject: Project,
                             fileGlobMapping: FileGlobMapping): CodeTransform {
     return async p => {
-        donorProject.streamFilesRaw(fileGlobMapping.donorPath, {})
+        donorProject.streamFilesRaw(fileGlobMapping.globPatterns, {})
             .on("data", f => {
-                p.addFileSync(fileGlobMapping.recipientPath + f.path, f.getContentSync());
+                p.addFileSync((fileGlobMapping.recipientPath || "") + f.path, f.getContentSync());
             });
     };
 }

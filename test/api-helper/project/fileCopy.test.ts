@@ -22,6 +22,7 @@ import * as assert from "power-assert";
 import {
     copyFileFromUrl,
     copyFilesFrom,
+    FileGlobMapping,
     streamFiles,
 } from "../../../lib/api-helper/project/fileCopy";
 
@@ -58,7 +59,7 @@ describe("fileCopy", () => {
             {path: "a/b/b", content: "b/b file"},
         );
 
-        const filesToSteal = { donorPath: ["a/**"], recipientPath: "c/" };
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"], recipientPath: "c/" };
         const recipient = InMemoryProject.of();
 
         await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
@@ -67,5 +68,23 @@ describe("fileCopy", () => {
         assert(2 === (await recipient.totalFileCount()));
         assert(!!(await recipient.getFile("c/a/b/a")));
         assert(!!(await recipient.getFile("c/a/b/b")));
+    });
+
+    it("should copy a subset of files from donor project handling undefined recipient path", async () => {
+        const donorProject = InMemoryProject.of(
+            {path: "/", content: "root file"},
+            {path: "a/b/a", content: "b/a file"},
+            {path: "a/b/b", content: "b/b file"},
+        );
+
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"], recipientPath : undefined };
+        const recipient = InMemoryProject.of();
+
+        await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
+
+        assert(3 === (await donorProject.totalFileCount()));
+        assert(2 === (await recipient.totalFileCount()));
+        assert(!!(await recipient.getFile("a/b/a")));
+        assert(!!(await recipient.getFile("a/b/b")));
     });
 });
