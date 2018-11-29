@@ -129,7 +129,8 @@ describe("executeGoal", () => {
                 goal: fakeGoal,
                 sdmGoal: fakeSdmGoal,
                 progressLog: {
-                    write: () => { /** empty */ },
+                    write: () => { /** empty */
+                    },
                 },
                 configuration: {
                     sdm: {
