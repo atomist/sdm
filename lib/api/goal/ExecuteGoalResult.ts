@@ -87,7 +87,7 @@ export function isSuccess(result: ExecuteGoalResult | void): boolean {
         if (!result.code) {
             return true;
         }
-        return result.code === 0;
+        return false;
     }
     return true;
 }

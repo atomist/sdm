@@ -39,6 +39,16 @@ describe("ExecuteGoalResult", () => {
             assert.strictEqual(isFailure({ code: 0, message: "This is a test " }), false);
         });
 
+        it("should correctly detect success from result with null code", () => {
+            assert.strictEqual(isSuccess({ code: null, message: "This is a test " }), true);
+            assert.strictEqual(isFailure({ code: null, message: "This is a test " }), false);
+        });
+
+        it("should correctly detect success from result with undefined code", () => {
+            assert.strictEqual(isSuccess({ code: undefined, message: "This is a test " }), true);
+            assert.strictEqual(isFailure({ code: undefined, message: "This is a test " }), false);
+        });
+
         it("should correctly detect failure from result with code", () => {
             assert.strictEqual(isSuccess({ code: 1, message: "This is a test " }), false);
             assert.strictEqual(isFailure({ code: 1, message: "This is a test " }), true);
