@@ -62,12 +62,15 @@ export interface GoalDetails {
 }
 
 /**
- * Result from goal execution
+ * Result from goal execution.
+ *
+ * Instead of returning ExecuteGoalResult, it is ok to throw an Error
+ * to signal errors during goal execution.
  */
 export interface ExecuteGoalResult extends GoalDetails {
 
     /**
-     * 0 is success; non-zero exit codes will mark the goal as failed,
+     * 0, undefined or null is success; non-zero exit codes will mark the goal as failed,
      * if state is not defined
      */
     code?: number;
