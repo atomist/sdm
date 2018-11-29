@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Fingerprints do not support deployments to staging. [#579](https://github.com/atomist/sdm/issues/579)
 -   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
 
+### Changed
+
+-   Make `code` on `ExecuteGoalResult` optional. [#586](https://github.com/atomist/sdm/issues/586)
+
 ### Deprecated
 
 -   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
