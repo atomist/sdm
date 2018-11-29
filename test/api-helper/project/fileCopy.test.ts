@@ -15,9 +15,8 @@
  */
 
 import {
-    configureLogging,
     GitHubRepoRef,
-    InMemoryProject, MinimalLogging,
+    InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
@@ -68,5 +67,5 @@ describe("fileCopy", () => {
         assert(2 === (await recipient.totalFileCount()));
         assert(!!(await recipient.getFile("c/a/b/a")));
         assert(!!(await recipient.getFile("c/a/b/b")));
-    }).timeout(5000);
+    });
 });

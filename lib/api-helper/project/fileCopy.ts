@@ -23,7 +23,7 @@ import {
     SimpleProjectEditor,
 } from "@atomist/automation-client";
 import axios from "axios";
-import {CodeTransform} from "../../api/registration/CodeTransform";
+import { CodeTransform } from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
@@ -42,6 +42,7 @@ export interface FileMapping {
     donorPath: string;
     recipientPath: string;
 }
+
 export interface FileGlobMapping {
     donorPath: string[];
     recipientPath: string;
@@ -97,11 +98,9 @@ export function streamFilesFrom(donorProjectId: RemoteRepoRef,
 
 export function streamFiles(donorProject: Project,
                             fileGlobMapping: FileGlobMapping): CodeTransform {
-    logger.debug("fileGlobMappings: %s", fileGlobMapping);
     return async p => {
-        donorProject.streamFilesRaw(fileGlobMapping.donorPath, { })
+        donorProject.streamFilesRaw(fileGlobMapping.donorPath, {})
             .on("data", f => {
-                logger.debug("file: %s", f);
                 p.addFileSync(fileGlobMapping.recipientPath + f.path, f.getContentSync());
             });
     };
