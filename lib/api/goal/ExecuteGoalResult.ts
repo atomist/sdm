@@ -62,18 +62,43 @@ export interface GoalDetails {
 }
 
 /**
- * Result from goal execution
+ * Result from goal execution.
+ *
+ * Instead of returning ExecuteGoalResult, it is ok to throw an Error
+ * to signal errors during goal execution.
  */
 export interface ExecuteGoalResult extends GoalDetails {
 
     /**
-     * 0 is success; non-zero exit codes will mark the goal as failed,
+     * 0, undefined or null is success; non-zero exit codes will mark the goal as failed,
      * if state is not defined
      */
-    code: number;
+    code?: number;
 
     /**
      * The simple text message describing the result
      */
     message?: string;
+}
+
+/**
+ * Assert if a given ExecuteGoalResult describe a successful result
+ * @param result
+ */
+export function isSuccess(result: ExecuteGoalResult | void): boolean {
+    if (result) {
+        if (!result.code) {
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Assert if a given ExecuteGoalResult describe a failure result
+ * @param result
+ */
+export function isFailure(result: ExecuteGoalResult | void): boolean {
+    return !isSuccess(result);
 }
