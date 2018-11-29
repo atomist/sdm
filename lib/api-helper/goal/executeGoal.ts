@@ -27,7 +27,10 @@ import * as _ from "lodash";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
-import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import {
+    ExecuteGoalResult,
+    isFailure,
+} from "../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
@@ -61,10 +64,10 @@ import {
 
 class GoalExecutionError extends Error {
     public readonly where: string;
-    public readonly result?: HandlerResult;
+    public readonly result?: ExecuteGoalResult;
     public readonly cause?: Error;
 
-    constructor(params: { where: string, result?: HandlerResult, cause?: Error }) {
+    constructor(params: { where: string, result?: ExecuteGoalResult, cause?: Error }) {
         super("Failure in " + params.where);
         this.where = params.where;
         this.result = params.result;
@@ -122,7 +125,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
     try {
         // execute pre hook
         let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, sdmGoal, "pre") || Success);
-        if (result.code !== 0) {
+        if (isFailure(result)) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
@@ -136,14 +139,14 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
                 throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
-        if (goalResult.code !== 0) {
+        if (isFailure(goalResult)) {
             throw new GoalExecutionError({ where: "executing goal", result: goalResult });
         }
 
         // execute post hook
         const hookResult: ExecuteGoalResult =
             (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
-        if (hookResult.code !== 0) {
+        if (isFailure(hookResult)) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
 
