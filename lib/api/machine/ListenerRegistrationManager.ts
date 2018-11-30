@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../listener/ClosedIssueListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
-import { FingerprintListener } from "../listener/FingerprintListener";
 import { GoalCompletionListener } from "../listener/GoalCompletionListener";
 import { GoalsSetListener } from "../listener/GoalsSetListener";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
@@ -31,7 +29,6 @@ import { StartupListener } from "../listener/StartupListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
-import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -54,16 +51,20 @@ export interface ListenerRegistrationManager {
 
     addUpdatedIssueListener(l: UpdatedIssueListener);
 
+    addClosedIssueListener(l: ClosedIssueListener): this;
+
     /**
      * Invoked when a goal state changes
      * @returns {this}
      */
     addGoalExecutionListener(l: GoalExecutionListener);
 
-    addClosedIssueListener(l: ClosedIssueListener): this;
-
     addTagListener(l: TagListener): this;
 
+    /**
+     * Add a listener that will be invoked when a channel is linked to a repo
+     * @param {ChannelLinkListener} l
+     */
     addChannelLinkListener(l: ChannelLinkListener);
 
     /**
@@ -100,8 +101,6 @@ export interface ListenerRegistrationManager {
 
     addGoalCompletionListener(l: GoalCompletionListener): this;
 
-    goalExecutionListeners: GoalExecutionListener[];
-
     /**
      * @param {FingerprintDifferenceListener} fh
      * @return {this}
@@ -110,30 +109,32 @@ export interface ListenerRegistrationManager {
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 
-    startupListeners: StartupListener[];
+    readonly goalExecutionListeners: GoalExecutionListener[];
 
-    userJoiningChannelListeners: UserJoiningChannelListener[];
+    readonly startupListeners: StartupListener[];
 
-    tagListeners: TagListener[];
+    readonly userJoiningChannelListeners: UserJoiningChannelListener[];
 
-    newIssueListeners: NewIssueListener[];
+    readonly tagListeners: TagListener[];
 
-    updatedIssueListeners: UpdatedIssueListener[];
+    readonly newIssueListeners: NewIssueListener[];
 
-    closedIssueListeners: ClosedIssueListener[];
+    readonly updatedIssueListeners: UpdatedIssueListener[];
 
-    repoCreationListeners: RepoCreationListener[];
+    readonly closedIssueListeners: ClosedIssueListener[];
 
-    repoOnboardingListeners: ProjectListener[];
+    readonly repoCreationListeners: RepoCreationListener[];
 
-    pullRequestListeners: PullRequestListener[];
+    readonly repoOnboardingListeners: ProjectListener[];
 
-    firstPushListeners: PushListener[];
+    readonly pullRequestListeners: PullRequestListener[];
 
-    channelLinkListeners: ChannelLinkListener[];
+    readonly firstPushListeners: PushListener[];
 
-    goalsSetListeners: GoalsSetListener[];
+    readonly channelLinkListeners: ChannelLinkListener[];
 
-    goalCompletionListeners: GoalCompletionListener[];
+    readonly goalsSetListeners: GoalsSetListener[];
+
+    readonly goalCompletionListeners: GoalCompletionListener[];
 
 }
