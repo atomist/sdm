@@ -30,6 +30,7 @@ import { TagListener } from "../../api/listener/TagListener";
 import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
+import { TriggeredListenerRegistration } from "../../api/registration/TriggeredListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -38,6 +39,8 @@ import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrat
 export class ListenerRegistrationManagerSupport implements ListenerRegistrationManager {
 
     public readonly startupListeners: StartupListener[] = [];
+
+    public readonly triggeredListeners: TriggeredListenerRegistration[] = [];
 
     public readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
@@ -69,6 +72,11 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addStartupListener(l: StartupListener): this {
         this.startupListeners.push(l);
+        return this;
+    }
+
+    public addTriggeredListener(t: TriggeredListenerRegistration): this {
+        this.triggeredListeners.push(t);
         return this;
     }
 
