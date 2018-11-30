@@ -46,7 +46,6 @@ describe("fileCopy", () => {
         const filesToSteal = [ { donorPath: "pom.xml", recipientPath: "foo" }];
         const recipient = InMemoryProject.of();
         await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient, undefined);
-        assert(0 < (await recipient.totalFileCount()));
         assert(!(await recipient.getFile(filesToSteal[0].donorPath)));
         assert(!!(await recipient.getFile(filesToSteal[0].recipientPath)));
     }).timeout(5000);
