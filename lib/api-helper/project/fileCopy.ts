@@ -104,10 +104,13 @@ export function streamFiles(donorProject: Project,
                             fileGlobMapping: FileGlobMapping): CodeTransform {
     return async p => {
         await donorProject.streamFiles(...fileGlobMapping.globPatterns)
+            .on("end", () => { logger.debug("end of file stream reached, using glob: ", fileGlobMapping); })
             .on("data", f => {
                 (async () => {
                     await p.addFile((fileGlobMapping.recipientPath || "") + f.path, await f.getContent());
+                    logger.debug("file copied: ", f);
                 })();
-            });
+            })
+        ;
     };
 }
