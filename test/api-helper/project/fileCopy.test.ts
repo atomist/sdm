@@ -15,9 +15,8 @@
  */
 
 import {
-    configureLogging,
     GitHubRepoRef,
-    InMemoryProject, MinimalLogging,
+    InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
@@ -28,7 +27,6 @@ import {
 } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
-    before(() => configureLogging(MinimalLogging));
     it("should copy file from url", async () => {
         const recipient = InMemoryProject.of();
         await (copyFileFromUrl("https://raw.githubusercontent.com/spring-team/spring-rest-seed/master/pom.xml", "pom.xml"))(recipient, undefined);
