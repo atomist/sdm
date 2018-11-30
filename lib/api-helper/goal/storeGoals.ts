@@ -41,7 +41,6 @@ import {
 } from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import {
-    OnAnyRequestedSdmGoal,
     OnPushToAnyBranch,
     PushFields,
     SdmGoalState,
