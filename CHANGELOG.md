@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Make `code` on `ExecuteGoalResult` optional. [#586](https://github.com/atomist/sdm/issues/586)
+-   Polishing: use readonly arrays. [#591](https://github.com/atomist/sdm/issues/591)
 
 ### Deprecated
 
