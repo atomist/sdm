@@ -51,6 +51,6 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
      */
     addExtensionPacks(...packs: ExtensionPack[]): this;
 
-    readonly extensionPacks: ExtensionPack[];
+    readonly extensionPacks: ReadonlyArray<ExtensionPack>;
 
 }

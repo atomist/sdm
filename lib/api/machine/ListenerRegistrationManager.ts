@@ -109,32 +109,32 @@ export interface ListenerRegistrationManager {
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 
-    readonly goalExecutionListeners: GoalExecutionListener[];
+    readonly goalExecutionListeners: ReadonlyArray<GoalExecutionListener>;
 
-    readonly startupListeners: StartupListener[];
+    readonly startupListeners: ReadonlyArray<StartupListener>;
 
-    readonly userJoiningChannelListeners: UserJoiningChannelListener[];
+    readonly userJoiningChannelListeners: ReadonlyArray<UserJoiningChannelListener>;
 
-    readonly tagListeners: TagListener[];
+    readonly tagListeners: ReadonlyArray<TagListener>;
 
-    readonly newIssueListeners: NewIssueListener[];
+    readonly newIssueListeners: ReadonlyArray<NewIssueListener>;
 
-    readonly updatedIssueListeners: UpdatedIssueListener[];
+    readonly updatedIssueListeners: ReadonlyArray<UpdatedIssueListener>;
 
-    readonly closedIssueListeners: ClosedIssueListener[];
+    readonly closedIssueListeners: ReadonlyArray<ClosedIssueListener>;
 
-    readonly repoCreationListeners: RepoCreationListener[];
+    readonly repoCreationListeners: ReadonlyArray<RepoCreationListener>;
 
-    readonly repoOnboardingListeners: ProjectListener[];
+    readonly repoOnboardingListeners: ReadonlyArray<ProjectListener>;
 
-    readonly pullRequestListeners: PullRequestListener[];
+    readonly pullRequestListeners: ReadonlyArray<PullRequestListener>;
 
-    readonly firstPushListeners: PushListener[];
+    readonly firstPushListeners: ReadonlyArray<PushListener>;
 
-    readonly channelLinkListeners: ChannelLinkListener[];
+    readonly channelLinkListeners: ReadonlyArray<ChannelLinkListener>;
 
-    readonly goalsSetListeners: GoalsSetListener[];
+    readonly goalsSetListeners: ReadonlyArray<GoalsSetListener>;
 
-    readonly goalCompletionListeners: GoalCompletionListener[];
+    readonly goalCompletionListeners: ReadonlyArray<GoalCompletionListener>;
 
 }
