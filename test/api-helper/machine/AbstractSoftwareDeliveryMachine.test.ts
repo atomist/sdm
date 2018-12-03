@@ -16,12 +16,17 @@
 
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
 import * as assert from "power-assert";
+import { resetRegistrableManager } from "../../../lib/api/machine/Registerable";
 import { TriggeredListenerRegistration } from "../../../lib/api/registration/TriggeredListenerRegistration";
 import { TestSoftwareDeliveryMachine } from "../TestSoftwareDeliveryMachine";
 
 describe("AbstractSoftwareDeliveryMachine", () => {
 
     describe("addTriggeredListener", () => {
+
+        afterEach(() => {
+            resetRegistrableManager();
+        })
 
         it("should register and schedule cron based trigger", () => {
             let count = 0;
