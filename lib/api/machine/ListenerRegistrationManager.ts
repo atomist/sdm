@@ -29,6 +29,7 @@ import { StartupListener } from "../listener/StartupListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
+import { TriggeredListenerRegistration } from "../registration/TriggeredListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -41,6 +42,13 @@ export interface ListenerRegistrationManager {
      * @return {this}
      */
     addStartupListener(l: StartupListener): this;
+
+    /**
+     * Add a listener that gets invoked on time-based triggers
+     * @param {TriggeredListenerRegistration} t
+     * @return {this}
+     */
+    addTriggeredListener(t: TriggeredListenerRegistration): this;
 
     /**
      * Add a listener that reacts to new issues
