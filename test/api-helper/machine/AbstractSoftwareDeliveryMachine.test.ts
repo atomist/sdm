@@ -26,7 +26,7 @@ describe("AbstractSoftwareDeliveryMachine", () => {
 
         afterEach(() => {
             resetRegistrableManager();
-        })
+        });
 
         it("should register and schedule cron based trigger", () => {
             let count = 0;
