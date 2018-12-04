@@ -15,7 +15,6 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { toGoals } from "../../dsl/GoalComponent";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import {
     GoalSettingCompositionStyle,
@@ -66,19 +65,16 @@ export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushLi
     }
 
     public async mapping(pi: PushListenerInvocation): Promise<V> {
-        const results: V[] = await Promise.all(this.choices
-            .map(async pc => {
-                const found = await pc.mapping(pi);
-                logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
+        for (const pc of this.choices) {
+            const found = await pc.mapping(pi);
+            logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
+            if (found) {
+                logger.info("PushRules '%s': Value for push on %j is %j", this.name, pi.id, found);
                 return found;
-            }));
-        const nonNull = results.find(p => !!p);
-        const indexOfNull = results.indexOf(null);
-        const value = indexOfNull > -1 && indexOfNull < results.indexOf(nonNull) ?
-            undefined :
-            nonNull;
-
-        logger.info("PushRules [%s]: Value for push on %j is %j", this.name, pi.id, value);
-        return value;
+            } else if (found === null) {
+                return undefined;
+            }
+        }
+        return undefined;
     }
 }
