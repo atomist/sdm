@@ -75,7 +75,7 @@ describe("fileCopy", () => {
             {path: "a/b/b", content: "b/b file"},
         );
 
-        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"], recipientPath : undefined };
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"]};
         const recipient = InMemoryProject.of();
 
         await (streamFiles(donorProject, filesToSteal))(recipient, undefined);

@@ -44,12 +44,15 @@ export interface FileMapping {
 }
 
 export interface FileGlobMapping {
+    /**
+     * See https://github.com/gulpjs/glob-stream for implementation details
+     */
     globPatterns: string[];
 
     /**
      * This recipientPath will only be prefixed verbatim to any path returned from the globs.
      */
-    recipientPath: string;
+    recipientPath?: string;
 }
 
 /**
