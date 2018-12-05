@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SdmGoalState } from "../../typings/types";
 import { SdmProvenance } from "./SdmGoalMessage";
 
 export const GoalSetRootType = "SdmGoalSet";
@@ -31,11 +32,13 @@ export interface SdmGoalSetMessage {
         providerId: string;
     };
 
+    state: SdmGoalState;
+
     goalSet: string;
     goalSetId: string;
     ts: number;
 
-    goals: Array<{ name: string, uniqueName: string}>;
+    goals: Array<{ name: string, uniqueName: string }>;
 
     provenance: SdmProvenance;
 }

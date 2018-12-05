@@ -93,7 +93,8 @@ export function createPredicatedGoal(egi: EssentialGoalInfo,
  */
 export function createPredicatedGoalExecutor(uniqueName: string,
                                              goalExecutor: ExecuteGoal,
-                                             w: WaitRules): ExecuteGoal {
+                                             w: WaitRules,
+                                             unref: boolean = true): ExecuteGoal {
     if (!!w.timeoutSeconds && !!w.timeoutMillis) {
         throw new Error("Invalid combination: Cannot specify timeoutSeconds and timeoutMillis: Choose one");
     }
@@ -104,21 +105,26 @@ export function createPredicatedGoalExecutor(uniqueName: string,
     waitRulesToUse.timeoutMillis = waitRulesToUse.timeoutMillis || 1000 * w.timeoutSeconds;
 
     return async gi => {
-        for (let tries = 0; tries++;) {
-            if (tries > w.retries) {
+        let tries = 1;
+        while (true) {
+            if (tries > waitRulesToUse.retries) {
                 throw new Error(`Goal '${uniqueName}' timed out after max retries: ${JSON.stringify(waitRulesToUse)}`);
             }
-            if (await w.condition(gi)) {
+            if (await waitRulesToUse.condition(gi)) {
                 return goalExecutor(gi);
             }
-            logger.info("Waiting %d seconds for '%s'", w.timeoutSeconds, uniqueName);
-            await wait(w.timeoutMillis);
+            tries++;
+            logger.info("Waiting %dms for '%s'", waitRulesToUse.timeoutMillis, uniqueName);
+            await wait(waitRulesToUse.timeoutMillis, unref);
         }
     };
 }
 
-function wait(timeoutMillis: number): Promise<void> {
-    return new Promise<void>(resolve => {
-        setTimeout(() => resolve(), timeoutMillis).unref();
+function wait(timeoutMillis: number, unref: boolean): Promise<any> {
+    return new Promise<any>(resolve => {
+        const timer = setTimeout(resolve, timeoutMillis);
+        if (unref) {
+            timer.unref();
+        }
     });
 }
