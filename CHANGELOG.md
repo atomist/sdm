@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Fingerprints do not support deployments to staging. [#579](https://github.com/atomist/sdm/issues/579)
 -   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
 -   CommandHandlerRegistrations supporting hints for "autoSubmit". [#577](https://github.com/atomist/sdm/issues/577)
+-   Add support for trigger listeners. [#595](https://github.com/atomist/sdm/issues/595)
 
 ### Changed
 
