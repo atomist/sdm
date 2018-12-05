@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Make `code` on `ExecuteGoalResult` optional. [#586](https://github.com/atomist/sdm/issues/586)
 -   Polishing: use readonly arrays. [#591](https://github.com/atomist/sdm/issues/591)
+-   Run PushMappings sequentially. [#594](https://github.com/atomist/sdm/issues/594)
 
 ### Deprecated
 
