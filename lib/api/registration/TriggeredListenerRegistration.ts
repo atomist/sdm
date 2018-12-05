@@ -22,7 +22,7 @@ import { TriggeredListener } from "../listener/TriggeredListener";
 export interface TriggeredListenerRegistration {
 
     /**
-     * Trigger can either be a cron expression as string or a number in milliseconds
+     * Trigger can be a cron expression as string and/or a interval in milliseconds
      */
     trigger: {
         cron?: string;

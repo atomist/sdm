@@ -45,7 +45,7 @@ describe("AbstractSoftwareDeliveryMachine", () => {
                 .then(() => {
                     const d = new Deferred<any>();
                     setTimeout(() => {
-                        assert(count >= 2);
+                        assert(count >= 2, count.toString());
                         d.resolve();
                     }, 10000);
                     return d.promise;
@@ -57,7 +57,7 @@ describe("AbstractSoftwareDeliveryMachine", () => {
             let count = 0;
             const job: TriggeredListenerRegistration = {
                 trigger: {
-                    interval: 1000,
+                    interval: 100,
                 },
                 listener: async t => {
                     assert(t.sdm);
@@ -72,10 +72,10 @@ describe("AbstractSoftwareDeliveryMachine", () => {
                     setTimeout(() => {
                         assert(count >= 2);
                         d.resolve();
-                    }, 5000);
+                    }, 1000);
                     return d.promise;
                 });
-        }).timeout(6000);
+        });
     });
 
 });
