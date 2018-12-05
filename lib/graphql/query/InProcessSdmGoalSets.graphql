@@ -1,0 +1,11 @@
+query InProcessSdmGoalSets($fetch: Int!, $registration: [String!]) {
+  SdmGoalSet(_orderBy: "ts", _first: $fetch) {
+    goalSetId
+    state
+    goalSet
+    ts
+    provenance(registration: $registration) @required {
+      registration
+    }
+  }
+}
