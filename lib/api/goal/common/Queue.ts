@@ -44,7 +44,7 @@ export const DefaultQueueOptions: QueueOptions = {
     concurrent: 2,
     fetch: 50,
     retries: 120,
-    interval: 30000,
+    interval: 30000, // 120 retries every 30s means we are trying for 60mins and then giving up
 };
 
 /**
