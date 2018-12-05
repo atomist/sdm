@@ -259,9 +259,9 @@ export function goalSetState(goals: Array<{ state: SdmGoalState }>): SdmGoalStat
         return SdmGoalState.pre_approved;
     } else if (goals.some(g => g.state === SdmGoalState.approved)) {
         return SdmGoalState.approved;
-    } else if (!goals.some(g => g.state !== SdmGoalState.requested)) {
+    } else if (goals.some(g => g.state === SdmGoalState.requested)) {
         return SdmGoalState.requested;
-    } else if (!goals.some(g => g.state !== SdmGoalState.planned)) {
+    } else if (goals.some(g => g.state === SdmGoalState.planned)) {
         return SdmGoalState.planned;
     } else if (!goals.some(g => g.state !== SdmGoalState.success)) {
         return SdmGoalState.success;

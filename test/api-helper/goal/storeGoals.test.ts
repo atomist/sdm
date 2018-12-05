@@ -50,6 +50,10 @@ describe("storeGoals", () => {
             assert.strictEqual(goalSetState(createGoals("waiting_for_approval", "in_process", "success")), SdmGoalState.in_process);
         });
 
+        it("should correctly determine planned", () => {
+            assert.strictEqual(goalSetState(createGoals("planned", "success", "planned")), SdmGoalState.planned);
+        });
+
         it("should correctly determine waiting_for_approval", () => {
             assert.strictEqual(goalSetState(createGoals("requested", "waiting_for_approval", "success")), SdmGoalState.waiting_for_approval);
         });
