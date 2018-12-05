@@ -71,7 +71,7 @@ export class Queue extends FulfillableGoal {
                 this.definition.uniqueName,
                 async () => {
                     // When we get here, the wait condition was successful and the goal set should proceed
-                    return Success
+                    return Success;
                 },
                 {
                     timeoutMillis: optsToUse.interval,
