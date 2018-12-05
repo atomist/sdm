@@ -1,0 +1,28 @@
+query SdmGoalSetForId($goalSetId: [String!]) {
+  SdmGoalSet(goalSetId: $goalSetId) {
+    branch
+    goalSet
+    goalSetId
+    goals {
+      name
+      uniqueName
+    }
+    provenance {
+      channelId
+      correlationId
+      name
+      registration
+      ts
+      userId
+      version
+    }
+    repo {
+      name
+      owner
+      providerId
+    }
+    sha
+    state
+    ts
+  }
+}
