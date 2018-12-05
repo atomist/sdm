@@ -1,0 +1,25 @@
+query InProcessSdmGoalSets($fetch: Int!, $registration: [String!]) {
+  SdmGoalSet(
+    _orderBy: "ts"
+    _ordering: asc
+    _first: $fetch
+    state: [pre_approved, requested, approved, planned, in_process]
+  ) {
+    goalSetId
+    goalSet
+    state
+    provenance(registration: $registration) @required {
+      registration
+    }
+    sha
+    branch
+    repo {
+      owner
+      name
+    }
+    goals {
+      uniqueName
+      name
+    }
+  }
+}

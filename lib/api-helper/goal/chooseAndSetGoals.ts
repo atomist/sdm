@@ -20,7 +20,6 @@ import {
     logger,
     ProjectOperationCredentials,
     RemoteRepoRef,
-    Success,
 } from "@atomist/automation-client";
 import {
     AddressChannels,
@@ -31,7 +30,6 @@ import {
     GoalWithPrecondition,
     hasPreconditions,
 } from "../../api/goal/Goal";
-import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
     SdmGoalFulfillment,
