@@ -106,7 +106,7 @@ export function createPredicatedGoalExecutor(uniqueName: string,
 
     return async gi => {
         let tries = 1;
-        while(true) {
+        while (true) {
             if (tries > waitRulesToUse.retries) {
                 throw new Error(`Goal '${uniqueName}' timed out after max retries: ${JSON.stringify(waitRulesToUse)}`);
             }
@@ -114,7 +114,7 @@ export function createPredicatedGoalExecutor(uniqueName: string,
                 return goalExecutor(gi);
             }
             tries++;
-            logger.info("Waiting %d seconds for '%s'", waitRulesToUse.timeoutSeconds, uniqueName);
+            logger.info("Waiting %dms for '%s'", waitRulesToUse.timeoutMillis, uniqueName);
             await wait(waitRulesToUse.timeoutMillis, unref);
         }
     };

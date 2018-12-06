@@ -14,9 +14,28 @@
  * limitations under the License.
  */
 
-import { Success } from "@atomist/automation-client";
-import { conditionQueueGoalSet } from "../../../api-helper/listener/executeQueue";
+import {
+    EventFired,
+    GraphQL,
+    HandlerContext,
+    OnEvent,
+    Parameters,
+    QueryNoCacheOptions,
+    Success,
+    Value,
+} from "@atomist/automation-client";
+import * as _ from "lodash";
+import { updateGoal } from "../../../api-helper/goal/storeGoals";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
+import {
+    InProcessSdmGoalSets,
+    OnAnySdmGoalSets,
+    SdmGoalsByGoalSetIdAndUniqueName,
+    SdmGoalState,
+    SdmGoalWithPushFields,
+} from "../../../typings/types";
+import { SoftwareDeliveryMachine } from "../../machine/SoftwareDeliveryMachine";
+import { AnyPush } from "../../mapping/support/commonPushTests";
 import {
     Goal,
     GoalDefinition,
@@ -27,8 +46,9 @@ import {
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
 } from "../GoalWithFulfillment";
+import { SdmGoalEvent } from "../SdmGoalEvent";
 import { IndependentOfEnvironment } from "../support/environment";
-import { createPredicatedGoalExecutor } from "./createGoal";
+import SdmGoalSet = InProcessSdmGoalSets.SdmGoalSet;
 
 /**
  * Options to configure the Queue goal
@@ -36,15 +56,11 @@ import { createPredicatedGoalExecutor } from "./createGoal";
 export interface QueueOptions {
     concurrent?: number;
     fetch?: number;
-    retries?: number;
-    interval?: number;
 }
 
 export const DefaultQueueOptions: QueueOptions = {
     concurrent: 2,
     fetch: 50,
-    retries: 120,
-    interval: 30000, // 120 retries every 30s means we are trying for 60mins and then giving up
 };
 
 /**
@@ -59,25 +75,28 @@ export class Queue extends FulfillableGoal {
             ...getGoalDefinitionFrom(options, DefaultGoalNameGenerator.generateName("queue"), QueueDefinition),
         }, ...dependsOn);
 
-        const optsToUse: QueueOptions = {
-            ...DefaultQueueOptions,
-            ...options,
-        };
-
         this.addFulfillment({
             name: `cancel-${this.definition.uniqueName}`,
+            pushTest: AnyPush,
+            goalExecutor: async gi => ({ state: SdmGoalState.in_process }),
             logInterpreter: LogSuppressor,
-            goalExecutor: createPredicatedGoalExecutor(
-                this.definition.uniqueName,
-                async () => {
-                    // When we get here, the wait condition was successful and the goal set should proceed
-                    return Success;
-                },
-                {
-                    timeoutMillis: optsToUse.interval,
-                    retries: optsToUse.retries,
-                    condition: conditionQueueGoalSet(this.options),
-                }),
+        });
+    }
+
+    public register(sdm: SoftwareDeliveryMachine): void {
+        super.register(sdm);
+
+        const optsToUse: QueueOptions = {
+            ...DefaultQueueOptions,
+            ...this.options,
+        };
+
+        sdm.addEvent({
+            name: `OnAnySdmGoalSet`,
+            description: `Handle queuing for goal ${this.definition.uniqueName}`,
+            subscription: GraphQL.subscription("OnAnySdmGoalSet"),
+            listener: handleSdmGoalSetEvent(optsToUse, this.definition),
+            paramsMaker: ConfigurationParameters,
         });
     }
 }
@@ -90,3 +109,55 @@ const QueueDefinition: GoalDefinition = {
     completedDescription: "Started goals",
     failedDescription: "Failed to queue goals",
 };
+
+@Parameters()
+class ConfigurationParameters {
+
+    @Value("name")
+    public registration;
+}
+
+function handleSdmGoalSetEvent(options: QueueOptions, defintion: GoalDefinition): OnEvent<OnAnySdmGoalSets.Subscription, ConfigurationParameters> {
+    return async (e: EventFired<OnAnySdmGoalSets.Subscription>, ctx: HandlerContext, params: ConfigurationParameters) => {
+        const optsToUse: QueueOptions = {
+            ...DefaultQueueOptions,
+            ...options,
+        };
+
+        const goalSets = await ctx.graphClient.query<InProcessSdmGoalSets.Query, InProcessSdmGoalSets.Variables>({
+            name: "InProcessSdmGoalSets",
+            variables: {
+                fetch: optsToUse.fetch,
+                registration: [params.registration],
+            },
+            options: QueryNoCacheOptions,
+        });
+
+        if (goalSets && goalSets.SdmGoalSet && goalSets.SdmGoalSet) {
+            const goalSetsToStart = goalSets.SdmGoalSet.slice(0, options.concurrent)
+                .filter(gs => gs.goals.some(g => g.uniqueName === defintion.uniqueName));
+            if (goalSetsToStart.length > 0) {
+                const queueGoals = (await ctx.graphClient.query<SdmGoalsByGoalSetIdAndUniqueName.Query, SdmGoalsByGoalSetIdAndUniqueName.Variables>({
+                    name: "SdmGoalsByGoalSetIdAndUniqueName",
+                    variables: {
+                        goalSetId: goalSetsToStart.map(gs => gs.goalSetId),
+                        uniqueName: [name],
+                        state: [SdmGoalState.requested, SdmGoalState.planned, SdmGoalState.in_process],
+                    },
+                })).SdmGoal as SdmGoalWithPushFields.Fragment[];
+
+                if (queueGoals && queueGoals.length > 0) {
+                    for (const goalSetToStart of goalSetsToStart) {
+                        const queueGoal = _.maxBy(queueGoals.filter(g => g.goalSetId === goalSetToStart.goalSetId), "ts") as SdmGoalEvent;
+                        await updateGoal(ctx, queueGoal, {
+                            state: SdmGoalState.success,
+                            description: defintion.completedDescription,
+                        });
+                    }
+                }
+            }
+        }
+
+        return Success;
+    };
+}

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { Success } from "@atomist/automation-client";
+import * as assert from "power-assert";
 import { createPredicatedGoalExecutor } from "../../../../lib/api/goal/common/createGoal";
 import { suggestAction } from "../../../../lib/api/goal/common/suggestAction";
 import { GoalInvocation } from "../../../../lib/api/goal/GoalInvocation";
-import * as assert from "power-assert";
 
 describe("createGoal", () => {
 
@@ -36,7 +37,7 @@ describe("createGoal", () => {
             const ge = createPredicatedGoalExecutor(
                 "test",
                 async () => {
-                    
+                    return Success;
                 },
                 {
                     condition: async gi => {
@@ -85,7 +86,7 @@ describe("createGoal", () => {
             try {
                 await ge({} as GoalInvocation);
             } catch (e) {
-                assert(e.message.includes("Goal 'test' timed out after max retries"))
+                assert(e.message.includes("Goal 'test' timed out after max retries"));
             }
         });
 
