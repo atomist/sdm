@@ -123,7 +123,7 @@ export interface FulfillableGoalDetails {
         stopped?: string;
     };
 
-    waitRules?: WaitRules;
+    preCondition?: WaitRules;
 }
 
 /**
@@ -131,7 +131,7 @@ export interface FulfillableGoalDetails {
  */
 export interface PredicatedGoalDefinition extends GoalDefinition {
 
-    waitRules?: WaitRules;
+    preCondition?: WaitRules;
 }
 
 /**
@@ -185,11 +185,11 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             let goalExecutor = fulfillment.goalExecutor;
 
             // Wrap the ExecuteGoal instance with WaitRules if provided
-            if (isGoalDefiniton(this.definitionOrGoal) && this.definitionOrGoal.waitRules) {
+            if (isGoalDefiniton(this.definitionOrGoal) && this.definitionOrGoal.preCondition) {
                 goalExecutor = createPredicatedGoalExecutor(
                     this.definitionOrGoal.uniqueName,
                     goalExecutor,
-                    this.definitionOrGoal.waitRules);
+                    this.definitionOrGoal.preCondition);
             }
 
             (this.sdm as AbstractSoftwareDeliveryMachine).addGoalImplementation(
@@ -301,7 +301,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
             preApprovalRequired: goalDetails.preApproval || defaultDefinition.preApprovalRequired,
             retryFeasible: goalDetails.retry || defaultDefinition.retryFeasible,
             isolated: goalDetails.isolate || defaultDefinition.isolated,
-            waitRules: goalDetails.waitRules,
+            preCondition: goalDetails.preCondition,
         };
     }
 }

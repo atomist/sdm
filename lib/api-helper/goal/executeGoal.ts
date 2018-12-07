@@ -295,6 +295,7 @@ export function markStatus(parameters: {
             phase: result.phase ? result.phase : sdmGoal.phase,
             description: result.description ? result.description : descriptionFromState(goal, newState),
             error,
+            data: result.data ? result.data : sdmGoal.data,
         });
 }
 

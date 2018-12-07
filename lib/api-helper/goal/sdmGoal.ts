@@ -15,6 +15,7 @@
  */
 
 import { sprintf } from "sprintf-js";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
 
 export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) => T {
@@ -31,4 +32,29 @@ export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
 
 export function goalKeyString(gk: SdmGoalKey): string {
     return sprintf("%s in %s", gk.uniqueName, gk.environment);
+}
+
+/**
+ * Retrieve the goal data
+ * Note: this purposely only works if the data field is stringified JSON.
+ * @param sdmGoal
+ */
+export function goalData(sdmGoal: SdmGoalEvent): any {
+    try {
+        return JSON.parse(sdmGoal.data || "");
+    } catch (e) {
+        throw new Error("Goal data is not stringified JSON");
+    }
+}
+
+/**
+ * Merge the provided data into the goal data
+ * @param data
+ * @param sdmGoal
+ */
+export function mergeGoalData(data: any, sdmGoal: SdmGoalEvent): any {
+    return {
+        ...goalData(sdmGoal),
+        ...data,
+    };
 }

@@ -59,6 +59,11 @@ export interface GoalDetails {
      * @deprecated use state = SdmGoalState.waiting_for_approval instead
      */
     requireApproval?: boolean;
+
+    /**
+     * Update the goals data field
+     */
+    data?: string;
 }
 
 /**
