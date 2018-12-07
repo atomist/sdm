@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
 -   CommandHandlerRegistrations supporting hints for "autoSubmit". [#577](https://github.com/atomist/sdm/issues/577)
 -   Add support for trigger listeners. [#595](https://github.com/atomist/sdm/issues/595)
+-   Add `Queue` goal to queue goal sets. [#597](https://github.com/atomist/sdm/issues/597)
 
 ### Changed
 
