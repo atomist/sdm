@@ -16,14 +16,16 @@
 
 import * as assert from "power-assert";
 import { goalSetState } from "../../../lib/api-helper/goal/storeGoals";
+import { SdmGoalMessage } from "../../../lib/api/goal/SdmGoalMessage";
 import { SdmGoalState } from "../../../lib/typings/types";
 
 describe("storeGoals", () => {
 
     describe("goalSetState", () => {
 
-        function createGoals(...states: string[]): Array<{ state: SdmGoalState }> {
-            return states.map(s => ({ state: s as SdmGoalState }));
+        let i = 0;
+        function createGoals(...states: string[]): Array<Pick<SdmGoalMessage, "name" | "state">> {
+            return states.map(s => ({ name: `goal-${i++}`, state: s as SdmGoalState }));
         }
 
         it("should correctly determine success", () => {
@@ -62,6 +64,11 @@ describe("storeGoals", () => {
             assert.strictEqual(goalSetState(createGoals("waiting_for_pre_approval", "waiting_for_approval", "success")),
                 SdmGoalState.waiting_for_pre_approval);
         });
+
+        it("should throw an error when given an invalid state", () => {
+            assert.throws(() => goalSetState(createGoals("success", "waiting_fer_approval", "success")), /Unknown goal state/);
+        });
+
     });
 
 });
