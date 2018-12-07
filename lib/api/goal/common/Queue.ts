@@ -187,10 +187,10 @@ async function updateGoals(goalSets: InProcessSdmGoalSets.Query,
         .filter(gs => gs.goals.some(g => g.uniqueName === definition.uniqueName));
     if (goalSetsToUpdate.length > 0) {
 
-        const updateGoals = await loadQueueGoals(goalSetsToUpdate, definition, ctx);
+        const queuedGoals = await loadQueueGoals(goalSetsToUpdate, definition, ctx);
 
         for (const goalSetToUpdate of goalSetsToUpdate) {
-            const updGoal = _.maxBy(updateGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts") as SdmGoalEvent;
+            const updGoal = _.maxBy(queuedGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts") as SdmGoalEvent;
             const phase = `at ${goalSetsToUpdate.findIndex(gs => gs.goalSetId === updGoal.goalSetId) + 1}`;
             if (updGoal.state === SdmGoalState.in_process && updGoal.phase !== phase) {
                 await updateGoal(ctx, updGoal, {

@@ -242,7 +242,7 @@ export async function storeGoalSet(ctx: HandlerContext,
     return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
 }
 
-export function goalSetState(goals: Array<{ state: SdmGoalState }>): SdmGoalState {
+export function goalSetState(goals: Array<Pick<SdmGoalMessage, "name" | "state">>): SdmGoalState {
     if (goals.some(g => g.state === SdmGoalState.failure)) {
         return SdmGoalState.failure;
     } else if (goals.some(g => g.state === SdmGoalState.canceled)) {
@@ -265,8 +265,11 @@ export function goalSetState(goals: Array<{ state: SdmGoalState }>): SdmGoalStat
         return SdmGoalState.planned;
     } else if (goals.some(g => g.state === SdmGoalState.skipped)) {
         return SdmGoalState.skipped;
-    } else {
+    } else if (goals.every(g => g.state === SdmGoalState.success)) {
         return SdmGoalState.success;
+    } else {
+        const unknowns = goals.filter(g => g.state !== SdmGoalState.success).map(g => `${g.name}:${g.state}`);
+        throw new Error("Unknown goal state(s): " + JSON.stringify(unknowns));
     }
 }
 

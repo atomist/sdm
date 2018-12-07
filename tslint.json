@@ -12,10 +12,9 @@
     "arrow-return-shorthand": true,
     "await-promise": true,
     "curly": true,
-    "cyclomatic-complexity": [
-      true,
-      12
-    ],
+    "cyclomatic-complexity": {
+      "severity": "warning"
+    },
     "deprecation": true,
     "interface-name": [
       true,
