@@ -63,6 +63,7 @@ import {
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
+import { GoalSetGoalCompletionListener } from "../listener/goalSetListener";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
@@ -309,6 +310,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
         // Register the triggered listener scheduler on SDM start
         this.addStartupListener(() => Promise.resolve(this.scheduleTriggeredListeners()));
+
+        // Register the goal completion listenr to update goal set state
+        this.addGoalCompletionListener(GoalSetGoalCompletionListener);
     }
 
 }
