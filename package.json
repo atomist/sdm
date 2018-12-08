@@ -50,12 +50,12 @@
     "stack-trace": "0.0.10"
   },
   "peerDependencies": {
-    "@atomist/automation-client": ">=1.0.1",
-    "@atomist/slack-messages": ">=1.0.1"
+    "@atomist/automation-client": ">=1.1.0",
+    "@atomist/slack-messages": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.1.0-master.20181124171043",
-    "@atomist/slack-messages": "^1.0.1",
+    "@atomist/automation-client": "^1.1.0",
+    "@atomist/slack-messages": "^1.1.0",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",
     "barrelsby": "1.0.2",
