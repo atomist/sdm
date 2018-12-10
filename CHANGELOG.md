@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.1.0...HEAD)
 
+### Added
+
+-   Allow more options to be passed to createGoal. [ab89243](https://github.com/atomist/sdm/commit/ab89243dd074ce4a1cb86ceab1be8e860b16e667)
+
 ## [1.1.0](https://github.com/atomist/sdm/compare/1.0.1...1.1.0) - 2018-12-08
 
 ### Added
