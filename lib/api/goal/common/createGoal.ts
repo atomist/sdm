@@ -15,6 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { InterpretLog } from "../../../spi/log/InterpretedLog";
+import { PushTest } from "../../mapping/PushTest";
 import {
     Goal,
     GoalDefinition,
@@ -25,6 +27,7 @@ import {
 } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
+import { ReportProgress } from "../progress/ReportProgress";
 
 /**
  * Minimum information needed to create a goal
@@ -39,12 +42,19 @@ export interface EssentialGoalInfo extends Partial<GoalDefinition> {
  * Create a goal with basic information
  * and an action callback.
  */
-export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): Goal {
+export function createGoal(egi: EssentialGoalInfo,
+                           goalExecutor: ExecuteGoal,
+                           options: {
+                               pushTest?: PushTest,
+                               logInterpreter?: InterpretLog,
+                               progressReporter?: ReportProgress,
+                           } = {}): Goal {
     const g = new GoalWithFulfillment({
         uniqueName: DefaultGoalNameGenerator.generateName(egi.displayName),
         ...egi,
     } as GoalDefinition);
     return g.with({
+        ...options,
         name: g.definition.uniqueName,
         goalExecutor,
     });
