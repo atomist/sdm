@@ -258,10 +258,13 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             }),
             sdm: this,
         };
-        return Promise.all(this.startupListeners.map(l => l(i)))
-            .then(() => {
-                // Empty to return void
-            });
+
+        // Register the startup listener to schedule the triggered listeners
+        // It is important we schedule the triggers after the startup listeners are done!
+        this.startupListeners.push(async () => this.scheduleTriggeredListeners());
+
+        // Execute startupListeners in registration order
+        await this.startupListeners.map(l => l(i)).reduce(p => p.then(), Promise.resolve());
     }
 
     /**
@@ -308,10 +311,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
 
-        // Register the triggered listener scheduler on SDM start
-        this.addStartupListener(() => Promise.resolve(this.scheduleTriggeredListeners()));
-
-        // Register the goal completion listenr to update goal set state
+        // Register the goal completion listener to update goal set state
         this.addGoalCompletionListener(GoalSetGoalCompletionListener);
     }
 

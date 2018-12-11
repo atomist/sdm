@@ -30,16 +30,21 @@ describe("AbstractSoftwareDeliveryMachine", () => {
 
         it("should register and schedule cron based trigger", () => {
             let count = 0;
+            let startupCalled = false;
             const job: TriggeredListenerRegistration = {
                 trigger: {
                     cron: "*/2 * * * * *",
                 },
                 listener: async t => {
+                    assert.strictEqual(startupCalled, true);
                     assert(t.sdm);
                     count = count + 1;
                 },
             };
             const sdm = new TestSoftwareDeliveryMachine("test");
+            sdm.addStartupListener(async () => {
+                startupCalled = true;
+            });
             sdm.addTriggeredListener(job);
             return sdm.notifyStartupListeners()
                 .then(() => {
