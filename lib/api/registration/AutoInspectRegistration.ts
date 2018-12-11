@@ -17,9 +17,7 @@
 import { NoParameters } from "@atomist/automation-client";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { CodeInspection } from "./CodeInspectionRegistration";
-import {
-    PushImpactResponse,
-} from "./PushImpactListenerRegistration";
+import { PushImpactResponse } from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
 
 /**

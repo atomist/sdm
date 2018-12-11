@@ -30,12 +30,8 @@ import {
     SpawnPromiseOptions,
     SpawnPromiseReturns,
 } from "@atomist/automation-client/lib/util/child_process";
-import {
-    ChildProcess,
-    SpawnOptions,
-} from "child_process";
+import { ChildProcess } from "child_process";
 import * as os from "os";
-import * as path from "path";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 

@@ -15,15 +15,11 @@
  */
 
 import {
-    asSpawnCommand,
     ChildProcessResult,
     configurationValue,
-    ErrorFinder,
-    poisonAndWait,
     spawnAndWatch as clientSpawnAndWatch,
     SpawnCommand,
     SpawnWatchOptions,
-    stringifySpawnCommand,
 } from "@atomist/automation-client";
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
