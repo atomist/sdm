@@ -69,7 +69,7 @@ export function chattyDryRunAwareEditor(editorName: string,
                     diff = gitDiffResult.stdout;
                 } catch (err) {
                     logger.error(`Error diffing project: %s`, err.message);
-                    diff = `Error obtaining \`git diff\`: 
+                    diff = `Error obtaining \`git diff\`:
 
 ${codeBlock(err.message)}`;
                 }
@@ -111,7 +111,7 @@ async function sendDryRunSummary(codeTransformName: string,
                 {
                     // reuse the other parameters, but set the dryRun flag to false and pin to one repo
                     ...params,
-                    dryRun: false,
+                    "dryRun": false,
                     "targets.sha": params.targets.sha,
                     "targets.owner": id.owner,
                     "targets.repo": id.repo,
