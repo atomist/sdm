@@ -26,9 +26,7 @@ import {
 } from "@atomist/automation-client";
 import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
 import { TargetsParams } from "@atomist/automation-client/lib/operations/common/params/TargetsParams";
-import {
-    RepoTargets,
-} from "../../machine/RepoTargets";
+import { RepoTargets } from "../../machine/RepoTargets";
 
 /**
  * Targets for working with BitBucket repo(s).

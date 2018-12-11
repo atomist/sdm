@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    ProjectOperationCredentials,
-} from "@atomist/automation-client";
+import { ProjectOperationCredentials } from "@atomist/automation-client";
 import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 
 /**

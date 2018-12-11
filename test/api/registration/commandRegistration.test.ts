@@ -258,6 +258,7 @@ describe("command registrations", () => {
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "targets.repos"));
+        assert(instance.parameters.some(p => p.name === "dryRun"));
         const pi = instance.freshParametersInstance();
         assert(!!pi);
     });

@@ -10,9 +10,7 @@ import {
 } from "@atomist/automation-client";
 import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
 import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
-import {
-    RepoTargets,
-} from "../../machine/RepoTargets";
+import { RepoTargets } from "../../machine/RepoTargets";
 
 export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackParams, RepoTargets {
 

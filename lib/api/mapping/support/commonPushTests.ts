@@ -16,9 +16,7 @@
 
 import { projectUtils } from "@atomist/automation-client";
 import * as _ from "lodash";
-import {
-    PullRequestsForBranch,
-} from "../../../typings/types";
+import { PullRequestsForBranch } from "../../../typings/types";
 import {
     predicatePushTest,
     PredicatePushTest,

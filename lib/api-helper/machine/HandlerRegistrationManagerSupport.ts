@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    NoParameters,
-} from "@atomist/automation-client";
+import { NoParameters } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
