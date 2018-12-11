@@ -16,6 +16,7 @@
 
 import {
     GitProject,
+    HandlerContext,
     logger,
     RemoteRepoRef,
 } from "@atomist/automation-client";
@@ -29,6 +30,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import { execPromise } from "../../misc/child_process";
 import {
     slackErrorMessage,
     slackInfoMessage,
@@ -36,34 +38,52 @@ import {
 import { confirmEditedness } from "./confirmEditedness";
 
 /**
- * Wrap this editor to make it chatty, so it responds to
- * Slack if there's nothing to do
+ * Wrap this editor to make it chatty, so it responds to Slack if there's nothing to do.
+ * It also honors the dryRun parameter flag to just capture the git diff and send it back to Slack instead
+ * of pushing changes to Git.
  * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor
  */
-export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
-    return async (project: GitProject, context, parms) => {
+export function chattyDryRunAwareEditor(editorName: string,
+                                        underlyingEditor: AnyProjectEditor): ProjectEditor {
+    return async (project: GitProject, context: HandlerContext, params: any) => {
         const id = project.id as RemoteRepoRef;
         const slug = `${id.owner}/${id.repo}`;
         try {
-            const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
+            const tentativeEditResult = await toEditor(underlyingEditor)(project, context, params);
             const editResult = await confirmEditedness(tentativeEditResult);
-            logger.debug("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
+            logger.debug("Code Transform %s: git status on '%j' is '%j': editResult=%j",
+                editorName, project.id, await project.gitStatus(), editResult);
+
+            // Figure out if this CodeTransform is running in dryRun mode; if so capture git diff and don't push changes
             if (!editResult.edited) {
                 await context.messageClient.respond(
                     slackInfoMessage(
-                        "Code Transform",
+                        `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
                         `Code transform ${italic(editorName)} made no changes to ${bold(slug)}`));
+            } else if (isDryRun(params)) {
+                const gitDiffResult = await execPromise("git", ["diff"], { cwd: project.baseDir });
+                await context.messageClient.respond(
+                    slackInfoMessage(
+                        `Code Transform (dry run)`,
+                        `Code transform ${italic(editorName)} would make the following changes to ${bold(slug)}:
+${codeBlock(gitDiffResult.stdout)}
+`));
+                return { target: project, edited: false, success: true };
             }
             return editResult;
         } catch (err) {
             await context.messageClient.respond(
                 slackErrorMessage(
-                    "Code Transform",
+                    `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
                     `Code transform ${italic(editorName)} failed while changing ${bold(slug)}:\n\n${codeBlock(err.message)}`,
                     context));
-            logger.warn("Editor error acting on %j: %s", project.id, err);
+            logger.warn("Code Transform error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false };
         }
     };
+}
+
+function isDryRun(params: any): boolean {
+    return !!params && params.dryRun === true;
 }

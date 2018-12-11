@@ -81,6 +81,7 @@ import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
 import {
     DeclarationType,
     MappedParameterOrSecretDeclaration,
+    NamedParameter,
     ParametersDefinition,
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
@@ -89,7 +90,7 @@ import {
     generatorCommand,
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
-import { chattyEditor } from "../command/transform/chattyEditor";
+import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -108,6 +109,7 @@ export const TransformTag = "transform";
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
+    addDryRunParameter(ctr);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
@@ -140,7 +142,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
+                chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -314,6 +316,23 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
 }
 
 /**
+ * Add the dryRun parameter into the list of parameters
+ */
+function addDryRunParameter<PARAMS>(c: CommandRegistration<PARAMS>): void {
+    const dryRunParameter = {
+        name: "dryRun",
+        description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+        required: false,
+        defaultValue: false,
+        type: "boolean",
+    } as NamedParameter;
+
+    const params = toParametersListing(c.parameters || {});
+    params.parameters.push(dryRunParameter);
+    c.parameters = params;
+}
+
+/**
  * Add to the existing ParametersMaker any parameters defined in the builder itself
  * @param {CommandHandlerRegistration<PARAMS>} c
  */
@@ -403,9 +422,9 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
         const n = await ct(p, {
-            ...ctx,
-            ...ci,
-        } as CommandListenerInvocation<P> & HandlerContext,
+                ...ctx,
+                ...ci,
+            } as CommandListenerInvocation<P> & HandlerContext,
             params);
         if (n === undefined) {
             // The transform returned void
