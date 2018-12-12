@@ -15,6 +15,7 @@
  */
 
 import {
+    executeAll,
     logger,
     RemoteRepoRef,
 } from "@atomist/automation-client";
@@ -23,7 +24,7 @@ import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachi
 import { WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
- * Perform an action on all accessible repos in parallel.
+ * Perform an action on all accessible repos in parallel up to a configurable max concurrency limit.
  * This is normally readonly.
  * If you want to perform an update, use a CodeTransform.
  * @param {SoftwareDeliveryMachine} sdm
@@ -35,13 +36,16 @@ export async function doWithRepos(sdm: SoftwareDeliveryMachine,
                                   i: SdmContext,
                                   action: WithLoadedProject<any>): Promise<any> {
     const repos = await sdm.configuration.sdm.repoFinder(i.context);
-    logger.info("doWithRepos working on %d repos", repos.length);
-    await Promise.all(repos.map(id => {
-        return sdm.configuration.sdm.projectLoader.doWithProject(
-            { credentials: i.credentials, id: id as RemoteRepoRef, readOnly: true },
-            action)
-            .catch(err => {
-                logger.warn("Project err: %s", err);
-            });
-    }));
+    logger.debug("doWithRepos working on %d repos", repos.length);
+
+    await executeAll(repos.map(id => () => {
+            return sdm.configuration.sdm.projectLoader.doWithProject(
+                { credentials: i.credentials, id: id as RemoteRepoRef, readOnly: true },
+                action)
+                .catch(err => {
+                    logger.warn("Project err: %s", err);
+                });
+        },
+    ));
 }
+
