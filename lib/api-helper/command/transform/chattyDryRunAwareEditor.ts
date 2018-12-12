@@ -17,6 +17,7 @@
 import {
     buttonForCommand,
     GitProject,
+    guid,
     HandlerContext,
     logger,
     RemoteRepoRef,
@@ -31,10 +32,15 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import {
+    DryRunMsgIdParameter,
+    DryRunParameter,
+} from "../../machine/handlerRegistrations";
 import { execPromise } from "../../misc/child_process";
 import {
     slackErrorMessage,
     slackInfoMessage,
+    slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { confirmEditedness } from "./confirmEditedness";
 
@@ -49,8 +55,9 @@ export function chattyDryRunAwareEditor(editorName: string,
                                         underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context: HandlerContext, params: any) => {
         const id = project.id as RemoteRepoRef;
-        const slug = `${id.owner}/${id.repo}`;
         try {
+            await sendDryRunUpdateMessage(editorName, id, params, context);
+
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, params);
             const editResult = await confirmEditedness(tentativeEditResult);
             logger.debug("Code Transform %s: git status on '%j' is '%j': editResult=%j",
@@ -61,7 +68,7 @@ export function chattyDryRunAwareEditor(editorName: string,
                 await context.messageClient.respond(
                     slackInfoMessage(
                         `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                        `Code transform ${italic(editorName)} made no changes to ${bold(slug)}`));
+                        `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`));
             } else if (isDryRun(params)) {
                 let diff = "";
                 try {
@@ -73,16 +80,18 @@ export function chattyDryRunAwareEditor(editorName: string,
 
 ${codeBlock(err.message)}`;
                 }
-                await sendDryRunSummary(editorName, id, diff, params, context);
+                await sendDryRunSummaryMessage(editorName, id, diff, params, context);
                 return { target: project, edited: false, success: true };
+            } else {
+                await sendSuccessMessage(editorName, id, params, context);
             }
             return editResult;
         } catch (err) {
             await context.messageClient.respond(
                 slackErrorMessage(
                     `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                    `Code transform ${italic(editorName)} failed while changing ${bold(slug)}:\n\n${codeBlock(err.message)}`,
-                    context));
+                    `Code transform ${italic(editorName)} failed while changing ${bold(slug(id))}:\n\n${codeBlock(err.message)}`,
+                    context), { id: params[DryRunMsgIdParameter.name] });
             logger.warn("Code Transform error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false };
         }
@@ -95,14 +104,44 @@ ${codeBlock(err.message)}`;
 export const chattyEditor = chattyDryRunAwareEditor;
 
 function isDryRun(params: any): boolean {
-    return !!params && params.dryRun === true;
+    return !!params && params[DryRunParameter.name] === true;
 }
 
-async function sendDryRunSummary(codeTransformName: string,
-                                 id: RemoteRepoRef,
-                                 diff: string,
-                                 params: any,
-                                 ctx: HandlerContext): Promise<void> {
+function slug(id: RemoteRepoRef): string {
+    return `${id.owner}/${id.repo}`;
+}
+
+async function sendDryRunUpdateMessage(codeTransformName: string,
+                                       id: RemoteRepoRef,
+                                       params: any,
+                                       ctx: HandlerContext): Promise<void> {
+    if (!!params[DryRunMsgIdParameter.name]) {
+        await ctx.messageClient.respond(
+            slackInfoMessage(
+                "Code Transform",
+                `Applying code transform ${italic(codeTransformName)} to ${bold(slug(id))}`),
+            { id: params[DryRunMsgIdParameter.name] });
+    }
+}
+
+async function sendSuccessMessage(codeTransformName: string,
+                                  id: RemoteRepoRef,
+                                  params: any,
+                                  ctx: HandlerContext): Promise<void> {
+    const msgId = params[DryRunMsgIdParameter.name];
+    await ctx.messageClient.respond(
+        slackSuccessMessage(
+            "Code Transform",
+            `Successfully applied code transform ${italic(codeTransformName)} to ${bold(slug(id))}`),
+        { id: msgId });
+}
+
+async function sendDryRunSummaryMessage(codeTransformName: string,
+                                        id: RemoteRepoRef,
+                                        diff: string,
+                                        params: any,
+                                        ctx: HandlerContext): Promise<void> {
+    const msgId = guid();
     const applyAction = {
         actions: [
             buttonForCommand(
@@ -111,19 +150,18 @@ async function sendDryRunSummary(codeTransformName: string,
                 {
                     // reuse the other parameters, but set the dryRun flag to false and pin to one repo
                     ...params,
-                    "dryRun": false,
+                    "dry-run": false,
+                    "dry-run.msgId": msgId,
                     "targets.sha": params.targets.sha,
                     "targets.owner": id.owner,
                     "targets.repo": id.repo,
                 }),
         ],
     };
-    const slug = `${id.owner}/${id.repo}`;
-
     await ctx.messageClient.respond(
         slackInfoMessage(
             `Code Transform (dry run)`,
-            `Code transform ${italic(codeTransformName)} would make the following changes to ${bold(slug)}:
+            `Code transform ${italic(codeTransformName)} would make the following changes to ${bold(slug(id))}:
 ${codeBlock(diff)}
-`, applyAction));
+`, applyAction), { id: msgId });
 }

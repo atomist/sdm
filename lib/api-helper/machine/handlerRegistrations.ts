@@ -109,7 +109,7 @@ export const TransformTag = "transform";
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
-    addDryRunParameter(ctr);
+    addDryRunParameters(ctr);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
@@ -315,20 +315,27 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
     };
 }
 
+export const DryRunParameter = {
+    name: "dry-run",
+    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+    required: false,
+    defaultValue: false,
+    type: "boolean",
+} as NamedParameter;
+export const DryRunMsgIdParameter = {
+    name: "dry-run.msgId",
+    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+    required: false,
+    type: "string",
+    displayable: false,
+} as NamedParameter;
+
 /**
  * Add the dryRun parameter into the list of parameters
  */
-function addDryRunParameter<PARAMS>(c: CommandRegistration<PARAMS>): void {
-    const dryRunParameter = {
-        name: "dryRun",
-        description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
-        required: false,
-        defaultValue: false,
-        type: "boolean",
-    } as NamedParameter;
-
+function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
     const params = toParametersListing(c.parameters || {});
-    params.parameters.push(dryRunParameter);
+    params.parameters.push(DryRunParameter, DryRunMsgIdParameter);
     c.parameters = params;
 }
 
