@@ -18,8 +18,8 @@ import {
     logger,
     RemoteRepoRef,
 } from "@atomist/automation-client";
-import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SdmContext } from "../../api/context/SdmContext";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
