@@ -16,24 +16,27 @@
 
 import { CloneOptions } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { ExecuteGoal } from "../../api/goal/GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
  * Convenience method to create goal implementations that require a local clone of the project.
- * @param {WithLoadedProject<void | ExecuteGoalResult>} action
+ * @param {(goalInv: GoalInvocation) => WithLoadedProject<void | ExecuteGoalResult>} action
  * @param {CloneOptions & {readOnly: boolean}} cloneOptions
  * @returns {ExecuteGoal}
  */
-export function doWithProject(action: WithLoadedProject<void | ExecuteGoalResult>,
+export function doWithProject(action: (goalInv: GoalInvocation) => WithLoadedProject<void | ExecuteGoalResult>,
                               cloneOptions: CloneOptions & { readOnly: boolean } = { readOnly: false }): ExecuteGoal {
     return gi => {
-        const { credentials, id } = gi;
-        return gi.configuration.sdm.projectLoader.doWithProject({
+        const { credentials, id, configuration } = gi;
+        return configuration.sdm.projectLoader.doWithProject({
             credentials,
             id,
             readOnly: cloneOptions.readOnly,
             cloneOptions,
-        }, action);
+        }, action(gi));
     };
 }
