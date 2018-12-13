@@ -61,8 +61,14 @@ export interface GoalInvocation extends RepoContext {
 
     /**
      * The goal event that triggered this execution
+     * @deprecated use goalEvent
      */
     sdmGoal: SdmGoalEvent;
+
+    /**
+     * The goal event that triggered this execution
+     */
+    goalEvent: SdmGoalEvent;
 
     /**
      * Progress log to write output to
