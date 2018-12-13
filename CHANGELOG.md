@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add dryRun flag to CodeTransform invocations. [#613](https://github.com/atomist/sdm/issues/613)
 -   Add helpers for `doWithRepos` and `doWithProject`. [#615](https://github.com/atomist/sdm/issues/615)
 -   Provide spawnLog with consistent spawn interface. [#620](https://github.com/atomist/sdm/issues/620)
+-   Add exec and spawn to doWithProject callback. [#618](https://github.com/atomist/sdm/issues/618)
 
 ### Deprecated
 
