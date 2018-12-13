@@ -21,13 +21,73 @@ import {
     killAndWait,
     spawn,
     spawnAndLog,
+    spawnLog,
 } from "../../../lib/api-helper/misc/child_process";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("child_process", () => {
 
+    describe("spawnLog", () => {
+
+        it("should handle invalid command", async () => {
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            try {
+                await spawnLog("thisIsNonsense", [], { log });
+                assert.fail("Should have thrown an exception");
+            } catch (err) {
+                assert(err.message.startsWith("Failed to run command: "));
+            }
+        });
+
+        it("should recognize successful exit with default error finder", async () => {
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const opts = {
+                log,
+                timeout: 1000,
+            };
+            const script = "process.exit(0);";
+            const r = await spawnLog("node", ["-e", script], opts);
+            assert(r.status === 0);
+            assert(r.code === 0);
+            assert(r.error === null);
+        });
+
+        it("should use default error finder if undefined provided", async () => {
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const opts = {
+                errorFinder: undefined,
+                log,
+                timeout: 1000,
+            };
+            const script = "process.exit(1);";
+            const r = await spawnLog("node", ["-e", script], opts);
+            assert(r.status === 1);
+            assert(r.code === 1);
+            assert(r.error);
+            assert(r.error.message.startsWith("Error finder found error in results from "));
+        });
+
+        it("should use custom error finder", async () => {
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const opts = {
+                errorFinder: () => true,
+                log,
+                timeout: 1000,
+            };
+            const script = "process.exit(0);";
+            const r = await spawnLog("node", ["-e", script], opts);
+            assert(r.status === 0);
+            assert(r.code === 99);
+            assert(r.error);
+            assert(r.error.message.startsWith("Error finder found error in results from "));
+        });
+
+    });
+
     describe("spawnAndLog", () => {
+
+        /* tslint:disable:deprecation */
 
         it("should handle invalid command", async () => {
             const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
@@ -78,6 +138,8 @@ describe("child_process", () => {
             assert(r.error);
             assert(r.error.message.startsWith("Error finder found error in results from "));
         });
+
+        /* tslint:enable:deprecation */
 
     });
 
