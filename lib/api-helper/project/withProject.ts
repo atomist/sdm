@@ -1,3 +1,4 @@
+import { ProjectListenerInvocation } from "./../../api/listener/ProjectListener";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -14,13 +15,15 @@
  * limitations under the License.
  */
 
-import { CloneOptions } from "@atomist/automation-client";
+import {
+    CloneOptions,
+    GitProject,
+} from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
-import { WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
  * Convenience method to create goal implementations that require a local clone of the project.
@@ -28,7 +31,8 @@ import { WithLoadedProject } from "../../spi/project/ProjectLoader";
  * @param {CloneOptions & {readOnly: boolean}} cloneOptions
  * @returns {ExecuteGoal}
  */
-export function doWithProject(action: (goalInv: GoalInvocation) => WithLoadedProject<void | ExecuteGoalResult>,
+export function doWithProject(action:
+    (inv: GoalInvocation & ProjectListenerInvocation) => Promise<ExecuteGoalResult>,
                               cloneOptions: CloneOptions & { readOnly: boolean } = { readOnly: false }): ExecuteGoal {
     return gi => {
         const { credentials, id, configuration } = gi;
@@ -37,6 +41,6 @@ export function doWithProject(action: (goalInv: GoalInvocation) => WithLoadedPro
             id,
             readOnly: cloneOptions.readOnly,
             cloneOptions,
-        }, action(gi));
+        }, (p: GitProject) => action({ ...gi, project: p }));
     };
 }

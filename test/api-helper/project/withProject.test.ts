@@ -23,6 +23,7 @@ import * as assert from "power-assert";
 import { doWithProject } from "../../../lib/api-helper/project/withProject";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import { ProjectListenerInvocation } from "../../../lib/api/listener/ProjectListener";
 import {
     ProjectLoadingParameters,
     WithLoadedProject,
@@ -35,17 +36,17 @@ describe("withProject", () => {
         it("should call action on cloned project", async () => {
             const fgi = fakeGoalInvocation(GitHubRepoRef.from({ owner: "atomist", repo: "sdm" }), {
                 projectLoader: {
-                    doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
+                    doWithProject<T>(params: ProjectLoadingParameters, action2: WithLoadedProject<T>): Promise<T> {
                         const p = InMemoryProject.of(new InMemoryProjectFile("foo", "")) as any;
-                        return action(p);
+                        return action2(p);
                     },
                 },
             } as any);
-            const action = (gi: GoalInvocation) => (async p => {
-                assert(await p.hasFile("foo"));
+            const action = async (gi: GoalInvocation & ProjectListenerInvocation) => {
+                assert(await gi.project.hasFile("foo"));
                 assert.strictEqual(gi.credentials, fgi.credentials);
                 return { code: 0 };
-            });
+            };
             const result: any = await doWithProject(action)(fgi);
             assert.strictEqual(result.code, 0);
         });
