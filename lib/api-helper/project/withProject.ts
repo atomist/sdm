@@ -29,7 +29,7 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import {
     execPromise,
     ExecPromiseResult,
-    spawnAndLog,
+    spawnLog,
     SpawnLogOptions,
     SpawnLogResult,
 } from "../misc/child_process";
@@ -41,21 +41,24 @@ import { ProjectListenerInvocation } from "./../../api/listener/ProjectListener"
 export interface ChildProcessOnProject {
 
     /**
-     * Spawn a child process, by default setting cwd to the directory of the local
-     * project and using the progressLog of GoalInvocation as logger.
-     * See spawnAndLog for more details.
+     * Spawn a child process, by default setting cwd to the directory
+     * of the local project and using the progressLog of
+     * GoalInvocation as logger.  Any `cwd` passed in the options
+     * overrides the default.  See [[spawnLog]] for more details.
+     *
      * @param {string} cmd
      * @param {string | string[]} args
      * @param {SpawnLogOptions} opts
      * @param {ProgressLog} log
      * @returns {Promise<SpawnLogResult>}
      */
-    spawn(cmd: string, args?: string | string[], opts?: SpawnLogOptions, log?: ProgressLog): Promise<SpawnLogResult>;
+    spawn(cmd: string, args?: string | string[], opts?: SpawnLogOptions): Promise<SpawnLogResult>;
 
     /**
-     * Spawn a child process, by default setting cw to the directory of the local
-     * project.
-     * See execPromise for more details.
+     * Spawn a child process, by default setting cwd to the directory
+     * of the local project.  Any `cwd` passed in the options
+     * overrides the default.  See [[execPromise]] for more details.
+     *
      * @param {string} cmd
      * @param {string | string[]} args
      * @param {SpawnSyncOptions} opts
@@ -83,13 +86,13 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
         function spawn(p: GitProject) {
             return (cmd: string,
                     args: string | string[] = [],
-                    opts: SpawnLogOptions = {},
-                    log: ProgressLog = progressLog) => {
+                    opts?: SpawnLogOptions) => {
                 const optsToUse: SpawnLogOptions = {
                     cwd: p.baseDir,
+                    log: progressLog,
                     ...opts,
                 };
-                return spawnAndLog(log, cmd, toStringArray(args), optsToUse);
+                return spawnLog(cmd, toStringArray(args), optsToUse);
             };
         }
 

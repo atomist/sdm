@@ -26,7 +26,7 @@ import {
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import {
-    spawnAndLog,
+    spawnLog,
     SpawnLogCommand,
     SpawnLogOptions,
     SpawnLogResult,
@@ -71,11 +71,12 @@ export function spawnCodeTransform(commands: SpawnLogCommand[], log: ProgressLog
         log.stripAnsi = true;
         const defaultOptions: SpawnLogOptions = {
             cwd: p.baseDir,
+            log,
         };
         let commandResult: MinSpawnLogResult;
         for (const cmd of commands) {
             try {
-                commandResult = await spawnAndLog(log, cmd.command, cmd.args, { ...defaultOptions, ...cmd.options });
+                commandResult = await spawnLog(cmd.command, cmd.args, { ...defaultOptions, ...cmd.options });
             } catch (e) {
                 e.message = `Uncaught error when running command ${cmd.command}: ${e.message}`;
                 logger.warn(e.message);
