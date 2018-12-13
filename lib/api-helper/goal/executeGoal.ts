@@ -96,43 +96,43 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   implementation: GoalImplementation,
                                   goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
-    const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
+    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
     const { progressReporter, logInterpreter, projectListeners } = implementation;
-    const implementationName = sdmGoal.fulfillment.name;
+    const implementationName = goalEvent.fulfillment.name;
 
     if (!!progressReporter) {
         goalInvocation.progressLog = new WriteToAllProgressLog(
-            sdmGoal.name,
+            goalEvent.name,
             goalInvocation.progressLog,
-            new ProgressReportingProgressLog(progressReporter, sdmGoal, goalInvocation.context),
+            new ProgressReportingProgressLog(progressReporter, goalEvent, goalInvocation.context),
         );
     }
 
-    logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
+    logger.info(`Running ${goalEvent.name}. Triggered by ${goalEvent.state} status: ${goalEvent.externalKey}: ${goalEvent.description}`);
 
-    async function notifyGoalExecutionListeners(goalEvent: SdmGoalEvent, error?: Error) {
+    async function notifyGoalExecutionListeners(sge: SdmGoalEvent, error?: Error) {
         const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
             id,
             context,
             addressChannels,
             credentials,
-            goalEvent,
+            goalEvent: sge,
             error,
         };
         await Promise.all(rules.goalExecutionListeners.map(gel => gel(inProcessGoalExecutionListenerInvocation)));
     }
 
-    const inProcessGoal = await markGoalInProcess({ ctx: context, sdmGoal, goal, progressLogUrl: progressLog.url });
+    const inProcessGoal = await markGoalInProcess({ ctx: context, goalEvent, goal, progressLogUrl: progressLog.url });
     await notifyGoalExecutionListeners(inProcessGoal);
 
     try {
         // execute pre hook
-        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, sdmGoal, "pre") || Success);
+        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, goalEvent, "pre") || Success);
         if (isFailure(result)) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, sdmGoal, configuration)
+        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, goalEvent, configuration)
         (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
@@ -148,7 +148,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
         // execute post hook
         const hookResult: ExecuteGoalResult =
-            (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
+            (await executeHook(rules, goalInvocation, goalEvent, "post")) || Success;
         if (isFailure(hookResult)) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
@@ -165,10 +165,10 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         };
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus({ context, sdmGoal, goal, result, progressLogUrl: progressLog.url });
+        await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
-        logger.warn("Error executing %s on %s: %s", implementationName, sdmGoal.sha, err.message);
+        logger.warn("Error executing %s on %s: %s", implementationName, goalEvent.sha, err.message);
         logger.warn(err.stack);
         await notifyGoalExecutionListeners({
             ...inProcessGoal,
@@ -179,7 +179,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         }, err);
         await markStatus({
             context,
-            sdmGoal,
+            goalEvent,
             goal,
             result: { code: 1, ...(err.result ? err.result : {}) },
             error: err,
@@ -216,7 +216,6 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     }, async p => {
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
-
 
         if (await p.hasFile(path.join(".atomist", "hooks", hook))) {
 
@@ -260,13 +259,13 @@ function goalToHookFile(sdmGoal: SdmGoalEvent,
 
 export function markStatus(parameters: {
     context: HandlerContext,
-    sdmGoal: SdmGoalEvent,
+    goalEvent: SdmGoalEvent,
     goal: Goal,
     result: ExecuteGoalResult,
     error?: Error,
     progressLogUrl: string,
 }) {
-    const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
+    const { context, goalEvent, goal, result, error, progressLogUrl } = parameters;
 
     /* tslint:disable:deprecation */
     let newState = SdmGoalState.success;
@@ -292,31 +291,31 @@ export function markStatus(parameters: {
 
     return updateGoal(
         context,
-        sdmGoal,
+        goalEvent,
         {
             url: progressLogUrl,
             externalUrls,
             state: newState,
-            phase: result.phase ? result.phase : sdmGoal.phase,
+            phase: result.phase ? result.phase : goalEvent.phase,
             description: result.description ? result.description : descriptionFromState(goal, newState),
             error,
-            data: result.data ? result.data : sdmGoal.data,
+            data: result.data ? result.data : goalEvent.data,
         });
 }
 
 async function markGoalInProcess(parameters: {
     ctx: HandlerContext,
-    sdmGoal: SdmGoalEvent,
+    goalEvent: SdmGoalEvent,
     goal: Goal,
     progressLogUrl: string,
 }): Promise<SdmGoalEvent> {
-    const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
-    sdmGoal.state = SdmGoalState.in_process;
-    sdmGoal.description = goal.inProcessDescription;
-    sdmGoal.url = progressLogUrl;
+    const { ctx, goalEvent, goal, progressLogUrl } = parameters;
+    goalEvent.state = SdmGoalState.in_process;
+    goalEvent.description = goal.inProcessDescription;
+    goalEvent.url = progressLogUrl;
     try {
         await updateGoal(ctx,
-            sdmGoal,
+            goalEvent,
             {
                 url: progressLogUrl,
                 description: goal.inProcessDescription,
@@ -325,7 +324,7 @@ async function markGoalInProcess(parameters: {
     } catch (err) {
         logger.warn("Failed to update %s goal to tell people we are inProcess on it: \n%s", goal.name, err.stack);
     }
-    return sdmGoal;
+    return goalEvent;
 }
 
 /**
@@ -387,7 +386,7 @@ export function prepareGoalInvocation(gi: GoalInvocation,
 
     let hs: GoalProjectListenerRegistration[] =
         listeners ? (Array.isArray(listeners) ? listeners : [listeners]) : [] as GoalProjectListenerRegistration[];
-    
+
     if (gi.configuration.sdm.projectLoader instanceof LazyProjectLoader) {
         // Register the materializing listener for LazyProject instances as those need to
         // get materialized before using in goal implementations

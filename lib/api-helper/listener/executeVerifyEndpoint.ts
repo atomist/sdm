@@ -39,8 +39,8 @@ export interface SdmVerification {
 
 export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoal {
     return async (r: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { context, id, sdmGoal } = r;
-        const sdmGoals = await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId);
+        const { context, id, goalEvent } = r;
+        const sdmGoals = await fetchGoalsForCommit(context, id, goalEvent.repo.providerId);
         const endpointGoal = sdmGoals.find(sg => sg.externalKey === sdm.endpointGoal.context);
 
         if (!endpointGoal) {

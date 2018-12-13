@@ -53,15 +53,15 @@ export function executeDeploy(artifactStore: ArtifactStore,
                               target: Target): ExecuteGoal {
 
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { sdmGoal, credentials, id, context, progressLog } = goalInvocation;
+        const { goalEvent, credentials, id, context, progressLog } = goalInvocation;
         const atomistTeam = context.workspaceId;
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
-        const targetUrls: string[] = _.get(sdmGoal, "push.after.images.imageName");
+        const targetUrls: string[] = _.get(goalEvent, "push.after.images.imageName");
         await Promise.all(targetUrls.map(async targetUrl => {
             const artifactCheckout = await checkOutArtifact(targetUrl, artifactStore, id, credentials, progressLog);
-            artifactCheckout.id.branch = sdmGoal.branch;
+            artifactCheckout.id.branch = goalEvent.branch;
 
             const deployments = await target.deployer.deploy(artifactCheckout, target.targeter(id, id.branch),
                 progressLog, credentials, atomistTeam);
@@ -111,7 +111,7 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
     deployment: Deployment,
 }) {
     const { goalInvocation, deployment, endpointGoal } = params;
-    const sdmGoal = await findSdmGoalOnCommit(goalInvocation.context, goalInvocation.id, goalInvocation.sdmGoal.repo.providerId, endpointGoal);
+    const sdmGoal = await findSdmGoalOnCommit(goalInvocation.context, goalInvocation.id, goalInvocation.goalEvent.repo.providerId, endpointGoal);
     // Only update the endpoint goal if it actually exists in the goal set
     if (sdmGoal) {
         if (deployment.endpoint) {
