@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Allow more options to be passed to createGoal. [ab89243](https://github.com/atomist/sdm/commit/ab89243dd074ce4a1cb86ceab1be8e860b16e667)
 -   Add dryRun flag to CodeTransform invocations. [#613](https://github.com/atomist/sdm/issues/613)
 -   Add helpers for `doWithRepos` and `doWithProject`. [#615](https://github.com/atomist/sdm/issues/615)
+-   Provide spawnLog with consistent spawn interface. [#620](https://github.com/atomist/sdm/issues/620)
 
 ### Deprecated
 
