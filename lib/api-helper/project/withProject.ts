@@ -15,7 +15,10 @@ import { ProjectListenerInvocation } from "./../../api/listener/ProjectListener"
  * limitations under the License.
  */
 
-import { CloneOptions, GitProject } from "@atomist/automation-client";
+import {
+    CloneOptions,
+    GitProject,
+} from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
