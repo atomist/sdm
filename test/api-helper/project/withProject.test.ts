@@ -44,8 +44,8 @@ describe("withProject", () => {
                 },
             } as any);
             const action = async (gi: ProjectAwareGoalInvocation) => {
-                const r = await gi.exec("pwd");
-                assert(!!r.stdout);
+                const r = await gi.exec("node", ["-e", "console.log(process.cwd());"]);
+                assert(r.stdout === process.cwd() + "\n");
                 assert(await gi.project.hasFile("foo"));
                 assert.strictEqual(gi.credentials, fgi.credentials);
                 return { code: 0 };
