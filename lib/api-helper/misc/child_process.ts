@@ -82,6 +82,10 @@ export interface SpawnLogOptions extends SpawnPromiseOptions {
      * will be populated with an `Error`.
      */
     errorFinder?: ErrorFinder;
+    /**
+     * Make SpawnPromiseOptions log mandatory and a ProgressLog.
+     */
+    log: ProgressLog;
 }
 
 /**
@@ -105,6 +109,48 @@ export interface SpawnLogCommand {
 export interface SpawnLogResult extends HandlerResult, SpawnPromiseReturns { }
 
 /**
+ * Spawn a process, logging its standard output and standard error,
+ * and return a Promise of its results.  The command is spawned using
+ * cross-spawn.  A DelimitedWriteProgressLogDecorator, using newlines
+ * as delimiters, is created from the provided `opts.log`.  The default
+ * command timeout is 10 minutes.  The default
+ * [[SpawnLogOptions#errorFinder]] sets the `error` property if the
+ * command exits with a non-zero status or is killed by a signal.  If
+ * the process is killed due to a signal or the `errorFinder` returns
+ * `true`, the returned `code` property will be non-zero.
+ *
+ * @param cmd Command to run.
+ * @param args Arguments to command.
+ * @param opts Options for spawn, spawnPromise, and spawnLog.
+ * @return A promise that provides information on the child process and
+ *         its execution result, including if the exit status was non-zero
+ *         or the process was killed by a signal.  The promise is only
+ *         rejected with an `ExecPromiseError` if there is an error
+ *         spawning the process.
+ */
+export async function spawnLog(cmd: string, args: string[], opts: SpawnLogOptions): Promise<SpawnLogResult> {
+    opts.errorFinder = (opts.errorFinder) ? opts.errorFinder : SuccessIsReturn0ErrorFinder;
+    opts.log = new DelimitedWriteProgressLogDecorator(opts.log, "\n");
+    opts.timeout = (opts.timeout) ? opts.timeout : configurationValue<number>("sdm.goal.timeout", 10 * 60 * 1000);
+
+    const spResult = await spawnPromise(cmd, args, opts);
+    const slResult = {
+        ...spResult,
+        code: (spResult.signal ? 128 + 15 : spResult.status), // if killed by signal, use SIGTERM
+    };
+    if (slResult.error) {
+        throw ExecPromiseError.fromSpawnReturns(slResult);
+    } else if (opts.errorFinder(slResult.code, slResult.signal, opts.log)) {
+        slResult.code = (slResult.code) ? slResult.code : 99;
+        slResult.error = new Error(`Error finder found error in results from ${slResult.cmdString}`);
+    }
+    return slResult;
+}
+
+/* tslint:disable:deprecation */
+/** @deprecated use SpawnLogOptions and spawnLog */
+export type SpawnAndLogOptions = SpawnPromiseOptions & { errorFinder?: ErrorFinder };
+/**
  * Spawn a process, log its output, and return a Promise of its
  * results.  The command is spawned using cross-spawn.  A
  * DelimitedWriteProgressLogDecorator, using newlines as delimiters,
@@ -124,26 +170,13 @@ export interface SpawnLogResult extends HandlerResult, SpawnPromiseReturns { }
  *         or the process was killed by a signal.  The promise is only
  *         rejected with an `ExecPromiseError` if there is an error
  *         spawning the process.
+ * @deprecated use spawnLog
  */
-export async function spawnAndLog(log: ProgressLog, cmd: string, args: string[] = [], opts: SpawnLogOptions = {}): Promise<SpawnLogResult> {
-
-    opts.errorFinder = (opts.errorFinder) ? opts.errorFinder : SuccessIsReturn0ErrorFinder;
-    opts.log = new DelimitedWriteProgressLogDecorator(log, "\n");
-    opts.timeout = (opts.timeout) ? opts.timeout : configurationValue<number>("sdm.goal.timeout", 10 * 60 * 1000);
-
-    const spResult = await spawnPromise(cmd, args, opts);
-    const slResult = {
-        ...spResult,
-        code: (spResult.signal ? 128 + 15 : spResult.status), // if killed by signal, use SIGTERM
-    };
-    if (slResult.error) {
-        throw ExecPromiseError.fromSpawnReturns(slResult);
-    } else if (opts.errorFinder(slResult.code, slResult.signal, opts.log)) {
-        slResult.code = (slResult.code) ? slResult.code : 99;
-        slResult.error = new Error(`Error finder found error in results from ${slResult.cmdString}`);
-    }
-    return slResult;
+export async function spawnAndLog(log: ProgressLog, cmd: string, args: string[] = [], opts: SpawnAndLogOptions = {}): Promise<SpawnLogResult> {
+    const slOpts = { ...opts, log };
+    return spawnLog(cmd, args, slOpts);
 }
+/* tslint:enable:deprecation */
 
 /**
  * Clear provided timers, checking to make sure the timers are defined
