@@ -78,23 +78,23 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             credentials: this.gi.credentials,
             id: this.gi.id,
             project: p,
-            push: this.gi.sdmGoal.push,
+            push: this.gi.goalEvent.push,
         };
 
         for (const lr of this.listeners) {
-            if (await lr.pushTest.mapping(pli)) {
+            if ((!lr.events || lr.events.includes(event)) && await lr.pushTest.mapping(pli)) {
 
                 this.gi.progressLog.write("/--");
                 this.gi.progressLog.write(`Invoking ${event} project listener: ${lr.name}`);
 
                 await updateGoal(
                     this.gi.context,
-                    this.gi.sdmGoal,
+                    this.gi.goalEvent,
                     {
-                        state: this.gi.sdmGoal.state,
+                        state: this.gi.goalEvent.state,
                         phase: lr.name,
-                        description: this.gi.sdmGoal.description,
-                        url: this.gi.sdmGoal.url,
+                        description: this.gi.goalEvent.description,
+                        url: this.gi.goalEvent.url,
                     });
 
                 const postResult = await lr.listener(p, this.gi, event);

@@ -45,6 +45,7 @@ export interface GoalProjectListenerRegistration {
     name: string;
     listener: GoalProjectListener;
     pushTest?: PushTest;
+    events?: GoalProjectListenerEvent[];
 }
 
 export interface GoalInvocation extends RepoContext {

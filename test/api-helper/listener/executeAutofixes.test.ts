@@ -216,7 +216,7 @@ describe("executeAutofixes", () => {
                 if (project !== p) {
                     errors.push("Project not the same");
                 }
-                if (!ci.push || ci.push.push !== gi.sdmGoal.push) {
+                if (!ci.push || ci.push.push !== gi.goalEvent.push) {
                     errors.push("push should be set");
                 }
             },
@@ -243,7 +243,7 @@ describe("executeAutofixes", () => {
             };
 
             const filterAutofixes = filterImmediateAutofixes([autofix], {
-                sdmGoal: {
+                goalEvent: {
                     push,
                 },
             } as any as GoalInvocation);
@@ -271,7 +271,7 @@ describe("executeAutofixes", () => {
             };
 
             const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], {
-                sdmGoal: {
+                goalEvent: {
                     push,
                 },
             } as any as GoalInvocation);

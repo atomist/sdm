@@ -25,18 +25,26 @@ import {
 import * as assert from "power-assert";
 import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../lib/api-helper/project/cloningProjectLoader";
-import { LazyProjectLoader } from "../../../lib/api-helper/project/LazyProjectLoader";
+import { GitHubLazyProjectLoader } from "../../../lib/api-helper/project/GitHubLazyProjectLoader";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,
 };
 
-describe("LazyProjectLoader", () => {
+describe("GitHubLazyProjectLoader", () => {
+
+    it("should ", async () => {
+        const id = new GitHubRepoRef("this.is.invalid", "nonsense");
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
+        const p: Project = await save(lpl, { credentials, id, readOnly: false });
+        assert.strictEqual((p as any).materialized(), false);
+        assert((p as any).materialized);
+    });
 
     it("should not need to load for name or id", async () => {
         const id = new GitHubRepoRef("this.is.invalid", "nonsense");
-        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         assert.equal(p.name, id.repo);
         assert.equal(p.id, id);
@@ -44,7 +52,7 @@ describe("LazyProjectLoader", () => {
 
     it("should get file first", async () => {
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
-        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
         assert(!f1);
@@ -54,7 +62,7 @@ describe("LazyProjectLoader", () => {
 
     it("should get file after stream", async () => {
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
-        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
         await projectUtils.doWithFiles(p, "**", f => {
@@ -71,7 +79,7 @@ describe("LazyProjectLoader", () => {
 
     it("should load for files", async () => {
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
-        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
         await projectUtils.doWithFiles(p, "**", f => {
@@ -85,7 +93,7 @@ describe("LazyProjectLoader", () => {
     it("should materialize once", async () => {
         // Look at log output
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
-        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
         assert(!f1);
