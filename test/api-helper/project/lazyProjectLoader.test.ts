@@ -34,6 +34,14 @@ const credentials = {
 
 describe("LazyProjectLoader", () => {
 
+    it("should", async () => {
+        const id = new GitHubRepoRef("this.is.invalid", "nonsense");
+        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const p: Project = await save(lpl, { credentials, id, readOnly: false });
+        assert.strictEqual((p as any).materialized(), false);
+        assert((p as any).materialized);
+    })
+
     it("should not need to load for name or id", async () => {
         const id = new GitHubRepoRef("this.is.invalid", "nonsense");
         const lpl = new LazyProjectLoader(CloningProjectLoader);

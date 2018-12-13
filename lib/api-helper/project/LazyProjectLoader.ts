@@ -68,25 +68,25 @@ class LazyProject extends AbstractProject implements GitProject {
         super(id);
     }
 
-    get materializing(): boolean {
+    public materializing(): boolean {
         return !!this.projectPromise;
     }
 
-    get materialized(): boolean {
-        return this.projectPromise && !!this.projectPromise.result;
+    public materialized(): boolean {
+        return !!this.projectPromise && !!this.projectPromise.result();
     }
 
     get provenance(): string {
-        return this.materialized ? this.projectPromise.result.provenance : "unavailable";
+        return this.materialized() ? this.projectPromise.result().provenance : "unavailable";
     }
 
     public release: ReleaseFunction = () => undefined;
 
     get baseDir(): string {
-        if (!this.materialized) {
+        if (!this.materialized()) {
             throw new Error("baseDir not supported until materialized");
         }
-        return this.projectPromise.result.baseDir;
+        return this.projectPromise.result().baseDir;
     }
 
     public branch = this.id.branch;
@@ -151,7 +151,7 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     public async getFile(path: string): Promise<ProjectFile | undefined> {
-        if (this.materializing) {
+        if (this.materializing()) {
             return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
         // TODO we need this to work for other gits
@@ -264,7 +264,7 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     private materializeIfNecessary(why: string) {
-        if (!this.materializing) {
+        if (!this.materializing()) {
             logger.info("Materializing project %j because of %s", this.id, why);
             this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));
         }
@@ -275,11 +275,11 @@ class LazyProject extends AbstractProject implements GitProject {
 
 interface QueryablePromise<T> extends Promise<T> {
 
-    isResolved: boolean;
-    isFulfilled: boolean;
-    isRejected: boolean;
+    isResolved(): boolean;
+    isFulfilled(): boolean;
+    isRejected(): boolean;
 
-    result: T;
+    result(): T;
 }
 
 /**

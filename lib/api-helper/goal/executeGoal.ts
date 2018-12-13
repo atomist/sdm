@@ -35,6 +35,7 @@ import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
+    GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
@@ -45,6 +46,7 @@ import {
     GoalExecutionListenerInvocation,
 } from "../../api/listener/GoalStatusListener";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -55,6 +57,7 @@ import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
+import { LazyProjectLoader } from "../project/LazyProjectLoader";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
 import { mockGoalExecutor } from "./mock";
 import {
@@ -130,7 +133,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         }
         // execute the actual goal
         const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, sdmGoal, configuration)
-            (prepareGoalInvocation(goalInvocation, projectListeners))
+        (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -214,7 +217,8 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
-        if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
+
+        if (await p.hasFile(path.join(".atomist", "hooks", hook))) {
 
             const opts = {
                 cwd: path.join(p.baseDir, ".atomist", "hooks"),
@@ -380,8 +384,27 @@ export function prepareGoalExecutor(gi: GoalImplementation,
 
 export function prepareGoalInvocation(gi: GoalInvocation,
                                       listeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[]): GoalInvocation {
-    const hs: GoalProjectListenerRegistration[] =
+
+    let hs: GoalProjectListenerRegistration[] =
         listeners ? (Array.isArray(listeners) ? listeners : [listeners]) : [] as GoalProjectListenerRegistration[];
+    
+    if (gi.configuration.sdm.projectLoader instanceof LazyProjectLoader) {
+        // Register the materializing listener for LazyProject instances as those need to
+        // get materialized before using in goal implementations
+        const projectMaterializer = {
+            name: "clone project",
+            pushTest: AnyPush,
+            events: [GoalProjectListenerEvent.before],
+            listener: async (p: any) => {
+                if (p.materialized && !p.materialized()) {
+                    // Trigger project materialization
+                    await p.gitStatus();
+                }
+                return { code: 0 };
+            },
+        };
+        hs = [projectMaterializer, ...hs];
+    }
 
     if (hs.length === 0) {
         return gi;
@@ -440,8 +463,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                        // Intentionally empty
-                    })
+                    // Intentionally empty
+                })
                     .catch(err => {
                         logger.warn(`Error occurred reporting progress: %s`, err.message);
                     });
