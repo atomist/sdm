@@ -102,6 +102,8 @@ import {
     toMachineOptions,
 } from "./toMachineOptions";
 
+// tslint:disable:max-file-line-count
+
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
 export const TransformTag = "transform";

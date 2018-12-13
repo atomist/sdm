@@ -50,7 +50,7 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
-import { spawnAndLog } from "../misc/child_process";
+import { spawnLog } from "../misc/child_process";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
@@ -226,10 +226,11 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     ATOMIST_REPO: sdmGoal.push.repo.name,
                     ATOMIST_OWNER: sdmGoal.push.repo.owner,
                 },
+                log: progressLog,
             };
 
             const cmd = path.join(p.baseDir, ".atomist", "hooks", hook);
-            let result: HandlerResult = await spawnAndLog(progressLog, cmd, [], opts);
+            let result: HandlerResult = await spawnLog(cmd, [], opts);
             if (!result) {
                 result = Success;
             }
