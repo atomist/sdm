@@ -166,11 +166,15 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     }
 
     public withExecutionListener(listener: GoalExecutionListener): this {
-        this.goalListeners.push(async gi => {
-            if (gi.goalEvent.uniqueName === this.uniqueName) {
-                return listener(gi);
-            }
-        });
+        const wrappedListener = async gi => {
+                if (gi.goalEvent.uniqueName === this.uniqueName) {
+                    return listener(gi);
+                }
+            };
+        if (this.sdm) {
+            this.sdm.addGoalExecutionListener(wrappedListener);
+        }
+        this.goalListeners.push(wrappedListener);
         return this;
     }
 
