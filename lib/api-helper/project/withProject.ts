@@ -77,7 +77,7 @@ export type ProjectAwareGoalInvocation = GoalInvocation & ProjectListenerInvocat
  * @param {CloneOptions & {readOnly: boolean}} cloneOptions
  * @returns {ExecuteGoal}
  */
-export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promise<ExecuteGoalResult>,
+export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promise<void | ExecuteGoalResult>,
                               cloneOptions: CloneOptions & { readOnly: boolean } = { readOnly: false }): ExecuteGoal {
     return gi => {
         const { credentials, id, configuration, progressLog } = gi;
