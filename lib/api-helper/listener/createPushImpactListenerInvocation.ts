@@ -35,10 +35,10 @@ import { filteredView } from "../misc/project/filteredView";
  */
 export async function createPushImpactListenerInvocation(goalInvocation: GoalInvocation,
                                                          project: GitProject): Promise<PushImpactListenerInvocation> {
-    const { sdmGoal, credentials, id, context, addressChannels } = goalInvocation;
-    const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(sdmGoal.push.repo, context));
+    const { goalEvent, credentials, id, context, addressChannels } = goalInvocation;
+    const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(goalEvent.push.repo, context));
 
-    const push = sdmGoal.push;
+    const push = goalEvent.push;
     const filesChanged = await filesChangedSince(project, push);
     const impactedSubProject = !filesChanged ? project : filteredView(project, path => filesChanged.includes(path));
     return {
@@ -49,7 +49,7 @@ export async function createPushImpactListenerInvocation(goalInvocation: GoalInv
         impactedSubProject,
         credentials,
         filesChanged,
-        commit: sdmGoal.push.after,
+        commit: goalEvent.push.after,
         push,
     };
 }

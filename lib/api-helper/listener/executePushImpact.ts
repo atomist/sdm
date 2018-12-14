@@ -44,13 +44,13 @@ export function executePushImpact(registrations: PushImpactListenerRegisterable[
             return Success;
         }
 
-        const { sdmGoal, configuration, credentials, id, context } = goalInvocation;
+        const { goalEvent, configuration, credentials, id, context } = goalInvocation;
         return configuration.sdm.projectLoader.doWithProject({
             credentials,
             id,
             context,
             readOnly: true,
-            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
+            cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
         }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);

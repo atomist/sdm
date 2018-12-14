@@ -38,7 +38,7 @@ describe("executeCancelGoalSets", () => {
             configuration: {
                 name: "@atomist/my-sdm",
             },
-            sdmGoal: {
+            goalEvent: {
                 push: {
                     before: {
                         sha: "015f119ccb0af8096ab08364dcccfa7149c36ea7",
@@ -93,7 +93,7 @@ describe("executeCancelGoalSets", () => {
             configuration: {
                 name: "@atomist/my-sdm",
             },
-            sdmGoal: {
+            goalEvent: {
                 push: {
                     before: {
                         sha: "015f119ccb0af8096ab08364dcccfa7149c36ea7",
@@ -172,7 +172,7 @@ describe("executeCancelGoalSets", () => {
             configuration: {
                 name: "@atomist/my-sdm",
             },
-            sdmGoal: {
+            goalEvent: {
                 push: {
                     before: {
                         sha: "015f119ccb0af8096ab08364dcccfa7149c36ea7",

@@ -61,7 +61,7 @@ export interface AutoInspectOptions {
  */
 export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { sdmGoal, configuration, credentials, id } = goalInvocation;
+        const { goalEvent, configuration, credentials, id } = goalInvocation;
         try {
             if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
@@ -71,7 +71,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
                 credentials,
                 id,
                 readOnly: true,
-                cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
+                cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
             }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: %s",

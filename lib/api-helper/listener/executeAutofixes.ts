@@ -53,13 +53,13 @@ import { relevantCodeActions } from "./relevantCodeActions";
  */
 export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { id, configuration, sdmGoal, credentials, context, progressLog } = goalInvocation;
+        const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
         try {
             if (registrations.length === 0) {
                 return Success;
             }
-            const push = sdmGoal.push;
+            const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
@@ -196,7 +196,7 @@ async function runOne(cri: PushImpactListenerInvocation,
 export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
                                          gi: GoalInvocation): AutofixRegistration[] {
     return autofixes.filter(
-        af => !(gi.sdmGoal.push.commits || [])
+        af => !(gi.goalEvent.push.commits || [])
             .some(c => c.message === generateCommitMessageForAutofix(af)));
 }
 

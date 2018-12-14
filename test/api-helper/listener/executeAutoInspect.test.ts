@@ -150,7 +150,7 @@ describe("executeAutoInspects", () => {
                 if (project !== p) {
                     errors.push("Project not the same");
                 }
-                if (!ci.push || ci.push.push !== rwlc.sdmGoal.push) {
+                if (!ci.push || ci.push.push !== rwlc.goalEvent.push) {
                     errors.push("push should not be set");
                 }
                 assert(!ci);
