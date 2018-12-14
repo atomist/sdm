@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add exec and spawn to doWithProject callback. [#618](https://github.com/atomist/sdm/issues/618)
 -   Add goal function to create a new GoalWithFulfillment. [311a273](https://github.com/atomist/sdm/commit/311a273f651be8c6aa5baa3d1a0a6c415973d52d)
 
+### Changed
+
+-   **BREAKING** Introduce LazyProjectLoader and LazyProject interfaces. [#625](https://github.com/atomist/sdm/issues/625)
+
 ### Deprecated
 
 -   Deprecate sdmGoal on GoalInvocation. [dbb25d2](https://github.com/atomist/sdm/commit/dbb25d2d020fc946450edd71e4e0465cd3e1af43)
