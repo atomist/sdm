@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
@@ -38,6 +39,7 @@ import {
     ExecuteGoal,
     GoalProjectListenerRegistration,
 } from "./GoalInvocation";
+import { DefaultGoalNameGenerator } from "./GoalNameGenerator";
 import { ReportProgress } from "./progress/ReportProgress";
 import {
     GoalEnvironment,
@@ -278,6 +280,36 @@ export class GoalWithFulfillment extends FulfillableGoal {
         this.addFulfillment(fulfillment);
         return this;
     }
+}
+
+/**
+ * Creates a new GoalWithFulfillment instance using conventions if overwrites aren't provided
+ * @param details
+ * @param goalExecutor
+ * @param options
+ */
+export function goal(details: FulfillableGoalDetails = {},
+                     goalExecutor?: ExecuteGoal,
+                     options?: {
+                         pushTest?: PushTest,
+                         logInterpreter?: InterpretLog,
+                         progressReporter?: ReportProgress,
+                     }): GoalWithFulfillment {
+    const def = getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName(details.displayName || "goal"));
+    const g = new GoalWithFulfillment(def);
+    if (!!goalExecutor) {
+        const optsToUse = {
+            pushTest: AnyPush,
+            logInterpreter: LogSuppressor,
+            ...(!!options ? options : {}),
+        };
+        g.with({
+            name: def.uniqueName,
+            goalExecutor,
+            ...optsToUse,
+        });
+    }
+    return g;
 }
 
 // tslint:disable:cyclomatic-complexity
