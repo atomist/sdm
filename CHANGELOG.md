@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Execute startupListeners before scheduling the triggered listeners. [#611](https://github.com/atomist/sdm/issues/611)
+-   Using `createGoal` with space in `displayName` creates invalid `uniqueName`. [#623](https://github.com/atomist/sdm/issues/623)
 
 ## [1.1.0](https://github.com/atomist/sdm/compare/1.0.1...1.1.0) - 2018-12-08
 
