@@ -164,7 +164,7 @@ const UniqueNameRegExp = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/i;
 
 function validateGoalDefinition(gd: GoalDefinition): GoalDefinition {
     // First replace all spaces and _ with -
-    const uniqueName = gd.uniqueName.replace(/ /g, "-").replace(/_/g, "-").toLowerCase();
+    const uniqueName = gd.uniqueName.replace(/ /g, "-").replace(/_/g, "-");
     // Now validate the part in front of # against regexp
     if (!UniqueNameRegExp.test(uniqueName.split("#")[0])) {
         throw new Error(`Goal uniqueName '${gd.uniqueName}' must consist of lower case alphanumeric characters or '-', and must start and ` +

@@ -23,7 +23,7 @@ describe("Goal", () => {
     describe("validateGoalDefinition", () => {
 
         it("should accept valid uniqueName", () => {
-            const g1 = new Goal({ uniqueName: "Test-123" });
+            const g1 = new Goal({ uniqueName: "test-123" });
             assert.strictEqual(g1.uniqueName, "test-123");
             assert.strictEqual(g1.definition.uniqueName, "test-123");
 
