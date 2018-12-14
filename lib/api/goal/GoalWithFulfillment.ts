@@ -16,6 +16,7 @@
 
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import {
     Registerable,
     registerRegistrable,
@@ -143,6 +144,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     public readonly fulfillments: Fulfillment[] = [];
     public readonly callbacks: GoalFulfillmentCallback[] = [];
     public readonly projectListeners: GoalProjectListenerRegistration[] = [];
+    public readonly goalListeners: GoalExecutionListener[] = [];
 
     public sdm: SoftwareDeliveryMachine;
 
@@ -153,14 +155,22 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     public register(sdm: SoftwareDeliveryMachine): void {
         this.sdm = sdm;
-        this.fulfillments.forEach(fulfillment => {
-            this.registerFulfillment(fulfillment);
-        });
+        this.fulfillments.forEach(f => this.registerFulfillment(f));
         this.callbacks.forEach(cb => this.registerCallback(cb));
+        this.goalListeners.forEach(gl => sdm.addGoalExecutionListener(gl));
     }
 
     public withProjectListener(listener: GoalProjectListenerRegistration): this {
         this.projectListeners.push(listener);
+        return this;
+    }
+
+    public withExecutionListener(listener: GoalExecutionListener): this {
+        this.goalListeners.push(async gi => {
+            if (gi.goalEvent.uniqueName === this.uniqueName) {
+                return listener(gi);
+            }
+        });
         return this;
     }
 
@@ -306,7 +316,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
     }
 }
 
-function getEnvironment(details?: { environment?: string | GoalEnvironment}): GoalEnvironment {
+function getEnvironment(details?: { environment?: string | GoalEnvironment }): GoalEnvironment {
     if (details && details.environment && typeof details.environment === "string") {
         switch (details.environment) {
             case "testing":
@@ -317,7 +327,7 @@ function getEnvironment(details?: { environment?: string | GoalEnvironment}): Go
                 return IndependentOfEnvironment;
         }
     } else if (details && typeof details.environment !== "string") {
-         return details.environment;
+        return details.environment;
     } else {
         return IndependentOfEnvironment;
     }
