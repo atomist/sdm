@@ -80,7 +80,7 @@ export type ProjectAwareGoalInvocation = GoalInvocation & ProjectListenerInvocat
 export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promise<void | ExecuteGoalResult>,
                               cloneOptions: CloneOptions & { readOnly: boolean } = { readOnly: false }): ExecuteGoal {
     return gi => {
-        const { credentials, id, configuration, progressLog } = gi;
+        const { context, credentials, id, configuration, progressLog } = gi;
 
         function spawn(p: GitProject) {
             return (cmd: string,
@@ -108,6 +108,7 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
         }
 
         return configuration.sdm.projectLoader.doWithProject({
+            context,
             credentials,
             id,
             readOnly: cloneOptions.readOnly,
