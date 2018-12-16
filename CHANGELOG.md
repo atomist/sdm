@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Deprecate sdmGoal on GoalInvocation. [dbb25d2](https://github.com/atomist/sdm/commit/dbb25d2d020fc946450edd71e4e0465cd3e1af43)
 
+### Removed
+
+-   Remove old Builder interface; moved to sdm-pack-build. [6211aef](https://github.com/atomist/sdm/commit/6211aef5f19a181d4d3a3f13210de3998c29a767)
+
 ### Fixed
 
 -   Execute startupListeners before scheduling the triggered listeners. [#611](https://github.com/atomist/sdm/issues/611)
