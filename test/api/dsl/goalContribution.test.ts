@@ -181,7 +181,7 @@ describe("goalContribution", () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             let gs = enrichGoalSetters(old,
-                enrichInvocation(async pu => { pu.state.name = "tony"; }),
+                enrichInvocation(async pu => ({ name: "tony" })),
                 whenPushSatisfies<StatefulPushListenerInvocation>(async pu => pu.state.name === "tony").setGoals(mg));
             gs = enrichGoalSetters(gs,
                 onAnyPush().setGoals(FingerprintGoal));
