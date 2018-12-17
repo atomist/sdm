@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Introduce LazyProjectLoader and LazyProject interfaces. [#625](https://github.com/atomist/sdm/issues/625)
+-   Don’t abort code transform on many repos if one repo fails. [#626](https://github.com/atomist/sdm/issues/626)
 
 ### Deprecated
 
