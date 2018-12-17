@@ -65,10 +65,18 @@ export function chattyDryRunAwareEditor(editorName: string,
 
             // Figure out if this CodeTransform is running in dryRun mode; if so capture git diff and don't push changes
             if (!editResult.edited) {
-                await context.messageClient.respond(
-                    slackInfoMessage(
+                if (!editResult.success) {
+                    await context.messageClient.respond(slackErrorMessage(
                         `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                        `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`));
+                        `Code transform ${italic(editorName)} failed while changing ${bold(slug(id))}:\n\n${
+                            editResult.error ? codeBlock(editResult.error.message) : ""}`,
+                        context), { id: params[DryRunMsgIdParameter.name] });
+                } else {
+                    await context.messageClient.respond(
+                        slackInfoMessage(
+                            `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
+                            `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`));
+                }
             } else if (isDryRun(params)) {
                 let diff = "";
                 try {
