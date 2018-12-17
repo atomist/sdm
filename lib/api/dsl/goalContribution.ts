@@ -21,17 +21,17 @@ import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
-import { GoalSetter, GoalSettingCompositionStyle, GoalSettingStructure, } from "../mapping/GoalSetter";
-import { mapMapping, Mapping, NeverMatch, } from "../mapping/Mapping";
+import { GoalSetter, GoalSettingCompositionStyle, GoalSettingStructure } from "../mapping/GoalSetter";
+import { mapMapping, Mapping, NeverMatch } from "../mapping/Mapping";
 import { Predicated } from "../mapping/PredicateMapping";
-import { GoalComponent, toGoals, } from "./GoalComponent";
+import { GoalComponent, toGoals } from "./GoalComponent";
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 
 }
 
 export interface InvocationState {
-    [key: string]: any
+    [key: string]: any;
 }
 
 export interface StatefulInvocation extends SdmContext {
@@ -57,11 +57,11 @@ export function enrichPush<F>(compute: (f: (F & StatefulInvocation)) => Promise<
         mapping: async f => {
             const withState = f as F & StatefulInvocation;
             if (!withState.state) {
-                withState.state = {}
+                withState.state = {};
             }
             await compute(withState);
             return undefined;
-        }
+        },
     };
 }
 
