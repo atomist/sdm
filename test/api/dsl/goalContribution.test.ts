@@ -24,7 +24,7 @@ import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
     enrichGoalSetters,
-    enrichPush,
+    enrichInvocation,
     goalContributors,
     StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
@@ -181,7 +181,7 @@ describe("goalContribution", () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             let gs = enrichGoalSetters(old,
-                enrichPush(async pu => { pu.state.name = "tony"; }),
+                enrichInvocation(async pu => { pu.state.name = "tony"; }),
                 whenPushSatisfies<StatefulPushListenerInvocation>(async pu => pu.state.name === "tony").setGoals(mg));
             gs = enrichGoalSetters(gs,
                 onAnyPush().setGoals(FingerprintGoal));

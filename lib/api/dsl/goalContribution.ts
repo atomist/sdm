@@ -58,13 +58,13 @@ export interface StatefulPushListenerInvocation extends PushListenerInvocation, 
 }
 
 /**
- * Enrich the push, enhancing its state
+ * Enrich the invocation, enhancing its state
  * @param {(f: (F & StatefulInvocation)) => Promise<void>} compute
  * @return {GoalContribution<F>}
  */
-export function enrichPush<F>(compute: (f: (F & StatefulInvocation)) => Promise<void>): GoalContribution<F> {
+export function enrichInvocation<F>(compute: (f: (F & StatefulInvocation)) => Promise<void>): GoalContribution<F> {
     return {
-        name: "enrichPush",
+        name: "enrichInvocation",
         mapping: async f => {
             const withState = f as F & StatefulInvocation;
             if (!withState.state) {
