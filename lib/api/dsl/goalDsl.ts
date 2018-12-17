@@ -73,9 +73,9 @@ export class GoalSetterMapping extends PushRule<Goals> {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(
-    guard1: PredicateMappingTerm<PushListenerInvocation>,
-    ...guards: Array<PredicateMappingTerm<PushListenerInvocation>>): GoalSetterMapping {
+export function whenPushSatisfies<P extends PushListenerInvocation = PushListenerInvocation>(
+    guard1: PredicateMappingTerm<P>,
+    ...guards: Array<PredicateMappingTerm<P>>): GoalSetterMapping {
     return new GoalSetterMapping(toPredicateMapping(guard1), guards.map(toPredicateMapping));
 }
 

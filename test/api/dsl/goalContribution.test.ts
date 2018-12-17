@@ -23,8 +23,9 @@ import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/commo
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
+    enrichPush,
     enrichGoalSetters,
-    goalContributors,
+    goalContributors, StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
 import {
     onAnyPush,
@@ -173,6 +174,21 @@ describe("goalContribution", () => {
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
             const barGoals: Goals = await gs1.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
             assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1));
+        });
+
+        it("should allow state", async () => {
+            const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
+            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
+            let gs = enrichGoalSetters(old,
+                enrichPush(async pu => { pu.state.name = "tony" }),
+                whenPushSatisfies<StatefulPushListenerInvocation>(async pu => pu.state.name === "tony").setGoals(mg));
+            gs = enrichGoalSetters(gs,
+                onAnyPush().setGoals(FingerprintGoal));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.equal(goals.goals.length, 3);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
+            assert.equal(goals.name, "SomeGoalSet, Sending message, fingerprint");
         });
 
     });

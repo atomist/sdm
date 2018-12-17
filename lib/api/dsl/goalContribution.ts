@@ -21,24 +21,48 @@ import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
-import {
-    GoalSetter,
-    GoalSettingCompositionStyle,
-    GoalSettingStructure,
-} from "../mapping/GoalSetter";
-import {
-    mapMapping,
-    Mapping,
-    NeverMatch,
-} from "../mapping/Mapping";
+import { GoalSetter, GoalSettingCompositionStyle, GoalSettingStructure, } from "../mapping/GoalSetter";
+import { mapMapping, Mapping, NeverMatch, } from "../mapping/Mapping";
 import { Predicated } from "../mapping/PredicateMapping";
-import {
-    GoalComponent,
-    toGoals,
-} from "./GoalComponent";
+import { GoalComponent, toGoals, } from "./GoalComponent";
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 
+}
+
+export interface InvocationState {
+    [key: string]: any
+}
+
+export interface StatefulInvocation extends SdmContext {
+
+    state?: InvocationState;
+}
+
+/**
+ * Within evaluation of push rules we can manage state to a push.
+ */
+export interface StatefulPushListenerInvocation extends PushListenerInvocation, StatefulInvocation {
+
+}
+
+/**
+ * Enrich the push, enhancing its state
+ * @param {(f: (F & StatefulInvocation)) => Promise<void>} compute
+ * @return {GoalContribution<F>}
+ */
+export function enrichPush<F>(compute: (f: (F & StatefulInvocation)) => Promise<void>): GoalContribution<F> {
+    return {
+        name: "enrichPush",
+        mapping: async f => {
+            const withState = f as F & StatefulInvocation;
+            if (!withState.state) {
+                withState.state = {}
+            }
+            await compute(withState);
+            return undefined;
+        }
+    };
 }
 
 /**
@@ -108,7 +132,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
  * @param {GoalContribution<F>} contributors
  * @return a mapping to goals
  */
-export function goalContributors<F extends SdmContext = PushListenerInvocation>(
+export function goalContributors<F extends SdmContext = StatefulPushListenerInvocation>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     if (contributors.length === 0) {
@@ -124,7 +148,7 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
  * @param {GoalContribution<F extends SdmContext>} contributors
  * @return {Mapping<F extends SdmContext, Goals>}
  */
-export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>(
+export function enrichGoalSetters<F extends SdmContext = StatefulPushListenerInvocation>(
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> & GoalSettingStructure<F, Goals> {
