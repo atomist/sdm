@@ -25,7 +25,8 @@ import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
     enrichGoalSetters,
     enrichPush,
-    goalContributors, StatefulPushListenerInvocation,
+    goalContributors,
+    StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
 import {
     onAnyPush,
