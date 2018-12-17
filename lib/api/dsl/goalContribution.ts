@@ -41,6 +41,46 @@ export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicat
 
 }
 
+export interface InvocationState {
+    [key: string]: any;
+}
+
+/**
+ * Add state to an invocation. Only available in memory.
+ */
+export interface StatefulInvocation extends SdmContext {
+
+    state?: InvocationState;
+}
+
+/**
+ * Within evaluation of push rules we can manage state on a push.
+ * This interface allows state. This state will not be persisted.
+ */
+export interface StatefulPushListenerInvocation extends PushListenerInvocation, StatefulInvocation {
+
+}
+
+/**
+ * Enrich the invocation, enhancing its state
+ * @param {(f: (F & StatefulInvocation)) => Promise<InvocationState>} compute additional state
+ * @return {GoalContribution<F>}
+ */
+export function enrichInvocation<F>(compute: (f: (F & StatefulInvocation)) => Promise<InvocationState>): GoalContribution<F> {
+    return {
+        name: "enrichInvocation",
+        mapping: async f => {
+            const withState = f as F & StatefulInvocation;
+            if (!withState.state) {
+                withState.state = {};
+            }
+            const additionalState = await compute(withState);
+            _.merge(withState.state, additionalState);
+            return undefined;
+        },
+    };
+}
+
 /**
  * An additive goal setter assembles the goals contributed by all the contributors.
  */
@@ -108,7 +148,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
  * @param {GoalContribution<F>} contributors
  * @return a mapping to goals
  */
-export function goalContributors<F extends SdmContext = PushListenerInvocation>(
+export function goalContributors<F extends SdmContext = StatefulPushListenerInvocation>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     if (contributors.length === 0) {
@@ -124,7 +164,7 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
  * @param {GoalContribution<F extends SdmContext>} contributors
  * @return {Mapping<F extends SdmContext, Goals>}
  */
-export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>(
+export function enrichGoalSetters<F extends SdmContext = StatefulPushListenerInvocation>(
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> & GoalSettingStructure<F, Goals> {
