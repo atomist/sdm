@@ -45,13 +45,17 @@ export interface InvocationState {
     [key: string]: any;
 }
 
+/**
+ * Add state to an invocation. Only available in memory.
+ */
 export interface StatefulInvocation extends SdmContext {
 
     state?: InvocationState;
 }
 
 /**
- * Within evaluation of push rules we can manage state to a push.
+ * Within evaluation of push rules we can manage state on a push.
+ * This interface allows state. This state will not be persisted.
  */
 export interface StatefulPushListenerInvocation extends PushListenerInvocation, StatefulInvocation {
 
