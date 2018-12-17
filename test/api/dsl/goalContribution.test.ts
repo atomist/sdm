@@ -179,17 +179,16 @@ describe("goalContribution", () => {
 
         it("should allow state", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
-            let gs = enrichGoalSetters(old,
+            let gs = goalContributors(
                 enrichInvocation(async pu => ({ name: "tony" })),
                 whenPushSatisfies<StatefulPushListenerInvocation>(async pu => pu.state.name === "tony").setGoals(mg));
             gs = enrichGoalSetters(gs,
                 onAnyPush().setGoals(FingerprintGoal));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
-            assert.equal(goals.goals.length, 3);
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
-            assert.equal(goals.name, "SomeGoalSet, Sending message, fingerprint");
+            assert.equal(goals.goals.length, 2);
+            assert.deepEqual(goals.goals, [mg, FingerprintGoal]);
+            assert.equal(goals.name, "Sending message, fingerprint");
         });
 
     });
