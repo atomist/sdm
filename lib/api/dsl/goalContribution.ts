@@ -36,6 +36,7 @@ import {
     GoalComponent,
     toGoals,
 } from "./GoalComponent";
+import { computeShaOf } from "../../api-helper/misc/sha";
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 
@@ -64,9 +65,9 @@ export interface StatefulPushListenerInvocation<S> extends PushListenerInvocatio
  * @param {(f: (StatefulInvocation<FACT>)) => Promise<FACT>} compute additional facts. 
  * @return {GoalContribution<F>}
  */
-export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: StatefulInvocation<FACT>) => Promise<FACT>): GoalContribution<F> {
+export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: F) => Promise<FACT>): GoalContribution<F> {
     return {
-        name: "attachFacts",
+        name: "attachFacts-" + computeShaOf(compute.toString()),
         mapping: async f => {
             const withAdditionalFact = f as F & StatefulInvocation<FACT>;
             if (!withAdditionalFact.facts) {
@@ -74,6 +75,7 @@ export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>
             }
             const additionalState = await compute(withAdditionalFact);
             _.merge(withAdditionalFact.facts, additionalState);
+            // The GoalContribution itself will be ignored
             return undefined;
         },
     };

@@ -177,6 +177,13 @@ describe("goalContribution", () => {
             assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1));
         });
 
+        it("should uniquely name attachFacts", async () => {
+            const af = attachFacts<{ name: string}>(async pu => ({ name: pu.push.id }));
+            assert(af.name.startsWith("attachFacts-"));
+            //assert(af.name.length > "attachFacts-".length);
+            throw af.name
+        });
+
         it("should attach facts", async () => {
             type Named = { name: string };
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
