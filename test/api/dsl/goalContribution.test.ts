@@ -23,8 +23,8 @@ import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/commo
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
-    enrichGoalSetters,
     attachFacts,
+    enrichGoalSetters,
     goalContributors,
     StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
