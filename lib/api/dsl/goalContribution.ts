@@ -43,6 +43,7 @@ export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicat
 
 /**
  * Add state to an invocation. Only available in memory.
+ * @param S type of the fact to add.
  */
 export interface StatefulInvocation<S> extends SdmContext {
 
@@ -67,12 +68,12 @@ export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>
     return {
         name: "attachFacts",
         mapping: async f => {
-            const withState = f as F & StatefulInvocation<FACT>;
-            if (!withState.facts) {
-                withState.facts = {} as FACT;
+            const withAdditionalFact = f as F & StatefulInvocation<FACT>;
+            if (!withAdditionalFact.facts) {
+                withAdditionalFact.facts = {} as FACT;
             }
-            const additionalState = await compute(withState);
-            _.merge(withState.facts, additionalState);
+            const additionalState = await compute(withAdditionalFact);
+            _.merge(withAdditionalFact.facts, additionalState);
             return undefined;
         },
     };
