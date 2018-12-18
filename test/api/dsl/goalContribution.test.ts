@@ -177,7 +177,7 @@ describe("goalContribution", () => {
             assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1));
         });
 
-        it("should allow state", async () => {
+        it("should attach facts", async () => {
             type Named = { name: string };
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             let gs = goalContributors(

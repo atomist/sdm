@@ -58,8 +58,9 @@ export interface StatefulPushListenerInvocation<S> extends PushListenerInvocatio
 }
 
 /**
- * Enrich the invocation, attaching a fact.
- * @param {(f: (F & StatefulInvocation)) => Promise<InvocationState>} compute additional state
+ * Enrich the invocation, attaching some facts.
+ * The returned object will be merged with any facts already on the invocation.
+ * @param {(f: (StatefulInvocation<FACT>)) => Promise<FACT>} compute additional facts. 
  * @return {GoalContribution<F>}
  */
 export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: StatefulInvocation<FACT>) => Promise<FACT>): GoalContribution<F> {
