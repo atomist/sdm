@@ -41,41 +41,37 @@ export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicat
 
 }
 
-export interface InvocationState {
-    [key: string]: any;
-}
-
 /**
  * Add state to an invocation. Only available in memory.
  */
-export interface StatefulInvocation extends SdmContext {
+export interface StatefulInvocation<S> extends SdmContext {
 
-    state?: InvocationState;
+    facts?: S;
 }
 
 /**
  * Within evaluation of push rules we can manage state on a push.
  * This interface allows state. This state will not be persisted.
  */
-export interface StatefulPushListenerInvocation extends PushListenerInvocation, StatefulInvocation {
+export interface StatefulPushListenerInvocation<S> extends PushListenerInvocation, StatefulInvocation<S> {
 
 }
 
 /**
- * Enrich the invocation, enhancing its state
+ * Enrich the invocation, attaching a fact.
  * @param {(f: (F & StatefulInvocation)) => Promise<InvocationState>} compute additional state
  * @return {GoalContribution<F>}
  */
-export function enrichInvocation<F extends SdmContext>(compute: (f: (F & StatefulInvocation)) => Promise<InvocationState>): GoalContribution<F> {
+export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: StatefulInvocation<FACT>) => Promise<FACT>): GoalContribution<F> {
     return {
-        name: "enrichInvocation",
+        name: "attachFacts",
         mapping: async f => {
-            const withState = f as F & StatefulInvocation;
-            if (!withState.state) {
-                withState.state = {};
+            const withState = f as F & StatefulInvocation<FACT>;
+            if (!withState.facts) {
+                withState.facts = {} as FACT;
             }
             const additionalState = await compute(withState);
-            _.merge(withState.state, additionalState);
+            _.merge(withState.facts, additionalState);
             return undefined;
         },
     };
@@ -148,7 +144,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
  * @param {GoalContribution<F>} contributors
  * @return a mapping to goals
  */
-export function goalContributors<F extends SdmContext = StatefulPushListenerInvocation>(
+export function goalContributors<F extends SdmContext = StatefulPushListenerInvocation<any>>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     if (contributors.length === 0) {
@@ -164,7 +160,7 @@ export function goalContributors<F extends SdmContext = StatefulPushListenerInvo
  * @param {GoalContribution<F extends SdmContext>} contributors
  * @return {Mapping<F extends SdmContext, Goals>}
  */
-export function enrichGoalSetters<F extends SdmContext = StatefulPushListenerInvocation>(
+export function enrichGoalSetters<F extends SdmContext = StatefulPushListenerInvocation<any>>(
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> & GoalSettingStructure<F, Goals> {
