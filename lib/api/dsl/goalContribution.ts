@@ -66,7 +66,7 @@ export interface StatefulPushListenerInvocation extends PushListenerInvocation, 
  * @param {(f: (F & StatefulInvocation)) => Promise<InvocationState>} compute additional state
  * @return {GoalContribution<F>}
  */
-export function enrichInvocation<F>(compute: (f: (F & StatefulInvocation)) => Promise<InvocationState>): GoalContribution<F> {
+export function enrichInvocation<F extends SdmContext>(compute: (f: (F & StatefulInvocation)) => Promise<InvocationState>): GoalContribution<F> {
     return {
         name: "enrichInvocation",
         mapping: async f => {
