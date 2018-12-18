@@ -180,8 +180,7 @@ describe("goalContribution", () => {
         it("should uniquely name attachFacts", async () => {
             const af = attachFacts<{ name: string}>(async pu => ({ name: pu.push.id }));
             assert(af.name.startsWith("attachFacts-"));
-            //assert(af.name.length > "attachFacts-".length);
-            throw af.name
+            assert(af.name.length > "attachFacts-".length);
         });
 
         it("should attach facts", async () => {
