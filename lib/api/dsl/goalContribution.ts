@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import * as _ from "lodash";
+import { computeShaOf } from "../../api-helper/misc/sha";
 import { SdmContext } from "../context/SdmContext";
 import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
@@ -36,7 +37,6 @@ import {
     GoalComponent,
     toGoals,
 } from "./GoalComponent";
-import { computeShaOf } from "../../api-helper/misc/sha";
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 
@@ -62,7 +62,7 @@ export interface StatefulPushListenerInvocation<S> extends PushListenerInvocatio
 /**
  * Enrich the invocation, attaching some facts.
  * The returned object will be merged with any facts already on the invocation.
- * @param {(f: (StatefulInvocation<FACT>)) => Promise<FACT>} compute additional facts. 
+ * @param {(f: (StatefulInvocation<FACT>)) => Promise<FACT>} compute additional facts.
  * @return {GoalContribution<F>}
  */
 export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: F) => Promise<FACT>): GoalContribution<F> {

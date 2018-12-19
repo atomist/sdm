@@ -184,7 +184,7 @@ describe("goalContribution", () => {
         });
 
         it("should attach facts", async () => {
-            type Named = { name: string };
+            interface Named { name: string }
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             let gs = goalContributors(
                 attachFacts<Named>(async pu => ({ name: "tony" })),
