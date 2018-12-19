@@ -17,6 +17,8 @@
 import {
     buttonForCommand,
     ButtonSpecification,
+    menuForCommand,
+    MenuSpecification,
     mergeParameters,
 } from "@atomist/automation-client";
 import { Action } from "@atomist/slack-messages";
@@ -24,10 +26,10 @@ import { CommandRegistration } from "../../registration/CommandRegistration";
 
 /**
  * Create an actionable button invoking the given command
- * @param {ButtonSpecification} buttonSpec
- * @param {CommandHandlerRegistration<T>} commandHandlerRegistration command registration
- * @param {T} parameters parameters to the command
- * @return {Action}
+ * @param buttonSpec
+ * @param commandHandlerRegistration command registration
+ * @param parameters parameters to the command
+ * @return
  */
 export function actionableButton<T>(
     buttonSpec: ButtonSpecification,
@@ -35,5 +37,23 @@ export function actionableButton<T>(
     parameters?: Partial<T>): Action {
     return buttonForCommand(buttonSpec,
         commandHandlerRegistration.name,
+        mergeParameters(parameters, {}));
+}
+
+/**
+ * Create an actionable menu invoking the given command
+ * @param buttonSpec
+ * @param commandHandlerRegistration
+ * @param parameterName
+ * @param parameters
+ */
+export function actionableMenu<T>(
+    buttonSpec: MenuSpecification,
+    commandHandlerRegistration: CommandRegistration<T>,
+    parameterName: string,
+    parameters?: Partial<T>): Action {
+    return menuForCommand(buttonSpec,
+        commandHandlerRegistration.name,
+        parameterName,
         mergeParameters(parameters, {}));
 }

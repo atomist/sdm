@@ -15,40 +15,101 @@
  */
 
 import * as assert from "assert";
-import { actionableButton } from "../../../../lib/api/command/support/buttons";
+import {
+    actionableButton,
+    actionableMenu,
+} from "../../../../lib/api/command/support/buttons";
 import { CodeTransformRegistration } from "../../../../lib/api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../../lib/api/registration/CommandHandlerRegistration";
 
-describe("actionableButton", () => {
+describe("buttons", () => {
 
-    it("should handle undefined", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CodeTransformRegistration) as any;
-        assert.deepStrictEqual(button.command.parameters, {});
-        assert(button.command.name === "someCommand");
-    });
+    describe("actionableButton", () => {
 
-    it("should handle simple property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, { name: "Fred" }) as any;
-        assert.deepStrictEqual(button.command.parameters, { name: "Fred" });
-    });
+        it("should handle undefined", () => {
+            const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CodeTransformRegistration) as any;
+            assert.deepStrictEqual(button.command.parameters, {});
+            assert(button.command.name === "someCommand");
+        });
 
-    it("should handle nested property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
-            name: "Fred",
-            address: { street: "somewhere" },
-        }) as any;
-        assert.deepStrictEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
-    });
+        it("should handle simple property", () => {
+            const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, { name: "Fred" }) as any;
+            assert.deepStrictEqual(button.command.parameters, { name: "Fred" });
+        });
 
-    it("should handle nested nested property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
-            name: "Fred",
-            address: { street: "somewhere", zip: { code: "12345" } },
-        }) as any;
-        assert.deepStrictEqual(button.command.parameters, {
-            "name": "Fred",
-            "address.street": "somewhere",
-            "address.zip.code": "12345",
+        it("should handle nested property", () => {
+            const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
+                name: "Fred",
+                address: { street: "somewhere" },
+            }) as any;
+            assert.deepStrictEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
+        });
+
+        it("should handle nested nested property", () => {
+            const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
+                name: "Fred",
+                address: { street: "somewhere", zip: { code: "12345" } },
+            }) as any;
+            assert.deepStrictEqual(button.command.parameters, {
+                "name": "Fred",
+                "address.street": "somewhere",
+                "address.zip.code": "12345",
+            });
         });
     });
+
+    describe("actionableMenu", () => {
+
+        it("should handle undefined", () => {
+            const button = actionableMenu({
+                text: "Ok",
+                options: [{ text: "1", value: "1" }],
+            }, { name: "someCommand" } as any as CodeTransformRegistration, "test") as any;
+            assert.deepStrictEqual(button.command.parameters, {});
+            assert.deepStrictEqual(button.command.parameterName, "test");
+            assert.deepStrictEqual(button.options, [{ text: "1", value: "1" }]);
+            assert(button.command.name === "someCommand");
+        });
+
+        it("should handle simple property", () => {
+            const button = actionableMenu({
+                text: "Ok",
+                options: [{ text: "1", value: "1" }],
+            }, { name: "someCommand" } as any as CommandHandlerRegistration, "test", { name: "Fred" }) as any;
+            assert.deepStrictEqual(button.command.parameters, { name: "Fred" });
+            assert.deepStrictEqual(button.command.parameterName, "test");
+            assert.deepStrictEqual(button.options, [{ text: "1", value: "1" }]);
+        });
+
+        it("should handle nested property", () => {
+            const button = actionableMenu({
+                text: "Ok",
+                options: [{ text: "1", value: "1" }],
+            }, { name: "someCommand" } as any as CommandHandlerRegistration, "test", {
+                name: "Fred",
+                address: { street: "somewhere" },
+            }) as any;
+            assert.deepStrictEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
+            assert.deepStrictEqual(button.command.parameterName, "test");
+            assert.deepStrictEqual(button.options, [{ text: "1", value: "1" }]);
+        });
+
+        it("should handle nested nested property", () => {
+            const button = actionableMenu({
+                text: "Ok",
+                options: [{ text: "1", value: "1" }],
+            }, { name: "someCommand" } as any as CommandHandlerRegistration, "test", {
+                name: "Fred",
+                address: { street: "somewhere", zip: { code: "12345" } },
+            }) as any;
+            assert.deepStrictEqual(button.command.parameters, {
+                "name": "Fred",
+                "address.street": "somewhere",
+                "address.zip.code": "12345",
+            });
+            assert.deepStrictEqual(button.command.parameterName, "test");
+            assert.deepStrictEqual(button.options, [{ text: "1", value: "1" }]);
+        });
+    });
+
 });
