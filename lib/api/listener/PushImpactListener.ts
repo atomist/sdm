@@ -25,7 +25,8 @@ import { PushListenerInvocation } from "./PushListener";
 export interface PushImpactListenerInvocation extends PushListenerInvocation {
 
     /**
-     * Files changed in this push. Undefined if unknown how many files have changed
+     * Paths of the files changed in this push.
+     * Undefined if it is unknown how many files have changed.
      */
     filesChanged: string[] | undefined;
 
