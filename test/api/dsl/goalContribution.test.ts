@@ -23,8 +23,8 @@ import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/commo
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
+    attachFacts,
     enrichGoalSetters,
-    enrichInvocation,
     goalContributors,
     StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
@@ -177,11 +177,18 @@ describe("goalContribution", () => {
             assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1));
         });
 
-        it("should allow state", async () => {
+        it("should uniquely name attachFacts", async () => {
+            const af = attachFacts<{ name: string}>(async pu => ({ name: pu.push.id }));
+            assert(af.name.startsWith("attachFacts-"));
+            assert(af.name.length > "attachFacts-".length);
+        });
+
+        it("should attach facts", async () => {
+            type Named = { name: string };
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             let gs = goalContributors(
-                enrichInvocation(async pu => ({ name: "tony" })),
-                whenPushSatisfies<StatefulPushListenerInvocation>(async pu => pu.state.name === "tony").setGoals(mg));
+                attachFacts<Named>(async pu => ({ name: "tony" })),
+                whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async pu => pu.facts.name === "tony").setGoals(mg));
             gs = enrichGoalSetters(gs,
                 onAnyPush().setGoals(FingerprintGoal));
             const p = fakePush();
