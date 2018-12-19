@@ -200,7 +200,9 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
             await rli.addressChannels(
                 slackErrorMessage(
                     "Review Listener",
-                    `Review listener ${italic(l.name)} failed${err.message ? `:\n\n${codeBlock(err.message)}` : ""}`, rli.context));
+                    `Review listener ${italic(l.name)} failed${err.message ? `:
+${codeBlock(err.message)}` : ""}`,
+                    rli.context));
             return PushImpactResponse.failGoals;
         }
     };

@@ -127,7 +127,9 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Invalid parameters to code transform ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
+                        `Invalid parameters to code transform ${italic(ci.commandName)}:
+${codeBlock(vr.message)}`,
+                        ci.context));
             }
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -178,7 +180,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Inspection`,
-                        `Invalid parameters to code inspection ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
+                        `Invalid parameters to code inspection ${italic(ci.commandName)}:
+${codeBlock(vr.message)}`,
+                        ci.context));
             }
             const action: (p: Project, params: any) => Promise<CodeInspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
