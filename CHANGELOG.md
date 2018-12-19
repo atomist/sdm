@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add goal function to create a new GoalWithFulfillment. [311a273](https://github.com/atomist/sdm/commit/311a273f651be8c6aa5baa3d1a0a6c415973d52d)
 -   Allow to register `GoalExecutionListener` on a `GoalWithFulfillment`. [#624](https://github.com/atomist/sdm/issues/624)
 -   Allow state computation in push rule evaluation. [#630](https://github.com/atomist/sdm/issues/630)
+-   Add actionableMenu to create menus from CommandHandlerRegistrations. [9ddfe18](https://github.com/atomist/sdm/commit/9ddfe18181832c8b49a2443e190a4a6179d3966e)
 
 ### Changed
 
