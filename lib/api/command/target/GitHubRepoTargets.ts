@@ -20,8 +20,11 @@ export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackPa
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
-    public sha: string = "master";
+    @Parameter({ description: "Ref", ...validationPatterns.GitShaRegExp, required: false })
+    public sha: string;
+
+    @Parameter({ description: "Branch", ...validationPatterns.GitBranchRegExp, required: false })
+    public branch: string = "master";
 
     @Parameter({ description: "regex", required: false })
     public repos: string;
