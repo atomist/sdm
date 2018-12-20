@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Allow state computation in push rule evaluation. [#630](https://github.com/atomist/sdm/issues/630)
 -   Add actionableMenu to create menus from CommandHandlerRegistrations. [9ddfe18](https://github.com/atomist/sdm/commit/9ddfe18181832c8b49a2443e190a4a6179d3966e)
 -   Provide useful error messages when project generation fails. [#634](https://github.com/atomist/sdm/issues/634)
+-   Add `targets.branch` to `CodeTransform` targeting. [#636](https://github.com/atomist/sdm/issues/636)
 
 ### Changed
 
