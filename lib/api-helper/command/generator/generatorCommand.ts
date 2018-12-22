@@ -150,7 +150,8 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
         await ctx.messageClient.respond(
             slackSuccessMessage(
                 `Create Project`,
-                `Successfully created new project ${bold(`${params.target.repoRef.owner}/${params.target.repoRef.repo}`)} at ${url(params.target.repoRef.url)}`));
+                `Successfully created new project ${bold(`${params.target.repoRef.owner}/${
+                    params.target.repoRef.repo}`)} at ${url(params.target.repoRef.url)}`));
         if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
             const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
             if (!webhookInstalled) {

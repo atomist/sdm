@@ -24,5 +24,5 @@ import * as df from "dateformat";
  */
 export function formatDate(date: Date = new Date(),
                            format: string = "yyyymmddHHMMss"): string {
-    return df(date, format)
+    return df(date, format);
 }
