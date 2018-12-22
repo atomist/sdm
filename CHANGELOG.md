@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Don’t abort code transform on many repos if one repo fails. [#626](https://github.com/atomist/sdm/issues/626)
 -   Rename enrichInvocation to attachFact. [#632](https://github.com/atomist/sdm/issues/632)
 -   Stronger typing on actionable(Command|Menu). [1a3e3e2](https://github.com/atomist/sdm/commit/1a3e3e2cbe3b1bf2e97d5e1db6f59c2f39414925)
+-   Change default code transform branch name to use proper date. [87a5514](https://github.com/atomist/sdm/commit/87a5514e89256c5214ed4b650ad8ad027ec5da2b)
 
 ### Deprecated
 
