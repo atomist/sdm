@@ -91,6 +91,7 @@ import {
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
 import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
+import { formatDate } from "../misc/dateFormat";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -281,9 +282,7 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
     addParametersDefinedInBuilder(c);
     return () => async (context, parameters) => {
-        // const opts = toMachineOptions(sdm);
         const cli = toCommandListenerInvocation(c, context, parameters);
-        logger.debug("Running command listener %s", cli.commandName);
         try {
             await c.listener(cli);
             return Success;
@@ -503,7 +502,7 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
     }
     // Default it if not supplied
     return new editModes.PullRequest(
-        `transform-${gitBranchCompatible(ctr.name)}-${Date.now()}`,
+        `transform-${gitBranchCompatible(ctr.name)}-${formatDate()}`,
         description);
 }
 
