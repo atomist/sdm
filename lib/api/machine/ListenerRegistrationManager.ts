@@ -62,7 +62,7 @@ export interface ListenerRegistrationManager {
     addClosedIssueListener(l: ClosedIssueListener): this;
 
     /**
-     * Invoked when a goal state changes
+     * Invoked when a goal state changes to in-process, success, or failure.
      * @returns {this}
      */
     addGoalExecutionListener(l: GoalExecutionListener);
