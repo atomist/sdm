@@ -25,6 +25,7 @@ import {
     GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import {
     ProjectLoader,
     ProjectLoadingParameters,
@@ -82,7 +83,9 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
         };
 
         for (const lr of this.listeners) {
-            if ((!lr.events || lr.events.includes(event)) && await lr.pushTest.mapping(pli)) {
+            const pushTest = lr.pushTest || AnyPush;
+            const events = lr.events || [GoalProjectListenerEvent.before, GoalProjectListenerEvent.after];
+            if (events.includes(event) && await pushTest.mapping(pli)) {
 
                 this.gi.progressLog.write("/--");
                 this.gi.progressLog.write(`Invoking ${event} project listener: ${lr.name}`);
