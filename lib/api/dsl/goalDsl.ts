@@ -103,6 +103,6 @@ export function whenPushSatisfies<P extends PushListenerInvocation = PushListene
  * PushRule that matches every push
  * @type {GoalSetterMapping}
  */
-export function onAnyPush(): GoalSetterMapping {
-    return new GoalSetterMapping(AnyPush, [], "On any push");
+export function onAnyPush<P extends PushListenerInvocation = PushListenerInvocation>(): GoalSetterMapping<P> {
+    return new GoalSetterMapping<P>(AnyPush, [], "On any push");
 }
