@@ -34,7 +34,7 @@ import {
 /**
  * PushRule implementation exposed in DSL. Continues fluent API.
  */
-export class GoalSetterMapping extends PushRule<Goals> {
+export class GoalSetterMapping<P extends PushListenerInvocation = PushListenerInvocation> extends PushRule<Goals> {
 
     private goalsName: string;
 
@@ -57,6 +57,26 @@ export class GoalSetterMapping extends PushRule<Goals> {
     }
 
     /**
+     * Set goals dynamically, depending on this push
+     * @param {(inv: P) => GoalComponent} f
+     * @return {this}
+     */
+    public setGoalsWhen(f: (inv: P) => GoalComponent): this {
+        // This is a bit devious. We override the parent mapping
+        this.mapping = async (pu: P) => {
+            const goalComponent = f(pu);
+            if (!!goalComponent && (goalComponent as Goals).name) {
+                this.goalsName = (goalComponent as Goals).name;
+            }
+            if (!goalComponent) {
+                return goalComponent as Goals;
+            }
+            return toGoals(goalComponent);
+        };
+        return this;
+    }
+
+    /**
      * Prevent setting any further goals on this push. Ordering matters:
      * goals may previously have been set.
      * @param name name of the empty Goals. Default is "No Goals"
@@ -75,14 +95,14 @@ export class GoalSetterMapping extends PushRule<Goals> {
  */
 export function whenPushSatisfies<P extends PushListenerInvocation = PushListenerInvocation>(
     guard1: PredicateMappingTerm<P>,
-    ...guards: Array<PredicateMappingTerm<P>>): GoalSetterMapping {
-    return new GoalSetterMapping(toPredicateMapping(guard1), guards.map(toPredicateMapping));
+    ...guards: Array<PredicateMappingTerm<P>>): GoalSetterMapping<P> {
+    return new GoalSetterMapping<P>(toPredicateMapping(guard1), guards.map(toPredicateMapping));
 }
 
 /**
  * PushRule that matches every push
  * @type {GoalSetterMapping}
  */
-export function onAnyPush(): GoalSetterMapping {
-    return new GoalSetterMapping(AnyPush, [], "On any push");
+export function onAnyPush<P extends PushListenerInvocation = PushListenerInvocation>(): GoalSetterMapping<P> {
+    return new GoalSetterMapping<P>(AnyPush, [], "On any push");
 }
