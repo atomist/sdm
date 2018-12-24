@@ -16,6 +16,7 @@
 
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
+import { StatefulPushListenerInvocation } from "../../../lib/api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
@@ -85,6 +86,21 @@ describe("whenPushSatisfies", () => {
         it("should allow simple function returning false", async () => {
             const test = whenPushSatisfies(async p => p.push.id === "notThis").setGoals(SomeGoalSet);
             assert.equal(await test.mapping(fakePush()), undefined);
+        });
+
+        it("should allow use of push in constructing goal", async () => {
+            interface Named { name: string; }
+            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true)
+                .setGoalsWhen(pu => {
+                    if (pu.facts.name === "fred") {
+                        return SomeGoalSet;
+                    }
+                    throw new Error("bad");
+                });
+            const invocation: StatefulPushListenerInvocation<Named> = fakePush();
+            invocation.facts = {} as any;
+            invocation.facts.name = "fred";
+            assert.equal(await test.mapping(invocation), SomeGoalSet);
         });
 
     });
