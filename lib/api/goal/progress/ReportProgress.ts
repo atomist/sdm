@@ -33,7 +33,7 @@ export interface Progress {
  * The returned Progress.phase will be stored on the Goal and overridden when
  * a new phase has been reported.
  *
- * If the foal fails, the failing phase is preserved. In all other cases the
+ * If the goal fails, the failing phase is preserved. In all other cases the
  * phase will be reset on goal completion.
  */
 export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
