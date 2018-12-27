@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Atomist Software Delivery Machine API",
   "author": {
     "name": "Atomist",
