@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Execute startupListeners before scheduling the triggered listeners. [#611](https://github.com/atomist/sdm/issues/611)
 -   Using `createGoal` with space in `displayName` creates invalid `uniqueName`. [#623](https://github.com/atomist/sdm/issues/623)
 -   Fix issues when pushTest is missing on project listener. [7fd6fab](https://github.com/atomist/sdm/commit/7fd6fab1b043d587ea2d551eb955782f719003bb)
+-   Update doc on goal execution listener. [#639](https://github.com/atomist/sdm/issues/639)
 
 ## [1.1.0](https://github.com/atomist/sdm/compare/1.0.1...1.1.0) - 2018-12-08
 
