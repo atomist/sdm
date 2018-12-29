@@ -1,6 +1,4 @@
-/**
- * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping
- */
+
 import {
     MappedParameter,
     MappedParameters,
@@ -12,6 +10,9 @@ import { FallbackParams } from "@atomist/automation-client/lib/operations/common
 import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
 import { RepoTargets } from "../../machine/RepoTargets";
 
+/**
+ * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping
+ */
 export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackParams, RepoTargets {
 
     @MappedParameter(MappedParameters.GitHubOwner, false)
