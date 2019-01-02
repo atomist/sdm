@@ -41,7 +41,7 @@ export interface CommandRegistration<PARAMS> {
      * Define parameters used by this command. Alternative to using
      * paramsMaker: Do not supply both.
      */
-    parameters?: ParametersDefinition;
+    parameters?: ParametersDefinition<PARAMS>;
 
     intent?: string | string[];
     tags?: string | string[];

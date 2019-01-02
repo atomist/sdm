@@ -16,7 +16,7 @@
 
 import { BaseParameter } from "@atomist/automation-client";
 
-export type ParametersDefinition = ParametersListing | ParametersObject;
+export type ParametersDefinition<PARAMS> = ParametersListing | ParametersObject<PARAMS>;
 
 /**
  * Interface mixed in with BaseParameter to allow adding a default value to a parameter.
@@ -25,13 +25,13 @@ export type ParametersDefinition = ParametersListing | ParametersObject;
  */
 export interface HasDefaultValue { defaultValue?: any; }
 
+export type ParametersObjectValue = (BaseParameter & HasDefaultValue) | MappedParameterOrSecretDeclaration;
+
 /**
  * Object with properties defining parameters. Useful for combination
  * via spreads.
  */
-export interface ParametersObject {
-    [name: string]: (BaseParameter & HasDefaultValue) | MappedParameterOrSecretDeclaration;
-}
+export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue>;
 
 export enum DeclarationType {
     mapped = "mapped",
