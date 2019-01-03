@@ -106,14 +106,23 @@ export function streamFilesFrom(donorProjectId: RemoteRepoRef,
 export function streamFiles(donorProject: Project,
                             fileGlobMapping: FileGlobMapping): CodeTransform {
     return async p => {
-        await donorProject.streamFiles(...fileGlobMapping.globPatterns)
-            .on("end", () => { logger.debug("end of file stream reached, using glob: ", fileGlobMapping); })
-            .on("data", f => {
-                (async () => {
-                    await p.addFile((fileGlobMapping.recipientPath || "") + f.path, await f.getContent());
-                    logger.debug("file copied: ", f);
-                })();
-            })
-        ;
+        const fileStream = donorProject.streamFiles(...fileGlobMapping.globPatterns);
+
+        await new Promise((resolve, reject) => {
+            fileStream
+                .on("end", () => {
+                    logger.debug("end of file stream reached, using glob: ", fileGlobMapping);
+                    resolve();
+                })
+                .on("data", donorFile => {
+                    const newPath = (fileGlobMapping.recipientPath || "") + donorFile.path;
+                    p.addFileSync(newPath, donorFile.getContentSync());
+                    logger.verbose("file copied: ", donorFile);
+                })
+                .on("error", e => {
+                    logger.warn("Error copying file: ", e);
+                    reject();
+                });
+        });
     };
 }
