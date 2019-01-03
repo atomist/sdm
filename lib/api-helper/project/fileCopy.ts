@@ -95,10 +95,9 @@ export function copyFiles(donorProject: Project,
  * @return {SimpleProjectEditor}
  */
 export function streamFilesFrom(donorProjectId: RemoteRepoRef,
-                                fileGlobMapping: FileGlobMapping,
-                                credentials: ProjectOperationCredentials): CodeTransform {
+                                fileGlobMapping: FileGlobMapping): CodeTransform {
     return async (p, i) => {
-        const donorProject = await GitCommandGitProject.cloned(credentials, donorProjectId);
+        const donorProject = await GitCommandGitProject.cloned(i.credentials, donorProjectId);
         return streamFiles(donorProject, fileGlobMapping)(p, i);
     };
 }
