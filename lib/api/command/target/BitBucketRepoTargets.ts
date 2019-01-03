@@ -26,9 +26,7 @@ import {
 } from "@atomist/automation-client";
 import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
 import { TargetsParams } from "@atomist/automation-client/lib/operations/common/params/TargetsParams";
-import {
-    RepoTargets,
-} from "../../machine/RepoTargets";
+import { RepoTargets } from "../../machine/RepoTargets";
 
 /**
  * Targets for working with BitBucket repo(s).
@@ -46,8 +44,11 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
-    public sha: string = "master";
+    @Parameter({ description: "Ref", ...validationPatterns.GitShaRegExp, required: false })
+    public sha: string;
+
+    @Parameter({ description: "Branch Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
+    public branch: string = "master";
 
     @Parameter({ description: "regex", required: false })
     public repos: string = ".*";
@@ -70,7 +71,7 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
                 this.apiUrl,
                 this.owner, this.repo,
                 true,
-                this.sha) :
+                this.branch ? this.branch : this.sha) :
             undefined;
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Atomist Software Delivery Machine API",
   "author": {
     "name": "Atomist",
@@ -26,11 +26,21 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@types/lodash": "^4.14.118",
-    "@types/node": "^10.12.3",
+    "@types/cron": "^1.3.0",
+    "@types/dateformat": "^3.0.0",
+    "@types/find-up": "^2.1.1",
+    "@types/fs-extra": "^5.0.4",
+    "@types/json-stringify-safe": "^5.0.0",
+    "@types/jssha": "^2.0.0",
+    "@types/lodash": "^4.14.119",
+    "@types/minimatch": "^3.0.3",
+    "@types/node": "^10.12.18",
+    "@types/sprintf-js": "^1.1.1",
+    "@types/stack-trace": "0.0.29",
     "axios": "^0.18.0",
     "base64-js": "^1.3.0",
-    "copyfiles": "^2.0.0",
+    "cron": "^1.6.0",
+    "dateformat": "^3.0.3",
     "find-up": "^3.0.0",
     "fs-extra": "^7.0.1",
     "json-stringify-safe": "^5.0.1",
@@ -38,33 +48,30 @@
     "lodash": "^4.17.10",
     "minimatch": "^3.0.4",
     "sha-regex": "^1.0.2",
-    "sprintf-js": "^1.1.1",
+    "sprintf-js": "^1.1.2",
     "stack-trace": "0.0.10"
   },
   "peerDependencies": {
-    "@atomist/automation-client": ">=1.0.1",
-    "@atomist/slack-messages": ">=1.0.1"
+    "@atomist/automation-client": ">=1.2.0",
+    "@atomist/slack-messages": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.1.0-master.20181124171043",
-    "@atomist/slack-messages": "^1.0.1",
+    "@atomist/automation-client": "^1.2.0",
+    "@atomist/slack-messages": "^1.1.0",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",
-    "axios-mock-adapter": "^1.15.0",
     "barrelsby": "1.0.2",
     "espower-typescript": "^9.0.0",
-    "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.6",
-    "npm-run-all": "^4.1.3",
+    "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.0",
     "prettier": "^1.15.1",
     "rimraf": "^2.6.2",
     "supervisor": "^0.12.0",
     "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
+    "tslint": "^5.12.0",
     "typedoc": "^0.13.0",
-    "typescript": "^3.1.6"
+    "typescript": "^3.2.2"
   },
   "directories": {
     "test": "test"

@@ -5,13 +5,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/sdm/compare/1.0.1...HEAD)
+## [Unreleased](https://github.com/atomist/sdm/compare/1.2.0...HEAD)
+
+## [1.2.0](https://github.com/atomist/sdm/compare/1.1.0...1.2.0) - 2018-12-27
+
+### Added
+
+-   Allow more options to be passed to createGoal. [ab89243](https://github.com/atomist/sdm/commit/ab89243dd074ce4a1cb86ceab1be8e860b16e667)
+-   Add dryRun flag to CodeTransform invocations. [#613](https://github.com/atomist/sdm/issues/613)
+-   Add helpers for `doWithRepos` and `doWithProject`. [#615](https://github.com/atomist/sdm/issues/615)
+-   Provide spawnLog with consistent spawn interface. [#620](https://github.com/atomist/sdm/issues/620)
+-   Add exec and spawn to doWithProject callback. [#618](https://github.com/atomist/sdm/issues/618)
+-   Add goal function to create a new GoalWithFulfillment. [311a273](https://github.com/atomist/sdm/commit/311a273f651be8c6aa5baa3d1a0a6c415973d52d)
+-   Allow to register `GoalExecutionListener` on a `GoalWithFulfillment`. [#624](https://github.com/atomist/sdm/issues/624)
+-   Allow state computation in push rule evaluation. [#630](https://github.com/atomist/sdm/issues/630)
+-   Add actionableMenu to create menus from CommandHandlerRegistrations. [9ddfe18](https://github.com/atomist/sdm/commit/9ddfe18181832c8b49a2443e190a4a6179d3966e)
+-   Provide useful error messages when project generation fails. [#634](https://github.com/atomist/sdm/issues/634)
+-   Add `targets.branch` to `CodeTransform` targeting. [#636](https://github.com/atomist/sdm/issues/636)
+-   Add ability to select goal based on push in DSL. [#642](https://github.com/atomist/sdm/issues/642)
+
+### Changed
+
+-   **BREAKING** Introduce LazyProjectLoader and LazyProject interfaces. [#625](https://github.com/atomist/sdm/issues/625)
+-   Don’t abort code transform on many repos if one repo fails. [#626](https://github.com/atomist/sdm/issues/626)
+-   Rename enrichInvocation to attachFact. [#632](https://github.com/atomist/sdm/issues/632)
+-   Stronger typing on actionable(Command|Menu). [1a3e3e2](https://github.com/atomist/sdm/commit/1a3e3e2cbe3b1bf2e97d5e1db6f59c2f39414925)
+-   Change default code transform branch name to use proper date. [87a5514](https://github.com/atomist/sdm/commit/87a5514e89256c5214ed4b650ad8ad027ec5da2b)
+
+### Deprecated
+
+-   Deprecate sdmGoal on GoalInvocation. [dbb25d2](https://github.com/atomist/sdm/commit/dbb25d2d020fc946450edd71e4e0465cd3e1af43)
+
+### Removed
+
+-   Remove old Builder interface; moved to sdm-pack-build. [6211aef](https://github.com/atomist/sdm/commit/6211aef5f19a181d4d3a3f13210de3998c29a767)
+
+### Fixed
+
+-   Execute startupListeners before scheduling the triggered listeners. [#611](https://github.com/atomist/sdm/issues/611)
+-   Using `createGoal` with space in `displayName` creates invalid `uniqueName`. [#623](https://github.com/atomist/sdm/issues/623)
+-   Fix issues when pushTest is missing on project listener. [7fd6fab](https://github.com/atomist/sdm/commit/7fd6fab1b043d587ea2d551eb955782f719003bb)
+-   Update doc on goal execution listener. [#639](https://github.com/atomist/sdm/issues/639)
+
+## [1.1.0](https://github.com/atomist/sdm/compare/1.0.1...1.1.0) - 2018-12-08
 
 ### Added
 
 -   Add support for canceling goals. [#572](https://github.com/atomist/sdm/issues/572)
 -   Add review listeners that set goal result state. [#573](https://github.com/atomist/sdm/issues/573)
 -   Fingerprints do not support deployments to staging. [#579](https://github.com/atomist/sdm/issues/579)
+-   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
+-   CommandHandlerRegistrations supporting hints for "autoSubmit". [#577](https://github.com/atomist/sdm/issues/577)
+-   Add support for trigger listeners. [#595](https://github.com/atomist/sdm/issues/595)
+-   Add `Queue` goal to queue goal sets. [#597](https://github.com/atomist/sdm/issues/597)
+
+### Changed
+
+-   Make `code` on `ExecuteGoalResult` optional. [#586](https://github.com/atomist/sdm/issues/586)
+-   Polishing: use readonly arrays. [#591](https://github.com/atomist/sdm/issues/591)
+-   Run PushMappings sequentially. [#594](https://github.com/atomist/sdm/issues/594)
+
+### Deprecated
+
+-   Update child_process usage. [#584](https://github.com/atomist/sdm/issues/584)
 
 ### Fixed
 

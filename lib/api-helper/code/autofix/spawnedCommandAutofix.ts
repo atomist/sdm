@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* tslint:disable:deprecation */
+
 import { SpawnCommand } from "@atomist/automation-client";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
@@ -25,6 +27,7 @@ import { localCommandsCodeTransform } from "../../command/transform/localCommand
 /**
  * Register an autofix based on spawned local shell commands.
  * For example, could wrap a linter
+ * @deprecated use spawnCommandAutofix
  */
 export function spawnedCommandAutofix(name: string,
                                       pushTest: PushTest,

@@ -96,7 +96,12 @@ describe("executeGoal", () => {
                 progressLog,
                 credentials: fakeCredentials,
                 goal: fakeGoal,
-                sdmGoal: fakeSdmGoal,
+                goalEvent: fakeSdmGoal,
+                configuration: {
+                    sdm: {
+                        projectLoader,
+                    },
+                },
             } as any as GoalInvocation;
 
             return executeGoal({ projectLoader, goalExecutionListeners: [] },
@@ -127,9 +132,10 @@ describe("executeGoal", () => {
                 context: fakeContext(),
                 credentials: fakeCredentials,
                 goal: fakeGoal,
-                sdmGoal: fakeSdmGoal,
+                goalEvent: fakeSdmGoal,
                 progressLog: {
-                    write: () => { /** empty */ },
+                    write: () => { /** empty */
+                    },
                 },
                 configuration: {
                     sdm: {

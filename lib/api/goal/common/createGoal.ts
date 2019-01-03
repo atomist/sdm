@@ -15,6 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { InterpretLog } from "../../../spi/log/InterpretedLog";
+import { PushTest } from "../../mapping/PushTest";
 import {
     Goal,
     GoalDefinition,
@@ -25,6 +27,7 @@ import {
 } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { GoalWithFulfillment } from "../GoalWithFulfillment";
+import { ReportProgress } from "../progress/ReportProgress";
 
 /**
  * Minimum information needed to create a goal
@@ -39,12 +42,19 @@ export interface EssentialGoalInfo extends Partial<GoalDefinition> {
  * Create a goal with basic information
  * and an action callback.
  */
-export function createGoal(egi: EssentialGoalInfo, goalExecutor: ExecuteGoal): Goal {
+export function createGoal(egi: EssentialGoalInfo,
+                           goalExecutor: ExecuteGoal,
+                           options: {
+                               pushTest?: PushTest,
+                               logInterpreter?: InterpretLog,
+                               progressReporter?: ReportProgress,
+                           } = {}): Goal {
     const g = new GoalWithFulfillment({
         uniqueName: DefaultGoalNameGenerator.generateName(egi.displayName),
         ...egi,
     } as GoalDefinition);
     return g.with({
+        ...options,
         name: g.definition.uniqueName,
         goalExecutor,
     });
@@ -93,7 +103,8 @@ export function createPredicatedGoal(egi: EssentialGoalInfo,
  */
 export function createPredicatedGoalExecutor(uniqueName: string,
                                              goalExecutor: ExecuteGoal,
-                                             w: WaitRules): ExecuteGoal {
+                                             w: WaitRules,
+                                             unref: boolean = true): ExecuteGoal {
     if (!!w.timeoutSeconds && !!w.timeoutMillis) {
         throw new Error("Invalid combination: Cannot specify timeoutSeconds and timeoutMillis: Choose one");
     }
@@ -104,21 +115,26 @@ export function createPredicatedGoalExecutor(uniqueName: string,
     waitRulesToUse.timeoutMillis = waitRulesToUse.timeoutMillis || 1000 * w.timeoutSeconds;
 
     return async gi => {
-        for (let tries = 0; tries++;) {
-            if (tries > w.retries) {
+        let tries = 1;
+        while (true) {
+            if (tries > waitRulesToUse.retries) {
                 throw new Error(`Goal '${uniqueName}' timed out after max retries: ${JSON.stringify(waitRulesToUse)}`);
             }
-            if (await w.condition(gi)) {
+            if (await waitRulesToUse.condition(gi)) {
                 return goalExecutor(gi);
             }
-            logger.info("Waiting %d seconds for '%s'", w.timeoutSeconds, uniqueName);
-            await wait(w.timeoutMillis);
+            tries++;
+            logger.info("Waiting %dms for '%s'", waitRulesToUse.timeoutMillis, uniqueName);
+            await wait(waitRulesToUse.timeoutMillis, unref);
         }
     };
 }
 
-function wait(timeoutMillis: number): Promise<void> {
+function wait(timeoutMillis: number, unref: boolean): Promise<void> {
     return new Promise<void>(resolve => {
-        setTimeout(() => resolve(), timeoutMillis).unref();
+        const timer = setTimeout(resolve, timeoutMillis);
+        if (unref) {
+            timer.unref();
+        }
     });
 }

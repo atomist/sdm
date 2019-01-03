@@ -34,31 +34,37 @@ import { AbstractProject } from "@atomist/automation-client/lib/project/support/
 import { fileContent } from "@atomist/automation-client/lib/util/gitHub";
 import * as stream from "stream";
 import {
+    LazyProject,
+    LazyProjectLoader,
+    WithLoadedLazyProject,
+} from "../../spi/project/LazyProjectLoader";
+import {
     ProjectLoader,
     ProjectLoadingParameters,
-    WithLoadedProject,
 } from "../../spi/project/ProjectLoader";
 import { save } from "./CachingProjectLoader";
 
 /**
- * Create a lazy view of the given project, which will materialize
+ * Create a lazy view of the given project GitHub, which will materialize
  * the remote project (usually by cloning) only if needed.
  */
-export class LazyProjectLoader implements ProjectLoader {
+export class GitHubLazyProjectLoader implements LazyProjectLoader {
+
+    public isLazy: true;
 
     constructor(private readonly delegate: ProjectLoader) {
     }
 
-    public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
-        const lazyProject = new LazyProject(params.id, this.delegate, params);
+    public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedLazyProject<T>): Promise<T> {
+        const lazyProject = new GitHubLazyProject(params.id, this.delegate, params);
         return action(lazyProject);
     }
 }
 
 /**
- * Lazy project that loads remote project and forwards to it only if necessary.
+ * Lazy project that loads remote GitHub project and forwards to it only if necessary.
  */
-class LazyProject extends AbstractProject implements GitProject {
+class GitHubLazyProject extends AbstractProject implements GitProject, LazyProject {
 
     private projectPromise: QueryablePromise<GitProject>;
 
@@ -68,25 +74,30 @@ class LazyProject extends AbstractProject implements GitProject {
         super(id);
     }
 
-    get materializing(): boolean {
+    public materializing(): boolean {
         return !!this.projectPromise;
     }
 
-    get materialized(): boolean {
-        return this.projectPromise && !!this.projectPromise.result;
+    public materialized(): boolean {
+        return !!this.projectPromise && !!this.projectPromise.result();
+    }
+
+    public materialize(): Promise<GitProject> {
+        this.materializeIfNecessary("materialize");
+        return this.projectPromise.then(mp => mp.gitStatus()) as any;
     }
 
     get provenance(): string {
-        return this.materialized ? this.projectPromise.result.provenance : "unavailable";
+        return this.materialized() ? this.projectPromise.result().provenance : "unavailable";
     }
 
     public release: ReleaseFunction = () => undefined;
 
     get baseDir(): string {
-        if (!this.materialized) {
+        if (!this.materialized()) {
             throw new Error("baseDir not supported until materialized");
         }
-        return this.projectPromise.result.baseDir;
+        return this.projectPromise.result().baseDir;
     }
 
     public branch = this.id.branch;
@@ -151,7 +162,7 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     public async getFile(path: string): Promise<ProjectFile | undefined> {
-        if (this.materializing) {
+        if (this.materializing()) {
             return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
         // TODO we need this to work for other gits
@@ -264,7 +275,7 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     private materializeIfNecessary(why: string) {
-        if (!this.materializing) {
+        if (!this.materializing()) {
             logger.info("Materializing project %j because of %s", this.id, why);
             this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));
         }
@@ -275,11 +286,11 @@ class LazyProject extends AbstractProject implements GitProject {
 
 interface QueryablePromise<T> extends Promise<T> {
 
-    isResolved: boolean;
-    isFulfilled: boolean;
-    isRejected: boolean;
+    isResolved(): boolean;
+    isFulfilled(): boolean;
+    isRejected(): boolean;
 
-    result: T;
+    result(): T;
 }
 
 /**

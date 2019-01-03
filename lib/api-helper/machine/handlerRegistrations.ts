@@ -81,6 +81,7 @@ import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
 import {
     DeclarationType,
     MappedParameterOrSecretDeclaration,
+    NamedParameter,
     ParametersDefinition,
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
@@ -89,7 +90,8 @@ import {
     generatorCommand,
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
-import { chattyEditor } from "../command/transform/chattyEditor";
+import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
+import { formatDate } from "../misc/dateFormat";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -101,6 +103,8 @@ import {
     toMachineOptions,
 } from "./toMachineOptions";
 
+// tslint:disable:max-file-line-count
+
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
 export const TransformTag = "transform";
@@ -108,6 +112,7 @@ export const TransformTag = "transform";
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
+    addDryRunParameters(ctr);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
@@ -123,7 +128,9 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Invalid parameters to code transform ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
+                        `Invalid parameters to code transform ${italic(ci.commandName)}:
+${codeBlock(vr.message)}`,
+                        ci.context));
             }
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -140,7 +147,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
+                chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -174,7 +181,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Inspection`,
-                        `Invalid parameters to code inspection ${italic(ci.commandName)}:\n\n${codeBlock(vr.message)}`, ci.context));
+                        `Invalid parameters to code inspection ${italic(ci.commandName)}:
+${codeBlock(vr.message)}`,
+                        ci.context));
             }
             const action: (p: Project, params: any) => Promise<CodeInspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
@@ -273,9 +282,7 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
     addParametersDefinedInBuilder(c);
     return () => async (context, parameters) => {
-        // const opts = toMachineOptions(sdm);
         const cli = toCommandListenerInvocation(c, context, parameters);
-        logger.debug("Running command listener %s", cli.commandName);
         try {
             await c.listener(cli);
             return Success;
@@ -311,6 +318,30 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
         credentials,
         ids,
     };
+}
+
+export const DryRunParameter = {
+    name: "dry-run",
+    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+    required: false,
+    defaultValue: false,
+    type: "boolean",
+} as NamedParameter;
+export const DryRunMsgIdParameter = {
+    name: "dry-run.msgId",
+    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+    required: false,
+    type: "string",
+    displayable: false,
+} as NamedParameter;
+
+/**
+ * Add the dryRun parameter into the list of parameters
+ */
+function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
+    const params = toParametersListing(c.parameters || {});
+    params.parameters.push(DryRunParameter, DryRunMsgIdParameter);
+    c.parameters = params;
 }
 
 /**
@@ -403,9 +434,9 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
         const n = await ct(p, {
-            ...ctx,
-            ...ci,
-        } as CommandListenerInvocation<P> & HandlerContext,
+                ...ctx,
+                ...ci,
+            } as CommandListenerInvocation<P> & HandlerContext,
             params);
         if (n === undefined) {
             // The transform returned void
@@ -471,7 +502,7 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
     }
     // Default it if not supplied
     return new editModes.PullRequest(
-        `transform-${gitBranchCompatible(ctr.name)}-${Date.now()}`,
+        `transform-${gitBranchCompatible(ctr.name)}-${formatDate()}`,
         description);
 }
 

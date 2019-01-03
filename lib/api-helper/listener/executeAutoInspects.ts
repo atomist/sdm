@@ -61,7 +61,7 @@ export interface AutoInspectOptions {
  */
 export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { sdmGoal, configuration, credentials, id } = goalInvocation;
+        const { goalEvent, configuration, credentials, id } = goalInvocation;
         try {
             if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
@@ -71,7 +71,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
                 credentials,
                 id,
                 readOnly: true,
-                cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
+                cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
             }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: %s",
@@ -200,7 +200,9 @@ function responseFromOneListener(rli: ReviewListenerInvocation) {
             await rli.addressChannels(
                 slackErrorMessage(
                     "Review Listener",
-                    `Review listener ${italic(l.name)} failed${err.message ? `:\n\n${codeBlock(err.message)}` : ""}`, rli.context));
+                    `Review listener ${italic(l.name)} failed${err.message ? `:
+${codeBlock(err.message)}` : ""}`,
+                    rli.context));
             return PushImpactResponse.failGoals;
         }
     };

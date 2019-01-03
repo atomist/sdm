@@ -45,6 +45,7 @@ export interface GoalProjectListenerRegistration {
     name: string;
     listener: GoalProjectListener;
     pushTest?: PushTest;
+    events?: GoalProjectListenerEvent[];
 }
 
 export interface GoalInvocation extends RepoContext {
@@ -61,8 +62,14 @@ export interface GoalInvocation extends RepoContext {
 
     /**
      * The goal event that triggered this execution
+     * @deprecated use goalEvent
      */
     sdmGoal: SdmGoalEvent;
+
+    /**
+     * The goal event that triggered this execution
+     */
+    goalEvent: SdmGoalEvent;
 
     /**
      * Progress log to write output to

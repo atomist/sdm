@@ -15,11 +15,11 @@
  */
 
 import {
-    execIn,
     GitProject,
     logger,
 } from "@atomist/automation-client";
 import { PushFields } from "../../../typings/types";
+import { execPromise } from "../child_process";
 
 /**
  * Use git to list the files changed since the given sha
@@ -38,7 +38,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
     } catch (err) {
 
         try {
-            await execIn(project.baseDir, "git", ["fetch", "--unshallow", "--no-tags"]);
+            await execPromise("git", ["fetch", "--unshallow", "--no-tags"], { cwd: project.baseDir });
 
             return await gitDiff(sha, commitCount, project);
 
@@ -47,7 +47,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
             try {
                 const gs = await project.gitStatus();
                 logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
-                const timeOfLastChange = await execIn(project.baseDir, "ls", ["-ltr", "."]);
+                const timeOfLastChange = await execPromise("ls", ["-ltr", "."], { cwd: project.baseDir });
                 logger.info("Files with dates: " + timeOfLastChange.stdout);
             } catch (err) {
                 logger.warn("Error while trying extra logging: " + err.stack);
@@ -58,7 +58,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
 }
 
 async function gitDiff(sha: string, commitCount: number, project: GitProject) {
-    const cr = await execIn(project.baseDir, "git", ["diff", "--name-only", `${sha}~${commitCount}`]);
+    const cr = await execPromise("git", ["diff", "--name-only", `${sha}~${commitCount}`], { cwd: project.baseDir });
     // stdout is nothing but a list of files, one per line
     logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
     return cr.stdout.split("\n")

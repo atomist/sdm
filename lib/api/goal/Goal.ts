@@ -130,14 +130,14 @@ export class Goal {
     }
 
     constructor(definition: GoalDefinition) {
-        this.definition = definition;
+        this.definition = validateGoalDefinition(definition);
         // Default environment if hasn't been provided
         if (!this.definition.environment) {
             this.definition.environment = IndependentOfEnvironment;
         }
-        this.context = BaseContext + definition.environment + definition.uniqueName;
-        this.name = definition.displayName || definition.uniqueName;
-        this.uniqueName = definition.uniqueName;
+        this.context = BaseContext + this.definition.environment + this.definition.uniqueName;
+        this.name = this.definition.displayName || this.definition.uniqueName;
+        this.uniqueName = this.definition.uniqueName;
     }
 }
 
@@ -158,4 +158,21 @@ export function isGoalDefiniton(f: Goal | GoalDefinition): f is GoalDefinition {
 
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
     return !!(goal as GoalWithPrecondition).dependsOn;
+}
+
+const UniqueNameRegExp = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/i;
+
+function validateGoalDefinition(gd: GoalDefinition): GoalDefinition {
+    // First replace all spaces and _ with -
+    const uniqueName = gd.uniqueName.replace(/ /g, "-").replace(/_/g, "-");
+    // Now validate the part in front of # against regexp
+    if (!UniqueNameRegExp.test(uniqueName.split("#")[0])) {
+        throw new Error(`Goal uniqueName '${gd.uniqueName}' must consist of lower case alphanumeric characters or '-', and must start and ` +
+            `end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '${UniqueNameRegExp}')`);
+    }
+
+    return {
+        ...gd,
+        uniqueName,
+    };
 }

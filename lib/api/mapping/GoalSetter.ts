@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import * as _ from "lodash";
 import { SdmContext } from "../context/SdmContext";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";

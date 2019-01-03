@@ -21,6 +21,7 @@ import {
 } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import { CronJob } from "cron";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import {
@@ -38,6 +39,7 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
+import { TriggeredListenerInvocation } from "../../api/listener/TriggeredListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
@@ -61,6 +63,7 @@ import {
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
+import { GoalSetGoalCompletionListener } from "../listener/goalSetListener";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
@@ -251,14 +254,43 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public async notifyStartupListeners(): Promise<void> {
         const i: AdminCommunicationContext = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
-                logger.warn("STARTUP PROBLEM: %j", msg);
+                logger.warn("startup: %j", msg);
             }),
             sdm: this,
         };
-        return Promise.all(this.startupListeners.map(l => l(i)))
-            .then(() => {
-                // Empty to return void
-            });
+
+        // Register the startup listener to schedule the triggered listeners
+        // It is important we schedule the triggers after the startup listeners are done!
+        this.startupListeners.push(async () => this.scheduleTriggeredListeners());
+
+        // Execute startupListeners in registration order
+        await this.startupListeners.map(l => l(i)).reduce(p => p.then(), Promise.resolve());
+    }
+
+    /**
+     * Schedule the triggered listeners
+     */
+    public scheduleTriggeredListeners(): void {
+        const i: TriggeredListenerInvocation = {
+            addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
+                logger.info("trigger: %j", msg);
+            }),
+            sdm: this,
+        };
+
+        this.triggeredListeners.forEach(t => {
+            if (t.trigger && t.trigger.cron) {
+                const cron = new CronJob({
+                    cronTime: t.trigger.cron,
+                    onTick: () => t.listener(i),
+                    unrefTimeout: true,
+                } as any);
+                cron.start();
+            }
+            if (t.trigger && t.trigger.interval) {
+                setInterval(() => t.listener(i), t.trigger.interval).unref();
+            }
+        });
     }
 
     /**
@@ -278,6 +310,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
+
+        // Register the goal completion listener to update goal set state
+        this.addGoalCompletionListener(GoalSetGoalCompletionListener);
     }
 
 }

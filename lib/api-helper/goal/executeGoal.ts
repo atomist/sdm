@@ -17,6 +17,7 @@
 import {
     configurationValue,
     failure,
+    GitProject,
     HandlerContext,
     HandlerResult,
     logger,
@@ -27,11 +28,15 @@ import * as _ from "lodash";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
-import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import {
+    ExecuteGoalResult,
+    isFailure,
+} from "../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
+    GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
@@ -42,16 +47,22 @@ import {
     GoalExecutionListenerInvocation,
 } from "../../api/listener/GoalStatusListener";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import {
+    isLazyProjectLoader,
+    LazyProject,
+} from "../../spi/project/LazyProjectLoader";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
+import { spawnLog } from "../misc/child_process";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
-import { spawnAndWatch } from "../misc/spawned";
+import { GitHubLazyProjectLoader } from "../project/GitHubLazyProjectLoader";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
 import { mockGoalExecutor } from "./mock";
 import {
@@ -61,10 +72,10 @@ import {
 
 class GoalExecutionError extends Error {
     public readonly where: string;
-    public readonly result?: HandlerResult;
+    public readonly result?: ExecuteGoalResult;
     public readonly cause?: Error;
 
-    constructor(params: { where: string, result?: HandlerResult, cause?: Error }) {
+    constructor(params: { where: string, result?: ExecuteGoalResult, cause?: Error }) {
         super("Failure in " + params.where);
         this.where = params.where;
         this.result = params.result;
@@ -90,44 +101,44 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   implementation: GoalImplementation,
                                   goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
-    const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
+    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
     const { progressReporter, logInterpreter, projectListeners } = implementation;
-    const implementationName = sdmGoal.fulfillment.name;
+    const implementationName = goalEvent.fulfillment.name;
 
     if (!!progressReporter) {
         goalInvocation.progressLog = new WriteToAllProgressLog(
-            sdmGoal.name,
+            goalEvent.name,
             goalInvocation.progressLog,
-            new ProgressReportingProgressLog(progressReporter, sdmGoal, goalInvocation.context),
+            new ProgressReportingProgressLog(progressReporter, goalEvent, goalInvocation.context),
         );
     }
 
-    logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
+    logger.info(`Running ${goalEvent.name}. Triggered by ${goalEvent.state} status: ${goalEvent.externalKey}: ${goalEvent.description}`);
 
-    async function notifyGoalExecutionListeners(goalEvent: SdmGoalEvent, error?: Error) {
+    async function notifyGoalExecutionListeners(sge: SdmGoalEvent, error?: Error) {
         const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
             id,
             context,
             addressChannels,
             credentials,
-            goalEvent,
+            goalEvent: sge,
             error,
         };
         await Promise.all(rules.goalExecutionListeners.map(gel => gel(inProcessGoalExecutionListenerInvocation)));
     }
 
-    const inProcessGoal = await markGoalInProcess({ ctx: context, sdmGoal, goal, progressLogUrl: progressLog.url });
+    const inProcessGoal = await markGoalInProcess({ ctx: context, goalEvent, goal, progressLogUrl: progressLog.url });
     await notifyGoalExecutionListeners(inProcessGoal);
 
     try {
         // execute pre hook
-        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, sdmGoal, "pre") || Success);
-        if (result.code !== 0) {
+        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, goalEvent, "pre") || Success);
+        if (isFailure(result)) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, sdmGoal, configuration)
-            (prepareGoalInvocation(goalInvocation, projectListeners))
+        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, goalEvent, configuration)
+        (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -136,14 +147,14 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
                 throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
-        if (goalResult.code !== 0) {
+        if (isFailure(goalResult)) {
             throw new GoalExecutionError({ where: "executing goal", result: goalResult });
         }
 
         // execute post hook
         const hookResult: ExecuteGoalResult =
-            (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
-        if (hookResult.code !== 0) {
+            (await executeHook(rules, goalInvocation, goalEvent, "post")) || Success;
+        if (isFailure(hookResult)) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
 
@@ -159,10 +170,10 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         };
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus({ context, sdmGoal, goal, result, progressLogUrl: progressLog.url });
+        await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
-        logger.warn("Error executing %s on %s: %s", implementationName, sdmGoal.sha, err.message);
+        logger.warn("Error executing %s on %s: %s", implementationName, goalEvent.sha, err.message);
         logger.warn(err.stack);
         await notifyGoalExecutionListeners({
             ...inProcessGoal,
@@ -173,7 +184,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         }, err);
         await markStatus({
             context,
-            sdmGoal,
+            goalEvent,
             goal,
             result: { code: 1, ...(err.result ? err.result : {}) },
             error: err,
@@ -211,7 +222,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
         progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
-        if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
+        if (await p.hasFile(path.join(".atomist", "hooks", hook))) {
 
             const opts = {
                 cwd: path.join(p.baseDir, ".atomist", "hooks"),
@@ -223,16 +234,11 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     ATOMIST_REPO: sdmGoal.push.repo.name,
                     ATOMIST_OWNER: sdmGoal.push.repo.owner,
                 },
+                log: progressLog,
             };
 
-            let result: HandlerResult = await spawnAndWatch(
-                { command: path.join(p.baseDir, ".atomist", "hooks", hook), args: [] },
-                opts,
-                progressLog,
-                {
-                    errorFinder: code => code !== 0,
-                });
-
+            const cmd = path.join(p.baseDir, ".atomist", "hooks", hook);
+            let result: HandlerResult = await spawnLog(cmd, [], opts);
             if (!result) {
                 result = Success;
             }
@@ -258,14 +264,15 @@ function goalToHookFile(sdmGoal: SdmGoalEvent,
 
 export function markStatus(parameters: {
     context: HandlerContext,
-    sdmGoal: SdmGoalEvent,
+    goalEvent: SdmGoalEvent,
     goal: Goal,
     result: ExecuteGoalResult,
     error?: Error,
     progressLogUrl: string,
 }) {
-    const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
+    const { context, goalEvent, goal, result, error, progressLogUrl } = parameters;
 
+    /* tslint:disable:deprecation */
     let newState = SdmGoalState.success;
     if (result.state) {
         newState = result.state;
@@ -285,33 +292,35 @@ export function markStatus(parameters: {
     if (result.targetUrl) {
         externalUrls.push({ label: "Link", url: result.targetUrl });
     }
+    /* tslint:enable:deprecation */
 
     return updateGoal(
         context,
-        sdmGoal,
+        goalEvent,
         {
             url: progressLogUrl,
             externalUrls,
             state: newState,
-            phase: result.phase ? result.phase : sdmGoal.phase,
+            phase: result.phase ? result.phase : goalEvent.phase,
             description: result.description ? result.description : descriptionFromState(goal, newState),
             error,
+            data: result.data ? result.data : goalEvent.data,
         });
 }
 
 async function markGoalInProcess(parameters: {
     ctx: HandlerContext,
-    sdmGoal: SdmGoalEvent,
+    goalEvent: SdmGoalEvent,
     goal: Goal,
     progressLogUrl: string,
 }): Promise<SdmGoalEvent> {
-    const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
-    sdmGoal.state = SdmGoalState.in_process;
-    sdmGoal.description = goal.inProcessDescription;
-    sdmGoal.url = progressLogUrl;
+    const { ctx, goalEvent, goal, progressLogUrl } = parameters;
+    goalEvent.state = SdmGoalState.in_process;
+    goalEvent.description = goal.inProcessDescription;
+    goalEvent.url = progressLogUrl;
     try {
         await updateGoal(ctx,
-            sdmGoal,
+            goalEvent,
             {
                 url: progressLogUrl,
                 description: goal.inProcessDescription,
@@ -320,7 +329,7 @@ async function markGoalInProcess(parameters: {
     } catch (err) {
         logger.warn("Failed to update %s goal to tell people we are inProcess on it: \n%s", goal.name, err.stack);
     }
-    return sdmGoal;
+    return goalEvent;
 }
 
 /**
@@ -379,8 +388,27 @@ export function prepareGoalExecutor(gi: GoalImplementation,
 
 export function prepareGoalInvocation(gi: GoalInvocation,
                                       listeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[]): GoalInvocation {
-    const hs: GoalProjectListenerRegistration[] =
+
+    let hs: GoalProjectListenerRegistration[] =
         listeners ? (Array.isArray(listeners) ? listeners : [listeners]) : [] as GoalProjectListenerRegistration[];
+
+    if (isLazyProjectLoader(gi.configuration.sdm.projectLoader)) {
+        // Register the materializing listener for LazyProject instances of those need to
+        // get materialized before using in goal implementations
+        const projectMaterializer = {
+            name: "clone project",
+            pushTest: AnyPush,
+            events: [GoalProjectListenerEvent.before],
+            listener: async (p: GitProject & LazyProject) => {
+                if (!p.materialized()) {
+                    // Trigger project materialization
+                    await p.materialize();
+                }
+                return { code: 0 };
+            },
+        };
+        hs = [projectMaterializer, ...hs];
+    }
 
     if (hs.length === 0) {
         return gi;

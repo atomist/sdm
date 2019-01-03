@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../listener/ClosedIssueListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
-import { FingerprintListener } from "../listener/FingerprintListener";
 import { GoalCompletionListener } from "../listener/GoalCompletionListener";
 import { GoalsSetListener } from "../listener/GoalsSetListener";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
@@ -31,7 +29,7 @@ import { StartupListener } from "../listener/StartupListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
-import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
+import { TriggeredListenerRegistration } from "../registration/TriggeredListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -46,6 +44,13 @@ export interface ListenerRegistrationManager {
     addStartupListener(l: StartupListener): this;
 
     /**
+     * Add a listener that gets invoked on time-based triggers
+     * @param {TriggeredListenerRegistration} t
+     * @return {this}
+     */
+    addTriggeredListener(t: TriggeredListenerRegistration): this;
+
+    /**
      * Add a listener that reacts to new issues
      * @param {NewIssueListener} l
      * @return {this}
@@ -54,16 +59,20 @@ export interface ListenerRegistrationManager {
 
     addUpdatedIssueListener(l: UpdatedIssueListener);
 
+    addClosedIssueListener(l: ClosedIssueListener): this;
+
     /**
-     * Invoked when a goal state changes
+     * Invoked when a goal state changes to in-process, success, or failure.
      * @returns {this}
      */
     addGoalExecutionListener(l: GoalExecutionListener);
 
-    addClosedIssueListener(l: ClosedIssueListener): this;
-
     addTagListener(l: TagListener): this;
 
+    /**
+     * Add a listener that will be invoked when a channel is linked to a repo
+     * @param {ChannelLinkListener} l
+     */
     addChannelLinkListener(l: ChannelLinkListener);
 
     /**
@@ -100,8 +109,6 @@ export interface ListenerRegistrationManager {
 
     addGoalCompletionListener(l: GoalCompletionListener): this;
 
-    goalExecutionListeners: GoalExecutionListener[];
-
     /**
      * @param {FingerprintDifferenceListener} fh
      * @return {this}
@@ -110,30 +117,32 @@ export interface ListenerRegistrationManager {
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 
-    startupListeners: StartupListener[];
+    readonly goalExecutionListeners: ReadonlyArray<GoalExecutionListener>;
 
-    userJoiningChannelListeners: UserJoiningChannelListener[];
+    readonly startupListeners: ReadonlyArray<StartupListener>;
 
-    tagListeners: TagListener[];
+    readonly userJoiningChannelListeners: ReadonlyArray<UserJoiningChannelListener>;
 
-    newIssueListeners: NewIssueListener[];
+    readonly tagListeners: ReadonlyArray<TagListener>;
 
-    updatedIssueListeners: UpdatedIssueListener[];
+    readonly newIssueListeners: ReadonlyArray<NewIssueListener>;
 
-    closedIssueListeners: ClosedIssueListener[];
+    readonly updatedIssueListeners: ReadonlyArray<UpdatedIssueListener>;
 
-    repoCreationListeners: RepoCreationListener[];
+    readonly closedIssueListeners: ReadonlyArray<ClosedIssueListener>;
 
-    repoOnboardingListeners: ProjectListener[];
+    readonly repoCreationListeners: ReadonlyArray<RepoCreationListener>;
 
-    pullRequestListeners: PullRequestListener[];
+    readonly repoOnboardingListeners: ReadonlyArray<ProjectListener>;
 
-    firstPushListeners: PushListener[];
+    readonly pullRequestListeners: ReadonlyArray<PullRequestListener>;
 
-    channelLinkListeners: ChannelLinkListener[];
+    readonly firstPushListeners: ReadonlyArray<PushListener>;
 
-    goalsSetListeners: GoalsSetListener[];
+    readonly channelLinkListeners: ReadonlyArray<ChannelLinkListener>;
 
-    goalCompletionListeners: GoalCompletionListener[];
+    readonly goalsSetListeners: ReadonlyArray<GoalsSetListener>;
+
+    readonly goalCompletionListeners: ReadonlyArray<GoalCompletionListener>;
 
 }

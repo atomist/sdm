@@ -40,6 +40,11 @@ import { AnyProjectEditor } from "@atomist/automation-client/lib/operations/edit
 import { generate } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
 import { isProject } from "@atomist/automation-client/lib/project/Project";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    bold,
+    codeBlock,
+    url,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
@@ -48,6 +53,11 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "../../machine/toMachineOptions";
+import {
+    slackErrorMessage,
+    slackInfoMessage,
+    slackSuccessMessage,
+} from "../../misc/slack/messages";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 
 /**
@@ -79,6 +89,7 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
 }
 
 export type EditorFactory<P> = (params: P, ctx: HandlerContext) => AnyProjectEditor<P>;
+
 interface GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters> extends CommandDetails {
 
     redirecter: (r: RepoRef) => string;
@@ -125,28 +136,41 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                                                                params: P,
                                                                details: GeneratorCommandDetails<P>,
                                                                startingPoint: StartingPoint<P>): Promise<RedirectResult> {
-    const r = await generate(
-        computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
-        ctx,
-        params.target.credentials,
-        editorFactory(params, ctx),
-        details.projectPersister,
-        params.target.repoRef,
-        params,
-        details.afterAction,
-    );
-    await ctx.messageClient.respond(`Created and pushed new project ${params.target.repoRef.url}`);
-    if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
-        const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
-        if (!webhookInstalled) {
-            await addAtomistWebhook((r.target as GitProject), params);
+    try {
+        const r = await generate(
+            computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
+            ctx,
+            params.target.credentials,
+            editorFactory(params, ctx),
+            details.projectPersister,
+            params.target.repoRef,
+            params,
+            details.afterAction,
+        );
+        await ctx.messageClient.respond(
+            slackSuccessMessage(
+                `Create Project`,
+                `Successfully created new project ${bold(`${params.target.repoRef.owner}/${
+                    params.target.repoRef.repo}`)} at ${url(params.target.repoRef.url)}`));
+        if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
+            const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
+            if (!webhookInstalled) {
+                await addAtomistWebhook((r.target as GitProject), params);
+            }
         }
+        return {
+            code: 0,
+            // Redirect to local project page
+            redirect: details.redirecter(params.target.repoRef),
+        };
+    } catch (err) {
+        await ctx.messageClient.respond(
+            slackErrorMessage(
+                `Create Project`,
+                `Project creation for ${bold(`${params.target.repoRef.owner}/${params.target.repoRef.repo}`)} failed:
+${codeBlock(err.message)}`,
+                ctx));
     }
-    return {
-        code: 0,
-        // Redirect to local project page
-        redirect: details.redirecter(params.target.repoRef),
-    };
 }
 
 const OrgWebhookQuery = `query OrgWebhook($owner: String!) {
@@ -187,14 +211,15 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
             throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +
                 `Offending registration had intent ${details.intent}`);
         }
-        await ctx.messageClient.respond(`Cloning seed project from parameters: ${params.source.repoRef.url}`);
+        await infoMessage(`Cloning seed project from parameters ${url(params.source.repoRef.url)}`, ctx);
         return repoLoader(params.source.repoRef);
     }
     if (isProject(startingPoint)) {
-        await ctx.messageClient.respond(`Using starting point project specified in registration`);
+        await infoMessage(`Using starting point project specified in registration`, ctx);
         return startingPoint;
     } else if (isRemoteRepoRef(startingPoint as RepoRef)) {
-        await ctx.messageClient.respond(`Cloning seed project from starting point: ${(startingPoint as RemoteRepoRef).url}`);
+        const source = startingPoint as RemoteRepoRef;
+        await infoMessage(`Cloning seed project from starting point ${bold(`${source.owner}/${source.repo}`)} at ${url(source.url)}`, ctx);
         const repoRef = startingPoint as RemoteRepoRef;
         params.source = { repoRef };
         return repoLoader(repoRef);
@@ -203,16 +228,16 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
         const rr: RemoteRepoRef | Project | Promise<Project> = (startingPoint as any)(params);
         if (isProjectPromise(rr)) {
             await rr.then(async (p: Project) =>
-                ctx.messageClient.respond(`Using dynamically chosen starting point project \`${p.id.owner}:${p.id.repo}\``),
+                infoMessage(`Using dynamically chosen starting point project ${bold(`${p.id.owner}:${p.id.repo}`)}`, ctx),
             );
             return rr;
         }
         if (isProject(rr)) {
-            await ctx.messageClient.respond(`Using dynamically chosen starting point project \`${rr.id.owner}:${rr.id.repo}\``);
+            await infoMessage(`Using dynamically chosen starting point project ${bold(`${rr.id.owner}:${rr.id.repo}`)}`, ctx);
             // params.source will remain undefined in this case
             return rr;
         } else {
-            await ctx.messageClient.respond(`Cloning dynamically chosen starting point from ${rr.url}`);
+            await infoMessage(`Cloning dynamically chosen starting point from ${url(rr.url)}`, ctx);
             params.source = { repoRef: rr };
             return repoLoader(rr);
         }
@@ -232,4 +257,8 @@ function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareD
         projectPersister: opts.projectPersister,
         redirecter: () => undefined,
     };
+}
+
+async function infoMessage(text: string, ctx: HandlerContext): Promise<void> {
+    return ctx.messageClient.respond(slackInfoMessage("Create Project", text));
 }

@@ -68,7 +68,7 @@ export interface GoalsBuilder {
      * @param {GoalDefinition | Goal | Goals} goals
      * @returns {Goals & GoalsAndPreConditionBuilder}
      */
-    plan(...goals: Array<GoalDefinition| Goal | Goals>): Goals & GoalsAndPreConditionBuilder;
+    plan(...goals: Array<GoalDefinition | Goal | Goals>): Goals & GoalsAndPreConditionBuilder;
 
 }
 
@@ -80,13 +80,14 @@ export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
     /**
      * Add preCondition(s) to previously planned goal or goals.
      * Note:
-     * This only will effect the goal or goals that where planned immediately
-     * before calling after. Additional a call to this method will remove all pre conditions
+     * This only will affect the goal or goals that were planned immediately
+     * before calling `after`.
+     * Only call this once; an additional call will remove other preconditions
      * that may have existed on the original goal.
      * @param {Goal} goals
      * @returns {Goals & GoalsBuilder}
      */
-    after(...goals: Array<Goals| GoalDefinition | Goal>): Goals & GoalsBuilder;
+    after(...goals: Array<Goals | GoalDefinition | Goal>): Goals & GoalsBuilder;
 
 }
 

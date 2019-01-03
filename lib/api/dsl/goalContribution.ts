@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import * as _ from "lodash";
+import { computeShaOf } from "../../api-helper/misc/sha";
 import { SdmContext } from "../context/SdmContext";
 import { Locking } from "../goal/common/Locking";
 import { Goal } from "../goal/Goal";
@@ -39,6 +40,45 @@ import {
 
 export interface GoalContribution<F> extends Mapping<F, GoalComponent>, Predicated<F> {
 
+}
+
+/**
+ * Add state to an invocation. Only available in memory.
+ * @param S type of the fact to add.
+ */
+export interface StatefulInvocation<S> extends SdmContext {
+
+    facts?: S;
+}
+
+/**
+ * Within evaluation of push rules we can manage state on a push.
+ * This interface allows state. This state will not be persisted.
+ */
+export interface StatefulPushListenerInvocation<S> extends PushListenerInvocation, StatefulInvocation<S> {
+
+}
+
+/**
+ * Enrich the invocation, attaching some facts.
+ * The returned object will be merged with any facts already on the invocation.
+ * @param {(f: (StatefulInvocation<FACT>)) => Promise<FACT>} compute additional facts.
+ * @return {GoalContribution<F>}
+ */
+export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>(compute: (f: F) => Promise<FACT>): GoalContribution<F> {
+    return {
+        name: "attachFacts-" + computeShaOf(compute.toString()),
+        mapping: async f => {
+            const withAdditionalFact = f as F & StatefulInvocation<FACT>;
+            if (!withAdditionalFact.facts) {
+                withAdditionalFact.facts = {} as FACT;
+            }
+            const additionalState = await compute(withAdditionalFact);
+            _.merge(withAdditionalFact.facts, additionalState);
+            // The GoalContribution itself will be ignored
+            return undefined;
+        },
+    };
 }
 
 /**
@@ -108,7 +148,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
  * @param {GoalContribution<F>} contributors
  * @return a mapping to goals
  */
-export function goalContributors<F extends SdmContext = PushListenerInvocation>(
+export function goalContributors<F extends SdmContext = StatefulPushListenerInvocation<any>>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     if (contributors.length === 0) {
@@ -124,7 +164,7 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
  * @param {GoalContribution<F extends SdmContext>} contributors
  * @return {Mapping<F extends SdmContext, Goals>}
  */
-export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>(
+export function enrichGoalSetters<F extends SdmContext = StatefulPushListenerInvocation<any>>(
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> & GoalSettingStructure<F, Goals> {

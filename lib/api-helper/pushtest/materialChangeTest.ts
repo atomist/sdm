@@ -16,9 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import * as minimatch from "minimatch";
-import {
-    DefaultGoalNameGenerator,
-} from "../../api/goal/GoalNameGenerator";
+import { DefaultGoalNameGenerator } from "../../api/goal/GoalNameGenerator";
 import {
     pushTest,
     PushTest,

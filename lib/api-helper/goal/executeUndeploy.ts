@@ -27,8 +27,8 @@ import { Target } from "../../spi/deploy/Target";
 
 export function executeUndeploy(target: Target): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { id, credentials, sdmGoal, progressLog } = goalInvocation;
-        const pushBranch = sdmGoal.branch;
+        const { id, credentials, goalEvent, progressLog } = goalInvocation;
+        const pushBranch = goalEvent.branch;
 
         const targetInfo = target.targeter(id, pushBranch);
         const deployments = await target.deployer.findDeployments(id, targetInfo, credentials);

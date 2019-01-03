@@ -41,7 +41,6 @@ import {
 } from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import {
-    OnAnyRequestedSdmGoal,
     OnPushToAnyBranch,
     PushFields,
     SdmGoalState,
@@ -233,6 +232,7 @@ export async function storeGoalSet(ctx: HandlerContext,
             owner: push.repo.owner,
             providerId: push.repo.org.provider.providerId,
         },
+        state: goalSetState(sdmGoals),
         goals: sdmGoals.map(g => ({
             name: g.name,
             uniqueName: g.uniqueName,
@@ -240,6 +240,37 @@ export async function storeGoalSet(ctx: HandlerContext,
         provenance: constructProvenance(ctx),
     };
     return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
+}
+
+export function goalSetState(goals: Array<Pick<SdmGoalMessage, "name" | "state">>): SdmGoalState {
+    if (goals.some(g => g.state === SdmGoalState.failure)) {
+        return SdmGoalState.failure;
+    } else if (goals.some(g => g.state === SdmGoalState.canceled)) {
+        return SdmGoalState.canceled;
+    } else if (goals.some(g => g.state === SdmGoalState.stopped)) {
+        return SdmGoalState.stopped;
+    } else if (goals.some(g => g.state === SdmGoalState.in_process)) {
+        return SdmGoalState.in_process;
+    } else if (goals.some(g => g.state === SdmGoalState.waiting_for_pre_approval)) {
+        return SdmGoalState.waiting_for_pre_approval;
+    } else if (goals.some(g => g.state === SdmGoalState.waiting_for_approval)) {
+        return SdmGoalState.waiting_for_approval;
+    } else if (goals.some(g => g.state === SdmGoalState.pre_approved)) {
+        return SdmGoalState.pre_approved;
+    } else if (goals.some(g => g.state === SdmGoalState.approved)) {
+        return SdmGoalState.approved;
+    } else if (goals.some(g => g.state === SdmGoalState.requested)) {
+        return SdmGoalState.requested;
+    } else if (goals.some(g => g.state === SdmGoalState.planned)) {
+        return SdmGoalState.planned;
+    } else if (goals.some(g => g.state === SdmGoalState.skipped)) {
+        return SdmGoalState.skipped;
+    } else if (goals.every(g => g.state === SdmGoalState.success)) {
+        return SdmGoalState.success;
+    } else {
+        const unknowns = goals.filter(g => g.state !== SdmGoalState.success).map(g => `${g.name}:${g.state}`);
+        throw new Error("Unknown goal state(s): " + JSON.stringify(unknowns));
+    }
 }
 
 function cleanPush(push: PushFields.Fragment): PushFields.Fragment {
