@@ -26,6 +26,10 @@ export const CloningProjectLoader: ProjectLoader = {
         // tslint:disable-next-line:deprecation
         const cloneOptions = coords.cloneOptions ? coords.cloneOptions : { depth: coords.depth };
         const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, cloneOptions);
+        if (p.id.sha === "HEAD") {
+            const gs = await p.gitStatus();
+            p.id.sha = gs.sha;
+        }
         return action(p);
     },
 };
