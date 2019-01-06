@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.2.0...HEAD)
 
+### Changed
+
+-   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
+
 ## [1.2.0](https://github.com/atomist/sdm/compare/1.1.0...1.2.0) - 2018-12-27
 
 ### Added
