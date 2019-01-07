@@ -185,7 +185,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameter and secret via indexed property, with spread", () => {
-        const halfOfParameters: ParametersObject = {
+        const halfOfParameters: ParametersObject<{bar: string, x1: string, y1: string}> = {
             bar: { required: true },
             x1: { declarationType: DeclarationType.secret, uri: "http://thing1" },
             y1: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
@@ -393,6 +393,23 @@ describe("command registrations", () => {
     it("should create command handler with autoSubmit", async () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
+            listener: async ci => { return; },
+            autoSubmit: true,
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        const md = metadataFromInstance(instance) as CommandHandlerMetadata;
+        assert(md.auto_submit);
+        assert.strictEqual(md.name, "test");
+    });
+
+    it("should match parameters for command handler", async () => {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+            name: "test",
+            parameters: {
+                foo: {},
+                bar: {},
+            },
             listener: async ci => { return; },
             autoSubmit: true,
         };

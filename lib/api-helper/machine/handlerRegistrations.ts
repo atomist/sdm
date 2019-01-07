@@ -372,7 +372,7 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
                 paramsInstance = {};
                 paramsInstance.__kind = "command-handler";
             }
-            const paramListing = toParametersListing(c.parameters);
+            const paramListing = toParametersListing(c.parameters as any);
             paramListing.parameters.forEach(p => {
                 paramsInstance[p.name] = p.defaultValue;
                 declareParameter(paramsInstance, p.name, p);
@@ -391,12 +391,12 @@ function isMappedParameterOrSecretDeclaration(x: any): x is MappedParameterOrSec
     return !!maybe && !!maybe.declarationType;
 }
 
-function isParametersListing(p: ParametersDefinition): p is ParametersListing {
+function isParametersListing(p: ParametersDefinition<any>): p is ParametersListing {
     const maybe = p as ParametersListing;
     return maybe.parameters !== undefined && maybe.mappedParameters !== undefined;
 }
 
-export function toParametersListing(p: ParametersDefinition): ParametersListing {
+export function toParametersListing(p: ParametersDefinition<any>): ParametersListing {
     if (isParametersListing(p)) {
         return p;
     }
