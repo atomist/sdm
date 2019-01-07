@@ -15,6 +15,7 @@
  */
 
 import {
+    CloneOptions,
     failure,
     logger,
     ProjectReview,
@@ -51,6 +52,7 @@ export interface AutoInspectOptions {
     registrations: Array<AutoInspectRegistration<any, any>>;
     listeners: ReviewListenerRegistration[];
     reportToSlack: boolean;
+    cloneOptions?: CloneOptions;
 }
 
 /**
@@ -71,7 +73,8 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
                 credentials,
                 id,
                 readOnly: true,
-                cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
+                cloneOptions:
+                    options.cloneOptions ? options.cloneOptions : minimalClone(goalEvent.push, { detachHead: true }),
             }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: %s",

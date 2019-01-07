@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CloneOptions } from "@atomist/automation-client";
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
@@ -34,7 +35,17 @@ import { IndependentOfEnvironment } from "../support/environment";
  * Options to configure the behavior of the AutoCodeInspection goal.
  */
 export interface AutoCodeInspectionOptions {
+    /**
+     * Report code inspection results to slack
+     */
     reportToSlack?: boolean;
+
+    /**
+     * In case more Git history is required for running the code inspection, pass
+     * appropriate CloneOptions
+     * By default only a shallow clone with depth push.commits.length + 1 is executed
+     */
+    cloneOptions?: CloneOptions;
 }
 
 const DefaultAutoCodeInspectionOptions: AutoCodeInspectionOptions = {
@@ -62,6 +73,7 @@ export class AutoCodeInspection
             name: `code-inspections-${this.definition.uniqueName}`,
             goalExecutor: executeAutoInspects({
                 reportToSlack: optsToUse.reportToSlack,
+                cloneOptions: optsToUse.cloneOptions,
                 registrations: this.registrations,
                 listeners: this.listeners,
             }),
