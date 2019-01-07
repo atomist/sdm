@@ -63,12 +63,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
-                    credentials,
-                    id,
-                    context,
-                    readOnly: false,
-                    cloneOptions: minimalClone(push),
-                },
+                credentials,
+                id,
+                context,
+                readOnly: false,
+                cloneOptions: minimalClone(push),
+            },
                 async project => {
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
@@ -123,6 +123,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
         } catch (err) {
             logger.warn("Autofixes failed with '%s':\n%s", err.message, err.stack);
             progressLog.write(sprintf("Autofixes failed with '%s'", err.message));
+            if (err.stdout) {
+                progressLog.write(err.stdout);
+            }
+            if (err.stderr) {
+                progressLog.write(err.stderr);
+            }
             return {
                 code: 1,
                 message: err.message,
