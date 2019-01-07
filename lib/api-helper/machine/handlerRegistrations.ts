@@ -63,6 +63,7 @@ import {
     isValidationError,
     RepoTargets,
 } from "../../api/machine/RepoTargets";
+import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { ProjectPredicate } from "../../api/mapping/PushTest";
 import {
     CodeInspectionRegistration,
@@ -147,7 +148,7 @@ ${codeBlock(vr.message)}`,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
+                chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -248,7 +249,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
-        () => toScalarProjectEditor(e.transform),
+        () => toScalarProjectEditor(e.transform, toMachineOptions(sdm)),
         e.name,
         e.paramsMaker,
         e.fallbackTarget || GitHubRepoCreationParameters,
@@ -281,8 +282,8 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
     addParametersDefinedInBuilder(c);
-    return () => async (context, parameters) => {
-        const cli = toCommandListenerInvocation(c, context, parameters);
+    return sdm => async (context, parameters) => {
+        const cli = toCommandListenerInvocation(c, context, parameters, toMachineOptions(sdm));
         try {
             await c.listener(cli);
             return Success;
@@ -297,7 +298,10 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
     };
 }
 
-function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
+function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
+                                        context: HandlerContext,
+                                        parameters: P,
+                                        sdm: SoftwareDeliveryMachineOptions): CommandListenerInvocation {
     // It may already be there
     let credentials = !!context ? (context as any as SdmContext).credentials : undefined;
     let ids: RemoteRepoRef[];
@@ -308,6 +312,15 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
         credentials = parameters.targets.credentials;
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }
+
+    if (!credentials && !!ids && ids.length > 0 && !!sdm.credentialsResolver) {
+        try {
+            credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids[0]);
+        } catch (e) {
+            logger.warn(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
+        }
+    }
+
     // TODO do a look up for associated channels
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
     return {
@@ -412,10 +425,12 @@ export function toParametersListing(p: ParametersDefinition): ParametersListing 
  * @param {ProjectPredicate} projectPredicate
  * @return {ProjectEditor<PARAMS>}
  */
-export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>, projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>,
+                                              sdm: SoftwareDeliveryMachineOptions,
+                                              projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
     const unguarded = Array.isArray(ctot) ?
-        chainEditors(...ctot.map(toProjectEditor)) :
-        toProjectEditor(ctot);
+        chainEditors(...ctot.map(c => toProjectEditor(c, sdm))) :
+        toProjectEditor(ctot, sdm);
     if (!!projectPredicate) {
         // Filter out this project if it doesn't match the predicate
         return async (p, context, params) => {
@@ -429,9 +444,10 @@ export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PA
 
 // Convert to an old style, automation-client, ProjectEditor to allow
 // underlying code to work for now
-function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
+function toProjectEditor<P>(ct: CodeTransform<P>,
+                            sdm: SoftwareDeliveryMachineOptions): ProjectEditor<P> {
     return async (p, ctx, params) => {
-        const ci = toCommandListenerInvocation(p, ctx, params);
+        const ci = toCommandListenerInvocation(p, ctx, params, toMachineOptions(sdm));
         // Mix in handler context for old style callers
         const n = await ct(p, {
                 ...ctx,

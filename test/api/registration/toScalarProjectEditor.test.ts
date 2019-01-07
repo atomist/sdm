@@ -26,7 +26,7 @@ describe("toScalarProjectEditor", () => {
 
     it("should invoke single transform without parameters", async () => {
         const ct: CodeTransform = async p => p.addFile("foo", "bar");
-        const pe = toScalarProjectEditor(ct);
+        const pe = toScalarProjectEditor(ct, {} as any);
         const project = InMemoryProject.of();
         const r = await pe(project);
         assert.notStrictEqual(r.edited, false);
@@ -37,7 +37,7 @@ describe("toScalarProjectEditor", () => {
     it("should invoke single transform with parameters", async () => {
         const ct: CodeTransform<{ name: string }> = async (p, ci) =>
             p.addFile(ci.parameters.name, "bar");
-        const pe = toScalarProjectEditor(ct);
+        const pe = toScalarProjectEditor(ct, {} as any);
         const project = InMemoryProject.of();
         const r = await pe(project, undefined, { name: "tony" });
         assert.notStrictEqual(r.edited, false);
@@ -49,7 +49,7 @@ describe("toScalarProjectEditor", () => {
         const ct: CodeTransform<{ name: string }> = async (p, ci) => {
             await p.addFile(ci.parameters.name, "bar");
         };
-        const pe = toScalarProjectEditor(ct);
+        const pe = toScalarProjectEditor(ct, {} as any);
         const project = InMemoryProject.of();
         const r = await pe(project, undefined, { name: "tony" });
         assert.notStrictEqual(r.edited, false);
@@ -64,7 +64,7 @@ describe("toScalarProjectEditor", () => {
             async p =>
                 p.addFile("foo", "bar"),
         ];
-        const pe = toScalarProjectEditor(ct);
+        const pe = toScalarProjectEditor(ct, {} as any);
         const project = InMemoryProject.of();
         const r = await pe(project, undefined, { name: "tony" });
         assert.notStrictEqual(r.edited, false);

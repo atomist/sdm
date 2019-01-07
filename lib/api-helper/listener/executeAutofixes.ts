@@ -31,6 +31,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
+import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -94,7 +95,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                     };
 
                     for (const autofix of _.flatten(relevantAutofixes)) {
-                        const thisEdit = await runOne(cri, autofix, progressLog);
+                        const thisEdit = await runOne(cri, autofix, progressLog, configuration);
                         if (thisEdit.edited) {
                             appliedAutofixes.push(autofix);
                         }
@@ -141,7 +142,8 @@ function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
 
 async function runOne(cri: PushImpactListenerInvocation,
                       autofix: AutofixRegistration,
-                      progressLog: ProgressLog): Promise<EditResult> {
+                      progressLog: ProgressLog,
+                      configuration: SoftwareDeliveryMachineConfiguration): Promise<EditResult> {
     const project = cri.project;
     progressLog.write(sprintf("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name));
     try {
@@ -150,7 +152,7 @@ async function runOne(cri: PushImpactListenerInvocation,
             ...cri,
             push: cri,
         } as any;
-        const tentativeEditResult = await toScalarProjectEditor(autofix.transform)(
+        const tentativeEditResult = await toScalarProjectEditor(autofix.transform, configuration.sdm)(
             project,
             arg2,
             autofix.parametersInstance);
