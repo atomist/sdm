@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.2.0...HEAD)
 
+### Added
+
+-   Make full clone an option on CodeInspection Goal. [#643](https://github.com/atomist/sdm/issues/643)
+
 ### Changed
 
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
