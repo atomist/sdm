@@ -16,7 +16,7 @@
 
 import { BaseParameter } from "@atomist/automation-client";
 
-export type ParametersDefinition<PARAMS> = ParametersListing | ParametersObject<PARAMS>;
+export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersObject<PARAMS>;
 
 /**
  * Interface mixed in with BaseParameter to allow adding a default value to a parameter.
