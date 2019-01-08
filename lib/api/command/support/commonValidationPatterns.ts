@@ -22,10 +22,33 @@ import { BaseParameter } from "@atomist/automation-client";
  */
 export const SemVerRegExp: Partial<BaseParameter> = {
     displayName: "Version",
-    description: "initial version of the project, e.g., 1.2.3-SNAPSHOT",
+    description: "version of the project, e.g., 1.2.3-SNAPSHOT",
     // tslint:disable-next-line:max-line-length
     pattern: /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(?:[1-9]\d*|\d*[-A-Za-z][-A-Za-z\d]*)(?:\.(?:[1-9]\d*|\d*[-A-Za-z][-A-Za-z\d]*))*)?(?:\+[-A-Za-z\d]+(?:\.[-A-Za-z\d]+)*)?$/,
     validInput: "a valid semantic version, http://semver.org",
     minLength: 1,
     maxLength: 50,
+};
+
+export const GitHubNameRegExp: Partial<BaseParameter> = {
+    displayName: "GitHub name",
+    description: "valid GitHub name",
+    pattern: /^[-.\w]+$/,
+    validInput: "a valid GitHub name which consists of alphanumeric, ., -, and _ characters",
+};
+
+export const GitBranchRegExp: Partial<BaseParameter> = {
+    displayName: "Branch",
+    description: "initial version of the project, e.g., 1.2.3-SNAPSHOT",
+    // not perfect, but pretty good
+    pattern: /^\w(?:[./]?[-\w])*$/,
+    validInput: "a valid Git branch name, see" +
+        " https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html",
+};
+
+export const GitShaRegExp: Partial<BaseParameter> = {
+    displayName: "Sha",
+    description: "valid Git SHA",
+    pattern: /^[0-9a-f]{40}$/,
+    validInput: "40 hex digits, lowercase",
 };
