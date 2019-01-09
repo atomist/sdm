@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
 
+### Fixed
+
+-   Errors in machine function can get swallowed and ignored . [#654](https://github.com/atomist/sdm/issues/654)
+
 ## [1.2.0](https://github.com/atomist/sdm/compare/1.1.0...1.2.0) - 2018-12-27
 
 ### Added
