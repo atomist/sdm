@@ -41,6 +41,7 @@ export interface EssentialGoalInfo extends Partial<GoalDefinition> {
 /**
  * Create a goal with basic information
  * and an action callback.
+ * @deprecated use goal()
  */
 export function createGoal(egi: EssentialGoalInfo,
                            goalExecutor: ExecuteGoal,
