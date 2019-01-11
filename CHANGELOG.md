@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Make full clone an option on CodeInspection Goal. [#643](https://github.com/atomist/sdm/issues/643)
+-   Add mergeOptions method. [939c04c](https://github.com/atomist/sdm/commit/939c04cf28114c42808712d3246645d0ab4bb96f)
 
 ### Changed
 
