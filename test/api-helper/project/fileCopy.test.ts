@@ -15,9 +15,8 @@
  */
 
 import {
-    configureLogging,
     GitHubRepoRef,
-    InMemoryProject, MinimalLogging,
+    InMemoryProject,
 } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {
@@ -28,7 +27,6 @@ import {
 } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
-    before(() => configureLogging(MinimalLogging));
     it("should copy file from url", async () => {
         const recipient = InMemoryProject.of();
         await (copyFileFromUrl("https://raw.githubusercontent.com/spring-team/spring-rest-seed/master/pom.xml", "pom.xml"))(recipient, undefined);
@@ -54,9 +52,9 @@ describe("fileCopy", () => {
 
     it("should copy a subset of files from donor project according to glob", async () => {
         const donorProject = InMemoryProject.of(
-            {path: "/", content: "root file"},
-            {path: "a/b/a", content: "b/a file"},
-            {path: "a/b/b", content: "b/b file"},
+            {path: "a/b/a", content: "a/b/a file"},
+            {path: "a/b/b", content: "a/b/b file"},
+            {path: "x/b/b", content: "x/b/b file"},
         );
 
         const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"], recipientPath: "c/" };
@@ -73,67 +71,22 @@ describe("fileCopy", () => {
     });
 
     it("should copy a subset of files from donor project handling undefined recipient path", async () => {
-        let i = 0;
-
         const donorProject = InMemoryProject.of(
-            {path: "/", content: "root file"},
-            {path: "a/b/a", content: "b/a file"},
-            {path: "a/b/b", content: "b/b file"},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
-            {path: "a/b/c" + (++i), content: "b/c file " + i},
+            {path: "a/b/a", content: "a/b/a file"},
+            {path: "a/b/b", content: "a/b/b file"},
+            {path: "x/b/b", content: "x/b/b file"},
         );
 
-        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"]};
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"] };
         const recipient = InMemoryProject.of();
 
         await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
 
-        i = 0;
-        const numDonorFiles = await donorProject.totalFileCount();
-        assert(23 === (numDonorFiles), "Num files " + numDonorFiles);
+        assert(3 === (await donorProject.totalFileCount()));
 
-        assert(!!(await recipient.getFile("a/b/b")));
         assert(!!(await recipient.getFile("a/b/a")));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
-        assert(!!(await recipient.getFile("a/b/c" + (++i))));
+        assert(!!(await recipient.getFile("a/b/b")));
 
-        const totalFiles = await recipient.totalFileCount();
-        assert(22 === (totalFiles), "Num files " + totalFiles);
+        assert(2 === (await recipient.totalFileCount()));
     });
 });

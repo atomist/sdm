@@ -116,11 +116,11 @@ export function streamFiles(donorProject: Project,
                 .on("data", donorFile => {
                     const newPath = (fileGlobMapping.recipientPath || "") + donorFile.path;
                     p.addFileSync(newPath, donorFile.getContentSync());
-                    logger.verbose("file copied: ", donorFile);
+                    logger.debug("file added: ", donorFile.path);
                 })
                 .on("error", e => {
                     logger.warn("Error copying file: ", e);
-                    reject();
+                    reject(e);
                 });
         });
     };
