@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
 
+### Deprecated
+
+-   Deprecated createGoal(). [8b27e81](https://github.com/atomist/sdm/commit/8b27e811de1bd76f538e6b311256da939904af97)
+
 ### Fixed
 
 -   Errors in machine function can get swallowed and ignored . [#654](https://github.com/atomist/sdm/issues/654)
