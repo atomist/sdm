@@ -15,7 +15,10 @@
  */
 
 import * as assert from "power-assert";
-import { goal } from "../../../lib/api/goal/GoalWithFulfillment";
+import {
+    goal,
+    mergeOptions,
+} from "../../../lib/api/goal/GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
 
 describe("GoalWithFulfillment", () => {
@@ -27,6 +30,20 @@ describe("GoalWithFulfillment", () => {
             assert(g.uniqueName.startsWith("goal#GoalWithFulfillment.test.ts"));
             assert.strictEqual(g.uniqueName, g.name);
             assert.strictEqual(g.environment, IndependentOfEnvironment);
+        });
+
+    });
+
+    describe("mergeOptions", () => {
+
+        it("should merge defaults with explicit values", () => {
+            const opts = mergeOptions({ foo: { bar: 1 } }, { foo: { bar: 2, bla: 3 } });
+            assert.deepStrictEqual(opts, { foo: { bar: 2, bla: 3 } });
+        });
+
+        it("should merge defaults with explicit values with partial overwrite", () => {
+            const opts = mergeOptions({ foo: { bar: 1 } }, { foo: { bla: 3 } });
+            assert.deepStrictEqual(opts, { foo: { bar: 1, bla: 3 } });
         });
 
     });

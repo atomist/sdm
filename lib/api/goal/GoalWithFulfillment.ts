@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client";
+import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -169,10 +171,10 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     public withExecutionListener(listener: GoalExecutionListener): this {
         const wrappedListener = async gi => {
-                if (gi.goalEvent.uniqueName === this.uniqueName) {
-                    return listener(gi);
-                }
-            };
+            if (gi.goalEvent.uniqueName === this.uniqueName) {
+                return listener(gi);
+            }
+        };
         if (this.sdm) {
             this.sdm.addGoalExecutionListener(wrappedListener);
         }
@@ -312,6 +314,12 @@ export function goal(details: FulfillableGoalDetails = {},
     return g;
 }
 
+/**
+ * Construct a PredicatedGoalDefinition from the provided goalDetails
+ * @param goalDetails
+ * @param uniqueName
+ * @param definition
+ */
 // tslint:disable:cyclomatic-complexity
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
                                       uniqueName: string,
@@ -350,6 +358,23 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
             preCondition: goalDetails.preCondition,
         };
     }
+}
+
+/**
+ * Merge Goal configuration options into a final options object.
+ * Starts off by merging the explicitly provided options over the provided defaults; finally merges the configuration
+ * values at the given configuration path (prefixed with sdm.) over the previous merge.
+ * @param defaults
+ * @param explicit
+ * @param configurationPath
+ */
+export function mergeOptions<OPTIONS>(defaults: OPTIONS, explicit: OPTIONS, configurationPath?: string): OPTIONS {
+    const options: OPTIONS = _.merge(defaults, explicit || {});
+    if (!!configurationPath) {
+        const configurationOptions = configurationValue<OPTIONS>(`sdm.${configurationPath}`, {} as any);
+        return _.merge(options, configurationOptions);
+    }
+    return options;
 }
 
 function getEnvironment(details?: { environment?: string | GoalEnvironment }): GoalEnvironment {
