@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    HandlerResult,
-} from "@atomist/automation-client";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { SdmGoalEvent } from "../SdmGoalEvent";
+import { ExecuteGoalResult } from "../ExecuteGoalResult";
+import { GoalInvocation } from "../GoalInvocation";
 
 /**
- * Launch a goal in an isolated environment (container or process) for fulfillment.
+ * Launch a goal in an environment (container or process) for fulfillment.
  */
-export type IsolatedGoalLauncher = (goal: SdmGoalEvent,
-                                    ctx: HandlerContext,
-                                    progressLog: ProgressLog) => Promise<HandlerResult>;
+export interface GoalLauncher {
+
+    /**
+     * Does this GoalLauncher support launching provided goals
+     * @param gi
+     */
+    supports(gi: GoalInvocation): Promise<boolean>;
+
+    /**
+     * Launch the provided goal
+     * @param gi
+     */
+    launch(gi: GoalInvocation): Promise<ExecuteGoalResult>;
+}

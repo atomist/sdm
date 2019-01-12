@@ -27,12 +27,8 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
-import { IsolatedGoalLauncher } from "../goal/support/IsolatedGoalLauncher";
+import { GoalLauncher } from "../goal/support/GoalLauncher";
 import { RepoTargets } from "./RepoTargets";
-
-/**
- * Parameters for targeting transforms or inspections to repos
- */
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -86,7 +82,7 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Strategy for launching goals in different infrastructure
      */
-    goalLauncher?: IsolatedGoalLauncher;
+    goalLauncher?: GoalLauncher | GoalLauncher[];
 
     /**
      * AddressChannels for communicating with system administrator.
