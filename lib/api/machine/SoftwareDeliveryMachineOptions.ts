@@ -82,7 +82,7 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Strategy for launching goals in different infrastructure
      */
-    goalLauncher?: GoalScheduler | GoalScheduler[];
+    goalScheduler?: GoalScheduler | GoalScheduler[];
 
     /**
      * AddressChannels for communicating with system administrator.
