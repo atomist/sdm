@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
+-   Make goal launching more pluggable. [#656](https://github.com/atomist/sdm/issues/656)
 
 ### Deprecated
 
