@@ -15,15 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
--   Make goal launching more pluggable. [#656](https://github.com/atomist/sdm/issues/656)
+-   Make goal scheduling more plugable. [#656](https://github.com/atomist/sdm/issues/656)
 
 ### Deprecated
 
--   Deprecated createGoal(). [8b27e81](https://github.com/atomist/sdm/commit/8b27e811de1bd76f538e6b311256da939904af97)
+-   Deprecated `createGoal()`. [8b27e81](https://github.com/atomist/sdm/commit/8b27e811de1bd76f538e6b311256da939904af97)
 
 ### Fixed
 
--   Errors in machine function can get swallowed and ignored . [#654](https://github.com/atomist/sdm/issues/654)
+-   Errors in machine function can get swallowed and ignored. [#654](https://github.com/atomist/sdm/issues/654)
 
 ## [1.2.0](https://github.com/atomist/sdm/compare/1.1.0...1.2.0) - 2018-12-27
 
