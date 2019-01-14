@@ -18,19 +18,19 @@ import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import { GoalInvocation } from "../GoalInvocation";
 
 /**
- * Launch a goal in an environment (container or process) for fulfillment.
+ * Schedule a goal in an environment (container or process) for fulfillment.
  */
-export interface GoalLauncher {
+export interface GoalScheduler {
 
     /**
-     * Does this GoalLauncher support launching provided goals
+     * Indicate if this GoalScheduler supports scheduling provided goal
      * @param gi
      */
     supports(gi: GoalInvocation): Promise<boolean>;
 
     /**
-     * Launch the provided goal
+     * Schedule the provided goal
      * @param gi
      */
-    launch(gi: GoalInvocation): Promise<ExecuteGoalResult>;
+    schedule(gi: GoalInvocation): Promise<ExecuteGoalResult>;
 }

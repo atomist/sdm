@@ -27,7 +27,7 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
-import { GoalLauncher } from "../goal/support/GoalLauncher";
+import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 
 /**
@@ -82,7 +82,7 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Strategy for launching goals in different infrastructure
      */
-    goalLauncher?: GoalLauncher | GoalLauncher[];
+    goalLauncher?: GoalScheduler | GoalScheduler[];
 
     /**
      * AddressChannels for communicating with system administrator.
