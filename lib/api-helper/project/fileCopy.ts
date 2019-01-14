@@ -91,7 +91,6 @@ export function copyFiles(donorProject: Project,
  * Take the specified files from the donor project
  * @param {RemoteRepoRef} donorProjectId
  * @param {FileGlobMapping} fileGlobMapping - treated as globs as defined in Project.streamFiles
- * @param {ProjectOperationCredentials} credentials
  * @return {SimpleProjectEditor}
  */
 export function streamFilesFrom(donorProjectId: RemoteRepoRef,
@@ -116,7 +115,7 @@ export function streamFiles(donorProject: Project,
                 .on("data", donorFile => {
                     const newPath = (fileGlobMapping.recipientPath || "") + donorFile.path;
                     p.addFileSync(newPath, donorFile.getContentSync());
-                    logger.debug("file added: ", donorFile.path);
+                    logger.log("silly", "file added: ", donorFile.path);
                 })
                 .on("error", e => {
                     logger.warn("Error copying file: ", e);
