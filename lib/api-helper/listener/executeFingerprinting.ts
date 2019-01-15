@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
 export function executeFingerprinting(fingerprinters: FingerprinterRegistration[],
                                       listeners: FingerprintListener[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { goalEvent, configuration, id, credentials, context } = goalInvocation;
+        const { goalEvent, configuration, id, credentials, context, preferences, addressChannels } = goalInvocation;
         if (fingerprinters.length === 0) {
             return Success;
         }
@@ -60,7 +60,8 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
                     id,
                     context,
                     credentials,
-                    addressChannels: cri.addressChannels,
+                    addressChannels,
+                    preferences,
                     fingerprints,
                 })));
         });

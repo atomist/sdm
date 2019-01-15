@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import {
     RepoId,
 } from "@atomist/automation-client";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
+import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { Goal } from "../../api/goal/Goal";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
@@ -42,6 +43,7 @@ export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDelivery
         addressChannels: async m => {
             logger.info("channels > " + m);
         },
+        preferences: NoPreferenceStore,
         progressLog: new LoggingProgressLog("fake"),
         sdmGoal: fakeSdmGoal(id),
         goalEvent: fakeSdmGoal(id),

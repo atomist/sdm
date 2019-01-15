@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import {
 } from "@atomist/slack-messages";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
+import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { SdmContext } from "../../api/context/SdmContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import {
@@ -323,11 +324,13 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
 
     // TODO do a look up for associated channels
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
+    const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
     return {
         commandName: c.name,
         context,
         parameters,
         addressChannels,
+        preferences,
         credentials,
         ids,
     };
