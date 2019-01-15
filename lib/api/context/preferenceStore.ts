@@ -22,7 +22,12 @@ import { HandlerContext } from "@atomist/automation-client";
 export type PreferenceStoreFactory = (ctx: HandlerContext) => PreferenceStore;
 
 /**
- * Strategy to store and retrieve SDM preferenceStoreFactory.
+ * Scope of a preference
+ */
+export type PreferenceScope = "sdm" | "workspace";
+
+/**
+ * Strategy to store and retrieve SDM preferences.
  */
 export interface PreferenceStore {
 
@@ -32,7 +37,7 @@ export interface PreferenceStore {
      * @param key
      * @param options
      */
-    get<V>(key: string, options?: { scoped?: boolean }): Promise<V | undefined>;
+    get<V>(key: string, options?: { scope?: PreferenceScope }): Promise<V | undefined>;
 
     /**
      * Store a preference object with the specified ttl. If options.scoped is set to true
@@ -41,12 +46,12 @@ export interface PreferenceStore {
      * @param value
      * @param options
      */
-    put<V>(key: string, value: V, options?: { ttl?: number, scoped?: boolean }): Promise<V>;
+    put<V>(key: string, value: V, options?: { ttl?: number, scope?: PreferenceScope }): Promise<V>;
 }
 
 /**
- * NoOp PreferenceStore implementation useful for situations the SDM does not support preferenceStoreFactory
- * or tests.
+ * NoOp PreferenceStore implementation useful for situations in which
+ * the SDM does not support preferences or tests.
  */
 export const NoPreferenceStore: PreferenceStore = {
 
