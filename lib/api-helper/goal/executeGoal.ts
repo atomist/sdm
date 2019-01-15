@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,6 @@ import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
-import { GitHubLazyProjectLoader } from "../project/GitHubLazyProjectLoader";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
 import { mockGoalExecutor } from "./mock";
 import {
@@ -101,7 +100,7 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   implementation: GoalImplementation,
                                   goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
-    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration } = goalInvocation;
+    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration, preferences } = goalInvocation;
     const { progressReporter, logInterpreter, projectListeners } = implementation;
     const implementationName = goalEvent.fulfillment.name;
 
@@ -120,6 +119,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             id,
             context,
             addressChannels,
+            preferences,
             credentials,
             goalEvent: sge,
             error,

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import {
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import { AddressNoChannels } from "../../api/context/addressChannels";
+import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { fakeContext } from "./fakeContext";
 
@@ -43,6 +44,7 @@ export function fakePush(project?: Project, pli: Partial<PushListenerInvocation>
         project: project as GitProject,
         context: fakeContext(),
         addressChannels: AddressNoChannels,
+        preferences: NoPreferenceStore,
         credentials: { token: "fake-token" },
         ...pli,
     };
