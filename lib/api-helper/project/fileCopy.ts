@@ -23,7 +23,7 @@ import {
     SimpleProjectEditor,
 } from "@atomist/automation-client";
 import axios from "axios";
-import {CodeTransform} from "../../api/registration/CodeTransform";
+import { CodeTransform } from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
