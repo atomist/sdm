@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,10 @@ import {
     AddressChannels,
     addressChannelsFor,
 } from "../../api/context/addressChannels";
+import {
+    PreferenceStore,
+    PreferenceStoreFactory,
+} from "../../api/context/preferenceStore";
 import {
     Goal,
     GoalWithPrecondition,
@@ -68,6 +72,8 @@ export interface ChooseAndSetGoalsRules {
 
     projectLoader: ProjectLoader;
 
+    preferencesFactory: PreferenceStoreFactory;
+
     repoRefResolver: RepoRefResolver;
 
     goalsListeners: GoalsSetListener[];
@@ -91,16 +97,17 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                             credentials: ProjectOperationCredentials,
                                             push: PushFields.Fragment,
                                         }): Promise<Goals | undefined> {
-    const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver } = rules;
+    const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver, preferencesFactory } = rules;
     const { context, credentials, push } = parameters;
     const enrichGoal = rules.enrichGoal ? rules.enrichGoal : async g => g;
     const id = repoRefResolver.repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
+    const preferences = preferencesFactory(parameters.context);
     const goalSetId = guid();
 
     const { determinedGoals, goalsToSave } = await determineGoals(
         { projectLoader, repoRefResolver, goalSetter, implementationMapping }, {
-            credentials, id, context, push, addressChannels, goalSetId,
+            credentials, id, context, push, addressChannels, preferences, goalSetId,
         });
 
     if (goalsToSave.length > 0) {
@@ -120,6 +127,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         context,
         credentials,
         addressChannels,
+        preferences,
         goalSetId,
         goalSetName: determinedGoals ? determinedGoals.name : undefined,
         goalSet: determinedGoals,
@@ -141,13 +149,14 @@ export async function determineGoals(rules: {
                                          context: HandlerContext,
                                          push: PushFields.Fragment,
                                          addressChannels: AddressChannels,
+                                         preferences: PreferenceStore,
                                          goalSetId: string,
                                      }): Promise<{
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoalMessage[],
 }> {
     const { projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
-    const { credentials, id, context, push, addressChannels, goalSetId } = circumstances;
+    const { credentials, id, context, push, addressChannels, goalSetId, preferences } = circumstances;
     return projectLoader.doWithProject({
             credentials,
             id,
@@ -163,6 +172,7 @@ export async function determineGoals(rules: {
                 push,
                 context,
                 addressChannels,
+                preferences,
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
             if (!determinedGoals) {
