@@ -27,6 +27,7 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
+import { PreferenceStoreFactory } from "../context/preferenceStore";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 
@@ -80,12 +81,17 @@ export interface SoftwareDeliveryMachineOptions {
     targets?: Maker<RepoTargets>;
 
     /**
-     * Strategy for launching goals in different infrastructure
+     * Optional Strategy to create a new PreferenceStore implementation
+     */
+    preferenceStoreFactory?: PreferenceStoreFactory;
+
+    /**
+     * Optional strategy for launching goals in different infrastructure
      */
     goalScheduler?: GoalScheduler | GoalScheduler[];
 
     /**
-     * AddressChannels for communicating with system administrator.
+     * Optional AddressChannels for communicating with system administrator.
      * Defaults to logging a warning unless this is set.
      */
     adminAddressChannels?: AddressChannels;
