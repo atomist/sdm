@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import {
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
+import { PreferenceStore } from "../../../lib/api/context/preferenceStore";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
@@ -69,6 +70,9 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
         },
         get addressChannels(): AddressChannels {
             throw new InsufficientDataError("addressChannels");
+        },
+        get preferences(): PreferenceStore {
+            throw new InsufficientDataError("preferences");
         },
         get credentials(): ProjectOperationCredentials {
             throw new InsufficientDataError("credentials");

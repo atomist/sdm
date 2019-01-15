@@ -27,6 +27,7 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
+import { PreferenceStoreMaker } from "../context/preferenceStore";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 
@@ -78,6 +79,11 @@ export interface SoftwareDeliveryMachineOptions {
      * If set, can still be overridden by individual editor registrations.
      */
     targets?: Maker<RepoTargets>;
+
+    /**
+     * Create a new PreferenceStore implementation
+     */
+    preferences: PreferenceStoreMaker;
 
     /**
      * Strategy for launching goals in different infrastructure

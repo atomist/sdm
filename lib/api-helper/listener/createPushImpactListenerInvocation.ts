@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import { filteredView } from "../misc/project/filteredView";
  */
 export async function createPushImpactListenerInvocation(goalInvocation: GoalInvocation,
                                                          project: GitProject): Promise<PushImpactListenerInvocation> {
-    const { goalEvent, credentials, id, context, addressChannels } = goalInvocation;
+    const { goalEvent, credentials, id, context, addressChannels, preferences } = goalInvocation;
     const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(goalEvent.push.repo, context));
 
     const push = goalEvent.push;
@@ -45,6 +45,7 @@ export async function createPushImpactListenerInvocation(goalInvocation: GoalInv
         id,
         context: smartContext,
         addressChannels,
+        preferences,
         project,
         impactedSubProject,
         credentials,
