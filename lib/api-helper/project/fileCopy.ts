@@ -23,7 +23,7 @@ import {
     SimpleProjectEditor,
 } from "@atomist/automation-client";
 import axios from "axios";
-import { CodeTransform } from "../../api/registration/CodeTransform";
+import {CodeTransform} from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
@@ -41,6 +41,18 @@ export function copyFileFromUrl(url: string, path: string): CodeTransform {
 export interface FileMapping {
     donorPath: string;
     recipientPath: string;
+}
+
+export interface FileGlobMapping {
+    /**
+     * See https://github.com/gulpjs/glob-stream for implementation details
+     */
+    globPatterns: string[];
+
+    /**
+     * This recipientPath will only be prefixed verbatim to any path returned from the globs.
+     */
+    recipientPath?: string;
 }
 
 /**
@@ -72,5 +84,43 @@ export function copyFiles(donorProject: Project,
             }
         }
         return p;
+    };
+}
+
+/**
+ * Take the specified files from the donor project
+ * @param {RemoteRepoRef} donorProjectId
+ * @param {FileGlobMapping} fileGlobMapping - treated as globs as defined in Project.streamFiles
+ * @return {SimpleProjectEditor}
+ */
+export function streamFilesFrom(donorProjectId: RemoteRepoRef,
+                                fileGlobMapping: FileGlobMapping): CodeTransform {
+    return async (p, i) => {
+        const donorProject = await GitCommandGitProject.cloned(i.credentials, donorProjectId);
+        return streamFiles(donorProject, fileGlobMapping)(p, i);
+    };
+}
+
+export function streamFiles(donorProject: Project,
+                            fileGlobMapping: FileGlobMapping): CodeTransform {
+    return async p => {
+        const fileStream = donorProject.streamFiles(...fileGlobMapping.globPatterns);
+
+        await new Promise((resolve, reject) => {
+            fileStream
+                .on("end", () => {
+                    logger.debug("end of file stream reached, using glob: ", fileGlobMapping);
+                    resolve();
+                })
+                .on("data", donorFile => {
+                    const newPath = (fileGlobMapping.recipientPath || "") + donorFile.path;
+                    p.addFileSync(newPath, donorFile.getContentSync());
+                    logger.log("silly", "file added: ", donorFile.path);
+                })
+                .on("error", e => {
+                    logger.warn("Error copying file: ", e);
+                    reject(e);
+                });
+        });
     };
 }

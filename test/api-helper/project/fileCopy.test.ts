@@ -22,10 +22,11 @@ import * as assert from "power-assert";
 import {
     copyFileFromUrl,
     copyFilesFrom,
+    FileGlobMapping,
+    streamFiles,
 } from "../../../lib/api-helper/project/fileCopy";
 
 describe("fileCopy", () => {
-
     it("should copy file from url", async () => {
         const recipient = InMemoryProject.of();
         await (copyFileFromUrl("https://raw.githubusercontent.com/spring-team/spring-rest-seed/master/pom.xml", "pom.xml"))(recipient, undefined);
@@ -48,4 +49,44 @@ describe("fileCopy", () => {
         assert(!(await recipient.getFile(filesToSteal[0].donorPath)));
         assert(!!(await recipient.getFile(filesToSteal[0].recipientPath)));
     }).timeout(5000);
+
+    it("should copy a subset of files from donor project according to glob", async () => {
+        const donorProject = InMemoryProject.of(
+            {path: "a/b/a", content: "a/b/a file"},
+            {path: "a/b/b", content: "a/b/b file"},
+            {path: "x/b/b", content: "x/b/b file"},
+        );
+
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"], recipientPath: "c/" };
+        const recipient = InMemoryProject.of();
+
+        await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
+
+        assert(3 === (await donorProject.totalFileCount()));
+
+        assert(!!(await recipient.getFile("c/a/b/a")));
+        assert(!!(await recipient.getFile("c/a/b/b")));
+
+        assert(2 === (await recipient.totalFileCount()));
+    });
+
+    it("should copy a subset of files from donor project handling undefined recipient path", async () => {
+        const donorProject = InMemoryProject.of(
+            {path: "a/b/a", content: "a/b/a file"},
+            {path: "a/b/b", content: "a/b/b file"},
+            {path: "x/b/b", content: "x/b/b file"},
+        );
+
+        const filesToSteal: FileGlobMapping = { globPatterns: ["a/**"] };
+        const recipient = InMemoryProject.of();
+
+        await (streamFiles(donorProject, filesToSteal))(recipient, undefined);
+
+        assert(3 === (await donorProject.totalFileCount()));
+
+        assert(!!(await recipient.getFile("a/b/a")));
+        assert(!!(await recipient.getFile("a/b/b")));
+
+        assert(2 === (await recipient.totalFileCount()));
+    });
 });
