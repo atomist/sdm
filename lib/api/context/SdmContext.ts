@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import {
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import { AddressChannels } from "./addressChannels";
+import { PreferenceStore } from "./preferenceStore";
 
 /**
  * Context for an SDM action, whether a listener invocation or internal action
@@ -48,6 +49,10 @@ export interface SdmContext {
      */
     credentials: ProjectOperationCredentials;
 
+    /**
+     * Store and retrieve preferences for this SDM or team
+     */
+    preferences: PreferenceStore;
 }
 
 /**
