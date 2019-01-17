@@ -17,7 +17,7 @@
 import { CloneOptions } from "@atomist/automation-client";
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
-import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
+import { AutoInspectRegistration } from "../../registration/AutoInspectRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
 import {
     Goal,
@@ -56,7 +56,7 @@ const DefaultAutoCodeInspectionOptions: AutoCodeInspectionOptions = {
  * Goal that runs code inspections
  */
 export class AutoCodeInspection
-    extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
+    extends FulfillableGoalWithRegistrationsAndListeners<AutoInspectRegistration<any, any>, ReviewListenerRegistration> {
 
     constructor(private readonly details: FulfillableGoalDetails & AutoCodeInspectionOptions = {},
                 ...dependsOn: Goal[]) {
