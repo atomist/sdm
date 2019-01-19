@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add mergeOptions method. [939c04c](https://github.com/atomist/sdm/commit/939c04cf28114c42808712d3246645d0ab4bb96f)
 -   Stream files during code transform. [#585](https://github.com/atomist/sdm/issues/585)
 -   Add PreferenceStore interface. [#658](https://github.com/atomist/sdm/issues/658)
+-   Add services to a FulfillableGoal. [e5e09df](https://github.com/atomist/sdm/commit/e5e09df8ed5ed1290620ec47466e53767de47b1f)
 
 ### Changed
 
