@@ -19,6 +19,7 @@ import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { RepoContext } from "../context/SdmContext";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import {
     Registerable,
@@ -43,6 +44,7 @@ import {
 } from "./GoalInvocation";
 import { DefaultGoalNameGenerator } from "./GoalNameGenerator";
 import { ReportProgress } from "./progress/ReportProgress";
+import { SdmGoalEvent } from "./SdmGoalEvent";
 import {
     GoalEnvironment,
     IndependentOfEnvironment,
@@ -140,6 +142,15 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
 }
 
 /**
+ * Register additional services for a goal.
+ * This can be used to add additional containers into k8s jobs to use during goal execution.
+ */
+export interface ServiceRegistration<T> {
+    name: string;
+    service: (goalEvent: SdmGoalEvent, repo: RepoContext) => Promise<{ type: string, spec: T }>;
+}
+
+/**
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
@@ -180,6 +191,22 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         }
         this.goalListeners.push(wrappedListener);
         return this;
+    }
+
+    public withService(registration: ServiceRegistration<any>): this {
+        this.addFulfillmentCallback({
+            goal: this,
+            callback: async (goalEvent, repoContext) => {
+                const service = await registration.service(goalEvent, repoContext);
+                const data = JSON.parse(goalEvent.data || "{}");
+                const servicesData = {
+                    services: {},
+                };
+                servicesData.services[registration.name] = JSON.stringify(service);
+                goalEvent.data = _.merge(data, servicesData);
+                return goalEvent;
+            },
+        });
     }
 
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
