@@ -202,11 +202,12 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                 const servicesData = {
                     services: {},
                 };
-                servicesData.services[registration.name] = JSON.stringify(service);
-                goalEvent.data = _.merge(data, servicesData);
+                servicesData.services[registration.name] = service;
+                goalEvent.data = JSON.stringify(_.merge(data, servicesData));
                 return goalEvent;
             },
         });
+        return this;
     }
 
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
