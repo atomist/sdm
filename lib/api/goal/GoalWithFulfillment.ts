@@ -147,7 +147,7 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
  */
 export interface ServiceRegistration<T> {
     name: string;
-    service: (goalEvent: SdmGoalEvent, repo: RepoContext) => Promise<{ type: string, spec: T }>;
+    service: (goalEvent: SdmGoalEvent, repo: RepoContext) => Promise<{ type: string, spec: T } | undefined>;
 }
 
 /**
@@ -198,12 +198,14 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             goal: this,
             callback: async (goalEvent, repoContext) => {
                 const service = await registration.service(goalEvent, repoContext);
-                const data = JSON.parse(goalEvent.data || "{}");
-                const servicesData = {
-                    services: {},
-                };
-                servicesData.services[registration.name] = service;
-                goalEvent.data = JSON.stringify(_.merge(data, servicesData));
+                if (!!service) {
+                    const data = JSON.parse(goalEvent.data || "{}");
+                    const servicesData = {
+                        services: {},
+                    };
+                    servicesData.services[registration.name] = service;
+                    goalEvent.data = JSON.stringify(_.merge(data, servicesData));
+                }
                 return goalEvent;
             },
         });
