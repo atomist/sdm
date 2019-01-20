@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Stream files during code transform. [#585](https://github.com/atomist/sdm/issues/585)
 -   Add PreferenceStore interface. [#658](https://github.com/atomist/sdm/issues/658)
 -   Add services to a FulfillableGoal. [e5e09df](https://github.com/atomist/sdm/commit/e5e09df8ed5ed1290620ec47466e53767de47b1f)
+-   Add branchAwareCodeTransform to make it target branch aware. [#659](https://github.com/atomist/sdm/issues/659)
 
 ### Changed
 
