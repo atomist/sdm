@@ -1,0 +1,9 @@
+query BranchForName($repo: String!, $owner: String!, $branch: String!) {
+    Branch(name: $branch) {
+        id
+        repo(name: $repo, owner: $owner) @required {
+            id
+        }
+    }
+}
+
