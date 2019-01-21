@@ -50,14 +50,16 @@ import { save } from "./CachingProjectLoader";
  */
 export class GitHubLazyProjectLoader implements LazyProjectLoader {
 
-    public isLazy: true;
-
     constructor(private readonly delegate: ProjectLoader) {
     }
 
     public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedLazyProject<T>): Promise<T> {
         const lazyProject = new GitHubLazyProject(params.id, this.delegate, params);
         return action(lazyProject);
+    }
+
+    get isLazy(): true {
+        return true;
     }
 }
 
