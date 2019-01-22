@@ -64,7 +64,9 @@ import { IngesterRegistration } from "../../api/registration/IngesterRegistratio
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
 import { GoalSetGoalCompletionListener } from "../listener/goalSetListener";
-import { lastLinesLogInterpreter } from "../log/logInterpreters";
+import {
+    LogSuppressor,
+} from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
 
@@ -136,7 +138,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: _.get(options, "pushTest") || AnyPush,
-            logInterpreter: _.get(options, "logInterpreter") || lastLinesLogInterpreter(implementationName, 10),
+            logInterpreter: _.get(options, "logInterpreter") || LogSuppressor,
             progressReporter: _.get(options, "progressReporter") || NoProgressReport,
             projectListeners: _.get(options, "projectListeners") || [],
         };
