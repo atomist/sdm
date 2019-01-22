@@ -93,7 +93,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.materialized() ? this.projectPromise.result().provenance : "unavailable";
     }
 
-    public release: ReleaseFunction = () => undefined;
+    public release: ReleaseFunction = () => Promise.resolve();
 
     get baseDir(): string {
         if (!this.materialized()) {

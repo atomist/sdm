@@ -20,6 +20,10 @@ import {
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
+import {
+    isLazyProjectLoader,
+    LazyProject,
+} from "../../spi/project/LazyProjectLoader";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**
@@ -35,8 +39,12 @@ export function projectLoaderRepoLoader(pl: ProjectLoader,
                                         context?: HandlerContext): RepoLoader {
     return async id => {
         let project;
+
         await pl.doWithProject({ id: id as RemoteRepoRef, credentials, readOnly, context },
             async p => {
+                if (isLazyProjectLoader(pl)) {
+                    await (p as any as LazyProject).materialize();
+                }
                 project = p;
             });
         return project;
