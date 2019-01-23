@@ -28,6 +28,7 @@ import * as _ from "lodash";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { NoParameterPrompt } from "../../api/context/parameterPrompt";
 import {
     ExecuteGoalResult,
     isFailure,

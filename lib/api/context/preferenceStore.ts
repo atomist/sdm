@@ -59,4 +59,4 @@ export const NoPreferenceStore: PreferenceStore = {
 
     put: async (key, value) => value,
 
-}
+};
