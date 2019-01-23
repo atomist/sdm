@@ -21,11 +21,11 @@ import { CommandRegistration } from "./CommandRegistration";
  * Superclass for all registrations of "project operations",
  * which can create or modify projects. Supply a transform function.
  */
-export interface ProjectOperationRegistration<PARAMS> extends CommandRegistration<PARAMS> {
+export interface ProjectOperationRegistration<PARAMS, ADDITIONAL_PARAMS = {}> extends CommandRegistration<PARAMS> {
 
     /**
      * Function to transform the project
      */
-    transform: CodeTransformOrTransforms<PARAMS>;
+    transform: CodeTransformOrTransforms<PARAMS & ADDITIONAL_PARAMS>;
 
 }

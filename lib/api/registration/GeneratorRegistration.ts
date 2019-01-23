@@ -21,6 +21,7 @@ import {
     ProjectPersister,
     RemoteRepoRef,
     RepoCreationParameters,
+    SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
@@ -35,7 +36,7 @@ export type StartingPoint<PARAMS> = Project | RemoteRepoRef | ((parameters: PARA
  * Register a project creation operation
  */
 export interface GeneratorRegistration<PARAMS = NoParameters>
-    extends ProjectOperationRegistration<PARAMS> {
+    extends ProjectOperationRegistration<PARAMS, SeedDrivenGeneratorParameters> {
 
     /**
      * Starting point before transformation. Normally the coordinates of a
