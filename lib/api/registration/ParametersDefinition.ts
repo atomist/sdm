@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersO
  */
 export interface HasDefaultValue { defaultValue?: any; }
 
-export type ParametersObjectValue = (BaseParameter & HasDefaultValue) | MappedParameterOrSecretDeclaration;
+export type ParametersObjectValue = (BaseParameter & HasDefaultValue);
+
+export type MappedParameterOrSecretObjectValue = MappedParameterOrSecretDeclaration;
 
 /**
- * Object with properties defining parameters. Useful for combination
- * via spreads.
+ * Object with properties defining parameters, secrets and mapped parameters. Useful for combination via spreads.
  */
-export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue>;
+export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS>
+    = Record<K, ParametersObjectValue | MappedParameterOrSecretObjectValue>;
 
 export enum DeclarationType {
     mapped = "mapped",

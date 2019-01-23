@@ -27,6 +27,10 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
+import {
+    ParameterPrompt,
+    ParameterPromptFactory,
+} from "../context/parameterPrompt";
 import { PreferenceStoreFactory } from "../context/preferenceStore";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
@@ -81,9 +85,14 @@ export interface SoftwareDeliveryMachineOptions {
     targets?: Maker<RepoTargets>;
 
     /**
-     * Optional Strategy to create a new PreferenceStore implementation
+     * Optional strategy to create a new PreferenceStore implementation
      */
     preferenceStoreFactory?: PreferenceStoreFactory;
+
+    /**
+     * Optional strategy to allow prompting for additional parameters
+     */
+    parameterPromptFactory?: ParameterPromptFactory<any>;
 
     /**
      * Optional strategy for launching goals in different infrastructure

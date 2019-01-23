@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import {
     NoParameters,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { ParametersDefinition } from "../registration/ParametersDefinition";
 import { SdmListener } from "./Listener";
 import { ParametersInvocation } from "./ParametersInvocation";
 
@@ -32,6 +33,21 @@ export interface CommandListenerInvocation<PARAMS = NoParameters> extends Parame
      * The repos this command relates to, if available.
      */
     ids?: RemoteRepoRef[];
+
+    /**
+     * Prompt for additional parameters needed during execution of the command listener.
+     *
+     * Callers should wait for the returned Promise to resolve. It will resolve with the requested
+     * parameters if those have already been collected. If not, a parameter prompt request to the backend
+     * will be sent and the Promise will reject. Once the new parameters are collected, a new
+     * command invocation will be sent and the command listener will restart.
+     *
+     * This requires that any state that gets created before calling promptFor can be re-created when
+     * re-entering the listener function. Also any action taken before calling promptFor needs to be
+     * implemented using idempotency patterns.
+     * @param parameters
+     */
+    promptFor<NEWPARAMS>(parameters: ParametersDefinition<NEWPARAMS>): Promise<NEWPARAMS>;
 
 }
 

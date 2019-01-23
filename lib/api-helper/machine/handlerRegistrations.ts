@@ -57,6 +57,7 @@ import {
 } from "@atomist/slack-messages";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
+import { NoParameterPrompt } from "../../api/context/parameterPrompt";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { SdmContext } from "../../api/context/SdmContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
@@ -281,6 +282,12 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
+export class CommandListenerExecutionInterruptError extends Error {
+    constructor(public readonly message) {
+        super(message);
+    }
+}
+
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
     addParametersDefinedInBuilder(c);
     return sdm => async (context, parameters) => {
@@ -289,12 +296,16 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
             await c.listener(cli);
             return Success;
         } catch (err) {
-            logger.error("Error executing command '%s': %s", cli.commandName, err.message);
-            logger.error(err.stack);
-            return {
-                code: 1,
-                message: err.message,
-            };
+            if (err instanceof CommandListenerExecutionInterruptError) {
+                return Success;
+            } else {
+                logger.error("Error executing command '%s': %s", cli.commandName, err.message);
+                logger.error(err.stack);
+                return {
+                    code: 1,
+                    message: err.message,
+                };
+            }
         }
     };
 }
@@ -322,14 +333,15 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         }
     }
 
-    // TODO do a look up for associated channels
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
+    const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt;
     const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
     return {
         commandName: c.name,
         context,
         parameters,
         addressChannels,
+        promptFor,
         preferences,
         credentials,
         ids,
