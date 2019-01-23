@@ -53,6 +53,7 @@ export interface SdmContext {
      * Store and retrieve preferences for this SDM or team
      */
     preferences: PreferenceStore;
+
 }
 
 /**
