@@ -18,6 +18,7 @@ import {
     NoParameters,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { ParametersDefinition } from "../registration/ParametersDefinition";
 import { SdmListener } from "./Listener";
 import { ParametersInvocation } from "./ParametersInvocation";
 
@@ -32,6 +33,12 @@ export interface CommandListenerInvocation<PARAMS = NoParameters> extends Parame
      * The repos this command relates to, if available.
      */
     ids?: RemoteRepoRef[];
+
+    /**
+     *
+     * @param parameters
+     */
+    promptFor<NEWPARAMS>(parameters: ParametersDefinition<NEWPARAMS>): Promise<NEWPARAMS>;
 
 }
 

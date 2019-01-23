@@ -25,6 +25,7 @@ import {
     AddressChannels,
     addressChannelsFor,
 } from "../../api/context/addressChannels";
+import { ParameterPromptFactory } from "../../api/context/parameterPrompt";
 import {
     NoPreferenceStore,
     PreferenceStore,
@@ -84,6 +85,8 @@ export interface ChooseAndSetGoalsRules {
     enrichGoal?: (goal: SdmGoalMessage) => Promise<SdmGoalMessage>;
 
     preferencesFactory?:  PreferenceStoreFactory;
+
+    parameterPromptFactory?: ParameterPromptFactory<any>;
 }
 
 /**
