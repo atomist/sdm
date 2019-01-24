@@ -26,7 +26,7 @@ export type PreferenceStoreFactory = (ctx: HandlerContext) => PreferenceStore;
  */
 export enum PreferenceScope {
     Sdm = "sdm",
-    Workspace = "workspace"
+    Workspace = "workspace",
 }
 
 /**
