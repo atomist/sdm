@@ -27,7 +27,7 @@ describe("parameterPrompt", () => {
             delete (global as any).__runningAutomationClient;
         });
 
-        it("should correct find already existing parameters", async () => {
+        it("should correctly find already existing parameters", async () => {
             const ctx = {
                 trigger: {
                     parameters: [
@@ -79,6 +79,78 @@ describe("parameterPrompt", () => {
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
         });
+
+        it("should not ask for missing optional parameters if there no required missing", async () => {
+            const wsMock: WebSocketLifecycle = {
+                send: msg => {
+                    assert.fail();
+                },
+            } as any;
+
+            (global as any).__runningAutomationClient = {
+                configuration: {
+                    ws: {
+                        lifecycle: wsMock,
+                    },
+                },
+            };
+
+            const ctx = {
+                trigger: {
+                    parameters: [
+                        { name: "some", value: "other" },
+                    ],
+                },
+            };
+
+            const params = await commandRequestParameterPromptFactory(ctx as any)({
+                test: { required: false },
+                foo: { required: false },
+            }) as any;
+            assert.deepStrictEqual(params, {});
+        });
+
+        it("should ask for missing optional parameters only when there's at least one required", async () => {
+            const wsMock: WebSocketLifecycle = {
+                send: msg => {
+                    assert(msg.parameter_specs.length === 3);
+                    assert.strictEqual(msg.parameter_specs[0].name, "bar");
+                    assert.strictEqual(msg.parameter_specs[1].name, "test");
+                    assert.strictEqual(msg.parameter_specs[2].name, "foo");
+                },
+            } as any;
+
+            (global as any).__runningAutomationClient = {
+                configuration: {
+                    ws: {
+                        lifecycle: wsMock,
+                    },
+                },
+            };
+
+            const ctx = {
+                trigger: {
+                    parameters: [
+                        { name: "some", value: "other" },
+                        { name: "superfoo", value: "other" }
+                    ],
+                },
+            };
+
+            try {
+                const params = await commandRequestParameterPromptFactory(ctx as any)({
+                    bar: { required: true },
+                    test: { required: true },
+                    foo: { required: true },
+                    superfoo: { required: true },
+                }) as any;
+                assert.fail();
+                assert.strictEqual(params, {});
+            } catch (e) {
+                assert(e instanceof CommandListenerExecutionInterruptError);
+            }
+        });
+
 
     });
 

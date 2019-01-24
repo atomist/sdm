@@ -64,18 +64,23 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
 
         // Find out if - and if - which parameters are actually missing
         let missing = false;
+        let requiredMissing = false;
         const params: any = {};
         for (const parameter in parameters) {
-            if (!existingParameters.some(p => p.name === parameter)) {
+            const existingParameter = existingParameters.find(p => p.name === parameter);
+            if (!existingParameter) {
                 missing = true;
+                if (newParameters[parameter].required) {
+                    requiredMissing = true;
+                }
             } else {
-                params[parameter] = existingParameters.find(p => p.name === parameter).value;
+                params[parameter] = existingParameter.value;
                 delete newParameters[parameter];
             }
         }
 
         // If no parameters are missing we can return the already collected parameters
-        if (!missing) {
+        if (!requiredMissing) {
             return params;
         }
 
