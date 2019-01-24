@@ -420,10 +420,14 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
         const value = p[name];
         if (isMappedParameterOrSecretDeclaration(value)) {
             switch (value.declarationType) {
+                // tslint:disable-next-line:deprecation
                 case DeclarationType.mapped:
+                case DeclarationType.Mapped:
                     builder.addMappedParameters({ name, uri: value.uri, required: value.required });
                     break;
+                // tslint:disable-next-line:deprecation
                 case DeclarationType.secret:
+                case DeclarationType.Secret:
                     builder.addSecrets({ name, uri: value.uri });
                     break;
             }
