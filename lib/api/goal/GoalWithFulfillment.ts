@@ -19,7 +19,6 @@ import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { RepoContext } from "../context/SdmContext";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import {
     Registerable,
@@ -29,7 +28,7 @@ import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
-    GoalDataServiceKey,
+    ServiceRegistrationGoalDataKey,
     ServiceRegistration,
 } from "../registration/ServiceRegistration";
 import {
@@ -48,7 +47,6 @@ import {
 } from "./GoalInvocation";
 import { DefaultGoalNameGenerator } from "./GoalNameGenerator";
 import { ReportProgress } from "./progress/ReportProgress";
-import { SdmGoalEvent } from "./SdmGoalEvent";
 import {
     GoalEnvironment,
     IndependentOfEnvironment,
@@ -196,7 +194,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                 if (!!service) {
                     const data = JSON.parse(goalEvent.data || "{}");
                     const servicesData = {};
-                    _.set<any>(servicesData, `${GoalDataServiceKey}.${registration.name}`, service);
+                    _.set<any>(servicesData, `${ServiceRegistrationGoalDataKey}.${registration.name}`, service);
                     goalEvent.data = JSON.stringify(_.merge(data, servicesData));
                 }
                 return goalEvent;
