@@ -20,7 +20,7 @@ import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 /**
  * Key under which services can be found in goal data.
  */
-export const ServiceRegistrationGoalDataKey = "atomist.com/sdm/service";
+export const ServiceRegistrationGoalDataKey = "atomist:sdm/service";
 
 /**
  * Register additional services for a goal.
