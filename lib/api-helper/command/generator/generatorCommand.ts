@@ -26,7 +26,7 @@ import {
     RemoteRepoRef,
     RepoCreationParameters,
     RepoRef,
-    SeedDrivenGeneratorParameters,
+    SeedDrivenGeneratorParameters, Success,
 } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { RedirectResult } from "@atomist/automation-client/lib/HandlerResult";
@@ -59,7 +59,7 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
-import { toCommandListenerInvocation } from "../../machine/handlerRegistrations";
+import { CommandListenerExecutionInterruptError, toCommandListenerInvocation } from "../../machine/handlerRegistrations";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 
 /**
@@ -171,6 +171,11 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
             redirect: details.redirecter(params.target.repoRef),
         };
     } catch (err) {
+        if (err instanceof CommandListenerExecutionInterruptError) {
+            // We're continuing
+            return Success as any;
+        }
+
         await ctx.messageClient.respond(
             slackErrorMessage(
                 `Create Project`,
@@ -230,8 +235,8 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
     } else {
         // Combine this for backward compatibility
         const pi = {
-            ...params,
             ...toCommandListenerInvocation(cr, ctx, params, sdmo),
+            ...params,
         };
         // It's a function that takes the parameters and returns either a project or a RemoteRepoRef
         const rr: RemoteRepoRef | Project | Promise<Project> = (startingPoint as any)(pi);
