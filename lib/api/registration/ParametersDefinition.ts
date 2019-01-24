@@ -36,8 +36,17 @@ export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS>
     = Record<K, ParametersObjectValue | MappedParameterOrSecretObjectValue>;
 
 export enum DeclarationType {
+    /**
+     * @deprecated use Mapped
+     */
     mapped = "mapped",
+    /**
+     * @deprecated use Secret
+     */
     secret = "secret",
+
+    Mapped = "mapped",
+    Secret = "secret",
 }
 
 export interface MappedParameterOrSecretDeclaration {
