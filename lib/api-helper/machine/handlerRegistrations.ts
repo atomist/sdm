@@ -257,6 +257,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
         e.fallbackTarget || GitHubRepoCreationParameters,
         e.startingPoint,
         e,
+        e,
     );
 }
 
@@ -310,10 +311,10 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
     };
 }
 
-function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
-                                        context: HandlerContext,
-                                        parameters: P,
-                                        sdm: SoftwareDeliveryMachineOptions): CommandListenerInvocation {
+export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
+                                               context: HandlerContext,
+                                               parameters: P,
+                                               sdm: SoftwareDeliveryMachineOptions): CommandListenerInvocation {
     // It may already be there
     let credentials = !!context ? (context as any as SdmContext).credentials : undefined;
     let ids: RemoteRepoRef[];
