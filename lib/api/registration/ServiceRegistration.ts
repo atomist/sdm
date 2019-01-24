@@ -26,7 +26,7 @@ export const ServiceRegistrationGoalDataKey = "atomist.com/sdm/service";
  * Register additional services for a goal.
  * This can be used to add additional containers into k8s jobs to use during goal execution.
  */
-export interface ServiceRegistration<T, N extends string> {
-    name: N;
+export interface ServiceRegistration<T> {
+    name: string;
     service: (goalEvent: SdmGoalEvent, repo: RepoContext) => Promise<{ type: string, spec: T } | undefined>;
 }
