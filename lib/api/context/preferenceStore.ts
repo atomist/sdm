@@ -24,7 +24,10 @@ export type PreferenceStoreFactory = (ctx: HandlerContext) => PreferenceStore;
 /**
  * Scope of a preference
  */
-export type PreferenceScope = "sdm" | "workspace";
+export enum PreferenceScope {
+    Sdm = "sdm",
+    Workspace = "workspace"
+}
 
 /**
  * Strategy to store and retrieve SDM preferences.
