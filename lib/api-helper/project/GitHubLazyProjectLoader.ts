@@ -253,7 +253,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     public push(options?: GitPushOptions): Promise<this> {
         this.materializeIfNecessary("push");
-        return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
+        return this.projectPromise.then(mp => mp.push(options)) as any;
     }
 
     public raisePullRequest(title: string, body: string): Promise<this> {
