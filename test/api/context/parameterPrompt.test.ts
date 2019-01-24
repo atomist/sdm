@@ -44,7 +44,7 @@ describe("parameterPrompt", () => {
         it("should ask for missing parameters", async () => {
             const wsMock: WebSocketLifecycle = {
                 send: msg => {
-                    assert(msg.parameter_specs.length === 2,);
+                    assert(msg.parameter_specs.length === 2);
                     assert.strictEqual(msg.parameter_specs[0].name, "bar");
                     assert.strictEqual(msg.parameter_specs[1].name, "test");
                 },
@@ -68,12 +68,13 @@ describe("parameterPrompt", () => {
             };
 
             try {
-                await commandRequestParameterPromptFactory(ctx as any)({
+                const params = await commandRequestParameterPromptFactory(ctx as any)({
                     bar: { required: true },
                     test: { required: true },
                     foo: { required: true },
                 }) as any;
                 assert.fail();
+                assert.strictEqual(params, {});
             } catch (e) {
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }

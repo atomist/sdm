@@ -19,9 +19,9 @@ import {
     onAnyPush,
     whenPushSatisfies,
 } from "../../../lib/api/dsl/goalDsl";
-import { createGoal } from "../../../lib/api/goal/common/createGoal";
 import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
+import { goal } from "../../../lib/api/goal/GoalWithFulfillment";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
@@ -57,9 +57,9 @@ const EmptyGoalNames = {
 describe("making use of the pushMap structure", async () => {
     const doNothing: ExecuteGoal = async () => { // do nothing
     };
-    const myGoal = createGoal({ displayName: "myGoal" }, doNothing);
-    const anotherGoal = createGoal({ displayName: "anotherGoal" }, doNothing);
-    const notSetGoal = createGoal({ displayName: "notSetGoal" }, doNothing);
+    const myGoal = goal({ displayName: "myGoal" }, doNothing);
+    const anotherGoal = goal({ displayName: "anotherGoal" }, doNothing);
+    const notSetGoal = goal({ displayName: "notSetGoal" }, doNothing);
 
     it("Can see that obvious goals will be returned", async () => {
         const sdm = new TestSoftwareDeliveryMachine("test goal setting structure",

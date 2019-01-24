@@ -97,7 +97,8 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             content_type: AtomistContinuationMimeType,
         };
 
-        await configurationValue<WebSocketLifecycle>("ws.lifecycle").send(response);
+        // Strangely send a message doesn't need a promise await; it is sync.
+        configurationValue<WebSocketLifecycle>("ws.lifecycle").send(response);
         throw new CommandListenerExecutionInterruptError(
             `Prompting for new parameters: ${_.map(newParameters, (v, k) => k).join(", ")}`);
     };

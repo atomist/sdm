@@ -16,10 +16,8 @@
 
 import { SlackMessage } from "@atomist/slack-messages";
 import { Goal } from "../Goal";
-import {
-    createGoal,
-    EssentialGoalInfo,
-} from "./createGoal";
+import { goal } from "../GoalWithFulfillment";
+import { EssentialGoalInfo } from "./createGoal";
 
 /**
  * How to present a suggested goal action to the user
@@ -44,7 +42,7 @@ export interface ActionSuggestion extends EssentialGoalInfo {
  * Return a goal that suggests an action to the user.
  */
 export function suggestAction(suggestion: ActionSuggestion): Goal {
-    return createGoal(suggestion,
+    return goal(suggestion,
         async gi => {
             let m = suggestion.message;
             /* tslint:disable-next-line */

@@ -196,7 +196,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                 if (!!service) {
                     const data = JSON.parse(goalEvent.data || "{}");
                     const servicesData = {};
-                    _.set(servicesData, `${GoalDataServiceKey}.${registration.name}`, service);
+                    _.set<any>(servicesData, `${GoalDataServiceKey}.${registration.name}`, service);
                     goalEvent.data = JSON.stringify(_.merge(data, servicesData));
                 }
                 return goalEvent;

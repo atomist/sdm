@@ -26,7 +26,10 @@ import {
     GoalInvocation,
 } from "../GoalInvocation";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { GoalWithFulfillment } from "../GoalWithFulfillment";
+import {
+    goal,
+    GoalWithFulfillment,
+} from "../GoalWithFulfillment";
 import { ReportProgress } from "../progress/ReportProgress";
 
 /**
@@ -92,7 +95,7 @@ const DefaultWaitRules: Partial<WaitRules> = {
 export function createPredicatedGoal(egi: EssentialGoalInfo,
                                      goalExecutor: ExecuteGoal,
                                      w: WaitRules): Goal {
-    return createGoal(egi, createPredicatedGoalExecutor(egi.displayName, goalExecutor, w));
+    return goal(egi, createPredicatedGoalExecutor(egi.displayName, goalExecutor, w));
 }
 
 /**

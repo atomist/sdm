@@ -106,7 +106,7 @@ export function streamFiles(donorProject: Project,
     return async p => {
         const fileStream = donorProject.streamFiles(...fileGlobMapping.globPatterns);
 
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
             fileStream
                 .on("end", () => {
                     logger.debug("end of file stream reached, using glob: ", fileGlobMapping);
