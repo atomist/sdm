@@ -24,13 +24,14 @@ import {
     SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
+import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 /**
  * Starting point before transformation. Normally the coordinates of a
  * seed project, but can also be an in memory project or a function that
  * computes a RemoteRepoRef or Project from the parameters.
  */
-export type StartingPoint<PARAMS> = Project | RemoteRepoRef | ((parameters: PARAMS) => (RemoteRepoRef | Project | Promise<Project>));
+export type StartingPoint<PARAMS> = Project | RemoteRepoRef | ((pi: PARAMS & ParametersInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
 
 /**
  * Register a project creation operation
