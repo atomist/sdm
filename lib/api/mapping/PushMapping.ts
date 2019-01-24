@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "../listener/PushListener";
 import {
-    Mapping,
-    NeverMatch,
-} from "./Mapping";
+    goals,
+    Goals,
+} from "../goal/Goals";
+import { PushListenerInvocation } from "../listener/PushListener";
+import { Mapping } from "./Mapping";
 
 /**
  * Constant to indicate we should never match.
  * @type {any}
  */
-export const DoNotSetAnyGoals: NeverMatch = null;
+export const DoNotSetAnyGoals: Goals = goals("no goals").andLock();
 
 /**
  * Mapper from push to value, id it can be resolved.
