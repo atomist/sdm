@@ -26,7 +26,8 @@ import {
     RemoteRepoRef,
     RepoCreationParameters,
     RepoRef,
-    SeedDrivenGeneratorParameters, Success,
+    SeedDrivenGeneratorParameters,
+    Success,
 } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { RedirectResult } from "@atomist/automation-client/lib/HandlerResult";
@@ -59,7 +60,10 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
-import { CommandListenerExecutionInterruptError, toCommandListenerInvocation } from "../../machine/handlerRegistrations";
+import {
+    CommandListenerExecutionInterruptError,
+    toCommandListenerInvocation,
+} from "../../machine/handlerRegistrations";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 
 /**
