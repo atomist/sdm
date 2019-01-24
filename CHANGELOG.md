@@ -22,10 +22,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Populate the SHA on projects when loading them. [#652](https://github.com/atomist/sdm/issues/652)
 -   Make goal scheduling more plugable. [#656](https://github.com/atomist/sdm/issues/656)
 -   Make LogSuppressor the default for logInterpreter. [6a921e2](https://github.com/atomist/sdm/commit/6a921e2c488f57fe544e5d4bcfa72885b3825423)
+-   Deprecate lower case enum values. [f556259](https://github.com/atomist/sdm/commit/f5562590f51caaaa3c97340b31efe544ea71bcc6)
 
 ### Deprecated
 
 -   Deprecated `createGoal()`. [8b27e81](https://github.com/atomist/sdm/commit/8b27e811de1bd76f538e6b311256da939904af97)
+-   Deprecate lower case enum values. [f556259](https://github.com/atomist/sdm/commit/f5562590f51caaaa3c97340b31efe544ea71bcc6)
 
 ### Fixed
 
