@@ -40,13 +40,24 @@ import { AnyProjectEditor } from "@atomist/automation-client/lib/operations/edit
 import { generate } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
 import { isProject } from "@atomist/automation-client/lib/project/Project";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
-import { bold, codeBlock, url, } from "@atomist/slack-messages";
+import {
+    bold,
+    codeBlock,
+    url,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
-import { MachineOrMachineOptions, toMachineOptions, } from "../../machine/toMachineOptions";
-import { slackErrorMessage, slackInfoMessage, slackSuccessMessage, } from "../../misc/slack/messages";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "../../machine/toMachineOptions";
+import {
+    slackErrorMessage,
+    slackInfoMessage,
+    slackSuccessMessage,
+} from "../../misc/slack/messages";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 import { toCommandListenerInvocation } from "../../machine/handlerRegistrations";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
