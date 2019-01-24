@@ -29,6 +29,10 @@ import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
+    GoalDataServiceKey,
+    ServiceRegistration,
+} from "../registration/ServiceRegistration";
+import {
     createPredicatedGoalExecutor,
     WaitRules,
 } from "./common/createGoal";
@@ -142,15 +146,6 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
 }
 
 /**
- * Register additional services for a goal.
- * This can be used to add additional containers into k8s jobs to use during goal execution.
- */
-export interface ServiceRegistration<T> {
-    name: string;
-    service: (goalEvent: SdmGoalEvent, repo: RepoContext) => Promise<{ type: string, spec: T } | undefined>;
-}
-
-/**
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
@@ -200,10 +195,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                 const service = await registration.service(goalEvent, repoContext);
                 if (!!service) {
                     const data = JSON.parse(goalEvent.data || "{}");
-                    const servicesData = {
-                        services: {},
-                    };
-                    servicesData.services[registration.name] = service;
+                    const servicesData = {};
+                    _.set(servicesData, `${GoalDataServiceKey}.${registration.name}`, service);
                     goalEvent.data = JSON.stringify(_.merge(data, servicesData));
                 }
                 return goalEvent;
