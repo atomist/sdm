@@ -28,8 +28,8 @@ import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
-    ServiceRegistrationGoalDataKey,
     ServiceRegistration,
+    ServiceRegistrationGoalDataKey,
 } from "../registration/ServiceRegistration";
 import {
     createPredicatedGoalExecutor,
