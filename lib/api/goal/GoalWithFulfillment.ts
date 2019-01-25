@@ -390,7 +390,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
  * @param configurationPath
  */
 export function mergeOptions<OPTIONS>(defaults: OPTIONS, explicit: OPTIONS, configurationPath?: string): OPTIONS {
-    const options: OPTIONS = _.merge(defaults, explicit || {});
+    const options: OPTIONS = _.merge(_.cloneDeep(defaults), explicit || {});
     if (!!configurationPath) {
         const configurationOptions = configurationValue<OPTIONS>(`sdm.${configurationPath}`, {} as any);
         return _.merge(options, configurationOptions);
