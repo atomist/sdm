@@ -1,4 +1,4 @@
-subscription OnAnySdmGoalSets($registration: [String!]) {
+subscription OnAnySdmGoalSet($registration: [String!]) {
   SdmGoalSet {
     goalSetId
     goalSet

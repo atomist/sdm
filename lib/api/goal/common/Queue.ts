@@ -28,7 +28,7 @@ import { updateGoal } from "../../../api-helper/goal/storeGoals";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import {
     InProcessSdmGoalSets,
-    OnAnySdmGoalSets,
+    OnAnySdmGoalSet,
     SdmGoalsByGoalSetIdAndUniqueName,
     SdmGoalState,
     SdmGoalWithPushFields,
@@ -144,8 +144,8 @@ const QueueDefinition: GoalDefinition = {
 
 export function handleSdmGoalSetEvent(options: QueueOptions,
                                       definition: GoalDefinition,
-                                      configuration: SoftwareDeliveryMachineConfiguration): OnEvent<OnAnySdmGoalSets.Subscription> {
-    return async (e: EventFired<OnAnySdmGoalSets.Subscription>, ctx: HandlerContext) => {
+                                      configuration: SoftwareDeliveryMachineConfiguration): OnEvent<OnAnySdmGoalSet.Subscription> {
+    return async (e: EventFired<OnAnySdmGoalSet.Subscription>, ctx: HandlerContext) => {
         const optsToUse: QueueOptions = {
             ...DefaultQueueOptions,
             ...options,

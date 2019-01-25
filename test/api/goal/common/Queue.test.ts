@@ -24,7 +24,7 @@ import { Goal } from "../../../../lib/api/goal/Goal";
 import { ExecuteGoal } from "../../../../lib/api/goal/GoalInvocation";
 import { IndependentOfEnvironment } from "../../../../lib/api/goal/support/environment";
 import {
-    OnAnySdmGoalSets,
+    OnAnySdmGoalSet,
     SdmGoalState,
 } from "../../../../lib/typings/types";
 
@@ -76,7 +76,7 @@ describe("Queue", () => {
                     fail();
                 },
             };
-            const e: OnAnySdmGoalSets.Subscription = {
+            const e: OnAnySdmGoalSet.Subscription = {
                 SdmGoalSet: [{
                     goalSetId: "123456",
                 }],
@@ -185,7 +185,7 @@ describe("Queue", () => {
                     }
                 },
             };
-            const e: OnAnySdmGoalSets.Subscription = {
+            const e: OnAnySdmGoalSet.Subscription = {
                 SdmGoalSet: [{
                     goalSetId: "4",
                 }],
