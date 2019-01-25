@@ -67,15 +67,17 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
         let requiredMissing = false;
         const params: any = {};
         for (const parameter in parameters) {
-            const existingParameter = existingParameters.find(p => p.name === parameter);
-            if (!existingParameter) {
-                missing = true;
-                if (newParameters[parameter].required) {
-                    requiredMissing = true;
+            if (parameters.hasOwnProperty(parameter)) {
+                const existingParameter = existingParameters.find(p => p.name === parameter);
+                if (!existingParameter) {
+                    missing = true;
+                    if (newParameters[parameter].required) {
+                        requiredMissing = true;
+                    }
+                } else {
+                    params[parameter] = existingParameter.value;
+                    delete newParameters[parameter];
                 }
-            } else {
-                params[parameter] = existingParameter.value;
-                delete newParameters[parameter];
             }
         }
 

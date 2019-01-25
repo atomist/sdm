@@ -48,7 +48,12 @@ import {
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
+import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
+import {
+    CommandListenerExecutionInterruptError,
+    toCommandListenerInvocation,
+} from "../../machine/handlerRegistrations";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import {
     MachineOrMachineOptions,
@@ -60,11 +65,6 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
-import {
-    CommandListenerExecutionInterruptError,
-    toCommandListenerInvocation,
-} from "../../machine/handlerRegistrations";
-import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 
 /**
  * Create a command handler for project generation

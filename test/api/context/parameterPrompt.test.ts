@@ -132,7 +132,7 @@ describe("parameterPrompt", () => {
                 trigger: {
                     parameters: [
                         { name: "some", value: "other" },
-                        { name: "superfoo", value: "other" }
+                        { name: "superfoo", value: "other" },
                     ],
                 },
             };
@@ -150,7 +150,6 @@ describe("parameterPrompt", () => {
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
         });
-
 
     });
 
