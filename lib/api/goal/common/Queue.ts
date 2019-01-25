@@ -74,13 +74,6 @@ export class Queue extends FulfillableGoal {
         super({
             ...getGoalDefinitionFrom(options, DefaultGoalNameGenerator.generateName("queue"), QueueDefinition),
         }, ...dependsOn);
-
-        this.addFulfillment({
-            name: `cancel-${this.definition.uniqueName}`,
-            pushTest: AnyPush,
-            goalExecutor: async gi => ({ state: SdmGoalState.in_process }),
-            logInterpreter: LogSuppressor,
-        });
     }
 
     public register(sdm: SoftwareDeliveryMachine): void {
@@ -90,6 +83,41 @@ export class Queue extends FulfillableGoal {
             ...DefaultQueueOptions,
             ...this.options,
         };
+
+        this.addFulfillment({
+            name: `queue-${this.definition.uniqueName}`,
+            pushTest: AnyPush,
+            goalExecutor: async gi => {
+                const { context, configuration, goalEvent, progressLog } = gi;
+                const goalSets = await context.graphClient.query<InProcessSdmGoalSets.Query, InProcessSdmGoalSets.Variables>({
+                    name: "InProcessSdmGoalSets",
+                    variables: {
+                        fetch: optsToUse.fetch + optsToUse.concurrent,
+                        registration: [configuration.name],
+                    },
+                    options: QueryNoCacheOptions,
+                });
+
+                if (!!goalSets && !!goalSets.SdmGoalSet) {
+                    const ix = goalSets.SdmGoalSet.findIndex(gs => gs.goalSetId === goalEvent.goalSetId);
+                    if (ix >= 0) {
+                        progressLog.write(`Goal set currently at position ${ix + 1} in queue`);
+                        if (ix < optsToUse.concurrent) {
+                            progressLog.write(`Goal set can start immediately`);
+                            return {
+                                state: SdmGoalState.success,
+                            };
+                        }
+                    } else {
+                        progressLog.write(`Goal set not currently pending`);
+                    }
+                }
+                return {
+                    state: SdmGoalState.in_process,
+                };
+            },
+            logInterpreter: LogSuppressor,
+        });
 
         sdm.addEvent({
             name: `OnAnySdmGoalSet`,
@@ -132,7 +160,7 @@ export function handleSdmGoalSetEvent(options: QueueOptions,
             options: QueryNoCacheOptions,
         });
 
-        if (goalSets && goalSets.SdmGoalSet && goalSets.SdmGoalSet) {
+        if (goalSets && goalSets.SdmGoalSet && goalSets.SdmGoalSet.length > 0) {
             await startGoals(goalSets, optsToUse, definition, ctx);
             await updateGoals(goalSets, optsToUse, definition, ctx);
         }
