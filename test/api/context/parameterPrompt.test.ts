@@ -139,9 +139,9 @@ describe("parameterPrompt", () => {
 
             try {
                 const params = await commandRequestParameterPromptFactory(ctx as any)({
-                    bar: { required: true },
-                    test: { required: true },
-                    foo: { required: true },
+                    bar: { },
+                    test: { required: false },
+                    foo: { required: false },
                     superfoo: { required: true },
                 }) as any;
                 assert.fail();

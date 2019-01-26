@@ -71,7 +71,8 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
                 const existingParameter = existingParameters.find(p => p.name === parameter);
                 if (!existingParameter) {
                     missing = true;
-                    if (newParameters[parameter].required) {
+                    // If required isn't defined it means the parameter is required
+                    if (newParameters[parameter].required || newParameters[parameter].required === undefined) {
                         requiredMissing = true;
                     }
                 } else {
