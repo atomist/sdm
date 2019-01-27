@@ -185,7 +185,7 @@ async function loadQueueGoals(goalsSets: SdmGoalSet[],
 async function startGoals(goalSets: InProcessSdmGoalSets.Query,
                           options: QueueOptions,
                           definition: GoalDefinition,
-                          ctx: HandlerContext) {
+                          ctx: HandlerContext): Promise<void> {
     // Update goal sets that are allowed to start
     const goalSetsToStart = goalSets.SdmGoalSet.slice(0, options.concurrent)
         .filter(gs => gs.goals.some(g => g.uniqueName === definition.uniqueName));
@@ -209,7 +209,7 @@ async function startGoals(goalSets: InProcessSdmGoalSets.Query,
 
 async function updateGoals(goalSets: InProcessSdmGoalSets.Query,
                            options: QueueOptions,
-                           definition: GoalDefinition, ctx: HandlerContext) {
+                           definition: GoalDefinition, ctx: HandlerContext): Promise<void> {
     // Update pending goal sets with a counter
     const goalSetsToUpdate = goalSets.SdmGoalSet.slice(options.concurrent)
         .filter(gs => gs.goals.some(g => g.uniqueName === definition.uniqueName));

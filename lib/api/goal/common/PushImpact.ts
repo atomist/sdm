@@ -49,7 +49,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
         });
     }
 
-    public withListener(listener: PushImpactListener<any>) {
+    public withListener(listener: PushImpactListener<any>): this {
         return this.with({
             name: DefaultGoalNameGenerator.generateName("push-impact-listener"),
             action: listener,

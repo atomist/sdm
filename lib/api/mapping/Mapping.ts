@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// tslint:disable-next-line:no-null-keyword
 export type NeverMatch = null;
 
 /**

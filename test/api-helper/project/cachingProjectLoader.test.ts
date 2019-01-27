@@ -32,7 +32,7 @@ describe("cachingProjectLoader", () => {
         const p = InMemoryProject.from(id);
         const pl = new SingleProjectLoader(p);
         const cp = new CachingProjectLoader(pl);
-        const p1 = await save(cp, {id, credentials: null, readOnly: true});
+        const p1 = await save(cp, {id, credentials: undefined, readOnly: true});
         assert(p1 as any === p);
     });
 

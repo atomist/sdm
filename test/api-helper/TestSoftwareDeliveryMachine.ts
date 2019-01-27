@@ -17,6 +17,7 @@
 import { Maker } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import { DefaultGoalImplementationMapper } from "../../lib/api-helper/goal/DefaultGoalImplementationMapper";
 import { AbstractSoftwareDeliveryMachine } from "../../lib/api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { GoalSetter } from "../../lib/api/mapping/GoalSetter";
 
@@ -27,7 +28,7 @@ export class TestSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine
 
     public readonly commandHandlers: Array<Maker<HandleCommand>>;
     public readonly eventHandlers: Array<Maker<HandleEvent<any>>>;
-    public readonly goalFulfillmentMapper;
+    public readonly goalFulfillmentMapper: DefaultGoalImplementationMapper;
     public readonly ingesters: string[];
 
     constructor(name: string, ...goalSetters: Array<GoalSetter | GoalSetter[]>) {

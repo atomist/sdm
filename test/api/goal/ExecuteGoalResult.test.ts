@@ -40,7 +40,9 @@ describe("ExecuteGoalResult", () => {
         });
 
         it("should correctly detect success from result with null code", () => {
+            // tslint:disable-next-line:no-null-keyword
             assert.strictEqual(isSuccess({ code: null, message: "This is a test " }), true);
+            // tslint:disable-next-line:no-null-keyword
             assert.strictEqual(isFailure({ code: null, message: "This is a test " }), false);
         });
 

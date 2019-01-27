@@ -39,5 +39,4 @@ export class TypedFingerprint<T> extends AbstractFingerprint {
     get object(): T {
         return JSON.parse(this.data);
     }
-
 }

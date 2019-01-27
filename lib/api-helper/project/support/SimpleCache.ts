@@ -24,7 +24,7 @@ export interface CacheStats {
  */
 export interface SimpleCache<T> {
 
-    put(key: string, value: T);
+    put(key: string, value: T): void;
 
     get(key: string): T;
 

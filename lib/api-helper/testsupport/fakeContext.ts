@@ -49,7 +49,7 @@ export function fakeContext(workspaceId: string = "T123"): HandlerContext & Auto
             correlationId,
             messageClient: new DevNullMessageClient(),
         },
-        trigger: {} as CommandIncoming,
+        trigger: {} as any,
     };
 }
 

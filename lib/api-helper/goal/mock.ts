@@ -122,6 +122,6 @@ function createGoalExecutor(seconds: number, code: number = 0): ExecuteGoal {
 
 function wait(seconds: number): Promise<void> {
     return new Promise<void>(resolve => {
-        setTimeout(() => resolve(), seconds * 1000).unref();
+        setTimeout(resolve, seconds * 1000).unref();
     });
 }

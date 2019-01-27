@@ -102,7 +102,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.result().baseDir;
     }
 
-    public branch = this.id.branch;
+    public branch: string = this.id.branch;
     public newRepo: boolean = false;
     public remote: string = (this.id as RemoteRepoRef).url;
 
@@ -192,7 +192,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const resultStream = new stream.Transform({ objectMode: true });
-        resultStream._transform = function(chunk, encoding, done) {
+        resultStream._transform = function(chunk: any, encoding: string, done: stream.TransformCallback): void {
             // tslint:disable-next-line:no-invalid-this
             this.push(chunk);
             done();
@@ -221,7 +221,9 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<this> {
+    public createAndSetRemote(gid: RemoteRepoRef,
+                              description: string,
+                              visibility: "private" | "public"): Promise<this> {
         this.materializeIfNecessary("createAndSetRemote");
         return this.projectPromise.then(mp => mp.createAndSetRemote(gid, description, visibility)) as any;
     }
@@ -276,7 +278,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }
 
-    private materializeIfNecessary(why: string) {
+    private materializeIfNecessary(why: string): QueryablePromise<GitProject> {
         if (!this.materializing()) {
             logger.info("Materializing project %j because of %s", this.id, why);
             this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));

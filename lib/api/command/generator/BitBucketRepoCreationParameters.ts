@@ -29,7 +29,7 @@ import { NewRepoCreationParameters } from "@atomist/automation-client/lib/operat
 export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
-    public githubToken;
+    public githubToken: string;
 
     // @MappedParameter(MappedParameters.GitHubWebHookUrl)
     // public webhookUrl: string;

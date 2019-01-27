@@ -22,6 +22,7 @@ import {
     projectUtils,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { ActionResult } from "@atomist/automation-client/lib/action/ActionResult";
 import * as assert from "power-assert";
 import {
     executeAutofixes,
@@ -99,19 +100,19 @@ const FakeRepoRefResolver: RepoRefResolver = {
             remoteBase: "unreal",
             providerType: 0,
             url: "not-here",
-            cloneUrl() {
+            cloneUrl(): string {
                 return "nope";
             },
-            createRemote() {
+            createRemote(): Promise<ActionResult<any>> {
                 throw new Error("Not implemented");
             },
-            setUserConfig() {
+            setUserConfig(): Promise<ActionResult<any>> {
                 throw new Error("Not implemented");
             },
-            raisePullRequest() {
+            raisePullRequest(): Promise<ActionResult<any>> {
                 throw new Error("Not implemented");
             },
-            deleteRemote() {
+            deleteRemote(): Promise<ActionResult<any>> {
                 throw new Error("Not implemented");
             },
             owner: repo.owner,
@@ -140,8 +141,11 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryProjectFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
-        (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
+        (p as any as GitProject).revert = async () => undefined;
+        (p as any as GitProject).gitStatus = async () => ({
+            isClean: false,
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+        } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -156,10 +160,13 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).commit = async () => null;
-        (p as any as GitProject).push = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
+        (p as any as GitProject).revert = async () => undefined;
+        (p as any as GitProject).commit = async () => undefined;
+        (p as any as GitProject).push = async () => undefined;
+        (p as any as GitProject).gitStatus = async () => ({
+            isClean: false,
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+        } as any);
         const pl = new SingleProjectLoader(p);
         const gi = fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -179,10 +186,13 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).commit = async () => null;
-        (p as any as GitProject).push = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
+        (p as any as GitProject).revert = async () => undefined;
+        (p as any as GitProject).commit = async () => undefined;
+        (p as any as GitProject).push = async () => undefined;
+        (p as any as GitProject).gitStatus = async () => ({
+            isClean: false,
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+        } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -200,10 +210,13 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).commit = async () => null;
-        (p as any as GitProject).push = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
+        (p as any as GitProject).revert = async () => undefined;
+        (p as any as GitProject).commit = async () => undefined;
+        (p as any as GitProject).push = async () => undefined;
+        (p as any as GitProject).gitStatus = async () => ({
+            isClean: false,
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+        } as any);
         const pl = new SingleProjectLoader(p);
         const gi = fakeGoalInvocation(id, {
             projectLoader: pl,

@@ -71,7 +71,7 @@ export function attachFacts<FACT, F extends SdmContext = PushListenerInvocation>
         mapping: async f => {
             const withAdditionalFact = f as F & StatefulInvocation<FACT>;
             if (!withAdditionalFact.facts) {
-                withAdditionalFact.facts = {} as FACT;
+                withAdditionalFact.facts = {} as any;
             }
             const additionalState = await compute(withAdditionalFact);
             _.merge(withAdditionalFact.facts, additionalState);
@@ -94,7 +94,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
     constructor(public readonly name: string, public readonly contributors: Array<GoalContribution<F>>) {
     }
 
-    get structure() {
+    get structure(): { components: any, compositionStyle: GoalSettingCompositionStyle } {
         return {
             components: this.contributors.map(vague => mapMapping(vague, toGoals)),
             compositionStyle: GoalSettingCompositionStyle.AllMatches,

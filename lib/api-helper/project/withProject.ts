@@ -25,7 +25,6 @@ import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
-import { ProgressLog } from "../../spi/log/ProgressLog";
 import {
     execPromise,
     ExecPromiseResult,
@@ -82,7 +81,7 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
     return gi => {
         const { context, credentials, id, configuration, progressLog } = gi;
 
-        function spawn(p: GitProject) {
+        function spawn(p: GitProject): (cmd: string, args: string[], opts: SpawnLogOptions) => Promise<SpawnLogResult> {
             return (cmd: string,
                     args: string | string[] = [],
                     opts?: SpawnLogOptions) => {
@@ -95,7 +94,7 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
             };
         }
 
-        function exec(p: GitProject) {
+        function exec(p: GitProject): (cmd: string, args?: string[], opts?: SpawnSyncOptions) => Promise<ExecPromiseResult> {
             return (cmd: string,
                     args: string | string[] = [],
                     opts: SpawnSyncOptions = {}) => {

@@ -34,7 +34,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryProjectFile("a", "b"));
-        const rr = await rer.inspection(project, null);
+        const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 0);
     });
 
@@ -47,7 +47,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
-        const rr = await rer.inspection(project, null);
+        const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });
@@ -61,7 +61,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
-        const rr = await rer.inspection(project, null);
+        const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 0);
     });
 
@@ -74,7 +74,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs suck test"));
-        const rr = await rer.inspection(project, null);
+        const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });
@@ -88,7 +88,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs /[&(* suck test"));
-        const rr = await rer.inspection(project, null);
+        const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });

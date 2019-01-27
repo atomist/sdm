@@ -47,7 +47,7 @@ import { OnPushToAnyBranch } from "../../../lib/typings/types";
 // Model for what we could do in a pack
 
 class InsufficientDataError extends Error {
-    public readonly kind = "InsufficientDataError";
+    public readonly kind: string = "InsufficientDataError";
 
     constructor(missing: string) {
         super(missing);

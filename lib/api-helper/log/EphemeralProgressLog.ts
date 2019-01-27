@@ -28,15 +28,15 @@ import {
  */
 class EphemeralProgressLog implements ProgressLog {
 
-    public log = "";
+    public log: string = "";
 
-    public url = undefined;
+    public url: string = undefined;
 
     constructor(public name: string, private readonly writeToLog: boolean = true) {}
 
-    public async isAvailable() { return true; }
+    public async isAvailable(): Promise<boolean> { return true; }
 
-    public flush() {
+    public flush(): Promise<void> {
         return Promise.resolve();
     }
 
@@ -48,7 +48,7 @@ class EphemeralProgressLog implements ProgressLog {
         }
     }
 
-    public write(what: string) {
+    public write(what: string): void {
         this.log += what;
     }
 

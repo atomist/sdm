@@ -56,7 +56,7 @@ export function createGoal(egi: EssentialGoalInfo,
     const g = new GoalWithFulfillment({
         uniqueName: DefaultGoalNameGenerator.generateName(egi.displayName),
         ...egi,
-    } as GoalDefinition);
+    });
     return g.with({
         ...options,
         name: g.definition.uniqueName,

@@ -19,6 +19,7 @@ import {
     deepLink as githubDeepLink,
     GitHubRepoRef,
     HandlerContext,
+    HandlerResult,
     ProjectReview,
     RemoteRepoRef,
     ReviewComment,
@@ -68,7 +69,7 @@ async function sendReviewToSlack(title: string,
                                  pr: ProjectReview,
                                  ctx: HandlerContext,
                                  addressChannels: AddressChannels,
-                                 deepLink: DeepLink) {
+                                 deepLink: DeepLink): Promise<HandlerResult> {
     const mesg: slack.SlackMessage = {
         text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
         attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c, deepLink)),

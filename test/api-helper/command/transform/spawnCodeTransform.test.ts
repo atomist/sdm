@@ -32,7 +32,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that runs a command", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: true }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(0);"] },
@@ -49,7 +49,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that runs a command that edits the project", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: false } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: false }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(0);"] },
@@ -66,7 +66,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that runs several commands", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: true }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(0);"] },
@@ -85,7 +85,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that runs a command that fails", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: true }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(1);"] },
@@ -103,7 +103,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that runs a command that edits a project and fails", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: false } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: false }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(4);"] },
@@ -121,7 +121,7 @@ describe("spawnCodeTransform", () => {
         it("should return a function that short circuits on failure", async () => {
             const p: GitProject = {
                 baseDir: ".",
-                gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+                gitStatus: async () => Promise.resolve({ isClean: true }),
             } as any;
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(2);"] },

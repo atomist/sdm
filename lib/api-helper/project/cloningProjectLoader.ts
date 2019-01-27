@@ -15,13 +15,17 @@
  */
 
 import { GitCommandGitProject } from "@atomist/automation-client";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import {
+    ProjectLoader,
+    ProjectLoadingParameters,
+    WithLoadedProject,
+} from "../../spi/project/ProjectLoader";
 
 /**
  * Non caching ProjectLoader that uses a separate clone for each project accessed
  */
 export const CloningProjectLoader: ProjectLoader = {
-    async doWithProject(coords, action) {
+    async doWithProject(coords: ProjectLoadingParameters, action: WithLoadedProject<any>): Promise<any> {
         // coords.depth is deprecated; populate it for backwards compatibility
         // tslint:disable-next-line:deprecation
         const cloneOptions = coords.cloneOptions ? coords.cloneOptions : { depth: coords.depth };

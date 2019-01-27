@@ -26,7 +26,7 @@ export async function projectConfigurationValue<T>(path: string, p: Project, def
     if (cf)  {
         const conf = JSON.parse(await cf.getContent());
         const value = _.get(conf, path) as T;
-        if (value != null) {
+        if (value !== undefined) {
             return value;
         }
     }

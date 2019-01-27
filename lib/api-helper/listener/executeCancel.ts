@@ -118,7 +118,8 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
     };
 }
 
-function provenanceFilter(sdmGoal: SdmGoalByShaAndBranch.SdmGoal, registration: string) {
+function provenanceFilter(sdmGoal: SdmGoalByShaAndBranch.SdmGoal,
+                          registration: string): boolean {
     const provenances = [...sdmGoal.provenance].sort((p1, p2) => p1.ts - p2.ts);
     return provenances[0].registration === registration || registration.startsWith(`${provenances[0].registration}-job`);
 }

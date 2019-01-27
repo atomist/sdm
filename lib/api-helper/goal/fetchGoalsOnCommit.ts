@@ -150,7 +150,10 @@ function sumEventsForOneSdmGoal(events: SdmGoalEvent[]): SdmGoalEvent {
     return success || _.maxBy(events, e => e.ts);
 }
 
-function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: string, ctx: HandlerContext) {
+function sdmGoalOffsetQuery(id: RemoteRepoRef,
+                            goalSetId: string,
+                            providerId: string,
+                            ctx: HandlerContext): (offset: number, size: number) => Promise<SdmGoalsForCommit.Query> {
     return async (offset: number, size: number) => {
         return ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
             name: "SdmGoalsForCommit",

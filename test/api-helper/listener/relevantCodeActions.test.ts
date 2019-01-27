@@ -16,13 +16,10 @@
 
 import { InMemoryProject } from "@atomist/automation-client";
 import axios from "axios";
-
 import * as assert from "power-assert";
 import { relevantCodeActions } from "../../../lib/api-helper/listener/relevantCodeActions";
 import { PushImpactListenerInvocation } from "../../../lib/api/listener/PushImpactListener";
-import {
-    AutofixRegistration,
-} from "../../../lib/api/registration/AutofixRegistration";
+import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
 
 const SomePickyFix: AutofixRegistration = {
     name: "Some picky fix",
@@ -36,7 +33,7 @@ const SomePickyFix: AutofixRegistration = {
 describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
-        const pti: PushImpactListenerInvocation = {} as PushImpactListenerInvocation;
+        const pti: PushImpactListenerInvocation = {} as any;
         const autofixes: AutofixRegistration = {
             name: "License Fix",
             transform: async p => {

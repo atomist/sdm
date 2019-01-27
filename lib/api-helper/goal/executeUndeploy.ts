@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import * as stringify from "json-stringify-safe";
+import { Success } from "@atomist/automation-client";
 import {
     ExecuteGoal,
     GoalInvocation,
@@ -36,8 +32,6 @@ export function executeUndeploy(target: Target): ExecuteGoal {
             progressLog.write("No deployments found");
             return Success;
         }
-
-        logger.info("Detected deployments: %s", deployments.map(s => stringify(s)).join(", "));
 
         deployments.forEach(async d =>
             target.deployer.undeploy(

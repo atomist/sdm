@@ -27,7 +27,7 @@ export class LoggingProgressLog implements ProgressLog {
     constructor(public name: string, private readonly level: "debug" | "info" = "debug") {
     }
 
-    public write(pWhat: string) {
+    public write(pWhat: string): void {
         let what = pWhat || "";
         this.log += what;
         if (what.endsWith("\n\r") || what.endsWith("\r\n")) {
@@ -46,15 +46,15 @@ export class LoggingProgressLog implements ProgressLog {
         }
     }
 
-    public async isAvailable() {
+    public async isAvailable(): Promise<boolean> {
         return true;
     }
 
-    public flush() {
+    public flush(): Promise<void> {
         return Promise.resolve();
     }
 
-    public close() {
+    public close(): Promise<void> {
         return Promise.resolve();
     }
 

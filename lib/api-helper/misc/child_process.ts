@@ -185,7 +185,7 @@ export async function spawnAndLog(log: ProgressLog, cmd: string, args: string[] 
  * @param timers the timers to clear.
  */
 function clearTimers(...timers: NodeJS.Timer[]): void {
-    timers.filter(t => !!t).map(t => clearTimeout(t));
+    timers.filter(t => !!t).map(clearTimeout);
 }
 
 /**

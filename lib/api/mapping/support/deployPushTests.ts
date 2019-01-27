@@ -43,7 +43,7 @@ query DeployEnablementForRepo($owner: [String], $repo: [String]) {
  */
 export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", isDeployEnabled);
 
-export async function isDeployEnabled(parameters: { context: HandlerContext, id: RepoRef }) {
+export async function isDeployEnabled(parameters: { context: HandlerContext, id: RepoRef }): Promise<boolean> {
     const {context, id} = parameters;
     try {
         const enablement = await context.graphClient.query<any, any>({

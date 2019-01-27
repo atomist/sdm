@@ -31,7 +31,7 @@ describe("deployPushTests tests thing", () => {
              const pi = {
                  context: {
                      graphClient: {
-                         query(options: { query: string, variables: any, options: any } ) {
+                         async query(options: { query: string, variables: any, options: any } ): Promise<any> {
                              assert.equal(options.variables.owner, "atomist");
                              assert.equal(options.variables.repo, "github-sdm");
                              return {
@@ -56,7 +56,7 @@ describe("deployPushTests tests thing", () => {
             const pi = {
                 context: {
                     graphClient: {
-                        query(options: { query: string, variables: any, options: any } ) {
+                        async query(options: { query: string, variables: any, options: any } ): Promise<any> {
                             return {
                                 SdmDeployEnablement: [ {
                                     id: guid(),
@@ -86,7 +86,7 @@ describe("deployPushTests tests thing", () => {
             const pi = {
                 context: {
                     graphClient: {
-                        query(options: { query: string, variables: any, options: any } ) {
+                        async query(options: { query: string, variables: any, options: any } ): Promise<any> {
                             return {
                                 SdmDeployEnablement: [ {
                                     id: guid(),
@@ -115,7 +115,7 @@ describe("deployPushTests tests thing", () => {
             const pi = {
                 context: {
                     graphClient: {
-                        query(options: { query: string, variables: any, options: any } ) {
+                        async query(options: { query: string, variables: any, options: any } ): Promise<any> {
                            throw new Error("This is supposed to happen");
                         },
                     },

@@ -29,7 +29,7 @@ export class PushRule<V = any> implements StaticPushMapping<V>, Predicated<PushL
 
     private staticValue: V;
 
-    get value() {
+    get value(): V {
         return this.staticValue;
     }
 
@@ -42,7 +42,7 @@ export class PushRule<V = any> implements StaticPushMapping<V>, Predicated<PushL
      */
     public readonly pushTest: PushTest;
 
-    get test() {
+    get test(): PushTest {
         return this.pushTest;
     }
 

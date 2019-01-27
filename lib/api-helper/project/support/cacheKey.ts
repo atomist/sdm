@@ -23,6 +23,6 @@ import { sprintf } from "sprintf-js";
  * @param {RemoteRepoRef} id
  * @return {any}
  */
-export function cacheKeyForSha(id: RemoteRepoRef) {
+export function cacheKeyForSha(id: RemoteRepoRef): string {
     return sprintf("%s:%s:%s:%s@%s", id.owner, id.repo, id.branch, id.sha, id.url);
 }

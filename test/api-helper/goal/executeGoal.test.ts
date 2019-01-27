@@ -90,7 +90,7 @@ describe("executeGoal", () => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
         createEphemeralProgressLog(fakeContext(),
-            { name: "test" } as SdmGoalEvent).then(progressLog => {
+            { name: "test" } as any).then(progressLog => {
             const fakeRWLC = {
                 context: fakeContext(),
                 progressLog,

@@ -39,6 +39,7 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
+import { GoalImplementationMapper } from "../../api/goal/support/GoalImplementationMapper";
 import { TriggeredListenerInvocation } from "../../api/listener/TriggeredListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
@@ -85,7 +86,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public readonly extensionPacks: ExtensionPack[] = [];
 
-    protected readonly registrationManager = new HandlerRegistrationManagerSupport(this);
+    protected readonly registrationManager: HandlerRegistrationManagerSupport
+        = new HandlerRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 
@@ -96,9 +98,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     private pushMap: GoalSetter;
 
-    private fulfillmentMapper;
+    private fulfillmentMapper: DefaultGoalImplementationMapper;
 
-    public get goalFulfillmentMapper() {
+    public get goalFulfillmentMapper(): DefaultGoalImplementationMapper {
         if (!this.fulfillmentMapper) {
             this.fulfillmentMapper = new DefaultGoalImplementationMapper();
         }

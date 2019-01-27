@@ -109,7 +109,7 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
     endpointGoal: Goal,
     goalInvocation: GoalInvocation,
     deployment: Deployment,
-}) {
+}): Promise<void> {
     const { goalInvocation, deployment, endpointGoal } = params;
     const sdmGoal = await findSdmGoalOnCommit(goalInvocation.context, goalInvocation.id, goalInvocation.goalEvent.repo.providerId, endpointGoal);
     // Only update the endpoint goal if it actually exists in the goal set
@@ -128,7 +128,7 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
 function markEndpointStatus(parameters: {
     context: HandlerContext, sdmGoal: SdmGoalEvent, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
     error?: Error,
-}) {
+}): Promise<void> {
     const { context, sdmGoal, endpointGoal, newState, endpoint, error } = parameters;
     return updateGoal(context, sdmGoal, {
         description: descriptionFromState(endpointGoal, newState),

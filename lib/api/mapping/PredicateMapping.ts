@@ -66,7 +66,7 @@ export type PredicateMappingVisitor<F> = (pm: PredicateMapping<F>) => boolean;
  * @param v visitor
  * @return {boolean} whether to visit the mapping's structure, if any
  */
-export function visitPredicateMappings<F>(pm: PredicateMapping<F>, v: PredicateMappingVisitor<F>) {
+export function visitPredicateMappings<F>(pm: PredicateMapping<F>, v: PredicateMappingVisitor<F>): void {
     if (v(pm) && !!pm.structure) {
         pm.structure.components.forEach(n => visitPredicateMappings(n, v));
     }

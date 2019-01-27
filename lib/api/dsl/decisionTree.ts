@@ -42,7 +42,7 @@ import { allSatisfied } from "../mapping/support/pushTestUtils";
  * @param givenPushTests PushTests
  * @return interim DSL structure
  */
-export function given<V>(...givenPushTests: PushTest[]) {
+export function given<V>(...givenPushTests: PushTest[]): TreeContext<V> {
     return new TreeContext<V>(givenPushTests);
 }
 

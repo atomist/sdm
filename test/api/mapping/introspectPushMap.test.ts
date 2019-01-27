@@ -15,6 +15,8 @@
  */
 
 import * as assert from "assert";
+
+import * as _ from "lodash";
 import {
     onAnyPush,
     whenPushSatisfies,
@@ -23,13 +25,11 @@ import { ExecuteGoal } from "../../../lib/api/goal/GoalInvocation";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { goal } from "../../../lib/api/goal/GoalWithFulfillment";
 import { PushTest } from "../../../lib/api/mapping/PushTest";
-import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
-
-import * as _ from "lodash";
 import {
     allSatisfied,
     anySatisfied,
 } from "../../../lib/api/mapping/support/pushTestUtils";
+import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 import {
     EmptyGoalPrediction,
     MappingPrediction,
@@ -40,7 +40,12 @@ import {
     TruePushTest,
 } from "./support/pushTestUtils.test";
 
-function goalsToNames(gp: MappingPrediction<Goals>) {
+function goalsToNames(gp: MappingPrediction<Goals>): {
+    definiteGoalNames: string[], possibleGoalNames: string[], unknownRoads: Array<{
+        name: string,
+        reason: string,
+    }>,
+} {
     return {
         definiteGoalNames: _.flatten(gp.definiteGoals.map(gg => gg.goals.map(g => g.name))),
         possibleGoalNames: _.flatten(gp.possibleGoals.map(gg => gg.goals.map(g => g.name))),

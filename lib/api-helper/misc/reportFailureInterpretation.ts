@@ -27,7 +27,7 @@ export async function reportFailureInterpretation(stepName: string,
                                                   fullLog: { url?: string, log: string },
                                                   id: RemoteRepoRef,
                                                   addressChannels: AddressChannels,
-                                                  retryButton?: slack.Action) {
+                                                  retryButton?: slack.Action): Promise<void> {
     if (!interpretation) {
         if (fullLog.url) {
             logger.info("No log interpretation. Log available at: " + fullLog.url);

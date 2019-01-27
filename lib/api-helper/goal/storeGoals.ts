@@ -47,7 +47,7 @@ import {
     SdmGoalWithPushFields,
 } from "../../typings/types";
 
-export function environmentFromGoal(goal: Goal) {
+export function environmentFromGoal(goal: Goal): string {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
 }
 
@@ -72,9 +72,9 @@ export function updateGoal(ctx: HandlerContext,
         params.data :
         !!before ? before.data : undefined;
     before.version = (before.version || 1) + 1;
-    const sdmGoal: SdmGoalMessage = {
+    const sdmGoal = {
         ...eventToMessage(before),
-        state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
+        state: params.state === "success" && !!before && before.approvalRequired ? SdmGoalState.waiting_for_approval : params.state,
         phase: params.phase,
         description,
         url: params.url ? params.url : before.url,
@@ -86,7 +86,7 @@ export function updateGoal(ctx: HandlerContext,
         data,
         push: cleanPush(before.push),
         version: before.version,
-    } as SdmGoalMessage;
+    };
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -99,7 +99,7 @@ function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
             providerId: event.push.repo.org.provider.providerId,
         },
         id: undefined,
-    } as SdmGoalMessage;
+    } as any;
 }
 
 export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoalKey): boolean {
@@ -173,7 +173,9 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     };
 }
 
-export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage, push: OnPushToAnyBranch.Push) {
+export function storeGoal(ctx: HandlerContext,
+                          sdmGoal: SdmGoalMessage,
+                          push: OnPushToAnyBranch.Push): Promise<SdmGoalMessage> {
     (sdmGoal as SdmGoalWithPushFields.Fragment).push = cleanPush(push);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);

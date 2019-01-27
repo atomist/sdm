@@ -28,7 +28,8 @@ import { execPromise } from "../child_process";
  * @param {PushFields.Fragment} push
  * @return {Promise<string[]>}
  */
-export async function filesChangedSince(project: GitProject, push: PushFields.Fragment): Promise<string[] | undefined> {
+export async function filesChangedSince(project: GitProject,
+                                        push: PushFields.Fragment): Promise<string[] | undefined> {
     // get the number of commits from the after
     const commitCount = push && push.commits ? push.commits.length : 1;
     const sha = push && push.after ? push.after.sha : "HEAD";
@@ -57,7 +58,9 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
     }
 }
 
-async function gitDiff(sha: string, commitCount: number, project: GitProject) {
+async function gitDiff(sha: string,
+                       commitCount: number,
+                       project: GitProject): Promise<string[]> {
     const cr = await execPromise("git", ["diff", "--name-only", `${sha}~${commitCount}`], { cwd: project.baseDir });
     // stdout is nothing but a list of files, one per line
     logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);

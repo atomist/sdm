@@ -59,11 +59,12 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
      * @param name
      */
     public withTransform(transform: CodeTransform<any>,
-                         name: string = DefaultGoalNameGenerator.generateName("autofix-transform")) {
+                         name: string = DefaultGoalNameGenerator.generateName("autofix-transform")): this {
         this.with({
             name,
             transform,
         });
+        return this;
     }
 }
 

@@ -42,7 +42,7 @@ export interface ConfigurationValues {
  * @param config
  * @param options
  */
-export function validateConfigurationValues(config: any, options: ConfigurationValues) {
+export function validateConfigurationValues(config: any, options: ConfigurationValues): void {
     const missingValues = [];
     const invalidValues = [];
     (options.requiredConfigurationValues || []).forEach(v => {

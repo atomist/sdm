@@ -22,17 +22,18 @@ import { SimpleCache } from "./SimpleCache";
  */
 export class LruCache<T> implements SimpleCache<T> {
 
-    private gets = 0;
-    private hits = 0;
+    private gets: number = 0;
+    private hits: number = 0;
 
     private readonly values: Map<string, T> = new Map<string, T>();
 
     constructor(private readonly maxEntries: number = 200,
-                private readonly evictCallback: (t: T) => void = () => { /** intentionally left empty */}) {
+                private readonly evictCallback: (t: T) => void = () => { /** intentionally left empty */
+                }) {
     }
 
-    get stats() {
-        return {hits: this.hits, gets: this.gets};
+    get stats(): { hits: number, gets: number } {
+        return { hits: this.hits, gets: this.gets };
     }
 
     public get(key: string): T {
@@ -48,7 +49,7 @@ export class LruCache<T> implements SimpleCache<T> {
         return entry;
     }
 
-    public put(key: string, value: T) {
+    public put(key: string, value: T): void {
         if (this.values.size >= this.maxEntries) {
             // least-recently used cache eviction strategy
             const keyToDelete = this.values.keys().next().value;
@@ -57,7 +58,7 @@ export class LruCache<T> implements SimpleCache<T> {
         this.values.set(key, value);
     }
 
-    public evict(key: string) {
+    public evict(key: string): boolean {
         this.evictCallback(this.values.get(key));
         return this.values.delete(key);
     }

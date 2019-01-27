@@ -28,23 +28,23 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
                 private readonly lineDelimiter: string) {
     }
 
-    get name() {
+    get name(): string {
         return this.delegate.name;
     }
 
-    get url() {
+    get url(): string {
         return this.delegate.url;
     }
 
-    get log() {
+    get log(): string {
         return this.delegate.log;
     }
 
-    public async isAvailable() {
+    public async isAvailable(): Promise<boolean> {
         return this.delegate.isAvailable();
     }
 
-    public write(what: string) {
+    public write(what: string): void {
         this.lineBuffer += what;
         const splitLines = this.lineBuffer.split(this.lineDelimiter);
         if (splitLines.length > 1) {
@@ -64,7 +64,7 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
         return this.delegate.close();
     }
 
-    private writeRemainder() {
+    private writeRemainder(): void {
         const remainder = this.lineBuffer;
         this.lineBuffer = "";
         this.delegate.write(remainder);

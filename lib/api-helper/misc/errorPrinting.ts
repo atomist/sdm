@@ -30,7 +30,7 @@ function isAxiosError(err: Error): err is AxiosError {
     return asAxios.config && asAxios.config.url && true;
 }
 
-function removePainfulBits(err: AxiosError) {
+function removePainfulBits(err: AxiosError): any {
     const usefulBits = {
         // Error
         stack: err.stack,

@@ -82,7 +82,7 @@ class GoalExecutionError extends Error {
         this.cause = params.cause;
     }
 
-    get description() {
+    get description(): string {
         const resultDescription = this.result ? `Result code ${this.result.code} ${this.result.message}` : "";
         const causeDescription = this.cause ? `Caused by: ${this.cause.message}` : "";
         return `Failure in ${this.where}: ${resultDescription} ${causeDescription}`;
@@ -115,7 +115,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
     logger.info(`Running ${goalEvent.name}. Triggered by ${goalEvent.state} status: ${goalEvent.externalKey}: ${goalEvent.description}`);
 
-    async function notifyGoalExecutionListeners(sge: SdmGoalEvent, error?: Error) {
+    async function notifyGoalExecutionListeners(sge: SdmGoalEvent, error?: Error): Promise<void> {
         const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
             id,
             context,
@@ -270,7 +270,7 @@ export function markStatus(parameters: {
     result: ExecuteGoalResult,
     error?: Error,
     progressLogUrl: string,
-}) {
+}): Promise<void>  {
     const { context, goalEvent, goal, result, error, progressLogUrl } = parameters;
 
     /* tslint:disable:deprecation */
@@ -345,7 +345,7 @@ async function reportGoalError(parameters: {
                                    id: RemoteRepoRef,
                                    logInterpreter: InterpretLog,
                                },
-                               err: GoalExecutionError) {
+                               err: GoalExecutionError): Promise<void> {
     const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
     logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",

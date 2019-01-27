@@ -21,7 +21,6 @@ import * as assert from "power-assert";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { spawnAndWatch } from "../../../lib/api-helper/misc/spawned";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
-import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("spawned", () => {
 
@@ -29,7 +28,7 @@ describe("spawned", () => {
         const sc: SpawnCommand = { command: "thisIsNonsense" };
         try {
             await spawnAndWatch(sc, {},
-                await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
+                await createEphemeralProgressLog(fakeContext(), { name: "test" } as any),
                 {});
             assert.fail("Should have thrown an exception");
         } catch (err) {
@@ -40,7 +39,7 @@ describe("spawned", () => {
     it("should handle valid command with no error finder", async () => {
         const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as any),
             { timeout: 10000 });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
@@ -49,7 +48,7 @@ describe("spawned", () => {
     it("should use default on attempt to pass in undefined error finder", async () => {
         const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as any),
             {
                 errorFinder: undefined,
                 timeout: 10000,
@@ -61,7 +60,7 @@ describe("spawned", () => {
     it("should handle valid command with error finder", async () => {
         const sc: SpawnCommand = { command: "ls" };
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent),
+            await createEphemeralProgressLog(fakeContext(), { name: "test" } as any),
             {
                 errorFinder: () => false,
                 timeout: 10000,

@@ -57,7 +57,7 @@ export interface ListenerRegistrationManager {
      */
     addNewIssueListener(l: NewIssueListener): this;
 
-    addUpdatedIssueListener(l: UpdatedIssueListener);
+    addUpdatedIssueListener(l: UpdatedIssueListener): this;
 
     addClosedIssueListener(l: ClosedIssueListener): this;
 
@@ -65,7 +65,7 @@ export interface ListenerRegistrationManager {
      * Invoked when a goal state changes to in-process, success, or failure.
      * @returns {this}
      */
-    addGoalExecutionListener(l: GoalExecutionListener);
+    addGoalExecutionListener(l: GoalExecutionListener): this;
 
     addTagListener(l: TagListener): this;
 
@@ -73,7 +73,7 @@ export interface ListenerRegistrationManager {
      * Add a listener that will be invoked when a channel is linked to a repo
      * @param {ChannelLinkListener} l
      */
-    addChannelLinkListener(l: ChannelLinkListener);
+    addChannelLinkListener(l: ChannelLinkListener): this;
 
     /**
      * You probably mean to use addFirstPushListener!

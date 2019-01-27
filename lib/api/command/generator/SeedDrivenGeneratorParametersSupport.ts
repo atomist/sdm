@@ -80,7 +80,7 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
     @MappedParameter(MappedParameters.SlackTeam)
     public slackTeam: string;
 
-    get description() {
+    get description(): string {
         return this.target.description;
     }
 

@@ -81,52 +81,48 @@ export class Goal {
     public readonly uniqueName: string;
     public readonly definition: GoalDefinition;
 
-    get environment() {
+    get environment(): string {
         return this.definition.environment;
     }
 
-    get successDescription() {
+    get successDescription(): string {
         return this.definition.completedDescription || `Complete: ${this.name}`;
     }
 
-    get inProcessDescription() {
+    get inProcessDescription(): string {
         return this.definition.workingDescription || `Working: ${this.name}`;
     }
 
-    get failureDescription() {
+    get failureDescription(): string {
         return this.definition.failedDescription || `Failed: ${this.name}`;
     }
 
-    get plannedDescription() {
+    get plannedDescription(): string {
         return this.definition.plannedDescription || `Planned: ${this.name}`;
     }
 
-    get requestedDescription() {
+    get requestedDescription(): string {
         return this.definition.requestedDescription || `Ready: ${this.name}`;
     }
 
-    get waitingForApprovalDescription() {
+    get waitingForApprovalDescription(): string {
         return this.definition.waitingForApprovalDescription || `Approval required: ${this.successDescription}`;
     }
 
-    get waitingForPreApprovalDescription() {
+    get waitingForPreApprovalDescription(): string {
         return this.definition.waitingForPreApprovalDescription || `Start required: ${this.name}`;
     }
 
-    get canceledDescription() {
+    get canceledDescription(): string {
         return this.definition.canceledDescription || `Canceled: ${this.name}`;
     }
 
-    get stoppedDescription() {
+    get stoppedDescription(): string {
         return this.definition.stoppedDescription || `Stopped: ${this.name}`;
     }
 
-    get skippedDescription() {
+    get skippedDescription(): string {
         return this.definition.skippedDescription || `Skipped: ${this.name}`;
-    }
-
-    get retryIntent() {
-        return "trigger " + this.name;
     }
 
     constructor(definition: GoalDefinition) {

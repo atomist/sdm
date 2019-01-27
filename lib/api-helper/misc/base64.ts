@@ -36,5 +36,5 @@ export function encode(str: string): string {
  */
 export function decode(coded: string): string {
     const decoded = base64.toByteArray(coded);
-    return String.fromCharCode.apply(null, decoded);
+    return String.fromCharCode.apply(undefined, decoded);
 }

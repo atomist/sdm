@@ -31,7 +31,7 @@ describe("child_process", () => {
     describe("spawnLog", () => {
 
         it("should handle invalid command", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             try {
                 await spawnLog("thisIsNonsense", [], { log });
                 assert.fail("Should have thrown an exception");
@@ -41,7 +41,7 @@ describe("child_process", () => {
         });
 
         it("should recognize successful exit with default error finder", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 log,
                 timeout: 1000,
@@ -54,7 +54,7 @@ describe("child_process", () => {
         });
 
         it("should use default error finder if undefined provided", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 errorFinder: undefined,
                 log,
@@ -69,7 +69,7 @@ describe("child_process", () => {
         });
 
         it("should use custom error finder", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 errorFinder: () => true,
                 log,
@@ -90,7 +90,7 @@ describe("child_process", () => {
         /* tslint:disable:deprecation */
 
         it("should handle invalid command", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             try {
                 await spawnAndLog(log, "thisIsNonsense");
                 assert.fail("Should have thrown an exception");
@@ -100,7 +100,7 @@ describe("child_process", () => {
         });
 
         it("should recognize successful exit with default error finder", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 timeout: 1000,
             };
@@ -112,7 +112,7 @@ describe("child_process", () => {
         });
 
         it("should use default error finder if undefined provided", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 errorFinder: undefined,
                 timeout: 1000,
@@ -126,7 +126,7 @@ describe("child_process", () => {
         });
 
         it("should use custom error finder", async () => {
-            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as SdmGoalEvent);
+            const log = await createEphemeralProgressLog(fakeContext(), { name: "test" } as any);
             const opts = {
                 errorFinder: () => true,
                 timeout: 1000,
@@ -166,7 +166,7 @@ describe("child_process", () => {
             assert(closed, `child process ${cp.pid} should have closed`);
         });
 
-        it("should fall through to SIGKILL", async function() {
+        it("should fall through to SIGKILL", async function(): Promise<void> {
             if (os.platform() === "win32") {
                 /* tslint:disable-next-line:no-invalid-this */
                 this.skip();

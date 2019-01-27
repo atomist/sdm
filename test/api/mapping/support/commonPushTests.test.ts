@@ -65,7 +65,7 @@ describe("commonPushTests", () => {
                 push: {
                     branch: "master",
                     repo: {
-                        defaultBranch: null,
+                        defaultBranch: undefined,
                     },
                 },
             };

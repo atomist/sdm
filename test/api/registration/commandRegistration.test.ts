@@ -56,7 +56,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         const bar = instance.parameters.find(p => p.name === "bar");
@@ -78,7 +78,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         const bar = instance.parameters.find(p => p.name === "bar");
@@ -124,7 +124,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         assert.equal(instance.mapped_parameters.length, 1);
@@ -144,7 +144,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         assert.equal(instance.secrets.length, 1);
@@ -167,7 +167,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         const bar = instance.parameters.find(p => p.name === "bar");
@@ -204,7 +204,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         const bar = instance.parameters.find(p => p.name === "bar");
@@ -237,7 +237,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
@@ -384,7 +384,7 @@ describe("command registrations", () => {
             startingPoint: InMemoryProject.of(new InMemoryProjectFile("a", "b")),
             transform: async p => p,
         };
-        generatorRegistrationToCommand(null, g);
+        generatorRegistrationToCommand(undefined, g);
         const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         instance.freshParametersInstance();
@@ -396,7 +396,7 @@ describe("command registrations", () => {
             listener: async ci => { return; },
             autoSubmit: true,
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         const md = metadataFromInstance(instance) as CommandHandlerMetadata;
         assert(md.auto_submit);
@@ -413,7 +413,7 @@ describe("command registrations", () => {
             listener: async ci => { return; },
             autoSubmit: true,
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         const md = metadataFromInstance(instance) as CommandHandlerMetadata;
         assert(md.auto_submit);
@@ -432,7 +432,7 @@ describe("command registrations", () => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
         };
-        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.strictEqual(instance.parameters.length, 1);
         assert.strictEqual(instance.values.length, 1);

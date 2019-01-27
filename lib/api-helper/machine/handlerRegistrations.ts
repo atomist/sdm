@@ -229,7 +229,7 @@ ${codeBlock(vr.message)}`,
  * @param {Partial<CommandDetails>} e
  * @param {string} tag
  */
-function tagWith(e: Partial<CommandDetails>, tag: string) {
+function tagWith(e: Partial<CommandDetails>, tag: string): void {
     if (!e.tags) {
         e.tags = [];
     }
@@ -286,7 +286,7 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 }
 
 export class CommandListenerExecutionInterruptError extends Error {
-    constructor(public readonly message) {
+    constructor(public readonly message: string) {
         super(message);
     }
 }
@@ -351,20 +351,20 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
     };
 }
 
-export const DryRunParameter = {
+export const DryRunParameter: NamedParameter = {
     name: "dry-run",
     description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
     required: false,
     defaultValue: false,
     type: "boolean",
-} as NamedParameter;
-export const DryRunMsgIdParameter = {
+};
+export const DryRunMsgIdParameter: NamedParameter = {
     name: "dry-run.msgId",
     description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
     required: false,
     type: "string",
     displayable: false,
-} as NamedParameter;
+};
 
 /**
  * Add the dryRun parameter into the list of parameters
@@ -379,7 +379,7 @@ function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
  * Add to the existing ParametersMaker any parameters defined in the builder itself
  * @param {CommandHandlerRegistration<PARAMS>} c
  */
-function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
+function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>): void {
     const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
@@ -483,7 +483,7 @@ function toProjectEditor<P>(ct: CodeTransform<P>,
         const n = await ct(p, {
                 ...ctx,
                 ...ci,
-            } as CommandListenerInvocation<P> & HandlerContext,
+            } as any,
             params);
         if (n === undefined) {
             // The transform returned void
@@ -535,7 +535,8 @@ export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS
         };
 }
 
-function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandListenerInvocation<P>) {
+function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
+                                ci: CommandListenerInvocation<P>): any {
     const description = ctr.description || ctr.name;
     if (!!ctr.transformPresentation) {
         return (p: Project) => ctr.transformPresentation(ci, p);
@@ -553,6 +554,6 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
         description);
 }
 
-function gitBranchCompatible(name: string) {
+function gitBranchCompatible(name: string): string {
     return name.replace(/\s+/g, "_"); // What else??
 }

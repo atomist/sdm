@@ -34,7 +34,7 @@ const SomeFingerprinter: PushImpactListener<FingerprinterResult> = async pli => 
 describe("computeFingerprints", () => {
 
     it("should execute none", async () => {
-        const cri: PushImpactListenerInvocation = null;
+        const cri: PushImpactListenerInvocation = undefined;
         const r = await computeFingerprints(cri, []);
         assert.equal(r.length, 0);
     });

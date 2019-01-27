@@ -26,7 +26,7 @@ describe("Reporting failure interpretation", () => {
 
     class AddressChannelsSpy {
         public messagesSent: SlackMessage[] = [];
-        get sentFullLog() {
+        get sentFullLog(): boolean {
             return !!this.messagesSent.find(m => (m as any).fileType === "text");
         }
     }
@@ -48,7 +48,7 @@ describe("Reporting failure interpretation", () => {
         };
         const fullLog = {log: "you are so busted"};
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
+            interpretedLog, fullLog, {sha: "abc"} as any, ac);
         assert(spy.sentFullLog);
     });
 
@@ -61,7 +61,7 @@ describe("Reporting failure interpretation", () => {
         };
         const fullLog = {url: "here", log: "you are so busted"};
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
+            interpretedLog, fullLog, {sha: "abc"} as any, ac);
 
         assert(!spy.sentFullLog);
     });
@@ -74,7 +74,7 @@ describe("Reporting failure interpretation", () => {
         };
         const fullLog = {url: "here", log: "you are so busted"};
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
+            interpretedLog, fullLog, {sha: "abc"} as any, ac);
 
         assert(!spy.sentFullLog);
     });
@@ -87,7 +87,7 @@ describe("Reporting failure interpretation", () => {
         };
         const fullLog = {log: "you are so busted"};
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
+            interpretedLog, fullLog, {sha: "abc"} as any, ac);
         assert(spy.sentFullLog);
     });
 

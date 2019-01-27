@@ -34,10 +34,10 @@ export function addressChannelsProgressLog(name: string, hasChannels: HasChannel
     return {
         name,
         isAvailable: async () => !!hasChannels.channels && hasChannels.channels.length > 0,
-        write(msg) {
-            return add(msg);
+        async write(msg: string): Promise<void> {
+            await add(msg);
         },
-        flush() { return Promise.resolve(); },
-        close() { return Promise.resolve(); },
+        flush(): Promise<void> { return Promise.resolve(); },
+        close(): Promise<void> { return Promise.resolve(); },
     };
 }

@@ -37,6 +37,7 @@ import {
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalFulfillment,
     SdmGoalFulfillmentMethod,
@@ -192,7 +193,7 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
                                  repoRefResolver: RepoRefResolver,
                                  pli: PushListenerInvocation,
                                  determinedGoals: Goals,
-                                 goalSetId: string) {
+                                 goalSetId: string): Promise<SdmGoalMessage[]> {
     return Promise.all(determinedGoals.goals.map(async g =>
         constructSdmGoal(pli.context, {
             goalSet: determinedGoals.name,

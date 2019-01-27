@@ -28,6 +28,7 @@ import {
 } from "./pushTestUtils.test";
 
 export const UndefinedPushTest: PushTest = pushTest("true", async () => undefined);
+// tslint:disable-next-line:no-null-keyword
 export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {

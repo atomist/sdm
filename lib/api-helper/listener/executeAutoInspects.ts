@@ -17,6 +17,7 @@
 import {
     CloneOptions,
     failure,
+    GitProject,
     logger,
     ProjectReview,
     RepoRef,
@@ -27,6 +28,7 @@ import {
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
     GoalInvocation,
@@ -133,7 +135,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
  * @param reviewListeners
  */
 function applyCodeInspections(goalInvocation: GoalInvocation,
-                              options: AutoInspectOptions) {
+                              options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
     return async project => {
         const { addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
@@ -162,7 +164,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             .map(e => e.error);
         // tslint:disable-next-line:no-boolean-literal-compare
         if (options.reportToSlack === true) {
-            sendErrorsToSlack(reviewerErrors, addressChannels);
+            await sendErrorsToSlack(reviewerErrors, addressChannels);
         }
 
         const responsesFromOnInspectionResult: PushImpactResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
@@ -180,8 +182,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
         };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
-    }
-        ;
+    };
 }
 
 async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
@@ -194,8 +195,8 @@ async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
     return Promise.all(reviewListeners.map(responseFromOneListener({ ...pli, review })));
 }
 
-function responseFromOneListener(rli: ReviewListenerInvocation) {
-    return async (l: ReviewListenerRegistration): Promise<PushImpactResponse> => {
+function responseFromOneListener(rli: ReviewListenerInvocation): (l: ReviewListenerRegistration) => Promise<PushImpactResponse> {
+    return async l => {
         try {
             return (await l.listener(rli)) || PushImpactResponse.proceed;
         } catch (err) {
@@ -212,7 +213,7 @@ ${codeBlock(err.message)}` : ""}`,
 }
 
 function createParametersInvocation(goalInvocation: GoalInvocation,
-                                    autoInspect: AutoInspectRegistration<any, any>) {
+                                    autoInspect: AutoInspectRegistration<any, any>): ParametersInvocation<any> {
     return {
         addressChannels: goalInvocation.addressChannels,
         preferences: goalInvocation.preferences,
@@ -234,9 +235,7 @@ function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {
     };
 }
 
-function sendErrorsToSlack(errors: ReviewerError[],
-                           addressChannels: AddressChannels) {
-    errors.forEach(async e => {
-        await addressChannels(formatReviewerError(e));
-    });
+async function sendErrorsToSlack(errors: ReviewerError[],
+                                 addressChannels: AddressChannels): Promise<void> {
+    await Promise.all(errors.map(async e => addressChannels(formatReviewerError(e))));
 }

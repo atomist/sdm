@@ -30,7 +30,7 @@ export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushLi
 
     public choices: Array<PushMapping<V>> = [];
 
-    get structure() {
+    get structure(): { components: Array<PushMapping<V>>, compositionStyle: GoalSettingCompositionStyle } {
         return {
             components: this.rules,
             compositionStyle: GoalSettingCompositionStyle.FirstMatch,
@@ -60,7 +60,7 @@ export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushLi
         return new PushRules("name-", this.choices.filter(predicate));
     }
 
-    public add(rules: Array<PushMapping<V>>) {
+    public add(rules: Array<PushMapping<V>>): void {
         this.choices = this.choices.concat(rules);
     }
 

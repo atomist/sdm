@@ -40,7 +40,7 @@ export function filteredView<P extends Project = Project>(p: Project,
             }
             const origMethod = target[prop];
             const decoratedMethod = decorator[prop];
-            return function(...args) {
+            return function(...args: any[]): any {
                 return !!decoratedMethod ?
                     decoratedMethod.apply(decorator, args) :
                     // tslint:disable-next-line:no-invalid-this
@@ -83,7 +83,7 @@ class FilteredProject implements Partial<Project> {
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const filter = this.filter;
         const onlyIncludedFilters = new stream.Transform({objectMode: true});
-        onlyIncludedFilters._transform = function(f, encoding, done) {
+        onlyIncludedFilters._transform = function(f: any, encoding: string, done: stream.TransformCallback): void {
             if (filter(f.path)) {
                 this.push(f);
             }

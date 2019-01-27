@@ -31,7 +31,7 @@ describe("spawnAutofix", () => {
     it("should return a function that runs a command", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: true }),
         } as any;
         const a = spawnAutofix("test0", predicatePushTest("ppt4", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(0);"] });
@@ -49,7 +49,7 @@ describe("spawnAutofix", () => {
     it("should return a function that runs a command that edits the project", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: false } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: false }),
         } as any;
         const a = spawnAutofix("test1", predicatePushTest("ppt3", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(0);"] });
@@ -67,7 +67,7 @@ describe("spawnAutofix", () => {
     it("should return a function that runs several commands", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: true }),
         } as any;
         const a = spawnAutofix("test2", predicatePushTest("ppt2", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(0);"] },
@@ -88,7 +88,7 @@ describe("spawnAutofix", () => {
     it("should return a function that runs a command that fails", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: true }),
         } as any;
         const a = spawnAutofix("test3", predicatePushTest("ppt1", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(1);"] });
@@ -107,7 +107,7 @@ describe("spawnAutofix", () => {
     it("should return a function that runs a command that edits a project and fails", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: false } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: false }),
         } as any;
         const a = spawnAutofix("test4", predicatePushTest("ppt0", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(4);"] });
@@ -126,7 +126,7 @@ describe("spawnAutofix", () => {
     it("should return a function that short circuits on failure", async () => {
         const p: GitProject = {
             baseDir: ".",
-            gitStatus: async () => Promise.resolve({ isClean: true } as GitStatus),
+            gitStatus: async () => Promise.resolve({ isClean: true }),
         } as any;
         const a = spawnAutofix("test5", predicatePushTest("ppt5", () => Promise.resolve(true)), undefined,
             { command: "node", args: ["-e", "process.exit(2);"] },
