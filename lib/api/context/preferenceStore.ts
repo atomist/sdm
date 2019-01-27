@@ -40,7 +40,7 @@ export interface PreferenceStore {
      * @param key
      * @param options
      */
-    get<V>(key: string, options?: { scope?: PreferenceScope }): Promise<V | undefined>;
+    get<V>(key: string, options?: { scope?: PreferenceScope, defaultValue?: V }): Promise<V | undefined>;
 
     /**
      * Store a preference object with the specified ttl. If options.scoped is set to true
