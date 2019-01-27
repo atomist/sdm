@@ -35,6 +35,7 @@ import {
     declareMappedParameter,
     declareParameter,
     declareSecret,
+    declareValue,
 } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
 import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
@@ -87,6 +88,7 @@ import {
     NamedParameter,
     ParametersDefinition,
     ParametersListing,
+    ValueDeclaration,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
 import {
@@ -393,10 +395,12 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
                 paramsInstance[p.name] = p.defaultValue;
                 declareParameter(paramsInstance, p.name, p);
             });
-            paramListing.mappedParameters.forEach(p =>
-                declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
-            paramListing.secrets.forEach(p =>
-                declareSecret(paramsInstance, p.name, p.uri));
+            paramListing.mappedParameters.forEach(mp =>
+                declareMappedParameter(paramsInstance, mp.name, mp.uri, mp.required));
+            paramListing.secrets.forEach(s =>
+                declareSecret(paramsInstance, s.name, s.uri));
+            paramListing.values.forEach(v =>
+                declareValue(paramsInstance, v.name, { path: v.path, required: v.required, type: v.type }));
             return paramsInstance;
         };
     }
@@ -405,6 +409,11 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
 function isMappedParameterOrSecretDeclaration(x: any): x is MappedParameterOrSecretDeclaration {
     const maybe = x as MappedParameterOrSecretDeclaration;
     return !!maybe && !!maybe.declarationType;
+}
+
+function isValueDeclaration(x: any): x is ValueDeclaration {
+    const maybe = x as ValueDeclaration;
+    return !!maybe && !!maybe.path;
 }
 
 function isParametersListing(p: ParametersDefinition<any>): p is ParametersListing {
@@ -432,8 +441,10 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
                     builder.addSecrets({ name, uri: value.uri });
                     break;
             }
+        } else if (isValueDeclaration(value)) {
+            builder.addValues({ name, path: value.path, required: value.required, type: value.type });
         } else {
-            builder.addParameters({ name, ...value });
+            builder.addParameters({ name, ...(value as any) });
         }
     }
     return builder;

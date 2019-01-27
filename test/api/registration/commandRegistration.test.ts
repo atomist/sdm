@@ -420,4 +420,29 @@ describe("command registrations", () => {
         assert.strictEqual(md.name, "test");
     });
 
+    it("should register values besides parameters and secrets", () => {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+            name: "test",
+            parameters:
+                {
+                    foo: { path: "name" },
+                    bar: { required: true },
+                },
+            listener: async ci => {
+                return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert.strictEqual(instance.parameters.length, 1);
+        assert.strictEqual(instance.values.length, 1);
+        const bar = instance.parameters.find(p => p.name === "bar");
+        const foo = instance.values.find(p => p.name === "foo");
+        assert(bar.required);
+        assert.strictEqual(foo.path, "name");
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.strictEqual(pi.name, "foo");
+    });
+
 });

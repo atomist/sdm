@@ -18,6 +18,7 @@ import {
     NamedMappedParameter,
     NamedParameter,
     NamedSecret,
+    NamedValue,
     ParametersListing,
 } from "./ParametersDefinition";
 
@@ -29,6 +30,7 @@ export class ParametersBuilder implements ParametersListing {
     public parameters: NamedParameter[] = [];
     public mappedParameters: NamedMappedParameter[] = [];
     public secrets: NamedSecret[] = [];
+    public values: NamedValue[] = [];
 
     /**
      * Declare a new parameter for a command
@@ -56,7 +58,17 @@ export class ParametersBuilder implements ParametersListing {
      */
     public addSecrets(s: NamedSecret, ...more: NamedSecret[]): this {
         this.secrets.push(s);
-        this.mappedParameters = this.mappedParameters.concat(more);
+        this.secrets = this.secrets.concat(more);
+        return this;
+    }
+
+    /**
+     * Declare a new value for a command
+     * @return {this}
+     */
+    public addValues(s: NamedValue, ...more: NamedValue[]): this {
+        this.values.push(s);
+        this.values = this.values.concat(more);
         return this;
     }
 }
@@ -88,5 +100,15 @@ export function addMappedParameters(p: NamedMappedParameter, ...more: NamedMappe
 export function addSecrets(s: NamedSecret, ...more: NamedSecret[]): ParametersBuilder {
     const pb = new ParametersBuilder();
     pb.addSecrets(s, ...more);
+    return pb;
+}
+
+/**
+ * Declare a new secret for the given command
+ * @return {ParametersBuilder}
+ */
+export function addValues(s: NamedValue, ...more: NamedValue[]): ParametersBuilder {
+    const pb = new ParametersBuilder();
+    pb.addValues(s, ...more);
     return pb;
 }

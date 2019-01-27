@@ -15,6 +15,7 @@
  */
 
 import { BaseParameter } from "@atomist/automation-client";
+import { BaseValue } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
 
 export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersObject<PARAMS>;
 
@@ -29,11 +30,14 @@ export type ParametersObjectValue = (BaseParameter & HasDefaultValue);
 
 export type MappedParameterOrSecretObjectValue = MappedParameterOrSecretDeclaration;
 
+export type ValueParameterObjectValue = ValueDeclaration;
+
 /**
- * Object with properties defining parameters, secrets and mapped parameters. Useful for combination via spreads.
+ * Object with properties defining parameters, secrets, mapped parameters and values.
+ * Useful for combination via spreads.
  */
 export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS>
-    = Record<K, ParametersObjectValue | MappedParameterOrSecretObjectValue>;
+    = Record<K, ParametersObjectValue | MappedParameterOrSecretObjectValue | ValueParameterObjectValue>;
 
 export enum DeclarationType {
     /**
@@ -61,6 +65,11 @@ export interface MappedParameterOrSecretDeclaration {
 }
 
 /**
+ * Define values to be injected from the SDM configuration
+ */
+export type ValueDeclaration = BaseValue;
+
+/**
  * Define parameters used in a command
  */
 export interface ParametersListing {
@@ -70,6 +79,8 @@ export interface ParametersListing {
     readonly mappedParameters: NamedMappedParameter[];
 
     readonly secrets: NamedSecret[];
+
+    readonly values: NamedValue[];
 }
 
 export type NamedParameter = BaseParameter & { name: string } & HasDefaultValue;
@@ -83,4 +94,10 @@ export interface NamedMappedParameter {
     name: string;
     uri: string;
     required?: boolean;
+}
+
+export type NamedValue = NamedValueParameter;
+
+export interface NamedValueParameter extends BaseValue {
+    name: string;
 }
