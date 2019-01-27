@@ -21,33 +21,37 @@ import {
     projectUtils,
 } from "@atomist/automation-client";
 
-import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
-
 import * as assert from "power-assert";
+
+import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
 
 describe("filteredView", () => {
 
     it("should suppress sync method", async () => {
-        const p = await GitCommandGitProject.cloned({ token: undefined }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        // tslint:disable-next-line:no-null-keyword
+        const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => path === "pom.xml");
         assert.throws(() => filtered.addFileSync("x", "y"));
     }).timeout(10000);
 
     it("should not filter anything", async () => {
-        const p = await GitCommandGitProject.cloned({ token: undefined }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        // tslint:disable-next-line:no-null-keyword
+        const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => true);
         assert.equal(await p.totalFileCount(), await filtered.totalFileCount());
     }).timeout(10000);
 
     it("should copy one", async () => {
-        const p = await GitCommandGitProject.cloned({ token: undefined }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        // tslint:disable-next-line:no-null-keyword
+        const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => path === "pom.xml");
         assert.equal(1, await filtered.totalFileCount());
         await filtered.findFile("pom.xml");
     }).timeout(10000);
 
     it("should find files", async () => {
-        const p = await GitCommandGitProject.cloned({ token: undefined }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        // tslint:disable-next-line:no-null-keyword
+        const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => path === "pom.xml");
         const r = await projectUtils.gatherFromFiles(filtered, AllFiles, async f => f.path);
         assert.deepEqual(r, ["pom.xml"]);
