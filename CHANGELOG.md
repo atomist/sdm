@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Errors in machine function can get swallowed and ignored. [#654](https://github.com/atomist/sdm/issues/654)
 -   Make lazy project loader work for generators. [2e0ed3e](https://github.com/atomist/sdm/commit/2e0ed3ec205237b4d28d0b78eb93e3cc60e83657)
+-   Do not swallow exceptions thrown by transforms in generators. [#664](https://github.com/atomist/sdm/issues/664)
 
 ## [1.2.0](https://github.com/atomist/sdm/compare/1.1.0...1.2.0) - 2018-12-27
 
