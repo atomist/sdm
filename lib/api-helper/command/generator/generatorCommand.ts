@@ -109,8 +109,8 @@ interface GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters> exten
  * @param {Maker<PARAMS>} paramsMaker
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
-function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                            target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
+export function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                                   target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isSeedDrivenGeneratorParameters(sampleParams) ?
         paramsMaker as Maker<SeedDrivenGeneratorParameters & PARAMS> as any :
