@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add services to a FulfillableGoal. [e5e09df](https://github.com/atomist/sdm/commit/e5e09df8ed5ed1290620ec47466e53767de47b1f)
 -   Add branchAwareCodeTransform to make it target branch aware. [#659](https://github.com/atomist/sdm/issues/659)
 -   Support parameter prompting from command listeners. [#661](https://github.com/atomist/sdm/issues/661)
+-   Support @Value in parameter declaration . [#648](https://github.com/atomist/sdm/issues/648)
 
 ### Changed
 
