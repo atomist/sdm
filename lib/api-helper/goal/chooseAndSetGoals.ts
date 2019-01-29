@@ -32,6 +32,7 @@ import {
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
 import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
+import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
     Goal,
     GoalWithPrecondition,
@@ -84,7 +85,7 @@ export interface ChooseAndSetGoalsRules {
 
     implementationMapping: GoalImplementationMapper;
 
-    enrichGoal?: (goal: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>;
+    enrichGoal?: EnrichGoal;
 
     preferencesFactory?: PreferenceStoreFactory;
 
