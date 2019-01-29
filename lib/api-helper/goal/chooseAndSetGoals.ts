@@ -31,6 +31,7 @@ import {
     PreferenceStore,
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
+import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
 import {
     Goal,
     GoalWithPrecondition,
@@ -83,7 +84,7 @@ export interface ChooseAndSetGoalsRules {
 
     implementationMapping: GoalImplementationMapper;
 
-    enrichGoal?: (goal: SdmGoalMessage) => Promise<SdmGoalMessage>;
+    enrichGoal?: (goal: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>;
 
     preferencesFactory?: PreferenceStoreFactory;
 
@@ -111,16 +112,11 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     const goalSetId = guid();
 
     const { determinedGoals, goalsToSave } = await determineGoals(
-        { projectLoader, repoRefResolver, goalSetter, implementationMapping }, {
+        { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
             credentials, id, context, push, addressChannels, preferences, goalSetId,
         });
 
     if (goalsToSave.length > 0) {
-        // Store all the goals first
-        await Promise.all(goalsToSave.map(async g1 => {
-            return enrichGoal(g1).then(g2 => storeGoal(context, g2, push));
-        }));
-
         // And then store the goalSetId
         await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, push);
     }
@@ -147,6 +143,7 @@ export async function determineGoals(rules: {
                                          repoRefResolver: RepoRefResolver,
                                          goalSetter: GoalSetter,
                                          implementationMapping: GoalImplementationMapper,
+                                         enrichGoal: (g: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>,
                                      },
                                      circumstances: {
                                          credentials: ProjectOperationCredentials,
@@ -160,7 +157,7 @@ export async function determineGoals(rules: {
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoalMessage[],
 }> {
-    const { projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
+    const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId, preferences } = circumstances;
     return projectLoader.doWithProject({
             credentials,
@@ -184,6 +181,10 @@ export async function determineGoals(rules: {
                 return { determinedGoals: undefined, goalsToSave: [] };
             }
             const goalsToSave = await sdmGoalsFromGoals(implementationMapping, repoRefResolver, pli, determinedGoals, goalSetId);
+
+            // Enrich all goals before they get saved
+            await Promise.all(goalsToSave.map(async g1 => enrichGoal(g1, pli)));
+
             return { determinedGoals, goalsToSave };
         });
 

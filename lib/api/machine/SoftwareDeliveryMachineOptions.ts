@@ -32,7 +32,9 @@ import {
     ParameterPromptFactory,
 } from "../context/parameterPrompt";
 import { PreferenceStoreFactory } from "../context/preferenceStore";
+import { SdmGoalMessage } from "../goal/SdmGoalMessage";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
+import { PushListenerInvocation } from "../listener/PushListener";
 import { RepoTargets } from "./RepoTargets";
 
 /**
@@ -100,11 +102,15 @@ export interface SoftwareDeliveryMachineOptions {
     goalScheduler?: GoalScheduler | GoalScheduler[];
 
     /**
-     * Optional AddressChannels for communicating with system administrator.
+     * Optional AddressChannels for communicating with system administrator
      * Defaults to logging a warning unless this is set.
      */
     adminAddressChannels?: AddressChannels;
 
+    /**
+     * Callback to enrich goal metadata before it gets persisted and planned
+     */
+    enrichGoal?: (goal: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>;
 }
 
 /**
