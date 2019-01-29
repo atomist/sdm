@@ -27,15 +27,10 @@ import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { AddressChannels } from "../context/addressChannels";
-import {
-    ParameterPrompt,
-    ParameterPromptFactory,
-} from "../context/parameterPrompt";
+import { ParameterPromptFactory } from "../context/parameterPrompt";
 import { PreferenceStoreFactory } from "../context/preferenceStore";
 import { EnrichGoal } from "../goal/enrichGoal";
-import { SdmGoalMessage } from "../goal/SdmGoalMessage";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
-import { PushListenerInvocation } from "../listener/PushListener";
 import { RepoTargets } from "./RepoTargets";
 
 /**
