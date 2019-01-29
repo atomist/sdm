@@ -15,8 +15,15 @@
  */
 
 import { EditMode } from "@atomist/automation-client";
-import { isBranchCommit, isPullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
-import { Attachment, Field, SlackMessage } from "@atomist/slack-messages";
+import {
+    isBranchCommit,
+    isPullRequest,
+} from "@atomist/automation-client/lib/operations/edit/editModes";
+import {
+    Attachment,
+    Field,
+    SlackMessage,
+} from "@atomist/slack-messages";
 import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { TransformResult } from "../../../api/registration/CodeTransform";
 
