@@ -32,6 +32,7 @@ import {
     ParameterPromptFactory,
 } from "../context/parameterPrompt";
 import { PreferenceStoreFactory } from "../context/preferenceStore";
+import { EnrichGoal } from "../goal/enrichGoal";
 import { SdmGoalMessage } from "../goal/SdmGoalMessage";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { PushListenerInvocation } from "../listener/PushListener";
@@ -110,7 +111,7 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Callback to enrich goal metadata before it gets persisted and planned
      */
-    enrichGoal?: (goal: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>;
+    enrichGoal?: EnrichGoal;
 }
 
 /**
