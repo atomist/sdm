@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add branchAwareCodeTransform to make it target branch aware. [#659](https://github.com/atomist/sdm/issues/659)
 -   Support parameter prompting from command listeners. [#661](https://github.com/atomist/sdm/issues/661)
 -   Support @Value in parameter declaration . [#648](https://github.com/atomist/sdm/issues/648)
+-   Enhance the typedoc within CodeTransformRegistration. [#665](https://github.com/atomist/sdm/issues/665)
 
 ### Changed
 
