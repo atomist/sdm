@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,14 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
     extends ProjectOperationRegistration<PARAMS>, ProjectsOperationRegistration<PARAMS> {
 
     /**
-     * How to present the transformation
+     * How to present the transformation - would you like a Pull Request or a branch commit?
+     * What would you like in the commit message, or the title of the pull request?
+     * All these and more can be specified in the EditMode, which this function can
+     * choose based on the invocation of this command and the code itself.
+     *
+     * This defaults to a pull request with branch name derived from the transform name.
      * @param {CommandListenerInvocation<PARAMS>} ci
+     * @param {p: Project} p
      * @return {EditMode}
      */
     transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
