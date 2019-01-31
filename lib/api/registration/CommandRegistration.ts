@@ -34,6 +34,7 @@ export interface CommandRegistration<PARAMS> {
     /**
      * Function to create a parameters object used by this command.
      * Empty parameters will be returned by default.
+     * @deprecated use parameters
      */
     paramsMaker?: Maker<PARAMS>;
 
