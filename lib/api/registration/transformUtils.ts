@@ -28,17 +28,16 @@ import {
 /**
  * Combine these transforms into a single transform,
  * where they execute it in order
- * @param {CodeTransform<any>} transforms
- * @return {CodeTransform<any>}
+ * @deprecated use array of CodeTransforms instead
  */
 export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTransform<any>>): CodeTransform<P> {
     return async (p, sdmc, params) => {
+        let cumulativeResult: TransformResult = {
+            target: p,
+            success: true,
+            edited: false,
+        };
         try {
-            let cumulativeResult: TransformResult = {
-                target: p,
-                success: true,
-                edited: false,
-            };
             for (const t of transforms) {
                 const lastResult = await t(p, sdmc, params);
                 cumulativeResult = combineResults(toTransformResult(p, lastResult), cumulativeResult);
@@ -46,7 +45,7 @@ export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTrans
             return cumulativeResult;
         } catch (error) {
             logger.warn("Editor failure in editorChain: %s", error);
-            return { target: p, edited: false, success: false, error };
+            return { target: p, edited: cumulativeResult.edited, success: false, error };
         }
     };
 }

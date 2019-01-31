@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:deprecation
+
 import { InMemoryProject } from "@atomist/automation-client";
 import * as assert from "assert";
 import {
@@ -47,5 +49,35 @@ describe("transformUtils", () => {
         assert(await project.hasFile("foo"));
         assert(await project.hasFile("fizz"));
         assert.strictEqual(r.edited, true);
+    });
+
+    it("should not swallow handled error", async () => {
+        const t1: CodeTransform = async p => {
+            await p.addFile("foo", "bar");
+            return { target: p, edited: true, success: true };
+        };
+        const t2: CodeTransform = async p => ({ target: p, edited: false, success: false, error: new Error("") });
+        const chained = chainTransforms(t1, t2);
+        const project = InMemoryProject.of();
+        const r = await chained(project, undefined, undefined) as TransformResult;
+        assert(await project.hasFile("foo"));
+        assert.strictEqual(r.edited, true);
+        assert(!!r.error);
+    });
+
+    it("should not swallow unhandled error", async () => {
+        const t1: CodeTransform = async p => {
+            await p.addFile("foo", "bar");
+            return { target: p, edited: true, success: true };
+        };
+        const t2: CodeTransform = async p => {
+            throw new Error("");
+        };
+        const chained = chainTransforms(t1, t2);
+        const project = InMemoryProject.of();
+        const r = await chained(project, undefined, undefined) as TransformResult;
+        assert(await project.hasFile("foo"));
+        assert.strictEqual(r.edited, true);
+        assert(!!r.error);
     });
 });
