@@ -176,10 +176,11 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
     } catch (err) {
         logger.warn("Error executing %s on %s: %s", implementationName, goalEvent.sha, err.message);
         logger.warn(err.stack);
+        const result = { code: 1, ...(err.result ? err.result : {}) };
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,
             state: SdmGoalState.failure,
-        }, undefined, err);
+        }, result, err);
         await reportGoalError({
             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
         }, err);
@@ -187,7 +188,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             context,
             goalEvent,
             goal,
-            result: { code: 1, ...(err.result ? err.result : {}) },
+            result,
             error: err,
             progressLogUrl: progressLog.url,
         });
