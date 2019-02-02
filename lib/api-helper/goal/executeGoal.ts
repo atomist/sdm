@@ -115,6 +115,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             addressChannels,
             preferences,
             credentials,
+            goal,
             goalEvent: sge,
             error,
             result,

@@ -15,6 +15,7 @@
  */
 
 import { ExecuteGoalResult } from "../goal/ExecuteGoalResult";
+import { Goal } from "../goal/Goal";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 import {
     RepoListenerInvocation,
@@ -28,7 +29,12 @@ import {
 export interface GoalExecutionListenerInvocation extends RepoListenerInvocation {
 
     /**
-     * The goal that changed state
+     * The goal that is current executing
+     */
+    goal: Goal;
+
+    /**
+     * The goal event that changed state
      */
     goalEvent: SdmGoalEvent;
 
