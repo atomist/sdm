@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ExecuteGoalResult } from "../goal/ExecuteGoalResult";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 import {
     RepoListenerInvocation,
@@ -31,7 +32,16 @@ export interface GoalExecutionListenerInvocation extends RepoListenerInvocation 
      */
     goalEvent: SdmGoalEvent;
 
+    /**
+     * Error that was raised during goal execution if not handled inside the
+     * goalExecutor
+     */
     error?: Error;
+
+    /**
+     * Result of goal execution; only available if goalExecutor returned an result
+     */
+    result?: ExecuteGoalResult | undefined;
 
 }
 
