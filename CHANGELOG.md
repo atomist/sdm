@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Support parameter prompting from command listeners. [#661](https://github.com/atomist/sdm/issues/661)
 -   Support @Value in parameter declaration . [#648](https://github.com/atomist/sdm/issues/648)
 -   Enhance the typedoc within CodeTransformRegistration. [#665](https://github.com/atomist/sdm/issues/665)
+-   Add parameters to EventHandlerRegistration. [230db78](https://github.com/atomist/sdm/commit/230db78e37e669ea8065b0ee5bc788e58f9cf117)
 
 ### Changed
 
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Deprecate lower case enum values. [f556259](https://github.com/atomist/sdm/commit/f5562590f51caaaa3c97340b31efe544ea71bcc6)
 -   Deprecate paramsMaker. [#667](https://github.com/atomist/sdm/issues/667)
 -   ChainTransforms swallows exceptions. [#668](https://github.com/atomist/sdm/issues/668)
+-   Add parameters to EventHandlerRegistration. [230db78](https://github.com/atomist/sdm/commit/230db78e37e669ea8065b0ee5bc788e58f9cf117)
 
 ### Fixed
 
