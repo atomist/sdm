@@ -37,6 +37,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   ChainTransforms swallows exceptions. [#668](https://github.com/atomist/sdm/issues/668)
 -   Add parameters to EventHandlerRegistration. [230db78](https://github.com/atomist/sdm/commit/230db78e37e669ea8065b0ee5bc788e58f9cf117)
 
+### Removed
+
+-   Remove atomist webhook handling from generators. [498bc1c](https://github.com/atomist/sdm/commit/498bc1c3f0c5c3b4c4fe970ad503c41611e33462)
+
 ### Fixed
 
 -   Errors in machine function can get swallowed and ignored. [#654](https://github.com/atomist/sdm/issues/654)
