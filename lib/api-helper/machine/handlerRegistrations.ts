@@ -15,6 +15,7 @@
  */
 
 // tslint:disable:deprecation
+// tslint:disable:max-file-line-count
 
 import {
     editModes,
@@ -109,8 +110,6 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
-
-// tslint:disable:max-file-line-count
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
@@ -277,6 +276,7 @@ export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: Machi
 }
 
 export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e: EventHandlerRegistration<any, any>): Maker<HandleEvent> {
+    addParametersDefinedInBuilder(e);
     return () => eventHandlerFrom(
         e.listener,
         e.paramsMaker || NoParameters,
@@ -385,13 +385,8 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>): 
     const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
-            let paramsInstance;
-            if (!!oldMaker) {
-                paramsInstance = toFactory(oldMaker)();
-            } else {
-                paramsInstance = {};
-                paramsInstance.__kind = "command-handler";
-            }
+            const paramsInstance: any = toFactory(oldMaker)();
+            
             const paramListing = toParametersListing(c.parameters as any);
             paramListing.parameters.forEach(p => {
                 paramsInstance[p.name] = p.defaultValue;
@@ -403,6 +398,7 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>): 
                 declareSecret(paramsInstance, s.name, s.uri));
             paramListing.values.forEach(v =>
                 declareValue(paramsInstance, v.name, { path: v.path, required: v.required, type: v.type }));
+
             return paramsInstance;
         };
     }

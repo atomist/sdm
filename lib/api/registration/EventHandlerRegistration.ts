@@ -16,13 +16,15 @@
 
 import {
     Maker,
+    NoParameters,
     OnEvent,
 } from "@atomist/automation-client";
+import { ParametersDefinition } from "./ParametersDefinition";
 
 /**
  * Type for registering event handlers.
  */
-export interface EventHandlerRegistration<EVENT = any, PARAMS = any> {
+export interface EventHandlerRegistration<EVENT = any, PARAMS = NoParameters> {
 
     /**
      * Name of the event handler.
@@ -41,15 +43,22 @@ export interface EventHandlerRegistration<EVENT = any, PARAMS = any> {
 
     /**
      * GraphQL subscription to subscribe this listener to.
-     * Note: Use subscription() methods of automation-client to create the subscription string
+     * Note: Use GraphQL.subscription() methods of automation-client to create the subscription string
      */
     subscription: string;
 
     /**
      * Create the parameters required by this command.
      * Empty parameters will be returned by default.
+     * @deprecated use parameters
      */
     paramsMaker?: Maker<PARAMS>;
+
+    /**
+     * Define parameters used by this command. Alternative to using
+     * paramsMaker: Do not supply both.
+     */
+    parameters?: ParametersDefinition<PARAMS>;
 
     /**
      * Listener to receive subscription matches.
