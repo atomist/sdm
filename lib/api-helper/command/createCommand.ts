@@ -44,7 +44,6 @@ export function createCommand<PARAMS = NoParameters>(
     const description = details.description || name;
     const detailsToUse: CommandDetails = {
         description,
-        intent: `do ${name}`,
         ...details,
     };
 

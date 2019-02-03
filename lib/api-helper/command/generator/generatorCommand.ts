@@ -15,8 +15,6 @@
  */
 
 import {
-    addAtomistWebhook,
-    GitProject,
     HandlerContext,
     Maker,
     OnCommand,
@@ -33,7 +31,6 @@ import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { RedirectResult } from "@atomist/automation-client/lib/HandlerResult";
 import { commandHandlerFrom } from "@atomist/automation-client/lib/onCommand";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
-import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { ProjectAction } from "@atomist/automation-client/lib/operations/common/projectAction";
 import { isRemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
@@ -119,7 +116,6 @@ export function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as SeedDrivenGeneratorParameters & PARAMS;
             allParms.target = target;
-            allParms.addAtomistWebhook = allParms.addAtomistWebhook || false;
             return allParms;
         };
 }
@@ -163,12 +159,6 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                 `Create Project`,
                 `Successfully created new project ${bold(`${params.target.repoRef.owner}/${
                     params.target.repoRef.repo}`)} at ${url(params.target.repoRef.url)}`));
-        if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
-            const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
-            if (!webhookInstalled) {
-                await addAtomistWebhook((r.target as GitProject), params);
-            }
-        }
         return {
             code: 0,
             // Redirect to local project page
@@ -187,26 +177,6 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
 ${codeBlock(err.message)}`,
                 ctx));
     }
-}
-
-const OrgWebhookQuery = `query OrgWebhook($owner: String!) {
-  Webhook(webhookType: organization) {
-    org(owner: $owner) @required {
-      owner
-    }
-  }
-}`;
-
-async function hasOrgWebhook(owner: string, ctx: HandlerContext): Promise<boolean> {
-    const orgHooks = await ctx.graphClient.query<any, any>({
-        query: OrgWebhookQuery,
-        variables: {
-            owner,
-        },
-        options: QueryNoCacheOptions,
-    });
-    const hookOwner = _.get(orgHooks, "Webhook[0].org.owner");
-    return hookOwner === owner;
 }
 
 /**

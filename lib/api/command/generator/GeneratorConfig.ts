@@ -26,8 +26,4 @@ export interface GeneratorConfig {
      */
     seed: () => RemoteRepoRef;
 
-    /**
-     * Add an Atomist webhook to new repos?
-     */
-    addAtomistWebhook?: boolean;
 }

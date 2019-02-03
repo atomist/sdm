@@ -38,17 +38,6 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
     public screenName: string;
 
     @Parameter({
-        pattern: /^(?:true|false)$/,
-        type: "boolean",
-        displayName: "Add Atomist webhook",
-        description: "whether to add the Atomist webhook to the repository to allow updates",
-        validInput: "'true' or 'false'",
-        required: false,
-        displayable: true,
-    })
-    public addAtomistWebhook: boolean = false;
-
-    @Parameter({
         ...SemVerRegExp,
         required: true,
         order: 52,
@@ -98,10 +87,6 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
         return { repoRef };
     }
 
-    public constructor(private readonly config?: GeneratorConfig) {
-        if (!!config && config.addAtomistWebhook !== undefined) {
-            this.addAtomistWebhook = config.addAtomistWebhook;
-        }
-    }
+    public constructor(private readonly config?: GeneratorConfig) {}
 
 }

@@ -307,7 +307,6 @@ describe("command registrations", () => {
         assert(!instance.mapped_parameters.some(p => p.name === "screenName"), "screenName parameter should not appear by magic");
         const pi = instance.freshParametersInstance() as FooBar & SeedDrivenGeneratorParameters;
         assert.equal(pi.bar, "carrot");
-        assert.equal(pi.addAtomistWebhook, false);
     });
 
     it("should build on generator using own parameters maker", () => {
@@ -339,7 +338,6 @@ describe("command registrations", () => {
         assert(instance.parameters.some(p => p.name === "target.repo"));
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
-        assert.equal(pi.addAtomistWebhook, false);
         assert.equal(pi.bar, "carrot");
         assert.equal(pi.name, "foo");
     });
@@ -358,7 +356,6 @@ describe("command registrations", () => {
         assert(instance.parameters.some(p => p.name === "foo"));
         // From common
         assert(instance.parameters.some(p => p.name === "targets.repos"));
-        assert(instance.parameters.some(p => p.name === "addAtomistWebhook"));
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
@@ -374,7 +371,6 @@ describe("command registrations", () => {
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         // It's not actually of this concrete type, but we want to check
         const paramsInstance = instance.freshParametersInstance() as SeedDrivenGeneratorParametersSupport;
-        assert.equal(paramsInstance.addAtomistWebhook, false, "Unexpected parameter object " + JSON.stringify(instance));
         assert(!paramsInstance.version, "Should not magically pick up version");
     });
 
