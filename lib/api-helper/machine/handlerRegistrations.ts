@@ -386,7 +386,7 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>): 
     if (!!c.parameters) {
         c.paramsMaker = () => {
             const paramsInstance: any = toFactory(oldMaker)();
-            
+
             const paramListing = toParametersListing(c.parameters as any);
             paramListing.parameters.forEach(p => {
                 paramsInstance[p.name] = p.defaultValue;

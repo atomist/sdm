@@ -20,7 +20,6 @@ import {
     OnCommand,
     Project,
     ProjectPersister,
-    QueryNoCacheOptions,
     RemoteRepoRef,
     RepoCreationParameters,
     RepoRef,
@@ -43,7 +42,6 @@ import {
     codeBlock,
     url,
 } from "@atomist/slack-messages";
-import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
