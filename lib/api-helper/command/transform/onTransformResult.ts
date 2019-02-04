@@ -26,10 +26,11 @@ import {
 } from "@atomist/slack-messages";
 import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { TransformResult } from "../../../api/registration/CodeTransform";
+import { slackErrorMessage, slackInfoMessage, slackSuccessMessage } from "../../misc/slack/messages";
 
 /**
  * This is a useful function to pass to CodeTransformRegistration.onTransformResults.
- * It sends a message describing any errors that occurred while saving the transforms,
+ * It sends a message per repository describing any errors that occurred while saving the transforms,
  * and also where the transform was applied. It gives you the branch name.
  * @param trs results of transforms
  * @param cli original command invocation
@@ -38,46 +39,41 @@ export async function announceTransformResults(
     trs: TransformResult[],
     cli: CommandListenerInvocation): Promise<void> {
 
-    const attachments: Attachment[] = trs.map(tr => {
+    const messages = trs.map(tr => {
         const projectId = tr.target.id;
-
-        const common: Partial<Attachment> = {
-            author_name: `${projectId.owner}/${projectId.repo}`,
-            author_link: tr.target.id.url,
-        };
-
+        const title = `${projectId.owner}/${projectId.repo}`;
         if (tr.error) {
-            return {
-                ...common,
-                color: "#f00000",
-                fallback: "failed transform result",
-                mrkdwn_in: ["text"],
-                title: "ERROR",
-                text: "```\n" + tr.error.message + "\n```",
-            };
+            return slackErrorMessage(title,
+                "Failure in " + cli.commandName + "\n```\n" + tr.error.message + "\n```",
+                cli.context, {
+                    author_name: title,
+                    author_link: tr.target.id.url,
+                });
         }
         if (tr.edited) {
-            return {
-                ...common,
-                fallback: "successful transform result",
-                color: "#20a010",
-                fields: fromEditMode(tr.editMode),
-            };
+            return slackSuccessMessage(title,
+                "Successfully applied " + cli.commandName,
+                {
+                    fields: fromEditMode(tr.editMode),
+                    author_name: title,
+                    author_link: tr.target.id.url,
+                },
+            );
         }
-        // it did nothing
-        return {
-            ...common,
-            fallback: "no changes to make",
-            text: "No changes made",
-        };
+        return slackInfoMessage(title,
+            "No changes made by " + cli.commandName,
+            {
+                author_name: title,
+                author_link: tr.target.id.url,
+            });
+
     });
+    await asyncForEach(messages, message =>
+        cli.addressChannels(message));
+}
 
-    const message: SlackMessage = {
-        text: "Results of running *" + cli.commandName + "*:",
-        attachments,
-    };
-
-    return cli.addressChannels(message);
+async function asyncForEach<T, R>(array: T[], fn: (t: T) => Promise<R>): Promise<R[]> {
+    return Promise.all(array.map(fn));
 }
 
 function fromEditMode(editMode?: EditMode): Field[] {
