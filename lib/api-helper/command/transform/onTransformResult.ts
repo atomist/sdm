@@ -26,7 +26,11 @@ import {
 } from "@atomist/slack-messages";
 import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { TransformResult } from "../../../api/registration/CodeTransform";
-import { slackErrorMessage, slackInfoMessage, slackSuccessMessage } from "../../misc/slack/messages";
+import {
+    slackErrorMessage,
+    slackInfoMessage,
+    slackSuccessMessage,
+} from "../../misc/slack/messages";
 
 /**
  * This is a useful function to pass to CodeTransformRegistration.onTransformResults.
