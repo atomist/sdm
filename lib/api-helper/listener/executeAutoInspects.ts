@@ -138,7 +138,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
  * @param reviewListeners
  */
 function applyCodeInspections(goalInvocation: GoalInvocation,
-                              options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
+    options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
     return async project => {
         const { addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
@@ -199,7 +199,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 
 function describeProjectReview(inspectionName: string, pr: ProjectReview): string {
     const commentStrings = pr.comments.map(describeComment);
-    const allComments = commentStrings.length === 0 ? "" : "\n" + commentStrings.join("\n");
+    const allComments = commentStrings.length === 0 ? "" : ":\n" + commentStrings.join("\n");
     return `${pr.comments.length} comments on ${pr.repoId.owner}/${pr.repoId.repo} by ${inspectionName}` + allComments;
 }
 
@@ -209,12 +209,12 @@ function describeComment(c: ReviewComment): string {
         category += "/" + c.subcategory;
     }
     const location = c.sourceLocation ? `${c.sourceLocation.path}#${c.sourceLocation.lineFrom1}: ` : "";
-    return `    ${c.severity} ${category} ${location}${c.detail}`;
+    return `  - [${c.severity} ${category} ${location}${c.detail}]`;
 }
 
 async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, reviews: ProjectReview[],
-                                                  reviewListeners: ReviewListenerRegistration[],
-                                                  pli: PushListenerInvocation):
+    reviewListeners: ReviewListenerRegistration[],
+    pli: PushListenerInvocation):
     Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
     logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
@@ -223,7 +223,7 @@ async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, revi
 }
 
 function responseFromOneListener(progressLog: ProgressLog,
-                                 rli: ReviewListenerInvocation): (l: ReviewListenerRegistration) => Promise<PushImpactResponse> {
+    rli: ReviewListenerInvocation): (l: ReviewListenerRegistration) => Promise<PushImpactResponse> {
     return async l => {
         try {
             progressLog.write(`Running review listener ${l.name}...`);
@@ -246,7 +246,7 @@ ${codeBlock(err.message)}` : ""}`,
 }
 
 function createParametersInvocation(goalInvocation: GoalInvocation,
-                                    autoInspect: AutoInspectRegistration<any, any>): ParametersInvocation<any> {
+    autoInspect: AutoInspectRegistration<any, any>): ParametersInvocation<any> {
     return {
         addressChannels: goalInvocation.addressChannels,
         preferences: goalInvocation.preferences,
@@ -269,6 +269,6 @@ function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {
 }
 
 async function sendErrorsToSlack(errors: ReviewerError[],
-                                 addressChannels: AddressChannels): Promise<void> {
+    addressChannels: AddressChannels): Promise<void> {
     await Promise.all(errors.map(async e => addressChannels(formatReviewerError(e))));
 }
