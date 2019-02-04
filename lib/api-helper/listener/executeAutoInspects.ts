@@ -21,6 +21,7 @@ import {
     logger,
     ProjectReview,
     RepoRef,
+    ReviewComment,
 } from "@atomist/automation-client";
 import {
     codeBlock,
@@ -154,8 +155,10 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                     try {
                         goalInvocation.progressLog.write("Running inspection " + autoInspect.name + "...");
                         const inspectionResult = await autoInspect.inspection(project, papi);
-                        goalInvocation.progressLog.write(`Inspection result from ${autoInspect.name}:\n`
-                            + stringify(inspectionResult, undefined, 2));
+                        if (isProjectReview(inspectionResult)) {
+                            goalInvocation.progressLog.write(
+                                describeProjectReview(autoInspect.name, inspectionResult));
+                        }
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
                             await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => {
@@ -192,6 +195,21 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };
+}
+
+function describeProjectReview(inspectionName: string, pr: ProjectReview): string {
+    const commentStrings = pr.comments.map(describeComment);
+    const allComments = commentStrings.length === 0 ? "" : "\n" + commentStrings.join("\n");
+    return `${pr.comments.length} comments on ${pr.repoId.owner}/${pr.repoId.repo} by ${inspectionName}` + allComments;
+}
+
+function describeComment(c: ReviewComment): string {
+    let category = c.category;
+    if (c.subcategory) {
+        category += "/" + c.subcategory;
+    }
+    const location = c.sourceLocation ? `${c.sourceLocation.path}#${c.sourceLocation.lineFrom1}: ` : "";
+    return `    ${c.severity} ${category} ${location}${c.detail}`;
 }
 
 async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, reviews: ProjectReview[],
