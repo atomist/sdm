@@ -26,6 +26,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
@@ -135,13 +136,13 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
  * @param reviewListeners
  */
 function applyCodeInspections(goalInvocation: GoalInvocation,
-                              options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
+    options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
     return async project => {
         const { addressChannels } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(options.registrations, cri);
 
-        const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: PushImpactResponse }> =
+        const inspectionReviewsAndResults: Array<{ review?: ProjectReview, error?: ReviewerError, response?: void | PushImpactResponse }> =
             await Promise.all(relevantAutoInspects
                 .map(async autoInspect => {
                     const cli: ParametersInvocation<any> = createParametersInvocation(goalInvocation, autoInspect);
@@ -150,12 +151,17 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                         push: cri,
                     };
                     try {
+                        goalInvocation.progressLog.write("Running inspection: " + autoInspect.name);
                         const inspectionResult = await autoInspect.inspection(project, papi);
+                        goalInvocation.progressLog.write("Inspection result: " + stringify(inspectionResult, undefined, 2));
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
-                            await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => undefined); // ignore errors
+                            await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => {
+                                goalInvocation.progressLog.write("Warning: onInspectionResult failed: " + err.message);
+                            }); // ignore errors
                         return { review, response };
                     } catch (error) {
+                        goalInvocation.progressLog.write("Error running inspection: " + error.message);
                         return { error };
                     }
                 }));
@@ -168,7 +174,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
         }
 
         const responsesFromOnInspectionResult: PushImpactResponse[] = inspectionReviewsAndResults.filter(r => !!r.response)
-            .map(r => r.response);
+            .map(r => r.response as PushImpactResponse);
 
         const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
             .map(r => r.review);
@@ -186,8 +192,8 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 }
 
 async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
-                                                  reviewListeners: ReviewListenerRegistration[],
-                                                  pli: PushListenerInvocation):
+    reviewListeners: ReviewListenerRegistration[],
+    pli: PushListenerInvocation):
     Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
     logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
@@ -213,7 +219,7 @@ ${codeBlock(err.message)}` : ""}`,
 }
 
 function createParametersInvocation(goalInvocation: GoalInvocation,
-                                    autoInspect: AutoInspectRegistration<any, any>): ParametersInvocation<any> {
+    autoInspect: AutoInspectRegistration<any, any>): ParametersInvocation<any> {
     return {
         addressChannels: goalInvocation.addressChannels,
         preferences: goalInvocation.preferences,
@@ -236,6 +242,6 @@ function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {
 }
 
 async function sendErrorsToSlack(errors: ReviewerError[],
-                                 addressChannels: AddressChannels): Promise<void> {
+    addressChannels: AddressChannels): Promise<void> {
     await Promise.all(errors.map(async e => addressChannels(formatReviewerError(e))));
 }
