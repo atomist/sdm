@@ -59,7 +59,7 @@ export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<AutoInspectRegistration<any, any>, ReviewListenerRegistration> {
 
     constructor(private readonly details: FulfillableGoalDetails & AutoCodeInspectionOptions = {},
-        ...dependsOn: Goal[]) {
+                ...dependsOn: Goal[]) {
         super({
             ...getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName("code-inspection"), CodeInspectionDefinition),
         }, ...dependsOn);
