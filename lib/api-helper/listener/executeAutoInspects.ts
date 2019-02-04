@@ -43,6 +43,7 @@ import {
     ReviewerError,
 } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
 import { minimalClone } from "../goal/minimalClone";
 import { slackErrorMessage } from "../misc/slack/messages";
@@ -151,9 +152,10 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                         push: cri,
                     };
                     try {
-                        goalInvocation.progressLog.write("Running inspection: " + autoInspect.name);
+                        goalInvocation.progressLog.write("Running inspection " + autoInspect.name + "...");
                         const inspectionResult = await autoInspect.inspection(project, papi);
-                        goalInvocation.progressLog.write("Inspection result: " + stringify(inspectionResult, undefined, 2));
+                        goalInvocation.progressLog.write(`Inspection result from ${autoInspect.name}:\n`
+                            + stringify(inspectionResult, undefined, 2));
                         const review = isProjectReview(inspectionResult) ? inspectionResult : undefined;
                         const response = autoInspect.onInspectionResult &&
                             await autoInspect.onInspectionResult(inspectionResult, cli).catch(err => {
@@ -161,7 +163,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                             }); // ignore errors
                         return { review, response };
                     } catch (error) {
-                        goalInvocation.progressLog.write("Error running inspection: " + error.message);
+                        goalInvocation.progressLog.write(`Error running inspection ${autoInspect.name}: ` + error.message);
                         return { error };
                     }
                 }));
@@ -178,7 +180,8 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
 
         const reviews: ProjectReview[] = inspectionReviewsAndResults.filter(r => !!r.review)
             .map(r => r.review);
-        const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(reviews, options.listeners, cri);
+        const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(goalInvocation.progressLog,
+            reviews, options.listeners, cri);
 
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
@@ -191,22 +194,28 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
     };
 }
 
-async function gatherResponsesFromReviewListeners(reviews: ProjectReview[],
+async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, reviews: ProjectReview[],
                                                   reviewListeners: ReviewListenerRegistration[],
                                                   pli: PushListenerInvocation):
     Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
     logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
 
-    return Promise.all(reviewListeners.map(responseFromOneListener({ ...pli, review })));
+    return Promise.all(reviewListeners.map(responseFromOneListener(progressLog, { ...pli, review })));
 }
 
-function responseFromOneListener(rli: ReviewListenerInvocation): (l: ReviewListenerRegistration) => Promise<PushImpactResponse> {
+function responseFromOneListener(progressLog: ProgressLog,
+                                 rli: ReviewListenerInvocation): (l: ReviewListenerRegistration) => Promise<PushImpactResponse> {
     return async l => {
         try {
-            return (await l.listener(rli)) || PushImpactResponse.proceed;
+            progressLog.write(`Running review listener ${l.name}...`);
+            const result = (await l.listener(rli)) || PushImpactResponse.proceed;
+            progressLog.write(`Review listener + ${l.name} result: ` + result);
+            return result;
         } catch (err) {
             logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
+            progressLog.write(`Review listener ${l.name} error: ` + err.message);
+            progressLog.write(`Failing autoinspect goal because a review listener failed.`);
             await rli.addressChannels(
                 slackErrorMessage(
                     "Review Listener",
