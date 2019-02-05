@@ -411,7 +411,7 @@ function isMappedParameterOrSecretDeclaration(x: any): x is MappedParameterOrSec
 
 function isValueDeclaration(x: any): x is ValueDeclaration {
     const maybe = x as ValueDeclaration;
-    return !!maybe && !!maybe.path;
+    return !!maybe && maybe.path !== undefined && maybe.path !== null;
 }
 
 function isParametersListing(p: ParametersDefinition<any>): p is ParametersListing {
