@@ -28,7 +28,7 @@ import {
 /**
  * Combine these transforms into a single transform,
  * where they execute it in order
- * @deprecated use array of CodeTransforms instead
+ * @deprecated use array of CodeTransforms instead when constructing a ProjectOperationRegistration
  */
 export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTransform<any>>): CodeTransform<P> {
     return async (p, sdmc, params) => {
@@ -44,7 +44,7 @@ export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTrans
             }
             return cumulativeResult;
         } catch (error) {
-            logger.warn("Editor failure in editorChain: %s", error);
+            logger.warn("Failure in transform chain: %s", error);
             return { target: p, edited: cumulativeResult.edited, success: false, error };
         }
     };
@@ -52,7 +52,7 @@ export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTrans
 
 function isTransformResult(tr: TransformReturnable): tr is TransformResult {
     const maybe = tr as TransformResult;
-    return maybe.success !== undefined;
+    return maybe && maybe.success !== undefined;
 }
 
 function toTransformResult(p: Project, tr: TransformReturnable): TransformResult {
