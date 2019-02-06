@@ -330,9 +330,9 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }
 
-    if (!credentials && !!ids && ids.length > 0 && !!sdm.credentialsResolver) {
+    if (!credentials && !!sdm.credentialsResolver) {
         try {
-            credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids[0]);
+            credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids ? ids[0] : undefined);
         } catch (e) {
             logger.warn(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
         }

@@ -25,8 +25,20 @@ import {
  */
 export interface CredentialsResolver {
 
-    eventHandlerCredentials(context: HandlerContext, id: RemoteRepoRef): ProjectOperationCredentials;
+    /**
+     * Return the appropriate credentials for this event handler invocation.
+     * @param {HandlerContext} context
+     * @param {RemoteRepoRef} id id of the repo if available
+     * @return {ProjectOperationCredentials}
+     */
+    eventHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef): ProjectOperationCredentials;
 
-    commandHandlerCredentials(context: HandlerContext, id: RemoteRepoRef): ProjectOperationCredentials;
+    /**
+     * Return the appropriate credentials for this command handler invocation.
+     * @param {HandlerContext} context
+     * @param {RemoteRepoRef} id id of the repo if available
+     * @return {ProjectOperationCredentials}
+     */
+    commandHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef): ProjectOperationCredentials;
 
 }
