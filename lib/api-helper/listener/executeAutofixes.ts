@@ -219,7 +219,7 @@ export function generateCommitMessageForAutofix(autofix: AutofixRegistration): s
 }
 
 export const AutofixProgressTests: ProgressTest[] = [{
-    test: /About to edit .* autofix '(.*)'/i,
+    test: /About to transform .* autofix '(.*)'/i,
     phase: "$1",
 }];
 
