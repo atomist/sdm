@@ -181,7 +181,7 @@ export function storeGoal(ctx: HandlerContext,
         .then(() => sdmGoal);
 }
 
-function constructProvenance(ctx: HandlerContext): SdmProvenance {
+export function constructProvenance(ctx: HandlerContext): SdmProvenance {
     return {
         registration: (ctx as any as AutomationContextAware).context.name,
         version: (ctx as any as AutomationContextAware).context.version,

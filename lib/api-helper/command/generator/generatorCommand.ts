@@ -15,6 +15,7 @@
  */
 
 import {
+    addressEvent,
     HandlerContext,
     Maker,
     OnCommand,
@@ -45,6 +46,8 @@ import {
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
+import { ProviderType } from "../../../typings/types";
+import { constructProvenance } from "../../goal/storeGoals";
 import {
     CommandListenerExecutionInterruptError,
     toCommandListenerInvocation,
@@ -152,6 +155,20 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
             params,
             details.afterAction,
         );
+
+        // TODO cd support other providers which needs to start upstream from this
+        if (params.target.repoRef.kind === ProviderType.github_com) {
+            const repoProvenance = {
+                repo: {
+                    name: params.target.repoRef.repo,
+                    owner: params.target.repoRef.owner,
+                    providerId: "zjlmxjzwhurspem",
+                },
+                provenance: constructProvenance(ctx),
+            };
+            await ctx.messageClient.send(repoProvenance, addressEvent("SdmRepoProvenance"));
+        }
+
         await ctx.messageClient.respond(
             slackSuccessMessage(
                 `Create Project`,
