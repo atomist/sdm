@@ -77,7 +77,6 @@ export interface GoalDefinition {
 export class Goal {
 
     public readonly context: GitHubStatusContext;
-    public readonly name: string;
     public readonly uniqueName: string;
     public readonly definition: GoalDefinition;
 
@@ -125,6 +124,10 @@ export class Goal {
         return this.definition.skippedDescription || `Skipped: ${this.name}`;
     }
 
+    get name(): string {
+        return this.definition.displayName || this.definition.uniqueName;
+    }
+
     constructor(definition: GoalDefinition) {
         this.definition = validateGoalDefinition(definition);
         // Default environment if hasn't been provided
@@ -132,7 +135,6 @@ export class Goal {
             this.definition.environment = IndependentOfEnvironment;
         }
         this.context = BaseContext + this.definition.environment + this.definition.uniqueName;
-        this.name = this.definition.displayName || this.definition.uniqueName;
         this.uniqueName = this.definition.uniqueName;
     }
 }
