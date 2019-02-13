@@ -167,8 +167,6 @@ function validateGoalDefinition(gd: GoalDefinition): GoalDefinition {
             `end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '${UniqueNameRegExp}')`);
     }
 
-    return {
-        ...gd,
-        uniqueName,
-    };
+    gd.uniqueName = uniqueName;
+    return gd;
 }

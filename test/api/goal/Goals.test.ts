@@ -21,7 +21,10 @@ import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
 import { goals } from "../../../lib/api/goal/Goals";
-import { GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
+import {
+    goal,
+    GoalWithFulfillment,
+} from "../../../lib/api/goal/GoalWithFulfillment";
 
 const ArtifactGoal = new GoalWithFulfillment({
     uniqueName: "artifact",
@@ -153,6 +156,16 @@ describe("GoalBuilder", () => {
 
         assert.deepStrictEqual((goals2.goals[0] as GoalWithPrecondition).dependsOn.map(g => g.definition.uniqueName),
             [CodeInspectionGoal, ArtifactGoal].map(g => g.definition.uniqueName));
+    });
+
+    it("should correctly maintain changed goal defintion", () => {
+        const g1 = goal({ });
+        const g2 = goal({ });
+        const gs = goals("test").plan(g1).plan(g2).after(g1);
+        g2.definition.displayName = "some test";
+
+        const gc2 = gs.goals.find(g => g.uniqueName === g2.uniqueName);
+        assert.strictEqual(gc2.definition.displayName, g2.definition.displayName);
     });
 
 });
