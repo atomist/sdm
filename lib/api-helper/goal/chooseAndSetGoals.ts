@@ -245,7 +245,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                     const preConditions = (g as any).dependsOn as Goal[];
                     if (preConditions) {
                         const filteredPreConditions = preConditions.filter(pc => determinedGoals.goals.some(ag =>
-                            ag.name === pc.name &&
+                            ag.uniqueName === pc.uniqueName &&
                             ag.environment === pc.environment));
                         if (filteredPreConditions.length > 0) {
                             filteredGoals.push(new GoalWithPrecondition(g.definition, ...filteredPreConditions));
