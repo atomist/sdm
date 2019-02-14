@@ -367,5 +367,8 @@ async function filePromise(token: string, rr: GitHubRepoRef, path: string): Prom
         headers: {
             Authorization: `token ${token}`,
         },
+        retry: {
+            retries: 0,
+        }
     });
 }
