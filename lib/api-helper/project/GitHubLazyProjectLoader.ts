@@ -15,23 +15,26 @@
  */
 
 import {
+    configurationValue,
+    DefaultHttpClientFactory,
+    GitHubRepoRef,
     GitProject,
     GitPushOptions,
     GitStatus,
+    HttpClientFactory,
+    HttpMethod,
+    HttpResponse,
     InMemoryProjectFile,
     logger,
     ProjectFile,
     RemoteRepoRef,
     TokenCredentials,
 } from "@atomist/automation-client";
-import {
-    GitHubDotComBase,
-    isGitHubRepoRef,
-} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { decode } from "@atomist/automation-client/lib/internal/util/base64";
+import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
 import { FileStream } from "@atomist/automation-client/lib/project/Project";
 import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
-import { fileContent } from "@atomist/automation-client/lib/util/gitHub";
 import * as stream from "stream";
 import {
     LazyProject,
@@ -167,13 +170,10 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         if (this.materializing()) {
             return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
-        // TODO we need this to work for other gits
-        if (isGitHubRepoRef(this.id) && GitHubDotComBase.includes(this.id.apiBase)) {
-            logger.info(`Asking github for ${this.id.owner}:${this.id.repo}/${path}`);
+        if (isGitHubRepoRef(this.id)) {
             const content = await fileContent(
                 (this.params.credentials as TokenCredentials).token,
-                this.id.owner,
-                this.id.repo,
+                this.id as GitHubRepoRef,
                 path);
             return !!content ? new InMemoryProjectFile(path, content) : undefined;
         }
@@ -192,7 +192,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const resultStream = new stream.Transform({ objectMode: true });
-        resultStream._transform = function(chunk: any, encoding: string, done: stream.TransformCallback): void {
+        resultStream._transform = function (chunk: any, encoding: string, done: stream.TransformCallback): void {
             // tslint:disable-next-line:no-invalid-this
             this.push(chunk);
             done();
@@ -291,7 +291,9 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 interface QueryablePromise<T> extends Promise<T> {
 
     isResolved(): boolean;
+
     isFulfilled(): boolean;
+
     isRejected(): boolean;
 
     result(): T;
@@ -344,4 +346,26 @@ function makeQueryablePromise<T>(ppromise: Promise<T>): QueryablePromise<T> {
         return result;
     };
     return qp;
+}
+
+export async function fileContent(token: string, rr: GitHubRepoRef, path: string): Promise<string | undefined> {
+    try {
+        const result = await filePromise(token, rr, path);
+        return decode(result.body.content);
+    } catch (e) {
+        logger.debug(`File at '${path}' not available`);
+        return undefined;
+    }
+}
+
+async function filePromise(token: string, rr: GitHubRepoRef, path: string): Promise<HttpResponse<{ content: string }>> {
+    const url = `${rr.scheme}${rr.apiBase}/repos/${rr.owner}/${rr.repo}/contents/${path}`;
+    logger.debug(`Requesting file from GitHub at '${url}'`);
+    const httpClient = configurationValue<HttpClientFactory>("http.client.factory", DefaultHttpClientFactory);
+    return httpClient.create(url).exchange<{ content: string }>(url, {
+        method: HttpMethod.Get,
+        headers: {
+            Authorization: `token ${token}`,
+        },
+    });
 }
