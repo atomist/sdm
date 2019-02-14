@@ -25,7 +25,12 @@ import { Mapping } from "./Mapping";
  * Constant to indicate we should never match.
  * @type {any}
  */
-export const DoNotSetAnyGoals: Goals = goals("no goals").andLock();
+export const DoNotSetAnyGoals: Goals = goals("no goals");
+
+/**
+ * Should be used in additive goal setting when no more goals should be scheduled.
+ */
+export const DoNotSetAnyGoalsAndLock: Goals = DoNotSetAnyGoals.andLock();
 
 /**
  * Mapper from push to value, id it can be resolved.
