@@ -173,7 +173,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         if (isGitHubRepoRef(this.id)) {
             const content = await fileContent(
                 (this.params.credentials as TokenCredentials).token,
-                this.id as GitHubRepoRef,
+                this.id,
                 path);
             return !!content ? new InMemoryProjectFile(path, content) : undefined;
         }
@@ -192,7 +192,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const resultStream = new stream.Transform({ objectMode: true });
-        resultStream._transform = function (chunk: any, encoding: string, done: stream.TransformCallback): void {
+        resultStream._transform = function(chunk: any, encoding: string, done: stream.TransformCallback): void {
             // tslint:disable-next-line:no-invalid-this
             this.push(chunk);
             done();
