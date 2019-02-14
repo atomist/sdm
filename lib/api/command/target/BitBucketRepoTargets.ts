@@ -54,7 +54,7 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
     public repos: string = ".*";
 
     get credentials(): ProjectOperationCredentials {
-        throw new Error("Must be overridden");
+        return undefined;
     }
 
     constructor() {
