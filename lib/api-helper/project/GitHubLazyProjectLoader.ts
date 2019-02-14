@@ -369,6 +369,6 @@ async function filePromise(token: string, rr: GitHubRepoRef, path: string): Prom
         },
         retry: {
             retries: 0,
-        }
+        },
     });
 }
