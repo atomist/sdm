@@ -145,7 +145,7 @@ ${codeBlock(vr.message)}`,
                 ctr.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
                     mo.projectLoader,
-                    (ci.parameters as RepoTargetingParameters).targets.credentials,
+                    ci.credentials,
                     false,
                     ci.context);
 
