@@ -87,6 +87,7 @@ export function updateGoal(ctx: HandlerContext,
         push: cleanPush(before.push),
         version: before.version,
     };
+    delete (sdmGoal as any).id;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -98,7 +99,6 @@ function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
             owner: event.push.repo.owner,
             providerId: event.push.repo.org.provider.providerId,
         },
-        id: undefined,
     };
 }
 

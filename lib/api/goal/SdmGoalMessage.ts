@@ -25,7 +25,7 @@ export enum SdmGoalFulfillmentMethod {
 }
 
 export interface SdmGoalFulfillment {
-    method: SdmGoalFulfillmentMethod;
+    method: SdmGoalFulfillmentMethod | string;
     name: string;
 }
 

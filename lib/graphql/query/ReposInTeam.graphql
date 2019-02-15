@@ -2,14 +2,7 @@ query ReposInTeam($offset: Int!, $size: Int!) {
   ChatTeam {
     orgs {
       repo(first: $size, offset: $offset) {
-        name
-        owner
-        org {
-          provider {
-            providerType
-            apiUrl
-          }
-        }
+        ...CoreRepoFieldsAndChannels
       }
     }
   }
