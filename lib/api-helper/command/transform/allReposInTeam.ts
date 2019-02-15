@@ -50,7 +50,7 @@ function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: num
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
-                org.repo.map(r => rrr.toRemoteRepoRef(r as any, {})));
+                org.repo.map(r => rrr.toRemoteRepoRef(r, {})));
         })
         .then(repos => {
             return (repos.length < PageSize) ?

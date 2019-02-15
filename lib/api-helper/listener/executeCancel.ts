@@ -77,7 +77,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
         });
 
         if (goals && goals.SdmGoal && goals.SdmGoal.length > 0) {
-            const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any) as SdmGoalByShaAndBranch.SdmGoal[];
+            const currentGoals = sumSdmGoalEvents(goals.SdmGoal as any);
             const cancelableGoals = currentGoals.filter(g => provenanceFilter(g, registration))
                 .filter(g => optsToUse.goalFilter(g as any));
 

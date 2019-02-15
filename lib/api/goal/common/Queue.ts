@@ -167,7 +167,7 @@ async function startGoals(goalSets: InProcessSdmGoalSets.Query,
         const queueGoals = await loadQueueGoals(goalSetsToStart, definition, ctx);
 
         for (const goalSetToStart of goalSetsToStart) {
-            const queueGoal = _.maxBy(queueGoals.filter(g => g.goalSetId === goalSetToStart.goalSetId), "ts") as SdmGoalEvent;
+            const queueGoal = _.maxBy(queueGoals.filter(g => g.goalSetId === goalSetToStart.goalSetId), "ts");
             logger.debug(`Updating goal '${definition.uniqueName}' of goal set '${queueGoal.goalSetId}' to 'success'`);
             if (queueGoal.state === SdmGoalState.in_process) {
                 await updateGoal(ctx, queueGoal, {
@@ -190,7 +190,7 @@ async function updateGoals(goalSets: InProcessSdmGoalSets.Query,
         const queuedGoals = await loadQueueGoals(goalSetsToUpdate, definition, ctx);
 
         for (const goalSetToUpdate of goalSetsToUpdate) {
-            const updGoal = _.maxBy(queuedGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts") as SdmGoalEvent;
+            const updGoal = _.maxBy(queuedGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts");
             const phase = `at ${goalSetsToUpdate.findIndex(gs => gs.goalSetId === updGoal.goalSetId) + 1}`;
             if (updGoal.state === SdmGoalState.in_process && updGoal.phase !== phase) {
                 await updateGoal(ctx, updGoal, {

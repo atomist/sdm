@@ -99,7 +99,7 @@ function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
             providerId: event.push.repo.org.provider.providerId,
         },
         id: undefined,
-    } as any;
+    };
 }
 
 export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoalKey): boolean {

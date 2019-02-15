@@ -130,7 +130,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
         });
     }
 
-    return goals as SdmGoalEvent[];
+    return goals;
 }
 
 export function sumSdmGoalEvents(some: SdmGoalEvent[]): SdmGoalEvent[] {
