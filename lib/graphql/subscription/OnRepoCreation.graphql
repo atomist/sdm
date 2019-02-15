@@ -1,7 +1,5 @@
 subscription OnRepoCreation {
   Repo {
-    owner
-    name
-    id
+    ...CoreRepoFieldsAndChannels
   }
 }
