@@ -84,8 +84,8 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     owner: id.owner,
                     provider: {
                         providerId: "skdfjasd",
-                    },
-                },
+                    } as any,
+                } as any,
                 name: id.repo,
                 channels: [{
                     name: "foo",
@@ -95,9 +95,9 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 }],
             },
-            commits: [{ sha: guid() }],
-        },
-    };
+            commits: [{ sha: guid() } as any],
+        } as any,
+    } as any;
 }
 
 function fakeGoal(name: string): Goal {

@@ -7,60 +7,7 @@ query PushForSdmGoal(
 ) {
   Commit(sha: $sha) {
     pushes(branch: $branch) {
-      id
-      timestamp
-      branch
-      before {
-        sha
-        message
-        committer {
-          login
-          person {
-            ...PersonFields
-          }
-        }
-      }
-      after(sha: $sha) {
-        sha
-        message
-        committer {
-          login
-          person {
-            ...PersonFields
-          }
-        }
-      }
-      commits {
-        sha
-        timestamp
-        message
-        author {
-          login
-          name
-        }
-      }
-      repo(owner: $owner, name: $repo) @required {
-        owner
-        name
-        org {
-          owner
-          ownerType
-          provider(providerId: $providerId) @required {
-            providerId
-            providerType
-            apiUrl
-            url
-          }
-        }
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        defaultBranch
-      }
+      ...PushFields
     }
   }
 }

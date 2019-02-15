@@ -14,75 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    PushFields,
-    SdmGoalState,
-} from "../../typings/types";
-import {
-    SdmGoalKey,
-    SdmProvenance,
-} from "./SdmGoalMessage";
+import { SdmGoalWithPushFields } from "../../typings/types";
 
 /**
  * An SdmGoal event.
- *
- * After https://github.com/atomisthq/automation-api/issues/479 is fixed,
- * and we make the required fields NonNull in GraphQL,
- * change this to be a type alias for SdmGoalFields.Fragment.
  */
-export interface SdmGoalEvent extends SdmGoalKey {
-    sha: string;
-    branch: string;
-
-    push: PushFields.Fragment;
-
-    fulfillment: {
-        method: string;
-        name: string;
-    };
-
-    /*
-     * this is also available in the push, but leave it here
-     * for backwards compatibility
-     */
-    repo: {
-        owner: string,
-        name: string,
-        providerId: string,
-    };
-
-    /**
-     * Current description that goes with the current status
-     */
-    description?: string;
-    url?: string;
-    externalUrls?: Array<{ label?: string, url: string }>;
-    goalSet: string;
-    goalSetId: string;
-    state: SdmGoalState;
-    phase?: string;
-
-    /**
-     * Timestamp
-     */
-    ts: number;
-
-    error?: string;
-    retryFeasible?: boolean;
-
-    approval?: SdmProvenance;
-    approvalRequired?: boolean;
-
-    preApproval?: SdmProvenance;
-    preApprovalRequired?: boolean;
-
-    provenance: SdmProvenance[];
-
-    preConditions: SdmGoalKey[];
-
-    externalKey?: string;
-
-    data?: string;
-
-    version?: number;
-}
+export type SdmGoalEvent = SdmGoalWithPushFields.Fragment;

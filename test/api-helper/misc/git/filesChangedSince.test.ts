@@ -58,7 +58,7 @@ describe("filesChanged", () => {
                 }, {
                     sha: "50bed8bff0ae8273302d2926e924148d57bad831",
                 }],
-            };
+            } as any;
 
             const files = await filesChangedSince(p, push);
             const expectedChanges = [".travis.yml",
@@ -92,7 +92,7 @@ describe("filesChanged", () => {
                 }, {
                     sha: "4a725eff5dbfd35f213b97d9c204b402fe45106e",
                 }],
-            };
+            } as any;
 
             const files = await filesChangedSince(p, push);
             const expectedChanges = ["README.md",

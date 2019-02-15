@@ -40,7 +40,7 @@ export function fakePush(project?: Project, pli: Partial<PushListenerInvocation>
             after: {
                 message: "Some fake commit",
             },
-        },
+        } as any,
         project: project as GitProject,
         context: fakeContext(),
         addressChannels: AddressNoChannels,

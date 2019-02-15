@@ -56,7 +56,7 @@
     "@atomist/slack-messages": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.3.0-master.20190214172210",
+    "@atomist/automation-client": "1.3.0-update-deps.20190215100321",
     "@atomist/slack-messages": "^1.1.0",
     "@types/mocha": "^5.2.6",
     "@types/power-assert": "^1.5.0",

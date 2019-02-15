@@ -30,7 +30,6 @@ query SdmGoalByShaAndBranch(
     }
     description
     url
-    externalUrl
     externalUrls {
       label
       url

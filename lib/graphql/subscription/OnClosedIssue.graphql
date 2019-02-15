@@ -3,6 +3,7 @@ subscription OnClosedIssue {
     number
     title
     body
+    state
     openedBy {
       login
       person {

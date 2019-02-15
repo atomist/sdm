@@ -29,8 +29,8 @@ import {
     CommitForSdmGoal,
     PushForSdmGoal,
     SdmGoalFields,
-    SdmGoalRepo,
     SdmGoalsForCommit,
+    SdmGoalWithPushFields,
 } from "../../typings/types";
 import { goalKeyString } from "./sdmGoal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
@@ -60,7 +60,7 @@ export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef
 }
 
 export async function fetchCommitForSdmGoal(ctx: HandlerContext,
-                                            goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
+                                            goal: SdmGoalWithPushFields.Fragment): Promise<CommitForSdmGoal.Commit> {
     const variables = { sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch };
     const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
         {
@@ -106,7 +106,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
     }
 
     // only maintain latest version of SdmGoals from the current goal set
-    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents((result as SdmGoalEvent[]));
+    const goals: SdmGoalEvent[] = sumSdmGoalEvents((result as any[]));
 
     // query for the push and add it in
     if (goals.length > 0) {
@@ -124,7 +124,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
             },
         });
         return goals.map(g => {
-            const goal = (_.cloneDeep(g) as SdmGoalEvent);
+            const goal = _.cloneDeep(g);
             goal.push = push.Commit[0].pushes[0];
             return goal;
         });

@@ -10,6 +10,5 @@ query SdmGoalsByGoalSetIdAndUniqueName(
     state: $state
   ) {
     ...SdmGoalWithPushFields
-    ...SdmGoalRepo
   }
 }

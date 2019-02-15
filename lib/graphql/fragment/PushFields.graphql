@@ -5,6 +5,7 @@ fragment PushFields on Push {
   before {
     sha
     message
+    timestamp
     committer {
       login
       person {
@@ -15,6 +16,7 @@ fragment PushFields on Push {
   after {
     sha
     message
+    timestamp
     committer {
       login
       person {
@@ -46,10 +48,11 @@ fragment PushFields on Push {
     sha
     timestamp
     message
-    author {
-      _id
+    committer {
       login
-      name
+      person {
+        ...PersonFields
+      }
     }
   }
 }

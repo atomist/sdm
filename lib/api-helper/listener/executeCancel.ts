@@ -103,6 +103,8 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                         version: actx.context.version,
                         correlationId: actx.context.correlationId,
                         ts: Date.now(),
+                        userId: undefined,
+                        channelId: undefined,
                     };
                     updatedGoal.provenance.push(prov);
 

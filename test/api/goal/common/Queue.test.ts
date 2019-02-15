@@ -80,7 +80,7 @@ describe("Queue", () => {
                 SdmGoalSet: [{
                     goalSetId: "123456",
                 }],
-            };
+            } as any;
             const h = handleSdmGoalSetEvent({}, { uniqueName: "test" }, { name: "test-sdm" } as any);
             const r = await h({ data: e } as any, { graphClient, messageClient } as any, {});
             assert.strictEqual(r.code, 0);
@@ -189,7 +189,7 @@ describe("Queue", () => {
                 SdmGoalSet: [{
                     goalSetId: "4",
                 }],
-            };
+            } as any;
             const h = handleSdmGoalSetEvent({}, { uniqueName: "test" }, { name: "test-sdm" } as any);
             const r = await h({ data: e } as any, {
                 graphClient,

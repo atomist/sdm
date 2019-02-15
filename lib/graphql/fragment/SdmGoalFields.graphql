@@ -1,4 +1,9 @@
 fragment SdmGoalFields on SdmGoal {
+  repo {
+    name
+    owner
+    providerId
+  }
   environment
   uniqueName
   name
@@ -10,7 +15,6 @@ fragment SdmGoalFields on SdmGoal {
   }
   description
   url
-  externalUrl
   externalUrls {
     label
     url
