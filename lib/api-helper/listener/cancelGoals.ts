@@ -45,8 +45,8 @@ export async function isGoalCanceled(sdmGoal: SdmGoalEvent,
 /**
  * Can goal be canceled
  */
-export async function cancellableGoal(sdmGoal: SdmGoalEvent,
+export async function cancelableGoal(sdmGoal: SdmGoalEvent,
                                       configuration: Configuration): Promise<boolean> {
-    const cancelableGoals = _.get(configuration, "sdm.goal.uncancellable") || [];
+    const cancelableGoals = _.get(configuration, "sdm.goal.uncancelable") || [];
     return cancelableGoals.includes(sdmGoal.uniqueName);
 }
