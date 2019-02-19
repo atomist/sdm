@@ -15,6 +15,8 @@
  */
 
 import {
+    Configuration,
+    ConfigurationAware,
     guid,
     HandlerContext,
     logger,
@@ -31,7 +33,6 @@ import {
     PreferenceStore,
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
-import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
 import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
     Goal,
@@ -39,7 +40,6 @@ import {
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
-import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalFulfillment,
     SdmGoalFulfillmentMethod,
@@ -90,6 +90,7 @@ export interface ChooseAndSetGoalsRules {
     preferencesFactory?: PreferenceStoreFactory;
 
     parameterPromptFactory?: ParameterPromptFactory<any>;
+
 }
 
 /**
@@ -110,11 +111,12 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     const id = repoRefResolver.repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
     const preferences = !!preferencesFactory ? preferencesFactory(parameters.context) : NoPreferenceStore;
+    const configuration = (context as any as ConfigurationAware).configuration;
     const goalSetId = guid();
 
     const { determinedGoals, goalsToSave } = await determineGoals(
         { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
-            credentials, id, context, push, addressChannels, preferences, goalSetId,
+            credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
         });
 
     if (goalsToSave.length > 0) {
@@ -131,6 +133,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         context,
         credentials,
         addressChannels,
+        configuration,
         preferences,
         goalSetId,
         goalSetName: determinedGoals ? determinedGoals.name : undefined,
@@ -152,6 +155,7 @@ export async function determineGoals(rules: {
                                          credentials: ProjectOperationCredentials,
                                          id: RemoteRepoRef,
                                          context: HandlerContext,
+                                         configuration: Configuration,
                                          push: PushFields.Fragment,
                                          addressChannels: AddressChannels,
                                          preferences?: PreferenceStore,
@@ -161,7 +165,7 @@ export async function determineGoals(rules: {
     goalsToSave: SdmGoalMessage[],
 }> {
     const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
-    const { credentials, id, context, push, addressChannels, goalSetId, preferences } = circumstances;
+    const { credentials, id, context, push, addressChannels, goalSetId, preferences, configuration } = circumstances;
     return projectLoader.doWithProject({
             credentials,
             id,
@@ -177,6 +181,7 @@ export async function determineGoals(rules: {
                 push,
                 context,
                 addressChannels,
+                configuration,
                 preferences: preferences || NoPreferenceStore,
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);

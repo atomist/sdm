@@ -76,6 +76,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
         const pli: PushListenerInvocation = {
             addressChannels: this.gi.addressChannels,
             preferences: this.gi.preferences,
+            configuration: this.gi.configuration,
             context: this.gi.context,
             credentials: this.gi.credentials,
             id: this.gi.id,

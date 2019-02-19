@@ -18,6 +18,7 @@
 // tslint:disable:max-file-line-count
 
 import {
+    ConfigurationAware,
     editModes,
     GitHubRepoRef,
     GitProject,
@@ -341,11 +342,13 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
     const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt;
     const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
+    const configuration = (context as any as ConfigurationAware).configuration;
     return {
         commandName: c.name,
         context,
         parameters,
         addressChannels,
+        configuration,
         promptFor,
         preferences,
         credentials,

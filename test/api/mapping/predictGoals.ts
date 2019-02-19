@@ -74,6 +74,9 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
         get preferences(): PreferenceStore {
             throw new InsufficientDataError("preferences");
         },
+        get configuration(): PreferenceStore {
+            throw new InsufficientDataError("configuration");
+        },
         get credentials(): ProjectOperationCredentials {
             throw new InsufficientDataError("credentials");
         },

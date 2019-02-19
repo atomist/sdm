@@ -56,6 +56,7 @@ export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoal {
             id: r.id,
             url: endpointGoal.url,
             addressChannels: r.addressChannels,
+            configuration: r.configuration,
             preferences: r.preferences,
             context: r.context,
             credentials: r.credentials,

@@ -59,6 +59,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
                 l({
                     id,
                     context,
+                    configuration,
                     credentials,
                     addressChannels,
                     preferences,

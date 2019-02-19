@@ -15,7 +15,6 @@
  */
 
 import { InMemoryProject } from "@atomist/automation-client";
-import axios from "axios";
 import * as assert from "power-assert";
 import { relevantCodeActions } from "../../../lib/api-helper/listener/relevantCodeActions";
 import { PushImpactListenerInvocation } from "../../../lib/api/listener/PushImpactListener";
@@ -37,8 +36,7 @@ describe("relevantCodeActions", () => {
         const autofixes: AutofixRegistration = {
             name: "License Fix",
             transform: async p => {
-                const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
-                return p.addFile("LICENSE", license.data);
+                return p.addFile("LICENSE", "Some license content");
             },
         };
         const relevant = await relevantCodeActions([autofixes], pti);

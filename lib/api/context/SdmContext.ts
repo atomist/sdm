@@ -15,6 +15,7 @@
  */
 
 import {
+    Configuration,
     HandlerContext,
     ProjectOperationCredentials,
     RemoteRepoRef,
@@ -53,6 +54,8 @@ export interface SdmContext {
      * Store and retrieve preferences for this SDM or team
      */
     preferences: PreferenceStore;
+
+    configuration: Configuration;
 
 }
 

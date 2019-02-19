@@ -35,7 +35,7 @@ import { filteredView } from "../misc/project/filteredView";
  */
 export async function createPushImpactListenerInvocation(goalInvocation: GoalInvocation,
                                                          project: GitProject): Promise<PushImpactListenerInvocation> {
-    const { goalEvent, credentials, id, context, addressChannels, preferences } = goalInvocation;
+    const { goalEvent, credentials, id, context, addressChannels, preferences, configuration } = goalInvocation;
     const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(goalEvent.push.repo, context));
 
     const push = goalEvent.push;
@@ -44,6 +44,7 @@ export async function createPushImpactListenerInvocation(goalInvocation: GoalInv
     return {
         id,
         context: smartContext,
+        configuration,
         addressChannels,
         preferences,
         project,

@@ -251,6 +251,7 @@ function createParametersInvocation(goalInvocation: GoalInvocation,
         addressChannels: goalInvocation.addressChannels,
         preferences: goalInvocation.preferences,
         context: goalInvocation.context,
+        configuration: goalInvocation.configuration,
         credentials: goalInvocation.credentials,
         parameters: autoInspect.parametersInstance,
     };

@@ -15,26 +15,28 @@
  */
 
 import {
+    configurationValue,
+    DefaultHttpClientFactory,
     GitCommandGitProject,
+    HttpMethod,
     logger,
     Project,
     ProjectOperationCredentials,
     RemoteRepoRef,
     SimpleProjectEditor,
 } from "@atomist/automation-client";
-import axios from "axios";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
- * @param {string} url url of the content. Must be publicly accessible
- * @param {string} path
- * @return {SimpleProjectEditor}
+ * @param url url of the content. Must be publicly accessible
+ * @param path
  */
 export function copyFileFromUrl(url: string, path: string): CodeTransform {
     return async p => {
-        const response = await axios.get(url);
-        return p.addFile(path, response.data);
+        const http = configurationValue("http.client.factory", DefaultHttpClientFactory);
+        const response = await http.create(url).exchange<string>(url, { method: HttpMethod.Get });
+        return p.addFile(path, response.body);
     };
 }
 
@@ -75,7 +77,7 @@ export function copyFiles(donorProject: Project,
                           fileMappings: Array<FileMapping | string>): CodeTransform {
     return async p => {
         for (const m of fileMappings) {
-            const fm = typeof m === "string" ? {donorPath: m, recipientPath: m} : m;
+            const fm = typeof m === "string" ? { donorPath: m, recipientPath: m } : m;
             const found = await donorProject.getFile(fm.donorPath);
             if (found) {
                 await p.addFile(fm.recipientPath, await found.getContent());

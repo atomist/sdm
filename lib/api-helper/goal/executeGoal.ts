@@ -59,7 +59,6 @@ import { SdmGoalState } from "../../typings/types";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { spawnLog } from "../misc/child_process";
 import { toToken } from "../misc/credentials/toToken";
-import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 import { serializeResult } from "../misc/result";
 import { ProjectListenerInvokingProjectLoader } from "../project/ProjectListenerInvokingProjectLoader";
@@ -113,6 +112,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             id,
             context,
             addressChannels,
+            configuration,
             preferences,
             credentials,
             goal,
@@ -141,11 +141,6 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, inProcessGoalEvent, configuration)
         (prepareGoalInvocation(goalInvocation, projectListeners))
             .catch(async err => {
-                progressLog.write("ERROR caught: " + err.message + "\n");
-                progressLog.write(err.stack);
-                progressLog.write(sprintf("Full error object: [%s]", stringifyError(err)));
-                await progressLog.flush();
-
                 throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
         if (isFailure(goalResult)) {

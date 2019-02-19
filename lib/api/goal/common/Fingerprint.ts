@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import axios from "axios";
+import {
+    HttpMethod,
+    logger,
+} from "@atomist/automation-client";
 import { executeFingerprinting } from "../../../api-helper/listener/executeFingerprinting";
 import { FingerprintListener } from "../../listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
@@ -83,7 +85,8 @@ export const SendFingerprintToAtomist: FingerprintListener = fli => {
     } catch (err) {
         logger.error(`Unable to serialize fingerprint: %s`, err.message);
     }
-    return axios.post(url, payload)
+    const http = fli.configuration.http.client.factory.create(url);
+    return http.exchange(url, { method: HttpMethod.Post, body: payload })
         .catch(err => {
             logger.error(`Failed to send fingerprint: %s`, err.message);
             return Promise.reject(err);
