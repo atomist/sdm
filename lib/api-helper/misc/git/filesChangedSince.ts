@@ -95,5 +95,9 @@ export function anyFileChangedSuchThat(changedFilePaths: string[], test: (path: 
 
 export function anyFileChangedWithExtension(changedFilePaths: string[], extensions: string[]): boolean {
     return anyFileChangedSuchThat(changedFilePaths,
-        path => extensions.some(ext => path.endsWith("." + ext)));
+        path => extensions.some(ext => path.endsWith(prefixWithDot(ext))));
+}
+
+function prefixWithDot(ext: string): string {
+    return ext.startsWith(".") ? ext : "." + ext;
 }

@@ -66,6 +66,20 @@ describe("isMaterialChange", () => {
 
         });
 
+        it("should match extensions that are specified with . in front of them", () => {
+            const options: MaterialChangeOptions = {
+                extensions: [".json", ".java"],
+            };
+
+            const changedFiles: string[] = [
+                "src/test/bla.java",
+                ".atomist/kube/service.json",
+            ];
+
+            assert(anyFileChanged(options, changedFiles));
+
+        });
+
         it("should not match extensions", () => {
             const options: MaterialChangeOptions = {
                 extensions: ["ts"],
