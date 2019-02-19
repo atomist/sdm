@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Deprecate lower case enum values. [f556259](https://github.com/atomist/sdm/commit/f5562590f51caaaa3c97340b31efe544ea71bcc6)
 -   Improve startingPoint handling in generators. [#663](https://github.com/atomist/sdm/issues/663)
 -   Deprecate paramsMaker. [#667](https://github.com/atomist/sdm/issues/667)
+-   Accept extensions starting with . in isMaterialChange. [#674](https://github.com/atomist/sdm/issues/674)
 
 ### Deprecated
 
