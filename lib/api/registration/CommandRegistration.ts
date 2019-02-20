@@ -19,11 +19,11 @@ import {
     RepoFinder,
     RepoLoader,
 } from "@atomist/automation-client";
+import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliveryMachineOptions";
 import { ParametersDefinition } from "./ParametersDefinition";
 
 /**
- * Type for registering a project transform, which can make changes
- * to projects
+ * Common supertype for all command registrations.
  */
 export interface CommandRegistration<PARAMS> {
 
@@ -44,7 +44,15 @@ export interface CommandRegistration<PARAMS> {
      */
     parameters?: ParametersDefinition<PARAMS>;
 
+    /**
+     * Intent or list of intents. What you need to type to invoke the
+     * command, for example via the bot.
+     */
     intent?: string | string[];
+
+    /**
+     * Tags associated with this command. Useful in searching.
+     */
     tags?: string | string[];
 
     /**
@@ -55,5 +63,15 @@ export interface CommandRegistration<PARAMS> {
     repoFinder?: RepoFinder;
 
     repoLoader?: (p: PARAMS) => RepoLoader;
+
+    /**
+     * If provided, select when this command is registered.
+     * Enables conditional registration on SDM startup, based on
+     * configuration, environment variables etc.
+     * This method is invoked during SDM startup.
+     * @param {SoftwareDeliveryMachineConfiguration} sdmConfiguration
+     * @return {boolean}
+     */
+    registerWhen?: (sdmConfiguration: SoftwareDeliveryMachineConfiguration) => boolean;
 
 }
