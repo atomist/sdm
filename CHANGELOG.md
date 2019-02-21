@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Enhance the typedoc within CodeTransformRegistration. [#665](https://github.com/atomist/sdm/issues/665)
 -   Add parameters to EventHandlerRegistration. [230db78](https://github.com/atomist/sdm/commit/230db78e37e669ea8065b0ee5bc788e58f9cf117)
 -   Provide a useful implementation of onTransformResults. [#666](https://github.com/atomist/sdm/issues/666)
+-   Add conditional command registration. [#676](https://github.com/atomist/sdm/issues/676)
 
 ### Changed
 
