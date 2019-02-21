@@ -39,7 +39,6 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
-import { GoalImplementationMapper } from "../../api/goal/support/GoalImplementationMapper";
 import { TriggeredListenerInvocation } from "../../api/listener/TriggeredListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
@@ -54,6 +53,7 @@ import { PushRules } from "../../api/mapping/support/PushRules";
 import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
+import { CommandRegistration } from "../../api/registration/CommandRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import {
@@ -159,22 +159,30 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
-        this.registrationManager.addCommand(cmd);
+        if (this.shouldRegister(cmd)) {
+            this.registrationManager.addCommand(cmd);
+        }
         return this;
     }
 
     public addGeneratorCommand<P = NoParameters>(gen: GeneratorRegistration<P>): this {
-        this.registrationManager.addGeneratorCommand(gen);
+        if (this.shouldRegister(gen)) {
+            this.registrationManager.addGeneratorCommand(gen);
+        }
         return this;
     }
 
-    public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
-        this.registrationManager.addCodeTransformCommand<P>(ed);
+    public addCodeTransformCommand<P>(ct: CodeTransformRegistration<P>): this {
+        if (this.shouldRegister(ct)) {
+            this.registrationManager.addCodeTransformCommand<P>(ct);
+        }
         return this;
     }
 
     public addCodeInspectionCommand<R, P>(cir: CodeInspectionRegistration<R, P>): this {
-        this.registrationManager.addCodeInspectionCommand<R, P>(cir);
+        if (this.shouldRegister(cir)) {
+            this.registrationManager.addCodeInspectionCommand<R, P>(cir);
+        }
         return this;
     }
 
@@ -317,6 +325,12 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
         // Register the goal completion listener to update goal set state
         this.addGoalCompletionListener(GoalSetGoalCompletionListener);
+    }
+
+    private shouldRegister<P>(cm: CommandRegistration<P>): boolean {
+        return !!cm.registerWhen ?
+            cm.registerWhen(this.configuration) :
+            true;
     }
 
 }
