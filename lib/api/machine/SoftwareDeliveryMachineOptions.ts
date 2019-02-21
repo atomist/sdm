@@ -32,6 +32,11 @@ import { PreferenceStoreFactory } from "../context/preferenceStore";
 import { EnrichGoal } from "../goal/enrichGoal";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
+import {
+    GoalSigningConfiguration,
+    GoalSigningKey,
+    GoalVerificationKey,
+} from "./SigningKeys";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -107,6 +112,12 @@ export interface SoftwareDeliveryMachineOptions {
      * Callback to enrich goal metadata before it gets persisted and planned
      */
     enrichGoal?: EnrichGoal;
+
+    /**
+     * Optional set of keys to sign and verify goals that are produced and received
+     * by this SDM.
+     */
+    goalSigning?: GoalSigningConfiguration;
 }
 
 /**
