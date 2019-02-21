@@ -133,7 +133,7 @@ export interface SoftwareDeliveryMachineOptions {
          * Public keys to verify incoming goals
          */
         verificationKeys?: GoalVerificationKey | GoalVerificationKey[];
-    }
+    };
 }
 
 /**
