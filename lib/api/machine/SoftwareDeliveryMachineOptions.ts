@@ -33,6 +33,7 @@ import { EnrichGoal } from "../goal/enrichGoal";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 import {
+    GoalSigningConfiguration,
     GoalSigningKey,
     GoalVerificationKey,
 } from "./SigningKeys";
@@ -116,24 +117,7 @@ export interface SoftwareDeliveryMachineOptions {
      * Optional set of keys to sign and verify goals that are produced and received
      * by this SDM.
      */
-    goalSigning?: {
-
-        /**
-         * Enable goal signature verification on this SDM.
-         */
-        enabled: boolean;
-
-        /**
-         * Public/Private key pair to use for goal signing.
-         * The public key will also be used to verify incoming goals.
-         */
-        signingKey: GoalSigningKey;
-
-        /**
-         * Public keys to verify incoming goals
-         */
-        verificationKeys?: GoalVerificationKey | GoalVerificationKey[];
-    };
+    goalSigning?: GoalSigningConfiguration;
 }
 
 /**
