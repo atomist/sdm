@@ -2,6 +2,7 @@
  * Key to verify incoming SDM goals
  */
 export interface GoalVerificationKey {
+    name: string;
     publicKey: string;
 }
 
