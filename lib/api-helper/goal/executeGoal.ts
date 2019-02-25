@@ -26,7 +26,6 @@ import {
 } from "@atomist/automation-client";
 import * as _ from "lodash";
 import * as path from "path";
-import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
 import {
     ExecuteGoalResult,
@@ -92,16 +91,16 @@ class GoalExecutionError extends Error {
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   implementation: GoalImplementation,
-                                  goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> {
-    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration, preferences } = goalInvocation;
+                                  gi: GoalInvocation): Promise<ExecuteGoalResult> {
+    const { goal, goalEvent, addressChannels, progressLog, id, context, credentials, configuration, preferences } = gi;
     const { progressReporter, logInterpreter, projectListeners } = implementation;
     const implementationName = goalEvent.fulfillment.name;
 
     if (!!progressReporter) {
-        goalInvocation.progressLog = new WriteToAllProgressLog(
+        gi.progressLog = new WriteToAllProgressLog(
             goalEvent.name,
-            goalInvocation.progressLog,
-            new ProgressReportingProgressLog(progressReporter, goalEvent, goalInvocation.context),
+            gi.progressLog,
+            new ProgressReportingProgressLog(progressReporter, goalEvent, gi.context),
         );
     }
 
@@ -132,14 +131,16 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
     await notifyGoalExecutionListeners(inProcessGoalEvent);
 
     try {
+
+        const goalInvocation = prepareGoalInvocation(gi, projectListeners);
+
         // execute pre hook
         let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, inProcessGoalEvent, "pre") || Success);
         if (isFailure(result)) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, inProcessGoalEvent, configuration)
-        (prepareGoalInvocation(goalInvocation, projectListeners))
+        const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, inProcessGoalEvent, configuration)(goalInvocation)
             .catch(async err => {
                 throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
