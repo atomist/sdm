@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add parameters to EventHandlerRegistration. [230db78](https://github.com/atomist/sdm/commit/230db78e37e669ea8065b0ee5bc788e58f9cf117)
 -   Provide a useful implementation of onTransformResults. [#666](https://github.com/atomist/sdm/issues/666)
 -   Add conditional command registration. [#676](https://github.com/atomist/sdm/issues/676)
+-   Introduce goal signing and verification. [#678](https://github.com/atomist/sdm/issues/678)
 
 ### Changed
 
