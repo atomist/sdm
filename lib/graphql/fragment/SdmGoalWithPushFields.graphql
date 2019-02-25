@@ -46,4 +46,5 @@ fragment SdmGoalWithPushFields on SdmGoal {
     channelId
   }
   data
+  signature
 }

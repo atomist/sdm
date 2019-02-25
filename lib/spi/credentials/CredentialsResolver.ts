@@ -31,7 +31,8 @@ export interface CredentialsResolver {
      * @param {RemoteRepoRef} id id of the repo if available
      * @return {ProjectOperationCredentials}
      */
-    eventHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef): ProjectOperationCredentials;
+    eventHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef):
+        Promise<ProjectOperationCredentials> | ProjectOperationCredentials;
 
     /**
      * Return the appropriate credentials for this command handler invocation.
@@ -39,6 +40,7 @@ export interface CredentialsResolver {
      * @param {RemoteRepoRef} id id of the repo if available
      * @return {ProjectOperationCredentials}
      */
-    commandHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef): ProjectOperationCredentials;
+    commandHandlerCredentials(context: HandlerContext, id?: RemoteRepoRef):
+        Promise<ProjectOperationCredentials> | ProjectOperationCredentials;
 
 }
