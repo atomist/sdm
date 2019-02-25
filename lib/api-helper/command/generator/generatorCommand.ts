@@ -52,6 +52,7 @@ import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
 import { constructProvenance } from "../../goal/storeGoals";
 import {
     CommandListenerExecutionInterruptError,
+    resolveCredentialsPromise,
     toCommandListenerInvocation,
 } from "../../machine/handlerRegistrations";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
@@ -229,6 +230,7 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
             ...toCommandListenerInvocation(cr, ctx, params, sdmo),
             ...params,
         };
+        pi.credentials = await resolveCredentialsPromise(pi.credentials);
         // It's a function that takes the parameters and returns either a project or a RemoteRepoRef
         const rr: RemoteRepoRef | Project | Promise<Project> = (startingPoint as any)(pi);
         if (isProjectPromise(rr)) {
