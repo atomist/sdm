@@ -28,6 +28,7 @@ import {
     NoParameters,
     OnCommand,
     Project,
+    ProjectOperationCredentials,
     RemoteRepoRef,
     RepoFinder,
     RepoLoader,
@@ -129,6 +130,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
         description,
         ...ctr as CommandRegistration<any>,
         listener: async ci => {
+            ci.credentials = await resolveCredentialsPromise(ci.credentials);
             const targets = (ci.parameters as RepoTargetingParameters).targets;
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
@@ -182,6 +184,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
         description,
         ...cir as CommandRegistration<any>,
         listener: async ci => {
+            ci.credentials = await resolveCredentialsPromise(ci.credentials);
             const targets = (ci.parameters as RepoTargetingParameters).targets;
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
@@ -298,6 +301,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
     addParametersDefinedInBuilder(c);
     return sdm => async (context, parameters) => {
         const cli = toCommandListenerInvocation(c, context, parameters, toMachineOptions(sdm));
+        cli.credentials = await resolveCredentialsPromise(cli.credentials);
         try {
             await c.listener(cli);
             return Success;
@@ -480,6 +484,7 @@ function toProjectEditor<P>(ct: CodeTransform<P>,
                             sdm: SoftwareDeliveryMachineOptions): ProjectEditor<P> {
     return async (p, ctx, params) => {
         const ci = toCommandListenerInvocation(p, ctx, params, toMachineOptions(sdm));
+        ci.credentials = await resolveCredentialsPromise(ci.credentials);
         // Mix in handler context for old style callers
         const n = await ct(p, {
                 ...ctx,
@@ -557,4 +562,13 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
 
 function gitBranchCompatible(name: string): string {
     return name.replace(/\s+/g, "_"); // What else??
+}
+
+export async function resolveCredentialsPromise(creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials)
+    : Promise<ProjectOperationCredentials> {
+    if (!!creds) {
+        return Promise.resolve(creds);
+    } else {
+        return undefined;
+    }
 }
