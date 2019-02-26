@@ -80,5 +80,5 @@ export interface GoalSigningConfiguration {
     /**
      * Algorithm to use for signing and verification
      */
-    algorithm: GoalSigningAlgorithm;
+    algorithm: GoalSigningAlgorithm<any>;
 }
