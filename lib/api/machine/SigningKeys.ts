@@ -14,17 +14,41 @@
  * limitations under the License.
  */
 
-export interface GoalVerificationKey {
+export interface GoalVerificationKey<T> {
     name: string;
-    publicKey: string;
+    publicKey: T;
 }
 
 /**
  * Private/public key pair to use for SDM goal signing and verification
  */
-export interface GoalSigningKey extends GoalVerificationKey {
-    privateKey: string;
+export interface GoalSigningKey<T> extends GoalVerificationKey<T> {
+    privateKey: T;
     passphrase?: string;
+}
+
+/**
+ * Defines the scope of which goes get signed and validated
+ */
+export enum GoalSigningScope {
+    Fulfillment = "fulfillment",
+    All = "all",
+}
+
+/**
+ * Strategy for implementing different signature algorithms
+ */
+export interface GoalSigningAlgorithm {
+
+    /**
+     * Sign the provided normalized goal with the given key
+     */
+    sign(goal: string, key: GoalSigningKey<any>): Promise<string>;
+
+    /**
+     * Verify the provided normalized goal against the signature
+     */
+    verify(goal: string, signature: string, keys: Array<GoalVerificationKey<any>>): Promise<GoalVerificationKey<any>>;
 }
 
 export interface GoalSigningConfiguration {
@@ -35,13 +59,26 @@ export interface GoalSigningConfiguration {
     enabled: boolean;
 
     /**
+     * Scope for goal signing:
+     *
+     * Fulfillment: only verify goals before fulfillment
+     * All: verify goals during all phases of a goal set execution
+     */
+    scope: GoalSigningScope;
+
+    /**
      * Public/Private key pair to use for goal signing.
      * The public key will also be used to verify incoming goals.
      */
-    signingKey: GoalSigningKey;
+    signingKey?: GoalSigningKey<any>;
 
     /**
      * Public keys to verify incoming goals
      */
-    verificationKeys?: GoalVerificationKey | GoalVerificationKey[];
+    verificationKeys?: GoalVerificationKey<any> | Array<GoalVerificationKey<any>>;
+
+    /**
+     * Algorithm to use for signing and verification
+     */
+    algorithm: GoalSigningAlgorithm;
 }
