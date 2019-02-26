@@ -38,17 +38,17 @@ export enum GoalSigningScope {
 /**
  * Strategy for implementing different signature algorithms
  */
-export interface GoalSigningAlgorithm {
+export interface GoalSigningAlgorithm<T> {
 
     /**
      * Sign the provided normalized goal with the given key
      */
-    sign(goal: string, key: GoalSigningKey<any>): Promise<string>;
+    sign(goal: string, key: GoalSigningKey<T>): Promise<string>;
 
     /**
      * Verify the provided normalized goal against the signature
      */
-    verify(goal: string, signature: string, keys: Array<GoalVerificationKey<any>>): Promise<GoalVerificationKey<any>>;
+    verify(goal: string, signature: string, keys: Array<GoalVerificationKey<T>>): Promise<GoalVerificationKey<T>>;
 }
 
 export interface GoalSigningConfiguration {
