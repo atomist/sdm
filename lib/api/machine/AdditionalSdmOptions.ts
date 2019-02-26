@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-export type AdditionalSdmOptions<OptionsType> = {
-    sdm: OptionsType
+export interface AdditionalSdmOptions<OptionsType> {
+    sdm: OptionsType;
 }
 
-export type SdmCacheOptions = {
-    enabled: boolean,
-    path: string,
+export interface SdmCacheOptions {
+    enabled: boolean;
+    path: string;
 }
