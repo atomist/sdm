@@ -1,13 +1,13 @@
 
 /**
  * Use this to declare that your Configuration includes additional
- * SDM configuration options, based on extension packs or optional functionality.
+ * components within SDM, based on extension packs or optional functionality.
  */
-export interface AdditionalSdmOptions<OptionsType> {
-    sdm: OptionsType;
+export interface AdditionalSdmConfiguration<ConfigurationType> {
+    sdm: ConfigurationType;
 }
 
-export interface SdmCacheOptions {
+export interface SdmCacheConfiguration {
     cache: {
         enabled: boolean;
         path: string;
