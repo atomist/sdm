@@ -123,9 +123,8 @@ export interface SoftwareDeliveryMachineOptions {
  * This directory is cleaned on SDM startup; files older than 2 hours are removed.
  */
 export interface CacheConfiguration {
-
-    cache: {
-        enabled: boolean;
+    cache?: {
+        enabled?: boolean;
         /**
          * Directory defaults to /opt/data
          */
