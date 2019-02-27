@@ -34,8 +34,6 @@ import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 import {
     GoalSigningConfiguration,
-    GoalSigningKey,
-    GoalVerificationKey,
 } from "./SigningKeys";
 
 /**
@@ -124,7 +122,7 @@ export interface SoftwareDeliveryMachineOptions {
  * Configure a directory where files can be cached.
  * This directory is cleaned on SDM startup; files older than 2 hours are removed.
  */
-export interface SdmCacheConfiguration {
+export interface CacheConfiguration {
 
     cache: {
         enabled: boolean;
@@ -138,6 +136,6 @@ export interface SdmCacheConfiguration {
 /**
  * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
  */
-export interface SoftwareDeliveryMachineConfiguration<AdditionalConfiguration> extends Configuration {
+export interface SoftwareDeliveryMachineConfiguration<AdditionalConfiguration = {}> extends Configuration {
     sdm: SoftwareDeliveryMachineOptions & AdditionalConfiguration & AnyOptions;
 }
