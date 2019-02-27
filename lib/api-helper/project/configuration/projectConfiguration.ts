@@ -28,6 +28,8 @@ import * as _ from "lodash";
  *  https://atomist.github.io/automation-client/modules/_lib_configuration_.html#loadconfiguration
  * 3) the default passed in, if any
  * 4) ... or else throw.
+ *
+ * This will not merge the configuration objects. It gives the first one that is not undefined.
  */
 export async function projectConfigurationValue<T>(path: string, p: Project, defaultValue?: T): Promise<T> {
     // Project specific configuration first
