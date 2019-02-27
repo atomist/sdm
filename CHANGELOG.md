@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Provide a useful implementation of onTransformResults. [#666](https://github.com/atomist/sdm/issues/666)
 -   Add conditional command registration. [#676](https://github.com/atomist/sdm/issues/676)
 -   Introduce goal signing and verification. [#678](https://github.com/atomist/sdm/issues/678)
+-   Add types that help you specify what your Configuration is. [#679](https://github.com/atomist/sdm/issues/679)
 
 ### Changed
 
