@@ -34,8 +34,6 @@ import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { RepoTargets } from "./RepoTargets";
 import {
     GoalSigningConfiguration,
-    GoalSigningKey,
-    GoalVerificationKey,
 } from "./SigningKeys";
 
 /**
@@ -48,38 +46,38 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Store for artifacts produced during the build process
      */
-    artifactStore: ArtifactStore;
+    artifactStore?: ArtifactStore;
 
     /**
      * Object used to load projects
      */
-    projectLoader: ProjectLoader;
+    projectLoader?: ProjectLoader;
 
     /**
      * Factory for loggers used to log specific activities
      * such as build and deployment.
      */
-    logFactory: ProgressLogFactory;
+    logFactory?: ProgressLogFactory;
 
     /**
      * Strategy for resolving Git repository references
      */
-    repoRefResolver: RepoRefResolver;
+    repoRefResolver?: RepoRefResolver;
 
     /**
      * Strategy for finding all repos to act on
      */
-    repoFinder: RepoFinder;
+    repoFinder?: RepoFinder;
 
     /**
      * Strategy for persisting new projects
      */
-    projectPersister: ProjectPersister;
+    projectPersister?: ProjectPersister;
 
     /**
      * Strategy for resolving credentials from a handler invocation
      */
-    credentialsResolver: CredentialsResolver;
+    credentialsResolver?: CredentialsResolver;
 
     /**
      * Allow customization of editor targeting at per-SDM level.
@@ -121,8 +119,22 @@ export interface SoftwareDeliveryMachineOptions {
 }
 
 /**
+ * Configure a directory where files can be cached.
+ * This directory is cleaned on SDM startup; files older than 2 hours are removed.
+ */
+export interface CacheConfiguration {
+    cache?: {
+        enabled?: boolean;
+        /**
+         * Directory defaults to /opt/data
+         */
+        path?: string;
+    };
+}
+
+/**
  * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
  */
-export interface SoftwareDeliveryMachineConfiguration extends Configuration {
-    sdm: SoftwareDeliveryMachineOptions & AnyOptions;
+export interface SoftwareDeliveryMachineConfiguration<AdditionalConfiguration = {}> extends Configuration {
+    sdm: SoftwareDeliveryMachineOptions & AdditionalConfiguration & AnyOptions;
 }
