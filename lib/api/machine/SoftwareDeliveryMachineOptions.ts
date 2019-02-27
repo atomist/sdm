@@ -120,9 +120,26 @@ export interface SoftwareDeliveryMachineOptions {
     goalSigning?: GoalSigningConfiguration;
 }
 
+
+/**
+ * Configure a directory where files can be cached.
+ * This directory is cleaned on SDM startup; files older than 2 hours are removed.
+ */
+export interface SdmCacheConfiguration {
+
+    cache: {
+        enabled: boolean;
+        /**
+         * Directory defaults to /opt/data
+         */
+        path?: string;
+    };
+}
+
+
 /**
  * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
  */
-export interface SoftwareDeliveryMachineConfiguration extends Configuration {
-    sdm: SoftwareDeliveryMachineOptions & AnyOptions;
+export interface SoftwareDeliveryMachineConfiguration<AdditionalConfiguration> extends Configuration {
+    sdm: SoftwareDeliveryMachineOptions & AdditionalConfiguration & AnyOptions;
 }
