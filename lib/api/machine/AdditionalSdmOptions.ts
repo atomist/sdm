@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
+/**
+ * Use this to wrap types that describe additions to the SDM configuration.
+ * Then you can add this to your type declaration for `configuration` in index.ts,
+ * so that you get autocompletion, and errors if you supply the wrong type. Like:
+ *
+ * `const configuration: Configuration & AdditionalSdmConfiguration<SdmCacheConfiguration>`
+ */
 export interface AdditionalSdmConfiguration<ConfigurationType> {
     sdm: ConfigurationType;
 }
 
+/**
+ * Configure a directory where files can be cached.
+ * This directory is cleaned on SDM startup; files older than 2 hours are removed.
+ */
 export interface SdmCacheConfiguration {
+
     cache: {
         enabled: boolean;
-        path: string;
+        /**
+         * Directory defaults to /opt/data
+         */
+        path?: string;
     };
 }
