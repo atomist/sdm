@@ -32,7 +32,15 @@ export interface GoalSigningKey<T> extends GoalVerificationKey<T> {
  * Defines the scope of which goes get signed and validated
  */
 export enum GoalSigningScope {
+
+    /**
+     * Only verify incoming goals for fulfillment
+     */
     Fulfillment = "fulfillment",
+
+    /**
+     * Verify each incoming goal into any of the SDM event handlers
+     */
     All = "all",
 }
 
