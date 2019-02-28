@@ -85,6 +85,8 @@ export interface GoalSigningConfiguration {
 
     /**
      * Algorithms to use for signing and verification
+     *
+     * Default RSA-SHA512 algorithm will always be available
      */
-    algorithms: GoalSigningAlgorithm<any> | Array<GoalSigningAlgorithm<any>>;
+    algorithms?: GoalSigningAlgorithm<any> | Array<GoalSigningAlgorithm<any>>;
 }
