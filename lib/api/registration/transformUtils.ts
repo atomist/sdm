@@ -18,7 +18,14 @@ import {
     logger,
     NoParameters,
     Project,
+    Success,
 } from "@atomist/automation-client";
+import {
+    GoalProjectListenerEvent,
+    GoalProjectListenerRegistration,
+} from "../goal/GoalInvocation";
+import { PushTest } from "../mapping/PushTest";
+import { AnyPush } from "../mapping/support/commonPushTests";
 import {
     CodeTransform,
     TransformResult,
@@ -73,3 +80,41 @@ function combineResults(r1: TransformResult, r2: TransformResult): TransformResu
         success: r1.success && r2.success,
     };
 }
+
+/**
+ * Convert a CodeTransform to a GoalProjectListener
+ * @param transform
+ * @param name
+ * @param pushTest
+ */
+export function transformToProjectListener(transform: CodeTransform,
+                                           name: string,
+                                           pushTest: PushTest = AnyPush): GoalProjectListenerRegistration {
+    return {
+        name,
+        pushTest,
+        events: [GoalProjectListenerEvent.before],
+        listener: async (p, gi) => {
+            try {
+                const result = await transform(
+                    p,
+                    {
+                        ...gi,
+                    },
+                    {});
+                if (isTransformResult(result)) {
+                    return {
+                        code: result.success === true ? 0 : 1,
+                    };
+                }
+            } catch (e) {
+                return {
+                    code: 1,
+                    message: e.message,
+                };
+            }
+            return Success;
+        },
+    };
+}
+
