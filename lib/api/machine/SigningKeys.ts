@@ -17,6 +17,7 @@
 export interface GoalVerificationKey<T> {
     name: string;
     publicKey: T;
+    algorithm?: string;
 }
 
 /**
@@ -39,6 +40,11 @@ export enum GoalSigningScope {
  * Strategy for implementing different signature algorithms
  */
 export interface GoalSigningAlgorithm<T> {
+
+    /**
+     * Return the name of this algorithm
+     */
+    name: string;
 
     /**
      * Sign the provided normalized goal with the given key
@@ -78,7 +84,7 @@ export interface GoalSigningConfiguration {
     verificationKeys?: GoalVerificationKey<any> | Array<GoalVerificationKey<any>>;
 
     /**
-     * Algorithm to use for signing and verification
+     * Algorithms to use for signing and verification
      */
-    algorithm: GoalSigningAlgorithm<any>;
+    algorithms: GoalSigningAlgorithm<any> | Array<GoalSigningAlgorithm<any>>;
 }
