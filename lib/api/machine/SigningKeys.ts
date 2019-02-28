@@ -54,7 +54,7 @@ export interface GoalSigningAlgorithm<T> {
     /**
      * Verify the provided normalized goal against the signature
      */
-    verify(goal: string, signature: string, key: GoalVerificationKey<T>): boolean;
+    verify(goal: string, signature: string, key: GoalVerificationKey<T>): Promise<boolean>;
 }
 
 export interface GoalSigningConfiguration {
