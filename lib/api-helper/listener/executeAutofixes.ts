@@ -63,19 +63,20 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
-                credentials,
-                id,
-                context,
-                readOnly: false,
-                cloneOptions: minimalClone(push),
-            },
+                    credentials,
+                    id,
+                    context,
+                    readOnly: false,
+                    cloneOptions: minimalClone(push),
+                },
                 async project => {
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
                             success: true,
                             edited: false,
                             target: project,
-                            description: "Autofixes not executing | new commits on branch",
+                            description: "Autofixes not executing",
+                            phase: "new commits on branch",
                         };
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
