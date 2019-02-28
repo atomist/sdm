@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add conditional command registration. [#676](https://github.com/atomist/sdm/issues/676)
 -   Introduce goal signing and verification. [#678](https://github.com/atomist/sdm/issues/678)
 -   Add types that help you specify what your Configuration is. [#679](https://github.com/atomist/sdm/issues/679)
+-   Adds Gitlab repo targets for commands. [#683](https://github.com/atomist/sdm/issues/683)
 
 ### Changed
 
