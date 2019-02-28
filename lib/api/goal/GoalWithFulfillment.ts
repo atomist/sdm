@@ -313,13 +313,13 @@ export class GoalWithFulfillment extends FulfillableGoal {
  * Caution: if you wrap this in another function, then you MUST provide details.uniqueName,
  *          because the default is based on where in the code this `goal` function is called.
  *
- * @param details It is highly recommended that you supply at least uniqueName. 
+ * @param details It is highly recommended that you supply at least uniqueName.
  * @param goalExecutor
  * @param options
  */
 export function goal(details: FulfillableGoalDetails = {},
-    goalExecutor?: ExecuteGoal,
-    options?: {
+                     goalExecutor?: ExecuteGoal,
+                     options?: {
         pushTest?: PushTest,
         logInterpreter?: InterpretLog,
         progressReporter?: ReportProgress,
@@ -349,8 +349,8 @@ export function goal(details: FulfillableGoalDetails = {},
  */
 // tslint:disable:cyclomatic-complexity
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-    uniqueName: string,
-    definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
+                                      uniqueName: string,
+                                      definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
     if (typeof goalDetails === "string") {
         return {
             ...(definition || {}),
