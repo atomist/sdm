@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Configuration } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import { GoalInvocation } from "../GoalInvocation";
 
@@ -21,6 +22,12 @@ import { GoalInvocation } from "../GoalInvocation";
  * Schedule a goal in an environment (container or process) for fulfillment.
  */
 export interface GoalScheduler {
+
+    /**
+     * Optionally initialize the GoalScheduler
+     * @param configuration
+     */
+    initialize?(configuration: Configuration): Promise<void>;
 
     /**
      * Indicate if this GoalScheduler supports scheduling provided goal
