@@ -307,17 +307,23 @@ export class GoalWithFulfillment extends FulfillableGoal {
 
 /**
  * Creates a new GoalWithFulfillment instance using conventions if overwrites aren't provided
- * @param details
+ *
+ * Call this from your machine.ts where you configure your sdm to create a custom goal.
+ *
+ * Caution: if you wrap this in another function, then you MUST provide details.uniqueName,
+ *          because the default is based on where in the code this `goal` function is called.
+ *
+ * @param details It is highly recommended that you supply at least uniqueName.
  * @param goalExecutor
  * @param options
  */
 export function goal(details: FulfillableGoalDetails = {},
                      goalExecutor?: ExecuteGoal,
                      options?: {
-                         pushTest?: PushTest,
-                         logInterpreter?: InterpretLog,
-                         progressReporter?: ReportProgress,
-                     }): GoalWithFulfillment {
+        pushTest?: PushTest,
+        logInterpreter?: InterpretLog,
+        progressReporter?: ReportProgress,
+    }): GoalWithFulfillment {
     const def = getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName(details.displayName || "goal"));
     const g = new GoalWithFulfillment(def);
     if (!!goalExecutor) {
