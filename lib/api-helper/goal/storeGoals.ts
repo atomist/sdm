@@ -291,6 +291,8 @@ export function goalSetState(goals: Array<Pick<SdmGoalMessage, "name" | "state">
 
 function cleanPush(push: PushFields.Fragment): PushFields.Fragment {
     const newPush = _.cloneDeep(push);
-    delete (newPush as any).goals;
+    if (!!newPush && !!(newPush as any).goals) {
+        delete (newPush as any).goals;
+    }
     return newPush;
 }
