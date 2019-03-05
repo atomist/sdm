@@ -94,9 +94,9 @@ function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
     return {
         ...event,
         repo: {
-            name: event.push.repo.name,
-            owner: event.push.repo.owner,
-            providerId: event.push.repo.org.provider.providerId,
+            name: event.repo.name,
+            owner: event.repo.owner,
+            providerId: event.repo.providerId,
         },
         id: undefined,
     } as any;
@@ -223,17 +223,31 @@ export async function storeGoalSet(ctx: HandlerContext,
                                    goalSet: string,
                                    sdmGoals: SdmGoalMessage[],
                                    push: OnPushToAnyBranch.Push): Promise<void> {
+    let repo;
+    if (!!push) {
+        repo = {
+            name: push.repo.name,
+            owner: push.repo.owner,
+            providerId: push.repo.org.provider.providerId,
+        };
+    } else if (!!sdmGoals && sdmGoals.length > 0) {
+        const goal = sdmGoals.find(g => !!g.repo);
+        if (!!goal) {
+            repo = {
+                name: goal.repo.name,
+                owner: goal.repo.owner,
+                providerId: goal.repo.providerId,
+            };
+        }
+    }
+
     const sdmGoalSet: SdmGoalSetMessage = {
         sha: push.after.sha,
         branch: push.branch,
         goalSetId,
         goalSet,
         ts: Date.now(),
-        repo: {
-            name: push.repo.name,
-            owner: push.repo.owner,
-            providerId: push.repo.org.provider.providerId,
-        },
+        repo,
         state: goalSetState(sdmGoals),
         goals: sdmGoals.map(g => ({
             name: g.name,
