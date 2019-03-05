@@ -65,6 +65,11 @@ const fakeSdmGoal = {
     name: "test",
     fulfillment: { name: "HelloWorld" },
     environment: "0-code",
+    repo: {
+        name: fakePush.repo.name,
+        owner: fakePush.repo.owner,
+        providerId: fakePush.repo.org.provider.providerId,
+    },
     push: fakePush,
 } as any as SdmGoalEvent;
 

@@ -118,6 +118,11 @@ describe("Queue", () => {
                                     goalSetId: "2",
                                     state: SdmGoalState.in_process,
                                     ts: Date.now(),
+                                    repo: {
+                                        name: "sha",
+                                        owner: "atomist",
+                                        providerId: "123456",
+                                    },
                                     push: {
                                         repo: {
                                             owner: "atomist",
@@ -138,6 +143,11 @@ describe("Queue", () => {
                                     goalSetId: "3",
                                     state: SdmGoalState.in_process,
                                     ts: Date.now(),
+                                    repo: {
+                                        name: "sha",
+                                        owner: "atomist",
+                                        providerId: "123456",
+                                    },
                                     push: {
                                         repo: {
                                             owner: "atomist",
@@ -154,6 +164,11 @@ describe("Queue", () => {
                                     goalSetId: "4",
                                     state: SdmGoalState.in_process,
                                     ts: Date.now(),
+                                    repo: {
+                                        name: "sha",
+                                        owner: "atomist",
+                                        providerId: "123456",
+                                    },
                                     push: {
                                         repo: {
                                             owner: "atomist",
