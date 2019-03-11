@@ -566,9 +566,14 @@ function gitBranchCompatible(name: string): string {
 
 export async function resolveCredentialsPromise(creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials)
     : Promise<ProjectOperationCredentials> {
-    if (!!creds) {
+    if (creds instanceof Promise) {
+        try {
+            return await creds;
+        } catch (e) {
+            logger.warn(e.message);
+        }
+    } else if (!!creds) {
         return creds;
-    } else {
-        return undefined;
     }
+    return undefined;
 }
