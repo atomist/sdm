@@ -15,6 +15,7 @@
  */
 
 import {
+    HttpMethod,
     secured,
     TokenCredentials,
 } from "@atomist/automation-client";
@@ -44,8 +45,21 @@ export function gitHubTeamVoter(team: string = "atomist-automation"): GoalApprov
             },
         });
 
-        const login = _.get(result, "Team[0].chatTeams[0].members[0].person.gitHubId.login", approval.userId);
         const apiUrl = _.get(result, "Team[0].orgs[0].provider.apiUrl");
+        let login = _.get(result, "Team[0].chatTeams[0].members[0].person.gitHubId.login");
+        if (!login) {
+            const httpClient = gai.configuration.http.client.factory.create(apiUrl);
+            const user = await httpClient.exchange<{ login: string }>(
+                `${apiUrl}user`,
+                {
+                    method: HttpMethod.Get,
+                    headers: {
+                        Authorization: `token ${(gai.credentials as TokenCredentials).token}`,
+                    },
+                });
+            login = user.body.login;
+        }
+        login = login || approval.userId;
 
         if (await secured.isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
             return {
