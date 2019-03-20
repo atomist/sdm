@@ -27,7 +27,6 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
-import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
