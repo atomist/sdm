@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.3.0...HEAD)
 
+### Added
+
+-   Provide the URL to the local SDM so it can give instructions. [#690](https://github.com/atomist/sdm/issues/690)
+
 ## [1.3.0](https://github.com/atomist/sdm/compare/1.2.0...1.3.0) - 2019-03-14
 
 ### Added
