@@ -181,7 +181,9 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
             code: 0,
             // Redirect to local project page
             redirect: details.redirecter(params.target.repoRef),
-        };
+            // local SDM uses this to print instructions
+            generatedRepositoryUrl: params.target.repoRef.url,
+        } as any;
     } catch (err) {
         if (err instanceof CommandListenerExecutionInterruptError) {
             // We're continuing
