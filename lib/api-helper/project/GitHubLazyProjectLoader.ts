@@ -359,7 +359,7 @@ export async function fileContent(token: string, rr: GitHubRepoRef, path: string
 }
 
 async function filePromise(token: string, rr: GitHubRepoRef, path: string): Promise<HttpResponse<{ content: string }>> {
-    const url = `${rr.scheme}${rr.apiBase}/repos/${rr.owner}/${rr.repo}/contents/${path}`;
+    const url = `${rr.scheme}${rr.apiBase}/repos/${rr.owner}/${rr.repo}/contents/${path}?ref=${rr.branch || "master"}`;
     logger.debug(`Requesting file from GitHub at '${url}'`);
     const httpClient = configurationValue<HttpClientFactory>("http.client.factory", DefaultHttpClientFactory);
     return httpClient.create(url).exchange<{ content: string }>(url, {
