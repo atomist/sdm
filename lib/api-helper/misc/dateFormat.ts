@@ -18,11 +18,15 @@ import * as df from "dateformat";
 
 /**
  * Format the date with provided format.
- * Defaults to formatting the current date with 'yyyymmddHHMMss' format.
- * @param date
- * @param format
+ * Defaults to formatting the current UTC date with 'yyyymmddHHMMss' format.
+ *
+ * @param date Date object to format
+ * @param format dateformat compatible format
+ * @param utc if true, use UTC time, otherwise use local time zone
+ * @return properly formatted date string
  */
 export function formatDate(date: Date = new Date(),
-                           format: string = "yyyymmddHHMMss"): string {
-    return df(date, format);
+                           format: string = "yyyymmddHHMMss",
+                           utc: boolean = true): string {
+    return df(date, format, utc);
 }
