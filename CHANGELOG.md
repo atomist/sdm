@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Provide the URL to the local SDM so it can give instructions. [#690](https://github.com/atomist/sdm/issues/690)
 
+### Changed
+
+-   Default formatDate to UTC. [#695](https://github.com/atomist/sdm/issues/695)
+
 ### Fixed
 
 -   GitHub lazy project loader honors branch. [72d0b02](https://github.com/atomist/sdm/commit/72d0b02add2652390bcb2021bd83a67fa64aaa3a)
