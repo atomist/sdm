@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Provide the URL to the local SDM so it can give instructions. [#690](https://github.com/atomist/sdm/issues/690)
+-   Add project-aware goal invocation converter. [#697](https://github.com/atomist/sdm/issues/697)
 
 ### Changed
 
