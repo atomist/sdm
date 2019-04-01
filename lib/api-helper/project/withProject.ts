@@ -51,7 +51,7 @@ export interface ChildProcessOnProject {
      * @param opts Spawn options
      * @returns Command result
      */
-    spawn(cmd: string, args?: string | string[], opts?: SpawnLogOptions): Promise<SpawnLogResult>;
+    spawn(cmd: string, args?: string | string[], opts?: Partial<SpawnLogOptions>): Promise<SpawnLogResult>;
 
     /**
      * Spawn a child process, by default setting cwd to the directory
@@ -111,8 +111,10 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
 /**
  * Return spawn function for project-aware goal invocations.
  */
-function pagiSpawn(p: GitProject, log: ProgressLog): (cmd: string, args?: string | string[], opts?: SpawnLogOptions) => Promise<SpawnLogResult> {
-    return (cmd: string, args: string | string[] = [], opts?: SpawnLogOptions) => {
+function pagiSpawn(p: GitProject, log: ProgressLog):
+    (cmd: string, args?: string | string[], opts?: Partial<SpawnLogOptions>) => Promise<SpawnLogResult> {
+
+    return (cmd: string, args: string | string[] = [], opts?: Partial<SpawnLogOptions>) => {
         const optsToUse: SpawnLogOptions = {
             cwd: p.baseDir,
             log,
