@@ -25,6 +25,7 @@ import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 import {
     execPromise,
     ExecPromiseResult,
@@ -66,9 +67,26 @@ export interface ChildProcessOnProject {
 }
 
 /**
- * Type providing access to the GoalInvocation, Project and running child process in the context of the project
+ * Type providing access to the GoalInvocation, Project and running
+ * child process in the context of the project.
  */
 export type ProjectAwareGoalInvocation = GoalInvocation & ProjectListenerInvocation & ChildProcessOnProject;
+
+/**
+ * Convenience method to create project aware goal invocations with
+ * spawn and exec functions that, by default, use the cloned project
+ * base directory as the current working directory.
+ *
+ * @param project locally cloned project
+ * @param gi SDM goal invocation
+ * @return goal invocation made project aware
+ */
+export function toProjectAwareGoalInvocation(project: GitProject, gi: GoalInvocation): ProjectAwareGoalInvocation {
+    const { progressLog } = gi;
+    const spawn = pagiSpawn(project, progressLog);
+    const exec = pagiExec(project);
+    return { ...gi, project, spawn, exec };
+}
 
 /**
  * Convenience method to create goal implementations that require a local clone of the project.
@@ -80,38 +98,39 @@ export function doWithProject(action: (pa: ProjectAwareGoalInvocation) => Promis
                               cloneOptions: CloneOptions & { readOnly: boolean } = { readOnly: false }): ExecuteGoal {
     return gi => {
         const { context, credentials, id, configuration, progressLog } = gi;
-
-        function spawn(p: GitProject): (cmd: string, args: string[], opts: SpawnLogOptions) => Promise<SpawnLogResult> {
-            return (cmd: string,
-                    args: string | string[] = [],
-                    opts?: SpawnLogOptions) => {
-                const optsToUse: SpawnLogOptions = {
-                    cwd: p.baseDir,
-                    log: progressLog,
-                    ...opts,
-                };
-                return spawnLog(cmd, toStringArray(args), optsToUse);
-            };
-        }
-
-        function exec(p: GitProject): (cmd: string, args?: string[], opts?: SpawnSyncOptions) => Promise<ExecPromiseResult> {
-            return (cmd: string,
-                    args: string | string[] = [],
-                    opts: SpawnSyncOptions = {}) => {
-                const optsToUse: SpawnSyncOptions = {
-                    cwd: p.baseDir,
-                    ...opts,
-                };
-                return execPromise(cmd, toStringArray(args), optsToUse);
-            };
-        }
-
         return configuration.sdm.projectLoader.doWithProject({
             context,
             credentials,
             id,
             readOnly: cloneOptions.readOnly,
             cloneOptions,
-        }, (p: GitProject) => action({ ...gi, project: p, spawn: spawn(p), exec: exec(p) }));
+        }, (p: GitProject) => action({ ...gi, project: p, spawn: pagiSpawn(p, progressLog), exec: pagiExec(p) }));
+    };
+}
+
+/**
+ * Return spawn function for project-aware goal invocations.
+ */
+function pagiSpawn(p: GitProject, log: ProgressLog): (cmd: string, args?: string | string[], opts?: SpawnLogOptions) => Promise<SpawnLogResult> {
+    return (cmd: string, args: string | string[] = [], opts?: SpawnLogOptions) => {
+        const optsToUse: SpawnLogOptions = {
+            cwd: p.baseDir,
+            log,
+            ...opts,
+        };
+        return spawnLog(cmd, toStringArray(args), optsToUse);
+    };
+}
+
+/**
+ * Return exec function for project-aware goal invocations.
+ */
+function pagiExec(p: GitProject): (cmd: string, args?: string | string[], opts?: SpawnSyncOptions) => Promise<ExecPromiseResult> {
+    return (cmd: string, args: string | string[] = [], opts: SpawnSyncOptions = {}) => {
+        const optsToUse: SpawnSyncOptions = {
+            cwd: p.baseDir,
+            ...opts,
+        };
+        return execPromise(cmd, toStringArray(args), optsToUse);
     };
 }
