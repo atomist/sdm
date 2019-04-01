@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.4.0...HEAD)
 
+### Fixed
+
+-   Fix ChildProcessOnProject interface. [903693d](https://github.com/atomist/sdm/commit/903693d050100681a854ca47b1c272a7390f3f7e)
+
 ## [1.4.0](https://github.com/atomist/sdm/compare/1.3.0...1.4.0) - 2019-04-01
 
 ### Added
