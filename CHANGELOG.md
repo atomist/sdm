@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.4.1...HEAD)
 
+### Deprecated
+
+-   Session ID being used as Bearer in Authorization header. [#689](https://github.com/atomist/sdm/issues/689)
+
 ## [1.4.1](https://github.com/atomist/sdm/compare/1.4.0...1.4.1) - 2019-04-01
 
 ### Fixed
