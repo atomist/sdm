@@ -67,7 +67,7 @@ export interface AutoInspectOptions {
  */
 export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { goalEvent, configuration, credentials, id } = goalInvocation;
+        const { goalEvent, configuration, credentials, id, context } = goalInvocation;
         try {
             if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
@@ -76,6 +76,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
             return configuration.sdm.projectLoader.doWithProject({
                 credentials,
                 id,
+                context,
                 readOnly: true,
                 cloneOptions:
                     options.cloneOptions ? options.cloneOptions : minimalClone(goalEvent.push, { detachHead: true }),
