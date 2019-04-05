@@ -41,23 +41,14 @@ export enum PushImpactResponse {
     requireApprovalToProceed = "requireApproval",
 }
 
-/**
- * Optional PushImpactResponse included in a return value.
- */
-export interface HasCodeActionResponse {
-
-    /**
-     * Response affecting further execution of the current goalset.
-     */
-    response?: PushImpactResponse;
-}
+type DefaultPushImpactListenerResult = void | PushImpactResponse;
 
 /**
  * Reaction on a push, with the code available.
  * Can optionally return a response that
  * determines whether to ask for approval or terminate current delivery flow.
  */
-export type PushImpactListener<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
+export type PushImpactListener<R = DefaultPushImpactListenerResult> = (i: PushImpactListenerInvocation) => Promise<R>;
 
 /**
  * Used to register actions on a push that can potentially
@@ -65,12 +56,12 @@ export type PushImpactListener<R> = (i: PushImpactListenerInvocation) => Promise
  * been set for the given push.
  * Use ReviewerRegistration if you want to return a structured review.
  */
-export type PushImpactListenerRegistration<R = any> = PushRegistration<PushImpactListener<R>>;
+export type PushImpactListenerRegistration<R = DefaultPushImpactListenerResult> = PushRegistration<PushImpactListener<R>>;
 
 /**
  * Something we can register as a push reaction
  */
-export type PushImpactListenerRegisterable<R = any> = PushImpactListenerRegistration | PushImpactListener<R>;
+export type PushImpactListenerRegisterable<R = DefaultPushImpactListenerResult> = PushImpactListenerRegistration<R> | PushImpactListener<R>;
 
 function isPushReactionRegistration(a: PushImpactListenerRegisterable<any>): a is PushImpactListenerRegistration {
     const maybe = a as PushRegistration<any>;
@@ -82,7 +73,7 @@ function isPushReactionRegistration(a: PushImpactListenerRegisterable<any>): a i
  * @param {PushImpactListenerRegisterable<any>} prr
  * @return {PushImpactListenerRegistration}
  */
-export function toPushReactionRegistration(prr: PushImpactListenerRegisterable<any>): PushImpactListenerRegistration {
+export function toPushReactionRegistration(prr: PushImpactListenerRegisterable): PushImpactListenerRegistration {
     return isPushReactionRegistration(prr) ? prr : {
         name: "Raw push reaction",
         action: prr,
