@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.4.1...HEAD)
 
+### Changed
+
+-   **BREAKING** Clean up push impact invocation. [#703](https://github.com/atomist/sdm/issues/703)
+
 ### Deprecated
 
 -   Session ID being used as Bearer in Authorization header. [#689](https://github.com/atomist/sdm/issues/689)
