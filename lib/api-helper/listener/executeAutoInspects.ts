@@ -185,12 +185,15 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             .map(r => r.review);
         const responsesFromReviewListeners = await gatherResponsesFromReviewListeners(goalInvocation.progressLog,
             reviews, options.listeners, cri);
+        const reviewCommentCount = _.flatten((reviews || []).map(r => r.comments || [])).length;
 
         const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
         const result = {
             code: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.failGoals) ? 1 : 0,
             state: allReviewResponses.some(rr => !!rr && rr === PushImpactResponse.requireApprovalToProceed)
                 ? SdmGoalState.waiting_for_approval : undefined,
+            description: reviewCommentCount > 0 ?
+                `Code inspections raised ${reviewCommentCount} review ${reviewCommentCount > 1 ? "comments" : "comment"}` : undefined,
         };
         logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;

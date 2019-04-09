@@ -134,6 +134,8 @@ describe("executeAutoInspects", () => {
         assert.equal(reviewEvents[0].review.comments.length, 1);
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
+        assert(!!r.description);
+        assert(r.description.includes("1 review comment"));
         assert(r.state);
     });
 
