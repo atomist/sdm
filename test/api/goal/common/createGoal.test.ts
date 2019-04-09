@@ -128,7 +128,7 @@ describe("createGoal", () => {
                         counter++;
                         return {
                             code: 1,
-                        }
+                        };
                     } else {
                         return {
                             code: 0,
