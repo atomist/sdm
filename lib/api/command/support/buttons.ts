@@ -28,33 +28,37 @@ import { CommandRegistration } from "../../registration/CommandRegistration";
 /**
  * Create an actionable button invoking the given command
  * @param buttonSpec
- * @param commandHandlerRegistration command registration
+ * @param commandHandlerRegistration command registration or command name
  * @param parameters parameters to the command
  * @return
  */
 export function actionableButton<T extends ParameterType>(
     buttonSpec: ButtonSpecification,
-    commandHandlerRegistration: CommandRegistration<T>,
+    commandHandlerRegistration: CommandRegistration<T> | string,
     parameters?: ParameterType): Action {
+    const name = typeof commandHandlerRegistration === "string" ?
+        commandHandlerRegistration : commandHandlerRegistration.name;
     return buttonForCommand(buttonSpec,
-        commandHandlerRegistration.name,
+        name,
         mergeParameters(parameters, {}));
 }
 
 /**
  * Create an actionable menu invoking the given command
  * @param menuSpec
- * @param commandHandlerRegistration
- * @param parameterName
- * @param parameters
+ * @param commandHandlerRegistration command registration or command name
+ * @param parameterName name of the parameter to bind the menu to
+ * @param parameters parameters to the command
  */
 export function actionableMenu<T extends ParameterType>(
     menuSpec: MenuSpecification,
-    commandHandlerRegistration: CommandRegistration<T>,
+    commandHandlerRegistration: CommandRegistration<T> | string,
     parameterName: string,
     parameters?: ParameterType): Action {
+    const name = typeof commandHandlerRegistration === "string" ?
+        commandHandlerRegistration : commandHandlerRegistration.name;
     return menuForCommand(menuSpec,
-        commandHandlerRegistration.name,
+        name,
         parameterName,
         mergeParameters(parameters, {}));
 }
