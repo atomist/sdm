@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Allow command name in actionableButton and menu. [cc3f07a](https://github.com/atomist/sdm/commit/cc3f07a4a414f111e99c772aed728397b1abe0ab)
+-   Retry options for FulfillableGoal. [#700](https://github.com/atomist/sdm/issues/700)
 
 ### Changed
 
