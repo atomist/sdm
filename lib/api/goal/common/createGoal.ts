@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import {
+    doWithRetry,
+    logger,
+    RetryOptions,
+} from "@atomist/automation-client";
 import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { PushTest } from "../../mapping/PushTest";
+import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import {
     Goal,
     GoalDefinition,
@@ -132,6 +137,20 @@ export function createPredicatedGoalExecutor(uniqueName: string,
             await wait(waitRulesToUse.timeoutMillis, unref);
         }
     };
+}
+
+export function createRetryingGoalExecutor(uniqueName: string,
+                                           goalExecutor: ExecuteGoal,
+                                           retry: RetryOptions): ExecuteGoal {
+    return gi => doWithRetry<void | ExecuteGoalResult>(async () => {
+            const result = await goalExecutor(gi);
+            if (!!result && result.code !== 0) {
+                throw new Error(`Goal '${uniqueName}' failed with non-zero code`);
+            }
+            return result;
+        },
+        `Invoking goal '${uniqueName}'`,
+        { log: false, ...retry });
 }
 
 function wait(timeoutMillis: number, unref: boolean): Promise<void> {

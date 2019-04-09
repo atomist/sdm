@@ -16,9 +16,11 @@
 
 import { Success } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import { createPredicatedGoalExecutor } from "../../../../lib/api/goal/common/createGoal";
+import {
+    createPredicatedGoalExecutor,
+    createRetryingGoalExecutor,
+} from "../../../../lib/api/goal/common/createGoal";
 import { suggestAction } from "../../../../lib/api/goal/common/suggestAction";
-import { GoalInvocation } from "../../../../lib/api/goal/GoalInvocation";
 
 describe("createGoal", () => {
 
@@ -90,6 +92,57 @@ describe("createGoal", () => {
             }
         });
 
+    });
+
+    describe("createRetryingGoalExecutor", () => {
+
+        it("should retry goalExecutor when an Error is thrown", async () => {
+            let counter = 0;
+            const ge = createRetryingGoalExecutor(
+                "test",
+                async () => {
+                    if (counter < 4) {
+                        counter++;
+                        throw new Error("Counter too low");
+                    } else {
+                        return {
+                            code: 0,
+                        };
+                    }
+                },
+                {
+                    retries: 5,
+                    minTimeout: 10,
+                    maxTimeout: 20,
+                });
+            const r = await ge({} as any);
+            assert.deepStrictEqual(r, { code: 0 });
+        });
+
+        it("should retry goalExecutor when an non-zero code is returned", async () => {
+            let counter = 0;
+            const ge = createRetryingGoalExecutor(
+                "test",
+                async () => {
+                    if (counter < 4) {
+                        counter++;
+                        return {
+                            code: 1,
+                        }
+                    } else {
+                        return {
+                            code: 0,
+                        };
+                    }
+                },
+                {
+                    retries: 5,
+                    minTimeout: 10,
+                    maxTimeout: 20,
+                });
+            const r = await ge({} as any);
+            assert.deepStrictEqual(r, { code: 0 });
+        });
     });
 
 });

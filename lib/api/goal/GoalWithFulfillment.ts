@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client";
+import {
+    configurationValue,
+    RetryOptions,
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
@@ -33,6 +36,7 @@ import {
 } from "../registration/ServiceRegistration";
 import {
     createPredicatedGoalExecutor,
+    createRetryingGoalExecutor,
     WaitRules,
 } from "./common/createGoal";
 import {
@@ -133,6 +137,7 @@ export interface FulfillableGoalDetails {
     };
 
     preCondition?: WaitRules;
+    retryCondition?: RetryOptions;
 }
 
 /**
@@ -141,6 +146,7 @@ export interface FulfillableGoalDetails {
 export interface PredicatedGoalDefinition extends GoalDefinition {
 
     preCondition?: WaitRules;
+    retryCondition?: RetryOptions;
 }
 
 /**
@@ -224,11 +230,17 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             let goalExecutor = fulfillment.goalExecutor;
 
             // Wrap the ExecuteGoal instance with WaitRules if provided
-            if (isGoalDefiniton(this.definitionOrGoal) && this.definitionOrGoal.preCondition) {
+            if (isGoalDefiniton(this.definitionOrGoal) && !!this.definitionOrGoal.preCondition) {
                 goalExecutor = createPredicatedGoalExecutor(
                     this.definitionOrGoal.uniqueName,
                     goalExecutor,
                     this.definitionOrGoal.preCondition);
+            }
+            if (isGoalDefiniton(this.definitionOrGoal) && !!this.definitionOrGoal.retryCondition) {
+                goalExecutor = createRetryingGoalExecutor(
+                    this.definitionOrGoal.uniqueName,
+                    goalExecutor,
+                    this.definitionOrGoal.retryCondition);
             }
 
             (this.sdm as AbstractSoftwareDeliveryMachine).addGoalImplementation(
