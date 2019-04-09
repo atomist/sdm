@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.4.1...HEAD)
 
+### Added
+
+-   Allow command name in actionableButton and menu. [cc3f07a](https://github.com/atomist/sdm/commit/cc3f07a4a414f111e99c772aed728397b1abe0ab)
+
 ### Changed
 
 -   **BREAKING** Clean up push impact invocation. [#703](https://github.com/atomist/sdm/issues/703)
