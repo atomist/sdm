@@ -17,6 +17,7 @@ fragment CoreRepoFieldsAndChannels on Repo {
     }
     name
     id
+    channelId
   }
   defaultBranch
 }
