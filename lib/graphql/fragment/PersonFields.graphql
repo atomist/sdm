@@ -10,5 +10,8 @@ fragment PersonFields on Person {
   }
   chatId {
     screenName
+    chatTeam {
+      id
+    }
   }
 }
