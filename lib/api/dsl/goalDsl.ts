@@ -61,10 +61,10 @@ export class GoalSetterMapping<P extends PushListenerInvocation = PushListenerIn
      * @param {(inv: P) => GoalComponent} f
      * @return {this}
      */
-    public setGoalsWhen(f: (inv: P) => GoalComponent): this {
+    public setGoalsWhen(f: (inv: P) => GoalComponent | Promise<GoalComponent>): this {
         // This is a bit devious. We override the parent mapping
         this.mapping = async (pu: P) => {
-            const goalComponent = f(pu);
+            const goalComponent = await f(pu);
             if (!!goalComponent && (goalComponent as Goals).name) {
                 this.goalsName = (goalComponent as Goals).name;
             }
