@@ -33,7 +33,7 @@ export function slackSuccessMessage(title: string, text: string, options: Partia
             author_name: title,
             text,
             fallback: text,
-            color: "#45B254",
+            color: "#37A745",
             mrkdwn_in: ["text"],
             footer: slackFooter(),
             ts: slackTs(),
@@ -118,7 +118,7 @@ export function slackSupportLink(ctx: HandlerContext): string {
 }
 
 export function slackFooter(): string {
-    return `${configurationValue<string>("name")}:${configurationValue<string>("version")}`;
+    return `${configurationValue<string>("name")}`;
 }
 
 export function slackTs(): number {
