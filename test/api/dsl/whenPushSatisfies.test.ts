@@ -103,6 +103,21 @@ describe("whenPushSatisfies", () => {
             assert.equal(await test.mapping(invocation), SomeGoalSet);
         });
 
+        it("should allow use of push in constructing goal with promise", async () => {
+            interface Named { name: string; }
+            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true)
+                .setGoalsWhen(async pu => {
+                    if (pu.facts.name === "fred") {
+                        return SomeGoalSet;
+                    }
+                    throw new Error("bad");
+                });
+            const invocation: StatefulPushListenerInvocation<Named> = fakePush();
+            invocation.facts = {} as any;
+            invocation.facts.name = "fred";
+            assert.equal(await test.mapping(invocation), SomeGoalSet);
+        });
+
     });
 
     describe("internal structure", () => {
