@@ -151,6 +151,20 @@ describe("goalContribution", () => {
             assert.equal(goals.name, "SomeGoalSet, lock");
         });
 
+        it("should respect sealed goals and short circuit evaluation", async () => {
+            const old = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet.andLock());
+            const gs = enrichGoalSetters(old,
+                onAnyPush().setGoalsWhen(() => {
+                    throw new Error("Should not get here");
+                }));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals);
+            assert.equal(goals.name, "SomeGoalSet, lock");
+        });
+
         it("should respect sealed goals after adding additional goal", async () => {
             // we create a goal setter that always sets a Fred goal
             const old = whenPushSatisfies(() => true)
