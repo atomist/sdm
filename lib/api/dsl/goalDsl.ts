@@ -64,6 +64,11 @@ export class GoalSetterMapping<P extends PushListenerInvocation = PushListenerIn
     public setGoalsWhen(f: (inv: P) => GoalComponent | Promise<GoalComponent>): this {
         // This is a bit devious. We override the parent mapping
         this.mapping = async (pu: P) => {
+            // Check whether the enclosing test would have let the push through
+            const shouldEvaluate = await this.pushTest.mapping(pu);
+            if (!shouldEvaluate) {
+                return undefined;
+            }
             const goalComponent = await f(pu);
             if (!!goalComponent && (goalComponent as Goals).name) {
                 this.goalsName = (goalComponent as Goals).name;
