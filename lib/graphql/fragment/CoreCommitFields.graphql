@@ -1,12 +1,11 @@
 fragment CoreCommitFields on Commit {
+  url
   sha
   message
   timestamp
   committer {
     person {
-      chatId {
-        screenName
-      }
+      ...PersonFields
     }
   }
 }

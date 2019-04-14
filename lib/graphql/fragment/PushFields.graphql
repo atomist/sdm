@@ -3,6 +3,7 @@ fragment PushFields on Push {
   timestamp
   branch
   before {
+    url
     sha
     message
     committer {
@@ -13,6 +14,7 @@ fragment PushFields on Push {
     }
   }
   after {
+    url
     sha
     message
     committer {
@@ -44,6 +46,7 @@ fragment PushFields on Push {
     ...CoreRepoFieldsAndChannels
   }
   commits {
+    url
     sha
     timestamp
     message
