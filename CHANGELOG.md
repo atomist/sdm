@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Allow command name in actionableButton and menu. [cc3f07a](https://github.com/atomist/sdm/commit/cc3f07a4a414f111e99c772aed728397b1abe0ab)
 -   Retry options for FulfillableGoal. [#700](https://github.com/atomist/sdm/issues/700)
+-   Add abrtitary string to allowed scopes for prefs. [dda2232](https://github.com/atomist/sdm/commit/dda2232eaf8631a75ba6d8526e4854f8f91d1f71)
 
 ### Changed
 
