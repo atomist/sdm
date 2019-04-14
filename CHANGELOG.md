@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Pass context to project loader for code inspections. [80d367b](https://github.com/atomist/sdm/commit/80d367b1673966056b5aeba5c8c6a9480406c10d)
+-   Make setGoalsWhen respect enclosing PushTest. [#708](https://github.com/atomist/sdm/issues/708)
 
 ## [1.4.1](https://github.com/atomist/sdm/compare/1.4.0...1.4.1) - 2019-04-01
 
