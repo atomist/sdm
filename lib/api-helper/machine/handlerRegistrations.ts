@@ -153,19 +153,32 @@ ${codeBlock(vr.message)}`,
                     ci.context);
 
             const editMode = toEditModeOrFactory(ctr, ci);
-            const results = await editAll<any, any>(
-                ci.context,
-                ci.credentials,
-                chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
-                editMode,
-                ci.parameters,
-                repoFinder,
-                andFilter(targets.test, ctr.repoFilter),
-                repoLoader);
-            if (!!ctr.onTransformResults) {
-                await ctr.onTransformResults(results, ci);
-            } else {
-                logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+
+            try {
+
+                const results = await editAll<any, any>(
+                    ci.context,
+                    ci.credentials,
+                    chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
+                    editMode,
+                    ci.parameters,
+                    repoFinder,
+                    andFilter(targets.test, ctr.repoFilter),
+                    repoLoader);
+                if (!!ctr.onTransformResults) {
+                    await ctr.onTransformResults(results, ci);
+                } else {
+                    logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+                }
+            } catch (e) {
+                return ci.addressChannels(
+                    slackErrorMessage(
+                        `Code Transform`,
+                        `Code transform ${italic(ci.commandName)} failed:
+${codeBlock(e.message)}`,
+                        ci.context
+                    )
+                )
             }
         },
     };
