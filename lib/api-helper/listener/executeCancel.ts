@@ -47,7 +47,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
         if (!goalEvent.push.before) {
             return {
                 code: 0,
-                description: `No goals canceled | first push on branch`,
+                description: `No goals canceled \u00B7 first push on branch`,
             };
         }
 

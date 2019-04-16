@@ -114,7 +114,7 @@ export function slackErrorMessage(title: string, text: string, ctx: HandlerConte
 export function slackSupportLink(ctx: HandlerContext): string {
     const supportUrl =
         `https://atomist.typeform.com/to/yvnyOj?message_id=${base64.encode(ctx.invocationId)}`;
-    return `${slackFooter()} | ${url(supportUrl, "Support")}`;
+    return `${slackFooter()} \u00B7 ${url(supportUrl, "Support")}`;
 }
 
 export function slackFooter(): string {
