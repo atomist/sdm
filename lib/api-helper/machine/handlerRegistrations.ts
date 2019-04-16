@@ -176,9 +176,9 @@ ${codeBlock(vr.message)}`,
                         `Code Transform`,
                         `Code transform ${italic(ci.commandName)} failed:
 ${codeBlock(e.message)}`,
-                        ci.context
-                    )
-                )
+                        ci.context,
+                    ),
+                );
             }
         },
     };
