@@ -51,7 +51,7 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
     public branch: string = "master";
 
     @Parameter({ description: "regex", required: false })
-    public repos: string = ".*";
+    public repos: string;
 
     get credentials(): ProjectOperationCredentials {
         return undefined;
