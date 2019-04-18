@@ -23,7 +23,7 @@ import { SdmListener } from "./Listener";
 import { ParametersInvocation } from "./ParametersInvocation";
 
 /**
- * Context for a commmand
+ * Context for a command
  */
 export interface CommandListenerInvocation<PARAMS = NoParameters> extends ParametersInvocation<PARAMS> {
 
