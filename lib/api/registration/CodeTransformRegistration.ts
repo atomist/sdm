@@ -24,6 +24,8 @@ import { TransformResult } from "./CodeTransform";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
+export type TransformPresentation<PARAMS> = (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
+
 /**
  * Type for registering a project transform, which can make changes
  * across projects
@@ -42,7 +44,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * @param {p: Project} p
      * @return {EditMode}
      */
-    transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
+    transformPresentation?: TransformPresentation<PARAMS>;
 
     /**
      * React to results from running transform across one or more projects

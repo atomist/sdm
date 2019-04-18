@@ -35,6 +35,12 @@ export type StartingPoint<PARAMS> =
     Project | RemoteRepoRef | ((pi: PARAMS & ParametersInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
 
 /**
+ * Action that executes after the project has been generated and pushed
+ * to the remote repository.
+ */
+export type ProjectAction<PARAMS> = (p: Project, pi: PARAMS & ParametersInvocation<PARAMS>) => Promise<void>;
+
+/**
  * Register a project creation operation
  */
 export interface GeneratorRegistration<PARAMS = NoParameters>
@@ -57,4 +63,11 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * e.g. to target a different source control system.
      */
     fallbackTarget?: Maker<RepoCreationParameters>;
+
+    /**
+     * Hooks that get executed after a successful project generation.
+     * Note: these hooks fire after the project has been generated and
+     * pushed to the remote repository.
+     */
+    afterAction?: ProjectAction<PARAMS> | Array<ProjectAction<PARAMS>>;
 }
