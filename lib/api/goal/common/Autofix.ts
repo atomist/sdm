@@ -17,10 +17,12 @@
 import {
     AutofixProgressReporter,
     executeAutofixes,
+    GoalInvocationParameters,
 } from "../../../api-helper/listener/executeAutofixes";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
 import { CodeTransform } from "../../registration/CodeTransform";
+import { TransformPresentation } from "../../registration/CodeTransformRegistration";
 import {
     Goal,
     GoalDefinition,
@@ -34,21 +36,38 @@ import {
 import { IndependentOfEnvironment } from "../support/environment";
 
 /**
+ * Extension to FulfillableGoalDetails to add optional TransformPresentation
+ */
+export interface AutofixGoalDetails extends FulfillableGoalDetails {
+
+    /**
+     * Optional TransformPresentation to use when pushing autofix commits to repositories.
+     */
+    transformPresentation?: TransformPresentation<GoalInvocationParameters>;
+}
+
+/**
  * Goal that performs autofixes: For example, linting and adding license headers.
  */
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
 
-    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("autofix"),
+    constructor(private readonly goalDetailsOrUniqueName: AutofixGoalDetails | string
+                    = DefaultGoalNameGenerator.generateName("autofix"),
                 ...dependsOn: Goal[]) {
 
         super({
             ...getGoalDefinitionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix"), AutofixDefinition),
         }, ...dependsOn);
 
+        let transformPresentation;
+        if (!!goalDetailsOrUniqueName && !!(goalDetailsOrUniqueName as any).transformPresentation) {
+            transformPresentation = (goalDetailsOrUniqueName as any).transformPresentation;
+        }
+
         this.addFulfillment({
             name: `autofix-${this.definition.uniqueName}`,
             logInterpreter: LogSuppressor,
-            goalExecutor: executeAutofixes(this.registrations),
+            goalExecutor: executeAutofixes(this.registrations, transformPresentation),
             progressReporter: AutofixProgressReporter,
         });
     }

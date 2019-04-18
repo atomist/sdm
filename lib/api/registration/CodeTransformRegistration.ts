@@ -19,10 +19,16 @@ import {
     NoParameters,
     Project,
 } from "@atomist/automation-client";
-import { CommandListenerInvocation } from "../listener/CommandListener";
 import { TransformResult } from "./CodeTransform";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
+import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";
+
+/**
+ * Signature to create an EditMode out of a PushAwareParametersInvocation and Project.
+ */
+export type TransformPresentation<PARAMS> =
+    (papi: PushAwareParametersInvocation<PARAMS>, p: Project) => EditMode;
 
 /**
  * Type for registering a project transform, which can make changes
@@ -38,19 +44,13 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * choose based on the invocation of this command and the code itself.
      *
      * This defaults to a pull request with branch name derived from the transform name.
-     * @param {CommandListenerInvocation<PARAMS>} ci
-     * @param {p: Project} p
-     * @return {EditMode}
      */
-    transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
+    transformPresentation?: TransformPresentation<PARAMS>;
 
     /**
      * React to results from running transform across one or more projects
-     * @param results
-     * @param ci context
-     * @return {Promise<void>}
      */
-    onTransformResults?(results: TransformResult[], ci: CommandListenerInvocation<PARAMS>): Promise<void>;
+    onTransformResults?(results: TransformResult[], ci: PushAwareParametersInvocation<PARAMS>): Promise<void>;
 
 }
 
