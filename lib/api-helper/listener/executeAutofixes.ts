@@ -141,12 +141,12 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                             let body = `${editMode.body}
 
 Applied autofixes:
-${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}`.trim();
+${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
+
+[atomist:generated]`.trim();
 
                             if (editMode.autoMerge) {
-                                body = `${body}
-
-${editMode.autoMerge.mode} ${editMode.autoMerge.method ? editMode.autoMerge.method : ""}`.trim();
+                                body = `${body} ${editMode.autoMerge.mode} ${editMode.autoMerge.method ? editMode.autoMerge.method : ""}`.trim();
                             }
                             await cri.project.raisePullRequest(editMode.title, body, targetBranch);
                         }
