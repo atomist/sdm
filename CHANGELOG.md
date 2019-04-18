@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Clean up push impact invocation. [#703](https://github.com/atomist/sdm/issues/703)
--   Remove .* repos default from BitBucketRepoTargets. [2f1fd7a](https://github.com/atomist/sdm/commit/2f1fd7a03b3eb5d38fed455c92abb0dcb46be603)
+-   Remove .\* repos default from BitBucketRepoTargets. [2f1fd7a](https://github.com/atomist/sdm/commit/2f1fd7a03b3eb5d38fed455c92abb0dcb46be603)
+-   Rolar log url should use uniqueName not name to avoid collision. [#710](https://github.com/atomist/sdm/issues/710)
 
 ### Deprecated
 
