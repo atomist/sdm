@@ -20,6 +20,10 @@ import {
     RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
+import {
+    isBranchCommit,
+    isPullRequest,
+} from "@atomist/automation-client/lib/operations/edit/editModes";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
 import * as _ from "lodash";
@@ -33,6 +37,7 @@ import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { TransformPresentation } from "../../api/registration/CodeTransformRegistration";
 import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
@@ -46,13 +51,18 @@ import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
+export interface GoalInvocationParameters {
+    goalInvocation: GoalInvocation;
+}
+
 /**
  * Execute autofixes against this push
  * Throw an error on failure
  * @param {AutofixRegistration[]} registrations
  * @return ExecuteGoal
  */
-export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteGoal {
+export function executeAutofixes(registrations: AutofixRegistration[],
+                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
@@ -60,6 +70,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             if (registrations.length === 0) {
                 return Success;
             }
+
             const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
@@ -76,10 +87,28 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                             edited: false,
                             target: project,
                             description: "Autofixes not executing",
-                            phase: "new commits on branch",
+                            phase: "new commit on branch",
                         };
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
+
+                    let editMode;
+                    if (!!transformPresentation) {
+                        editMode = transformPresentation({
+                            ...cri,
+                            parameters: {
+                                goalInvocation,
+                            },
+                        } as any, project);
+                        if (isBranchCommit(editMode) || isPullRequest(editMode)) {
+                            if (await project.hasBranch(editMode.branch)) {
+                                await project.checkout(editMode.branch);
+                            } else {
+                                await project.createBranch(editMode.branch);
+                            }
+                        }
+                    }
+
                     const relevantAutofixes: AutofixRegistration[] =
                         filterImmediateAutofixes(await relevantCodeActions(registrations, cri), goalInvocation);
                     progressLog.write(sprintf("Applying %d relevant autofixes of %d to %s/%s: '%s' of configured '%s'",
@@ -104,6 +133,17 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                     }
                     if (cumulativeResult.edited) {
                         await cri.project.push();
+
+                        if (!!editMode && isPullRequest(editMode)) {
+                            const targetBranch = editMode.targetBranch || cri.project.branch;
+                            let body = editMode.body;
+                            if (editMode.autoMerge) {
+                                body = `${body}
+
+${editMode.autoMerge.mode} ${editMode.autoMerge.method ? editMode.autoMerge.method : ""}`.trim();
+                            }
+                            await cri.project.raisePullRequest(editMode.title, body, targetBranch);
+                        }
                     }
                     return cumulativeResult;
                 });
