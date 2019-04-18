@@ -23,11 +23,13 @@ import {
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import { ActionResult } from "@atomist/automation-client/lib/action/ActionResult";
+import { PullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
 import * as assert from "power-assert";
 import {
     executeAutofixes,
     filterImmediateAutofixes,
     generateCommitMessageForAutofix,
+    GoalInvocationParameters,
 } from "../../../lib/api-helper/listener/executeAutofixes";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
@@ -37,6 +39,7 @@ import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { pushTest } from "../../../lib/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
+import { TransformPresentation } from "../../../lib/api/registration/CodeTransformRegistration";
 import { RepoRefResolver } from "../../../lib/spi/repo-ref/RepoRefResolver";
 import {
     CoreRepoFieldsAndChannels,
@@ -236,6 +239,74 @@ describe("executeAutofixes", () => {
         };
         await executeAutofixes([testFix])(gi);
         assert.deepEqual(errors, []);
+    }).timeout(10000);
+
+    it("should fix with transformPresentation set", async () => {
+        const id = GitHubRepoRef.from({
+            owner: "a",
+            repo: "b",
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            branch: "master",
+        });
+        const initialContent = "public class Thing {}";
+        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
+        (p as any as GitProject).revert = async () => undefined;
+        (p as any as GitProject).hasBranch = async name => {
+            if (name === "test-branch") {
+                return false;
+            }
+            assert.fail();
+        };
+        (p as any as GitProject).commit = async () => undefined;
+        (p as any as GitProject).push = async () => undefined;
+        (p as any as GitProject).gitStatus = async () => ({
+            isClean: false,
+            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+        } as any);
+
+        let createdBranch = false;
+        let createdPr = false;
+        (p as any as GitProject).createBranch = async name => {
+            if (name === "test-branch") {
+                createdBranch = true;
+            }
+            return p as any;
+        };
+        (p as any as GitProject).raisePullRequest = async (title, body, targetBranch) => {
+            if (targetBranch === "master") {
+                createdPr = true;
+            }
+            assert(body.startsWith("body"));
+            assert(body.includes("AddThing"));
+            return p as any;
+        };
+
+        const pl = new SingleProjectLoader(p);
+        const gi = fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any);
+        let invokedTp = false;
+
+        const tp: TransformPresentation<GoalInvocationParameters> = (ci, p1) => {
+            if (invokedTp) {
+                assert.fail();
+            }
+            invokedTp = true;
+            return new PullRequest("test-branch", "title", "body");
+        };
+
+        assert(!!gi.credentials);
+        const r = await executeAutofixes([AddThingAutofix], tp)(gi) as ExecuteGoalResult;
+        assert.deepStrictEqual(r.code, 0);
+        assert(!!p);
+        const foundFile = p.findFileSync("thing");
+        assert(!!foundFile);
+        assert.deepStrictEqual(foundFile.getContentSync(), "1");
+        assert(!!invokedTp);
+        assert(!!createdBranch);
+        assert(!!createdPr);
     }).timeout(10000);
 
     describe("filterImmediateAutofixes", () => {
