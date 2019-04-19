@@ -48,7 +48,10 @@ import {
 } from "@atomist/slack-messages";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
-import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
+import {
+    GeneratorRegistration,
+    StartingPoint,
+} from "../../../api/registration/GeneratorRegistration";
 import { constructProvenance } from "../../goal/storeGoals";
 import {
     CommandListenerExecutionInterruptError,
@@ -83,7 +86,7 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
                                     fallbackTarget: Maker<RepoCreationParameters>,
                                     startingPoint: StartingPoint<P>,
                                     details: Partial<GeneratorCommandDetails<any>> = {},
-                                    cr: CommandRegistration<P>): HandleCommand {
+                                    cr: GeneratorRegistration<P>): HandleCommand {
     const detailsToUse: GeneratorCommandDetails<any> = {
         ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
@@ -132,7 +135,7 @@ export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGenerato
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
                                                                  details: GeneratorCommandDetails<P>,
                                                                  startingPoint: StartingPoint<P>,
-                                                                 cr: CommandRegistration<P>,
+                                                                 cr: GeneratorRegistration<P>,
                                                                  sdmo: SoftwareDeliveryMachineOptions): OnCommand<P> {
 
     return (ctx: HandlerContext, parameters: P) => {
@@ -145,7 +148,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                                                                params: P,
                                                                details: GeneratorCommandDetails<P>,
                                                                startingPoint: StartingPoint<P>,
-                                                               cr: CommandRegistration<P>,
+                                                               cr: GeneratorRegistration<P>,
                                                                sdmo: SoftwareDeliveryMachineOptions): Promise<RedirectResult> {
     try {
         const r = await generate(
@@ -156,11 +159,25 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
             details.projectPersister,
             params.target.repoRef,
             params,
-            details.afterAction,
+            undefined, // set to undefined as we run the afterActions below explicitly
         );
 
+        if (!!cr.afterAction && r.success === true) {
+            const pi = {
+                ...toCommandListenerInvocation(cr, ctx, params, sdmo),
+                ...params,
+            } as any;
+            pi.credentials = await resolveCredentialsPromise(pi.credentials);
+
+            const afterActions = Array.isArray(cr.afterAction) ? cr.afterAction : [cr.afterAction];
+
+            for (const afterAction of afterActions) {
+                await afterAction(r.target, pi);
+            }
+        }
+
         // TODO cd support other providers which needs to start upstream from this
-        if (params.target.repoRef.providerType === ProviderType.github_com) {
+        if (params.target.repoRef.providerType === ProviderType.github_com && r.success === true) {
             const repoProvenance = {
                 repo: {
                     name: params.target.repoRef.repo,

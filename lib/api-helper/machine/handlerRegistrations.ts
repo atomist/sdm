@@ -276,7 +276,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
         e.paramsMaker,
         e.fallbackTarget || GitHubRepoCreationParameters,
         e.startingPoint,
-        e,
+        e as any, // required because we redefine the afterAction
         e,
     );
 }
