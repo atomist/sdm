@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Retry options for FulfillableGoal. [#700](https://github.com/atomist/sdm/issues/700)
 -   Add abrtitary string to allowed scopes for prefs. [dda2232](https://github.com/atomist/sdm/commit/dda2232eaf8631a75ba6d8526e4854f8f91d1f71)
 -   Catch error from running code transform. [e880e41](https://github.com/atomist/sdm/commit/e880e415636b41da9e4816a5418c5fd471a642b0)
+-   Allow control over transformPresentation with autofix. [#687](https://github.com/atomist/sdm/issues/687)
 
 ### Changed
 
