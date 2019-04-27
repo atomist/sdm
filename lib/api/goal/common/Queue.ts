@@ -221,15 +221,19 @@ async function updateGoals(goalSets: InProcessSdmGoalSets.Query,
 
             for (const goalSetToUpdate of goalSetsToUpdate) {
                 const updGoal = _.maxBy(queuedGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts") as SdmGoalEvent;
-                const phase = `at ${goalSetsToUpdate.findIndex(gs => gs.goalSetId === updGoal.goalSetId) + 1}`;
-                if (updGoal.state === SdmGoalState.in_process && updGoal.phase !== phase) {
-                    await updateGoal(ctx, updGoal, {
-                        state: SdmGoalState.in_process,
-                        description: definition.workingDescription,
-                        phase,
-                    });
+
+                if (!!updGoal) {
+                    const phase = `at ${goalSetsToUpdate.findIndex(gs => gs.goalSetId === updGoal.goalSetId) + 1}`;
+                    if (updGoal.state === SdmGoalState.in_process && updGoal.phase !== phase) {
+                        await updateGoal(ctx, updGoal, {
+                            state: SdmGoalState.in_process,
+                            description: definition.workingDescription,
+                            phase,
+                        });
+                    }
                 }
             }
+
         }
     }
 }
