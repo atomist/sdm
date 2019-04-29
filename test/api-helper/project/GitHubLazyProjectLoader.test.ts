@@ -52,7 +52,11 @@ describe("GitHubLazyProjectLoader", () => {
         assert.equal(p.id, id);
     });
 
-    it("should get file first", async () => {
+    it("should get file first", async function(): Promise<void> {
+        if (!process.env.GITHUB_TOKEN) {
+            // tslint:disable-next-line:no-invalid-this
+            this.skip();
+        }
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
