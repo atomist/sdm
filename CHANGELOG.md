@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Catch error from running code transform. [e880e41](https://github.com/atomist/sdm/commit/e880e415636b41da9e4816a5418c5fd471a642b0)
 -   Allow control over transformPresentation with autofix. [#687](https://github.com/atomist/sdm/issues/687)
 -   Allow `afterActions` on generator registrations. [#714](https://github.com/atomist/sdm/issues/714)
+-   Change `Applying Autofix` to `Evaluating Autofix` (or similar). [#719](https://github.com/atomist/sdm/issues/719)
 
 ### Changed
 
