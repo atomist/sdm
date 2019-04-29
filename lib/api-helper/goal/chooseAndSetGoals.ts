@@ -235,7 +235,7 @@ async function fulfillment(rules: {
 async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                                            pi: PushListenerInvocation): Promise<Goals> {
     const { goalSetter } = rules;
-    const { push, id, addressChannels } = pi;
+    const { push, id } = pi;
 
     try {
         const determinedGoals: Goals = await goalSetter.mapping(pi);
@@ -271,7 +271,6 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
     } catch (err) {
         logger.error("Error determining goals: %s", err);
         logger.error(err.stack);
-        await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
         throw err;
     }
 }
