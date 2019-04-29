@@ -11,6 +11,7 @@ query SdmGoalByShaAndBranch(
     branch: [$branch]
     uniqueName: $uniqueNames
     _first: 500
+    _showHistory: true
   ) {
     goalSet
     goalSetId

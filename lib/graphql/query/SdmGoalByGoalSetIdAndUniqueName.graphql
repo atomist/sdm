@@ -5,6 +5,7 @@ query SdmGoalsByGoalSetIdAndUniqueName(
 ) {
   SdmGoal(
     _first: 100
+    _showHistory: true
     goalSetId: $goalSetId
     uniqueName: $uniqueName
     state: $state
