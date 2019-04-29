@@ -35,6 +35,13 @@ const credentials = {
 
 describe("GitHubLazyProjectLoader", () => {
 
+    before(function(): void {
+        if (!process.env.GITHUB_TOKEN) {
+            // tslint:disable-next-line:no-invalid-this
+            this.skip();
+        }
+    });
+
     it("should properly handle LazyProject methods", async () => {
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
@@ -52,17 +59,14 @@ describe("GitHubLazyProjectLoader", () => {
         assert.equal(p.id, id);
     });
 
-    it("should get file first", async function(): Promise<void> {
-        if (!process.env.GITHUB_TOKEN) {
-            // tslint:disable-next-line:no-invalid-this
-            this.skip();
-        }
+    it("should get file first", async () => {
         const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
         assert(!f1);
         const pom = await p.getFile("pom.xml");
+        assert(pom, "failed to get pom.xml");
         assert(!!pom.getContentSync());
     }).timeout(10000);
 
@@ -72,7 +76,6 @@ describe("GitHubLazyProjectLoader", () => {
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
         await projectUtils.doWithFiles(p, "**", f => {
-            // tslint:disable-next-line:no-console
             ++count;
             assert(!!f.getContentSync());
         });
@@ -89,7 +92,6 @@ describe("GitHubLazyProjectLoader", () => {
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
         await projectUtils.doWithFiles(p, "**", f => {
-            // tslint:disable-next-line:no-console
             ++count;
             assert(!!f.getContentSync());
         });
@@ -104,7 +106,6 @@ describe("GitHubLazyProjectLoader", () => {
         const f1 = await p.getFile("not-there");
         assert(!f1);
         await Promise.all([1, 2, 3].map(() => projectUtils.doWithFiles(p, "**", f => {
-            // tslint:disable-next-line:no-console
             assert(!!f.getContentSync());
         })));
     }).timeout(10000);
