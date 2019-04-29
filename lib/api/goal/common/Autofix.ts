@@ -91,7 +91,7 @@ const AutofixDefinition: GoalDefinition = {
     uniqueName: "autofix",
     displayName: "autofix",
     environment: IndependentOfEnvironment,
-    workingDescription: "Applying autofixes",
+    workingDescription: "Evaluating autofixes",
     completedDescription: "No autofixes applied",
     failedDescription: "Autofixes failed",
     stoppedDescription: "Autofixes applied",
