@@ -140,7 +140,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                         await cri.project.push();
 
                         if (!!editMode && isPullRequest(editMode)) {
-                            const targetBranch = editMode.targetBranch || cri.project.branch || cri.project.id.branch;
+                            const targetBranch = editMode.targetBranch || goalEvent.branch;
                             let body = `${editMode.body}
 
 Applied autofixes:
