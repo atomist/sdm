@@ -366,10 +366,7 @@ async function reportGoalError(parameters: {
                 { url: progressLog.url, log: progressLog.log },
                 id, addressChannels);
         }
-    } else {
-        // We don't have an interpretation available. Just report
-        await addressChannels("Failure executing goal: " + err.message);
-    }
+    } 
 }
 
 export function prepareGoalExecutor(gi: GoalImplementation,
