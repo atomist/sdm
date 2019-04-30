@@ -18,6 +18,7 @@ import {
     NoParameters,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { ParameterPromptOptions } from "../context/parameterPrompt";
 import { ParametersDefinition } from "../registration/ParametersDefinition";
 import { SdmListener } from "./Listener";
 import { ParametersInvocation } from "./ParametersInvocation";
@@ -45,9 +46,9 @@ export interface CommandListenerInvocation<PARAMS = NoParameters> extends Parame
      * This requires that any state that gets created before calling promptFor can be re-created when
      * re-entering the listener function. Also any action taken before calling promptFor needs to be
      * implemented using idempotency patterns.
-     * @param parameters
      */
-    promptFor<NEWPARAMS>(parameters: ParametersDefinition<NEWPARAMS>): Promise<NEWPARAMS>;
+    promptFor<NEWPARAMS>(parameters: ParametersDefinition<NEWPARAMS>,
+                         options?: ParameterPromptOptions): Promise<NEWPARAMS>;
 
 }
 
