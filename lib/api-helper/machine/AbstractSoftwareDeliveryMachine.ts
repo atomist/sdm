@@ -204,7 +204,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     /**
      * Declare that a goal will become successful based on something outside.
-     * For instance, ArtifactGoal succeeds because of an ImageLink event.
      * This tells the SDM that it does not need to run anything when this
      * goal becomes ready.
      * @param {Goal} goal

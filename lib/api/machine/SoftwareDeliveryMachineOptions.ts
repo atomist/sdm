@@ -21,7 +21,6 @@ import {
     ProjectPersister,
     RepoFinder,
 } from "@atomist/automation-client";
-import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -42,12 +41,6 @@ import {
  * also to facilitate testing.
  */
 export interface SoftwareDeliveryMachineOptions {
-
-    /**
-     * Store for artifacts produced during the build process
-     */
-    artifactStore?: ArtifactStore;
-
     /**
      * Object used to load projects
      */
