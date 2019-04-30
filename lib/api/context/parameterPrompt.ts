@@ -39,9 +39,21 @@ export type ParametersPromptObject<PARAMS, K extends keyof PARAMS = keyof PARAMS
 export type ParameterPromptFactory<PARAMS> = (ctx: HandlerContext) => ParameterPrompt<PARAMS>;
 
 /**
+ * Options to configure the parameter prompt
+ */
+export interface ParameterPromptOptions {
+
+    /** Optional thread identifier to send this message to or true to send
+     * this to the message that triggered this command.
+     */
+    thread?: boolean | string;
+}
+
+/**
  * ParameterPrompts let the caller prompt for the provided parameters
  */
-export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>) => Promise<PARAMS>;
+export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>,
+                                       options?: ParameterPromptOptions) => Promise<PARAMS>;
 
 /**
  * No-op NoParameterPrompt implementation that never prompts for new parameters
@@ -56,7 +68,7 @@ export const AtomistContinuationMimeType = "application/x-atomist-continuation+j
  * @param ctx
  */
 export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): ParameterPrompt<T> {
-    return async parameters => {
+    return async (parameters, options = {}) => {
         const trigger = (ctx as any as AutomationContextAware).trigger as CommandIncoming;
 
         const existingParameters = trigger.parameters;
@@ -87,6 +99,17 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             return params;
         }
 
+        // Set up the thread_ts for this response message
+        let thread_ts;
+        if (options.thread === true && !!trigger.source) {
+            thread_ts = _.get(trigger.source, "slack.message.ts");
+        } else if (typeof options.thread === "string") {
+            thread_ts = options.thread;
+        }
+
+        const destination = _.cloneDeep(trigger.source);
+        _.set(destination, "slack.thread_ts", thread_ts);
+
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
         const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[] } = {
@@ -95,6 +118,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             team: trigger.team,
             command: trigger.command,
             source: trigger.source,
+            destinations: [destination],
             parameters: trigger.parameters,
             parameter_specs: _.map(newParameters, (v, k) => ({
                 ...v,
