@@ -366,7 +366,7 @@ async function reportGoalError(parameters: {
                 { url: progressLog.url, log: progressLog.log },
                 id, addressChannels);
         }
-    } 
+    }
 }
 
 export function prepareGoalExecutor(gi: GoalImplementation,
