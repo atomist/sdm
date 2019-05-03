@@ -99,7 +99,6 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
 
-
                     if (!!transformPresentation) {
                         editMode = transformPresentation({
                             ...cri,
@@ -164,7 +163,7 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
                     code: 0,
                     message: "Edited",
                     description: goalInvocation.goal.stoppedDescription,
-                    state: isNewBranch(editMode, goalEvent.branch)? SdmGoalState.success : SdmGoalState.stopped,
+                    state: isNewBranch(editMode, goalEvent.branch) ? SdmGoalState.success : SdmGoalState.stopped,
                     phase: detailMessage(appliedAutofixes),
                 };
             }
