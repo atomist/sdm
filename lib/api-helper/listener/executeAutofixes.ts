@@ -15,6 +15,7 @@
  */
 
 import {
+    editModes,
     HandlerContext,
     logger,
     RemoteRepoRef,
@@ -78,6 +79,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
 
             const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
+            let editMode;
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
                     id,
@@ -97,7 +99,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
 
-                    let editMode;
+
                     if (!!transformPresentation) {
                         editMode = transformPresentation({
                             ...cri,
@@ -105,7 +107,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                                 goalInvocation,
                             },
                         } as any, project);
-                        if (isBranchCommit(editMode) || isPullRequest(editMode)) {
+                        if (isBranchCommit(editMode)) {
                             if (await project.hasBranch(editMode.branch)) {
                                 await project.checkout(editMode.branch);
                             } else {
@@ -162,7 +164,7 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
                     code: 0,
                     message: "Edited",
                     description: goalInvocation.goal.stoppedDescription,
-                    state: SdmGoalState.stopped,
+                    state: isNewBranch(editMode, goalEvent.branch)? SdmGoalState.success : SdmGoalState.stopped,
                     phase: detailMessage(appliedAutofixes),
                 };
             }
@@ -185,6 +187,16 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
             };
         }
     };
+}
+
+/**
+ * Check if this autofix is going to commit to a new branch
+ */
+function isNewBranch(editMode: editModes.EditMode, branch: string): boolean {
+    if (!!editMode && isBranchCommit(editMode)) {
+        return editMode.branch !== branch;
+    }
+    return false;
 }
 
 function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
