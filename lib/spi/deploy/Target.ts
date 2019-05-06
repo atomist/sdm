@@ -18,7 +18,7 @@ import { RemoteRepoRef } from "@atomist/automation-client";
 import { Goal } from "../../api/goal/Goal";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-
+ 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
 export interface DeployStage {
