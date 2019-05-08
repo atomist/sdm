@@ -40,6 +40,7 @@ import {
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalFulfillment,
     SdmGoalFulfillmentMethod,
@@ -188,7 +189,13 @@ export async function determineGoals(rules: {
             if (!determinedGoals) {
                 return { determinedGoals: undefined, goalsToSave: [] };
             }
-            const goalsToSave = await sdmGoalsFromGoals(implementationMapping, repoRefResolver, pli, determinedGoals, goalSetId);
+            const goalsToSave = await sdmGoalsFromGoals(
+                implementationMapping,
+                push,
+                repoRefResolver,
+                pli,
+                determinedGoals,
+                goalSetId);
 
             // Enrich all goals before they get saved
             await Promise.all(goalsToSave.map(async g1 => enrichGoal(g1, pli)));
@@ -199,12 +206,13 @@ export async function determineGoals(rules: {
 }
 
 async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper,
+                                 push: PushFields.Fragment,
                                  repoRefResolver: RepoRefResolver,
                                  pli: PushListenerInvocation,
                                  determinedGoals: Goals,
                                  goalSetId: string): Promise<SdmGoalMessage[]> {
-    return Promise.all(determinedGoals.goals.map(async g =>
-        constructSdmGoal(pli.context, {
+    return Promise.all(determinedGoals.goals.map(async g => {
+        const ge = constructSdmGoal(pli.context, {
             goalSet: determinedGoals.name,
             goalSetId,
             goal: g,
@@ -213,7 +221,19 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
             id: pli.id,
             providerId: repoRefResolver.providerIdFromPush(pli.push),
             fulfillment: await fulfillment({ implementationMapping }, g, pli),
-        })));
+        });
+
+        const cbs = implementationMapping.findFulfillmentCallbackForGoal({ ...ge, push }) || [];
+        let ng: SdmGoalEvent = { ...ge, push };
+        for (const cb of cbs) {
+            ng = await cb.callback(ng, pli);
+        }
+
+        return {
+            ...ge,
+            data: ng.data,
+        };
+    }));
 }
 
 async function fulfillment(rules: {
