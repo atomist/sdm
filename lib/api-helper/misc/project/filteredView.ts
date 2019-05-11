@@ -26,7 +26,7 @@ import * as stream from "stream";
  * Create a filtered view of the given project.
  * Changes to the filtered view will affect the source project.
  * @param {LocalProject} p
- * @param filter function to filter file paths
+ * @param filter function to filter file paths. Return true to eliminate a file
  * @return {Promise<LocalProject>}
  */
 export function filteredView<P extends Project = Project>(p: Project,
@@ -53,7 +53,7 @@ export function filteredView<P extends Project = Project>(p: Project,
 
 /**
  * This relies on the implementation of AbstractProject,
- * where overriding streamFilesRaw does move of what we need
+ * where overriding streamFilesRaw does most of what we need
  */
 class FilteredProject implements Partial<Project> {
 
