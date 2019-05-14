@@ -28,12 +28,12 @@ import {
 export interface RepoRefResolver {
 
     /**
-     * Obtain a RemoteRepoRef from the given push, correctly
-     * resolving provider.
+     * Obtain RemoteRepoRefs from the given push, correctly
+     * resolving provider. There may be more than one virtual RemoteRepoRef
      * @param {OnPushToAnyBranch.Push} push
      * @return {any}
      */
-    repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef;
+    repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef[];
 
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null;
 

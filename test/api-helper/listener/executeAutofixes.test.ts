@@ -86,7 +86,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
 };
 
 const FakeRepoRefResolver: RepoRefResolver = {
-    repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef {
+    repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef[] {
         throw new Error("Not implemented");
     },
 

@@ -98,51 +98,55 @@ export interface ChooseAndSetGoalsRules {
  * Choose and set goals for this push
  * @param {ChooseAndSetGoalsRules} rules: configuration for handling incoming pushes
  * @param parameters details of incoming request
- * @return {Promise<Goals | undefined>}
  */
 export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                         parameters: {
                                             context: HandlerContext,
                                             credentials: ProjectOperationCredentials,
                                             push: PushFields.Fragment,
-                                        }): Promise<Goals | undefined> {
+                                        }): Promise<Array<Goals | undefined>> {
     const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver, preferencesFactory } = rules;
     const { context, credentials, push } = parameters;
     const enrichGoal = rules.enrichGoal ? rules.enrichGoal : async g => g;
-    const id = repoRefResolver.repoRefFromPush(push);
-    const addressChannels = addressChannelsFor(push.repo, context);
-    const preferences = !!preferencesFactory ? preferencesFactory(parameters.context) : NoPreferenceStore;
-    const configuration = (context as any as ConfigurationAware).configuration;
-    const goalSetId = guid();
+    const ids = repoRefResolver.repoRefFromPush(push);
+    const results: Array<Goals | undefined> = [];
 
-    const { determinedGoals, goalsToSave } = await determineGoals(
-        { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
-            credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
-        });
+    for (const id of ids) {
+        const addressChannels = addressChannelsFor(push.repo, context);
+        const preferences = !!preferencesFactory ? preferencesFactory(parameters.context) : NoPreferenceStore;
+        const configuration = (context as any as ConfigurationAware).configuration;
+        const goalSetId = guid();
 
-    if (goalsToSave.length > 0) {
-        // First store the goals
-        await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
-        // And then store the goalSetId
-        await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, push);
+        const { determinedGoals, goalsToSave } = await determineGoals(
+            { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
+                credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
+            });
+
+        if (goalsToSave.length > 0) {
+            // First store the goals
+            await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
+            // And then store the goalSetId
+            await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, push);
+        }
+
+        // Let GoalSetListeners know even if we determined no goals.
+        // This is not an error
+        const gsi: GoalsSetListenerInvocation = {
+            id,
+            context,
+            credentials,
+            addressChannels,
+            configuration,
+            preferences,
+            goalSetId,
+            goalSetName: determinedGoals ? determinedGoals.name : undefined,
+            goalSet: determinedGoals,
+            push,
+        };
+        await Promise.all(goalsListeners.map(l => l(gsi)));
+        results.push(determinedGoals);
     }
-
-    // Let GoalSetListeners know even if we determined no goals.
-    // This is not an error
-    const gsi: GoalsSetListenerInvocation = {
-        id,
-        context,
-        credentials,
-        addressChannels,
-        configuration,
-        preferences,
-        goalSetId,
-        goalSetName: determinedGoals ? determinedGoals.name : undefined,
-        goalSet: determinedGoals,
-        push,
-    };
-    await Promise.all(goalsListeners.map(l => l(gsi)));
-    return determinedGoals;
+    return results;
 }
 
 export async function determineGoals(rules: {
