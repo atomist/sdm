@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Allow `afterActions` on generator registrations. [#714](https://github.com/atomist/sdm/issues/714)
 -   Change `Applying Autofix` to `Evaluating Autofix` (or similar). [#719](https://github.com/atomist/sdm/issues/719)
 -   Don't stop auto fix goal when transformPresentation is to a different branch. [#725](https://github.com/atomist/sdm/issues/725)
+-   Add and & or to aggregate PushTests. [a928fdb](https://github.com/atomist/sdm/commit/a928fdb3f9caf2e4eb616f2158b62837de990ec6)
 
 ### Changed
 
