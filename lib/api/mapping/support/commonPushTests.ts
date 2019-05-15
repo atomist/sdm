@@ -51,7 +51,7 @@ export const AnyPush: PushTest = pushTest("Any push", async () => true);
  * @return {PushTest}
  */
 export function hasFile(path: string): PredicatePushTest {
-    return predicatePushTest(`HasFile(${path}})`,
+    return predicatePushTest(`HasFile(${path})`,
         async p => !!(await p.getFile(path)));
 }
 
@@ -62,7 +62,7 @@ export function hasFile(path: string): PredicatePushTest {
  * @return {PushTest}
  */
 export function hasFileContaining(path: string, pattern: RegExp): PredicatePushTest {
-    return predicatePushTest(`HasFile(${path}} containing ${pattern.source})`,
+    return predicatePushTest(`HasFile(${path}) containing ${pattern.source}`,
         async p => {
             const f = await p.getFile(path);
             if (!f) {
