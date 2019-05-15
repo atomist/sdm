@@ -31,6 +31,18 @@ import * as pred from "./predicateUtils";
  */
 export const not = pred.whenNot;
 
+/**
+ * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * AND: Return true if all are satisfied
+ */
+export const and = allSatisfied;
+
+/**
+ * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * OR: Return true if any is satisfied
+ */
+export const or = anySatisfied;
+
 export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
 
 /**
