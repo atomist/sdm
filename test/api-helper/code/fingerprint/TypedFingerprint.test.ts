@@ -16,6 +16,8 @@
 
 import * as assert from "power-assert";
 import { TypedFingerprint } from "../../../../lib/api-helper/code/fingerprint/TypedFingerprint";
+import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
+import { computeShaOf } from "../../../../lib/api-helper/misc/sha";
 
 interface Person {
     name: string;
@@ -23,6 +25,16 @@ interface Person {
 }
 
 describe("TypedFingerprint", () => {
+
+    it("should serialize sha", () => {
+        const fp = new TypedFingerprint<Person>("name", "ABR", "0.1.0", {
+            name: "tony",
+            age: 65,
+        });
+        const ser = JSON.stringify(fp);
+        const parsed = JSON.parse(ser) as Fingerprint;
+        assert.strictEqual(parsed.sha, computeShaOf(fp.data));
+    });
 
     it("should convert valid data", () => {
         const fp = new TypedFingerprint<Person>("name", "ABR", "0.1.0", {

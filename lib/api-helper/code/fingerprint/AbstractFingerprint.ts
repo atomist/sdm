@@ -22,14 +22,13 @@ import { computeShaOf } from "../../misc/sha";
  */
 export abstract class AbstractFingerprint implements FingerprintData {
 
+    public readonly sha: string;
+
     protected constructor(public readonly name: string,
                           public readonly abbreviation: string,
-                          public readonly version: string) {
+                          public readonly version: string,
+                          public readonly data: string) {
+        this.sha = computeShaOf(this.data);
     }
 
-    abstract get data(): string;
-
-    get sha(): string {
-        return computeShaOf(this.data);
-    }
 }

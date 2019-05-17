@@ -25,11 +25,7 @@ export class TypedFingerprint<T> extends AbstractFingerprint {
                        abbreviation: string,
                        version: string,
                        private readonly t: T) {
-        super(name, abbreviation, version);
-    }
-
-    get data(): string {
-        return JSON.stringify(this.t);
+        super(name, abbreviation, version, JSON.stringify(t));
     }
 
     /**
