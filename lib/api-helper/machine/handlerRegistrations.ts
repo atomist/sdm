@@ -101,6 +101,7 @@ import {
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
 import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
+import { LoggingProgressLog } from "../log/LoggingProgressLog";
 import { formatDate } from "../misc/dateFormat";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
@@ -166,7 +167,10 @@ ${codeBlock(vr.message)}`,
                     andFilter(targets.test, ctr.repoFilter),
                     repoLoader);
                 if (!!ctr.onTransformResults) {
-                    await ctr.onTransformResults(results, ci);
+                    await ctr.onTransformResults(results, {
+                        ...ci,
+                        progressLog: new LoggingProgressLog(ctr.name, "debug"),
+                    });
                 } else {
                     logger.info("No react function to react to results of code transformation '%s'", ctr.name);
                 }
@@ -212,7 +216,10 @@ ${codeBlock(vr.message)}`,
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
                     return { repoId: p.id, result: undefined };
                 }
-                return { repoId: p.id, result: await cir.inspection(p, ci) };
+                return {
+                    repoId: p.id,
+                    result: await cir.inspection(p, { ...ci, progressLog: new LoggingProgressLog(cir.name, "debug") }),
+                };
             };
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -558,7 +565,10 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
                                 ci: CommandListenerInvocation<P>): any {
     const description = ctr.description || ctr.name;
     if (!!ctr.transformPresentation) {
-        return (p: Project) => ctr.transformPresentation(ci, p);
+        return (p: Project) => ctr.transformPresentation({
+            ...ci,
+            progressLog: new LoggingProgressLog(ctr.name, "debug"),
+        }, p);
     }
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
