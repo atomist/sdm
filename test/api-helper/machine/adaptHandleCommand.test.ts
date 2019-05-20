@@ -26,6 +26,7 @@ describe("adaptHandleCommand", () => {
         assert.deepStrictEqual(cd.intent, ["intent"]);
         assert.strictEqual(cd.autoSubmit, true);
 
+        // tslint:disable:deprecation
         const md = metadataFromInstance(toFactory(cd.paramsMaker)()) as CommandHandlerMetadata;
         assert.strictEqual(md.parameters[0].description, "test");
         assert.strictEqual(md.secrets[0].uri, Secrets.userToken("repo"));
