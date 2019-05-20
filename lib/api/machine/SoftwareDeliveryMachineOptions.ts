@@ -45,6 +45,7 @@ export interface SoftwareDeliveryMachineOptions {
 
     /**
      * Store for artifacts produced during the build process
+     * @deprecated Use project listeners to store artifacts
      */
     artifactStore?: ArtifactStore;
 

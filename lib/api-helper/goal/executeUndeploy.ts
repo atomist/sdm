@@ -21,6 +21,9 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { Target } from "../../spi/deploy/Target";
 
+/**
+ * @deprecated Deployer concept will be removed.
+ */
 export function executeUndeploy(target: Target): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { id, credentials, goalEvent, progressLog } = goalInvocation;

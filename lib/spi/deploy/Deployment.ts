@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import { RemoteRepoRef } from "@atomist/automation-client";
 
 /**
  * Information about a deployment
+ * @deprecated
  */
 export interface Deployment {
 
@@ -27,6 +28,9 @@ export interface Deployment {
     readonly endpoint?: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface TargetInfo {
 
     name: string;
@@ -34,6 +38,7 @@ export interface TargetInfo {
 }
 
 /**
+ * @deprecated
  * Info to send up for a deployment
  */
 export interface AppInfo {

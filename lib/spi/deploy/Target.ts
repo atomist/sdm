@@ -19,18 +19,30 @@ import { Goal } from "../../api/goal/Goal";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 
+/**
+ * @deprecated
+ */
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
+/**
+ * @deprecated
+ */
 export interface DeployStage {
     deployGoal: Goal;
     endpointGoal: Goal;
     undeployGoal: Goal;
 }
 
+/**
+ * @deprecated
+ */
 export interface DeployerInfo<T extends TargetInfo> {
     deployer: Deployer<T>;
     targeter: Targeter<T>;
 }
 
+/**
+ * @deprecated
+ */
 export interface Target<T extends TargetInfo = TargetInfo> extends DeployerInfo<T>, DeployStage {
 }

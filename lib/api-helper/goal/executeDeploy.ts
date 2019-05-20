@@ -45,6 +45,7 @@ import {
 } from "./storeGoals";
 
 /**
+ * @deprecated Deployer concept will be removed.
  * Execute deploy with the supplied deployer and target
  */
 export function executeDeploy(artifactStore: ArtifactStore,
@@ -74,6 +75,9 @@ export function executeDeploy(artifactStore: ArtifactStore,
     };
 }
 
+/**
+ * @deprecated Deployer concept will be removed.
+ */
 export async function checkOutArtifact(targetUrl: string,
                                        artifactStore: ArtifactStore,
                                        id: RemoteRepoRef,
@@ -104,6 +108,9 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
     };
 }
 
+/**
+ * @deprecated Deployer concept will be removed.
+ */
 export async function setEndpointGoalOnSuccessfulDeploy(params: {
     repoRefResolver: RepoRefResolver,
     endpointGoal: Goal,
