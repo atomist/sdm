@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Don't stop auto fix goal when transformPresentation is to a different branch. [#725](https://github.com/atomist/sdm/issues/725)
 -   Add and & or to aggregate PushTests. [a928fdb](https://github.com/atomist/sdm/commit/a928fdb3f9caf2e4eb616f2158b62837de990ec6)
 -   Add adapt functionality from decorator handlers. [8068ee5](https://github.com/atomist/sdm/commit/8068ee5bce9b0d8bbe75aeeea7a6334e5aee3851)
+-   Add support for reading project configuration from a yaml file. [#733](https://github.com/atomist/sdm/issues/733)
 
 ### Changed
 
