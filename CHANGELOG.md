@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Use correct base branch for raising autofix PRs. [ff68974](https://github.com/atomist/sdm/commit/ff68974e07d4d73b9ac8ebff126646bd461205e5)
 -   `FulfillmentCallbacks` aren't running on goals without pre conditions. [#701](https://github.com/atomist/sdm/issues/701)
 -   When a GoalExecutionListener fails, the goal stays in progress. [#739](https://github.com/atomist/sdm/issues/739)
+-   ExecuteGoalResult from a ProjectListener is not persisted. [#738](https://github.com/atomist/sdm/issues/738)
 
 ## [1.4.1](https://github.com/atomist/sdm/compare/1.4.0...1.4.1) - 2019-04-01
 
