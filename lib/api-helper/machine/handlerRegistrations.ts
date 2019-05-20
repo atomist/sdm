@@ -138,6 +138,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                     slackErrorMessage(
                         `Code Transform`,
                         `Invalid parameters to code transform ${italic(ci.commandName)}:
+
 ${codeBlock(vr.message)}`,
                         ci.context));
             }
@@ -167,6 +168,17 @@ ${codeBlock(vr.message)}`,
                     repoLoader);
                 if (!!ctr.onTransformResults) {
                     await ctr.onTransformResults(results, ci);
+                } else if (results.some(r => !!r.error)) {
+                    const errors = results.filter(r => !!r.error);
+                    return ci.addressChannels(
+                        slackErrorMessage(
+                            `Code Transform`,
+                            `Code transform ${italic(ci.commandName)} failed:
+
+${errors.map(err => codeBlock(err.error.message)).join("\n")}`,
+                            ci.context,
+                        ),
+                    );
                 } else {
                     logger.info("No react function to react to results of code transformation '%s'", ctr.name);
                 }
@@ -175,6 +187,7 @@ ${codeBlock(vr.message)}`,
                     slackErrorMessage(
                         `Code Transform`,
                         `Code transform ${italic(ci.commandName)} failed:
+
 ${codeBlock(e.message)}`,
                         ci.context,
                     ),
@@ -205,6 +218,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                     slackErrorMessage(
                         `Code Inspection`,
                         `Invalid parameters to code inspection ${italic(ci.commandName)}:
+
 ${codeBlock(vr.message)}`,
                         ci.context));
             }
