@@ -121,7 +121,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         };
         await Promise.all(rules.goalExecutionListeners.map(gel => {
             try {
-                return gel(inProcessGoalExecutionListenerInvocation)
+                return gel(inProcessGoalExecutionListenerInvocation);
             } catch (e) {
                 logger.warn(`GoalExecutionListener failed: ${e.message}`);
                 logger.debug(e);

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:deprecation
+
 import { RemoteRepoRef } from "@atomist/automation-client";
 import { Goal } from "../../api/goal/Goal";
 import { Deployer } from "./Deployer";

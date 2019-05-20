@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
 import * as assert from "power-assert";
 import { TypedFingerprint } from "../../../../lib/api-helper/code/fingerprint/TypedFingerprint";
-import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
 import { computeShaOf } from "../../../../lib/api-helper/misc/sha";
 
 interface Person {

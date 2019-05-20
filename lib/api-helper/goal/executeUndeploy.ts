@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:deprecation
+
 import { Success } from "@atomist/automation-client";
 import {
     ExecuteGoal,

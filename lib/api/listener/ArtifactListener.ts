@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:deprecation
+
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { PushRegistration } from "../registration/PushRegistration";
 import {

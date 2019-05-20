@@ -20,7 +20,7 @@ export function adaptHandleCommand(maker: Maker<HandleCommand<any>>): CommandHan
         autoSubmit: md.auto_submit,
         paramsMaker: maker,
         listener: async ci => {
-            const h = toFactory(maker)() as HandleCommand;
+            const h = toFactory(maker)();
             _.forEach(ci.parameters, (v, k) => h[k] = v);
             return h.handle(ci.context, ci.parameters);
         },
