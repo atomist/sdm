@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Make setGoalsWhen respect enclosing PushTest. [#708](https://github.com/atomist/sdm/issues/708)
 -   Use correct base branch for raising autofix PRs. [ff68974](https://github.com/atomist/sdm/commit/ff68974e07d4d73b9ac8ebff126646bd461205e5)
 -   `FulfillmentCallbacks` aren't running on goals without pre conditions. [#701](https://github.com/atomist/sdm/issues/701)
+-   When a GoalExecutionListener fails, the goal stays in progress. [#739](https://github.com/atomist/sdm/issues/739)
 
 ## [1.4.1](https://github.com/atomist/sdm/compare/1.4.0...1.4.1) - 2019-04-01
 
