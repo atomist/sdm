@@ -16,8 +16,10 @@
 
 import {
     configurationValue,
+    logger,
     Project,
 } from "@atomist/automation-client";
+import yaml = require("js-yaml");
 import * as _ from "lodash";
 
 /**
@@ -33,19 +35,38 @@ import * as _ from "lodash";
  */
 export async function projectConfigurationValue<T>(path: string, p: Project, defaultValue?: T): Promise<T> {
     // Project specific configuration first
-    const cf = await p.getFile(".atomist/config.json");
-    if (cf) {
-        const conf = JSON.parse(await cf.getContent());
-        const value = _.get(conf, path) as T;
-        if (value !== undefined) {
-            return value;
+    let cf = await p.getFile(".atomist/config.json");
+    if (!!cf) {
+        try {
+            const conf = JSON.parse(await cf.getContent());
+            const value = _.get(conf, path) as T;
+            if (value !== undefined) {
+                return value;
+            }
+        } catch (e) {
+            logger.warn(`Failed to load/parse '.atomist/config.json' from '${p.id.owner}/${p.id.repo}': ${e.message}`);
         }
     }
+
+    cf = await p.getFile(".atomist/config.yaml");
+    if (!!cf) {
+        try {
+            const conf = yaml.safeLoad(await cf.getContent());
+            const value = _.get(conf, path) as T;
+            if (value !== undefined) {
+                return value;
+            }
+        } catch (e) {
+            logger.warn(`Failed to load/parse '.atomist/config.yaml' from '${p.id.owner}/${p.id.repo}': ${e.message}`);
+        }
+    }
+
     // SDM configuration as fallback
     const cfg = configurationValue<T>(`sdm.${path}`, defaultValue);
-    if (cfg) {
+    if (!!cfg) {
         return cfg;
     }
+
     // Lastly use the defaultValue if provided
     if (defaultValue !== undefined) {
         return defaultValue;

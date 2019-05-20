@@ -49,4 +49,15 @@ describe("projectConfigurationValue", () => {
         assert.deepEqual(await projectConfigurationValue<string[]>("sdm.enable", project), ["@atomist/atomist-sdm"]);
         return;
     });
+
+    it("should read config setting from yaml file", async () => {
+        const project = InMemoryProject.of(
+            new InMemoryProjectFile(".atomist/config.yaml", `---
+npm:
+  publish:
+    access: private
+`));
+        assert.strictEqual(await projectConfigurationValue<string>("npm.publish.access", project), "private");
+        return;
+    });
 });
