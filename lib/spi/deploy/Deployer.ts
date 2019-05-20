@@ -29,6 +29,7 @@ import {
 /**
  * Implemented by classes that can deploy from a published artifact that was build
  * by execution of a previous Build goal.
+ * @deprecated
  */
 export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
 

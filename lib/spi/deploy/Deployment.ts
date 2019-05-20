@@ -18,6 +18,7 @@ import { RemoteRepoRef } from "@atomist/automation-client";
 
 /**
  * Information about a deployment
+ * @deprecated
  */
 export interface Deployment {
 
@@ -27,6 +28,9 @@ export interface Deployment {
     readonly endpoint?: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface TargetInfo {
 
     name: string;
@@ -34,6 +38,7 @@ export interface TargetInfo {
 }
 
 /**
+ * @deprecated
  * Info to send up for a deployment
  */
 export interface AppInfo {
