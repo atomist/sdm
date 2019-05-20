@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { PushImpactListenerInvocation } from "../listener/PushImpactListener";
 
@@ -27,4 +28,9 @@ export interface PushAwareParametersInvocation<P> extends ParametersInvocation<P
      * The push invocation. Will be undefined if we are not invoked from a push.
      */
     push?: PushImpactListenerInvocation;
+
+    /**
+     * Optional ProgressLog to log to
+     */
+    progressLog?: ProgressLog;
 }

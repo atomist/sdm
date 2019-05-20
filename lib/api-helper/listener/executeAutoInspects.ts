@@ -140,7 +140,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
 function applyCodeInspections(goalInvocation: GoalInvocation,
                               options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
     return async project => {
-        const { addressChannels } = goalInvocation;
+        const { addressChannels, progressLog } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(options.registrations, cri);
 
@@ -151,6 +151,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                     const papi: PushAwareParametersInvocation<any> = {
                         ...cli,
                         push: cri,
+                        progressLog,
                     };
                     try {
                         goalInvocation.progressLog.write("Running inspection " + autoInspect.name + "...");
