@@ -26,10 +26,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** Clean up push impact invocation. [#703](https://github.com/atomist/sdm/issues/703)
 -   Remove .\* repos default from BitBucketRepoTargets. [2f1fd7a](https://github.com/atomist/sdm/commit/2f1fd7a03b3eb5d38fed455c92abb0dcb46be603)
 -   Rolar log url should use uniqueName not name to avoid collision. [#710](https://github.com/atomist/sdm/issues/710)
+-   Deprecate deployers. [#734](https://github.com/atomist/sdm/issues/734)
 
 ### Deprecated
 
 -   Session ID being used as Bearer in Authorization header. [#689](https://github.com/atomist/sdm/issues/689)
+-   Deprecate deployers. [#734](https://github.com/atomist/sdm/issues/734)
 
 ### Fixed
 
