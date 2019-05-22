@@ -106,15 +106,15 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
         }
 
         // Set up the thread_ts for this response message
-        let thread_ts;
+        let threadTs;
         if (options.thread === true && !!trigger.source) {
-            thread_ts = _.get(trigger.source, "slack.message.ts");
+            threadTs = _.get(trigger.source, "slack.message.ts");
         } else if (typeof options.thread === "string") {
-            thread_ts = options.thread;
+            threadTs = options.thread;
         }
 
         const destination = _.cloneDeep(trigger.source);
-        _.set(destination, "slack.thread_ts", thread_ts);
+        _.set(destination, "slack.thread_ts", threadTs);
 
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
