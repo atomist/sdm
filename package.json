@@ -57,22 +57,22 @@
     "@atomist/slack-messages": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "^1.3.0",
+    "@atomist/automation-client": "1.5.0-question-style.20190522122820",
     "@atomist/slack-messages": "^1.1.0",
     "@types/mocha": "^5.2.6",
     "@types/power-assert": "^1.5.0",
     "barrelsby": "^1.0.2",
-    "espower-typescript": "^9.0.1",
-    "mocha": "^6.0.2",
+    "espower-typescript": "^9.0.2",
+    "mocha": "^6.1.4",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
-    "prettier": "^1.16.4",
+    "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
     "supervisor": "^0.12.0",
-    "ts-node": "^8.0.3",
-    "tslint": "^5.14.0",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.3.3"
+    "typescript": "^3.4.5"
   },
   "directories": {
     "test": "test"

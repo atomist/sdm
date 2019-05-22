@@ -26,6 +26,7 @@ import { HandlerResponse } from "@atomist/automation-client/lib/internal/transpo
 import { Parameter } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import * as _ from "lodash";
 import { CommandListenerExecutionInterruptError } from "../../api-helper/machine/handlerRegistrations";
+import { ParameterStyle } from "../registration/CommandRegistration";
 import { ParametersObjectValue } from "../registration/ParametersDefinition";
 
 /**
@@ -47,6 +48,11 @@ export interface ParameterPromptOptions {
      * this to the message that triggered this command.
      */
     thread?: boolean | string;
+
+    /**
+     * Configure strategy on how to ask for parameters in chat or web
+     */
+    parameterStyle?: ParameterStyle;
 }
 
 /**
@@ -112,7 +118,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
 
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
-        const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[] } = {
+        const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[], question: any } = {
             api_version: "1",
             correlation_id: trigger.correlation_id,
             team: trigger.team,
@@ -120,6 +126,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             source: trigger.source,
             destinations: [destination],
             parameters: trigger.parameters,
+            question: !!options.parameterStyle ? options.parameterStyle.toString() : undefined,
             parameter_specs: _.map(newParameters, (v, k) => ({
                 ...v,
                 name: k,

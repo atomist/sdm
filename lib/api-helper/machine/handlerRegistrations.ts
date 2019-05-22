@@ -413,7 +413,7 @@ export const DryRunMsgIdParameter: NamedParameter = {
  * Add the dryRun parameter into the list of parameters
  */
 function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
-    const params = toParametersListing(c.parameters || {});
+    const params = toParametersListing(c.parameters || {} as any);
     params.parameters.push(DryRunParameter, DryRunMsgIdParameter);
     c.parameters = params;
 }

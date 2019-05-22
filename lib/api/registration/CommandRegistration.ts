@@ -23,6 +23,16 @@ import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliver
 import { ParametersDefinition } from "./ParametersDefinition";
 
 /**
+ * Different strategies to ask for parameters in chat or web
+ */
+export enum ParameterStyle {
+    Dialog = "dialog",
+    Threaded = "threaded",
+    Unthreaded = "unthreaded",
+    DialogAction = "dialog_action",
+}
+
+/**
  * Common supertype for all command registrations.
  */
 export interface CommandRegistration<PARAMS> {
@@ -59,6 +69,11 @@ export interface CommandRegistration<PARAMS> {
      * Configure command to submit without confirmation
      */
     autoSubmit?: boolean;
+
+    /**
+     * Configure strategy on how to ask for parameters in chat or web
+     */
+    parameterStyle?: ParameterStyle;
 
     repoFinder?: RepoFinder;
 
