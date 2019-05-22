@@ -26,6 +26,7 @@ import { HandlerResponse } from "@atomist/automation-client/lib/internal/transpo
 import { Parameter } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import * as _ from "lodash";
 import { CommandListenerExecutionInterruptError } from "../../api-helper/machine/handlerRegistrations";
+import { ParameterStyle } from "../registration/CommandRegistration";
 import { ParametersObjectValue } from "../registration/ParametersDefinition";
 
 /**
@@ -47,6 +48,11 @@ export interface ParameterPromptOptions {
      * this to the message that triggered this command.
      */
     thread?: boolean | string;
+
+    /**
+     * Configure strategy on how to ask for parameters in chat or web
+     */
+    parameterStyle?: ParameterStyle;
 }
 
 /**
@@ -100,19 +106,19 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
         }
 
         // Set up the thread_ts for this response message
-        let thread_ts;
+        let threadTs;
         if (options.thread === true && !!trigger.source) {
-            thread_ts = _.get(trigger.source, "slack.message.ts");
+            threadTs = _.get(trigger.source, "slack.message.ts");
         } else if (typeof options.thread === "string") {
-            thread_ts = options.thread;
+            threadTs = options.thread;
         }
 
         const destination = _.cloneDeep(trigger.source);
-        _.set(destination, "slack.thread_ts", thread_ts);
+        _.set(destination, "slack.thread_ts", threadTs);
 
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
-        const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[] } = {
+        const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[], question: any } = {
             api_version: "1",
             correlation_id: trigger.correlation_id,
             team: trigger.team,
@@ -120,6 +126,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             source: trigger.source,
             destinations: [destination],
             parameters: trigger.parameters,
+            question: !!options.parameterStyle ? options.parameterStyle.toString() : undefined,
             parameter_specs: _.map(newParameters, (v, k) => ({
                 ...v,
                 name: k,

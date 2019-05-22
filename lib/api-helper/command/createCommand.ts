@@ -54,5 +54,6 @@ export function createCommand<PARAMS = NoParameters>(
         detailsToUse.description,
         detailsToUse.intent,
         detailsToUse.tags,
-        detailsToUse.autoSubmit);
+        detailsToUse.autoSubmit,
+        (detailsToUse as any).parameterStyle);
 }
