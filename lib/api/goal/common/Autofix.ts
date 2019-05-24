@@ -16,7 +16,9 @@
 
 import {
     AutofixProgressReporter,
+    DefaultExtractAuthor,
     executeAutofixes,
+    ExtractAuthor,
     GoalInvocationParameters,
 } from "../../../api-helper/listener/executeAutofixes";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
@@ -44,6 +46,12 @@ export interface AutofixGoalDetails extends FulfillableGoalDetails {
      * Optional TransformPresentation to use when pushing autofix commits to repositories.
      */
     transformPresentation?: TransformPresentation<GoalInvocationParameters>;
+
+    /**
+     * Optionally set autofix commit author to author of current head commit or to the
+     * result of the provider ExtractAuthor function.
+     */
+    setAuthor: boolean | ExtractAuthor;
 }
 
 /**
@@ -60,14 +68,26 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
         }, ...dependsOn);
 
         let transformPresentation;
-        if (!!goalDetailsOrUniqueName && !!(goalDetailsOrUniqueName as any).transformPresentation) {
-            transformPresentation = (goalDetailsOrUniqueName as any).transformPresentation;
+        let extractAuthor: ExtractAuthor;
+        if (!!goalDetailsOrUniqueName) {
+            const autofixDetails = goalDetailsOrUniqueName as AutofixGoalDetails;
+
+            if (!!autofixDetails.transformPresentation) {
+                transformPresentation = autofixDetails.transformPresentation;
+            }
+            if (!!autofixDetails.setAuthor) {
+                if (typeof autofixDetails.setAuthor === "boolean") {
+                    extractAuthor = DefaultExtractAuthor;
+                } else {
+                    extractAuthor = autofixDetails.setAuthor;
+                }
+            }
         }
 
         this.addFulfillment({
             name: `autofix-${this.definition.uniqueName}`,
             logInterpreter: LogSuppressor,
-            goalExecutor: executeAutofixes(this.registrations, transformPresentation),
+            goalExecutor: executeAutofixes(this.registrations, transformPresentation, extractAuthor),
             progressReporter: AutofixProgressReporter,
         });
     }

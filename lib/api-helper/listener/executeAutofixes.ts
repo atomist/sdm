@@ -37,11 +37,9 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { TransformPresentation } from "../../api/registration/CodeTransformRegistration";
 import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
-import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
 import { minimalClone } from "../goal/minimalClone";
@@ -50,6 +48,7 @@ import {
     testProgressReporter,
 } from "../goal/progress/progress";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
+import { spawnLog } from "../misc/child_process";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
@@ -68,7 +67,8 @@ export interface GoalInvocationParameters {
  * @return ExecuteGoal
  */
 export function executeAutofixes(registrations: AutofixRegistration[],
-                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>): ExecuteGoal {
+                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>,
+                                 extractAuthor: ExtractAuthor = NoOpExtractAuthor): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
@@ -131,7 +131,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     };
 
                     for (const autofix of _.flatten(relevantAutofixes)) {
-                        const thisEdit = await runOne(cri, autofix, progressLog, configuration);
+                        const thisEdit = await runOne(goalInvocation, cri, autofix, extractAuthor);
                         if (thisEdit.edited) {
                             appliedAutofixes.push(autofix);
                         }
@@ -207,10 +207,11 @@ function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
     }
 }
 
-async function runOne(cri: PushImpactListenerInvocation,
+async function runOne(gi: GoalInvocation,
+                      cri: PushImpactListenerInvocation,
                       autofix: AutofixRegistration,
-                      progressLog: ProgressLog,
-                      configuration: SoftwareDeliveryMachineConfiguration): Promise<EditResult> {
+                      extractAuthor: ExtractAuthor): Promise<EditResult> {
+    const { progressLog, configuration } = gi;
     const project = cri.project;
     progressLog.write(sprintf("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name));
     try {
@@ -238,6 +239,17 @@ async function runOne(cri: PushImpactListenerInvocation,
         } else if (editResult.edited) {
             progressLog.write(sprintf("Autofix '%s' made changes", autofix.name));
             await project.commit(generateCommitMessageForAutofix(autofix));
+
+            const author = await extractAuthor(gi);
+            if (!!author && !!author.name && !!author.email) {
+                await spawnLog(
+                    "git",
+                    ["commit", "--amend", `--author="${author.name} <${author.email}>"`, "--no-edit"],
+                    {
+                        cwd: project.baseDir,
+                        log: progressLog,
+                    });
+            }
         } else {
             progressLog.write(sprintf("Autofix '%s' made no changes", autofix.name));
             logger.debug("No changes were made by autofix %s", autofix.name);
@@ -288,3 +300,26 @@ export const AutofixProgressTests: ProgressTest[] = [{
  * Default ReportProgress for running autofixes
  */
 export const AutofixProgressReporter: ReportProgress = testProgressReporter(...AutofixProgressTests);
+
+/**
+ * Extract author information from the current goal invocation
+ */
+export type ExtractAuthor = (gi: GoalInvocation) => Promise<{ name: string, email: string } | undefined>;
+
+export const NoOpExtractAuthor: ExtractAuthor = async () => {
+    return undefined;
+};
+
+export const DefaultExtractAuthor: ExtractAuthor = async gi => {
+    const { goalEvent } = gi;
+    const name = _.get(goalEvent, "push.after.author.name");
+    const email = _.get(goalEvent, "push.after.author.emails[0].address");
+    if (!!name && !!email) {
+        return {
+            name,
+            email,
+        };
+    } else {
+        return undefined;
+    }
+};

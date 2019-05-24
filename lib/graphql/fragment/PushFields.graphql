@@ -17,9 +17,22 @@ fragment PushFields on Push {
     url
     sha
     message
+    author {
+      login
+      name
+      emails {
+        address
+      }
+      person {
+        ...PersonFields
+      }
+    }
     committer {
       login
       name
+      emails {
+        address
+      }
       person {
         ...PersonFields
       }
