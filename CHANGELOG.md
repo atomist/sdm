@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add adapt functionality from decorator handlers. [8068ee5](https://github.com/atomist/sdm/commit/8068ee5bce9b0d8bbe75aeeea7a6334e5aee3851)
 -   Add support for reading project configuration from a yaml file. [#733](https://github.com/atomist/sdm/issues/733)
 -   Add progressLog to CodeInspection and CodeTransform. [#737](https://github.com/atomist/sdm/issues/737)
+-   Set commit author on autofixes. [fcd10b8](https://github.com/atomist/sdm/commit/fcd10b8c154fc6aa965c83e6c323837d83b49c0e)
 
 ### Changed
 
