@@ -20,6 +20,7 @@ import {
     HasChannels,
 } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * Stream the ProgressLog output to any channels associated
@@ -34,8 +35,8 @@ export function addressChannelsProgressLog(name: string, hasChannels: HasChannel
     return {
         name,
         isAvailable: async () => !!hasChannels.channels && hasChannels.channels.length > 0,
-        async write(msg: string): Promise<void> {
-            await add(msg);
+        async write(msg: string, ...args: string[]): Promise<void> {
+            await add(format(msg, ...args));
         },
         flush(): Promise<void> { return Promise.resolve(); },
         close(): Promise<void> { return Promise.resolve(); },

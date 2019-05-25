@@ -55,6 +55,7 @@ import {
 } from "../../spi/project/LazyProjectLoader";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
+import { format } from "../log/format";
 import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { spawnLog } from "../misc/child_process";
 import { toToken } from "../misc/credentials/toToken";
@@ -454,8 +455,8 @@ class ProgressReportingProgressLog implements ProgressLog {
         return true;
     }
 
-    public write(what: string): void {
-        const progress = this.progressReporter(what, this.sdmGoal);
+    public write(msg: string, ...args: string[]): void {
+        const progress = this.progressReporter(format(msg, ...args), this.sdmGoal);
         if (progress && progress.phase) {
             if (this.sdmGoal.phase !== progress.phase) {
                 this.sdmGoal.phase = progress.phase;

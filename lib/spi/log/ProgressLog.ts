@@ -33,20 +33,23 @@ export interface ProgressLog extends WritableLog {
      */
     readonly name: string;
 
-    flush(): Promise<void>;
-
-    close(): Promise<void>;
-
     /**
      * Return the url of the log if it is persisted
      */
-    url?: string;
+    readonly url?: string;
+
+    flush(): Promise<void>;
+
+    close(): Promise<void>;
 
     /**
      * Is this logger available at this point in time?
      * E.g. if it's backed by a service, is that service up?
      */
     isAvailable(): Promise<boolean>;
+
+    /** Function that appends to the log. */
+    write(log: string, ...args: any[]): void;
 }
 
 /**

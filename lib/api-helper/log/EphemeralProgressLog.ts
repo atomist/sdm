@@ -19,6 +19,7 @@ import {
     ProgressLog,
     ProgressLogFactory,
 } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * Implementation of ProgressLog log that returns
@@ -48,8 +49,8 @@ class EphemeralProgressLog implements ProgressLog {
         }
     }
 
-    public write(what: string): void {
-        this.log += what;
+    public write(what: string, ...args: string[]): void {
+        this.log += format(what, ...args);
     }
 
 }

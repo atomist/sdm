@@ -15,6 +15,7 @@
  */
 
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * ProgressLog implementation that captures the log into a string and makes it
@@ -34,11 +35,11 @@ export class StringCapturingProgressLog implements ProgressLog {
         return Promise.resolve();
     }
 
-    public write(what: string): void {
+    public write(msg: string, ...args: string[]): void {
         if (this.log) {
-            this.log += what;
+            this.log += format(msg, ...args);
         } else {
-            this.log = what;
+            this.log = format(msg, ...args);
         }
     }
 
