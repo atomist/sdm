@@ -35,16 +35,14 @@ export enum PreferenceScope {
 export interface PreferenceStore {
 
     /**
-     * Retrieve a preference object via its key.
-     * The key might get scoped to the current SDM if the options.scoped flag is set to true.
+     * Retrieve a preference object via its key in the given scope.
      */
     get<V>(key: string,
            scope?: PreferenceScope | string,
            options?: { defaultValue?: V }): Promise<V | undefined>;
 
     /**
-     * Store a preference object with the specified ttl. If options.scoped is set to true
-     * the key preference will be scoped to the current SDM.
+     * Store a preference object with the specified ttl and scope.
      */
     put<V>(key: string,
            value: V,
