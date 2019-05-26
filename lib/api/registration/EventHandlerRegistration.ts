@@ -63,5 +63,5 @@ export interface EventHandlerRegistration<EVENT = any, PARAMS = NoParameters> {
     /**
      * Listener to receive subscription matches.
      */
-    listener: OnEvent<EVENT>;
+    listener: OnEvent<EVENT, PARAMS>;
 }
