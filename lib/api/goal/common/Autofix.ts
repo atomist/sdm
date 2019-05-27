@@ -51,7 +51,7 @@ export interface AutofixGoalDetails extends FulfillableGoalDetails {
      * Optionally set autofix commit author to author of current head commit or to the
      * result of the provider ExtractAuthor function.
      */
-    setAuthor: boolean | ExtractAuthor;
+    setAuthor?: boolean | ExtractAuthor;
 }
 
 /**
