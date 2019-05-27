@@ -38,16 +38,14 @@ export interface PreferenceStore {
      * Retrieve a preference object via its key in the given scope.
      */
     get<V>(key: string,
-           scope?: PreferenceScope | string,
-           options?: { defaultValue?: V }): Promise<V | undefined>;
+           options?: { scope?: PreferenceScope | string, defaultValue?: V }): Promise<V | undefined>;
 
     /**
      * Store a preference object with the specified ttl and scope.
      */
     put<V>(key: string,
            value: V,
-           scope?: PreferenceScope | string,
-           options?: { ttl?: number }): Promise<V>;
+           options?: { scope?: PreferenceScope | string, ttl?: number }): Promise<V>;
 
     /**
      * List all preferences in a given scope
@@ -58,7 +56,7 @@ export interface PreferenceStore {
      * Delete a preference in a given scope
      */
     delete(key: string,
-           scope?: PreferenceScope | string): Promise<void>;
+           options?: { scope?: PreferenceScope | string }): Promise<void>;
 }
 
 /**
