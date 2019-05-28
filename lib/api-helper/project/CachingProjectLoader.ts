@@ -134,7 +134,7 @@ export class CachingProjectLoader implements ProjectLoader {
                 this.cleanUp(p, "shutdown");
             });
             return 0;
-        });
+        }, 10000, `deleting cached projects`);
     }
 }
 
