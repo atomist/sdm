@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.5.0...HEAD)
 
+### Fixed
+
+-   Add missing array destructuring. [74704ac](https://github.com/atomist/sdm/commit/74704ac1fc30b57ab9cb63b37070806df1fcac38)
+
 ## [1.5.0](https://github.com/atomist/sdm/compare/1.4.1...1.5.0) - 2019-05-27
 
 ### Added
