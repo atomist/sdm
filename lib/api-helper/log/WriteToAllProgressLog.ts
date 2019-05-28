@@ -33,7 +33,7 @@ export class WriteToAllProgressLog implements ProgressLog {
     }
 
     public write(msg: string, ...args: string[]): void {
-        this.logs.forEach(log => log.write(msg, args));
+        this.logs.forEach(log => log.write(msg, ...args));
     }
 
     public async flush(): Promise<void> {
