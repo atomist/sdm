@@ -53,11 +53,11 @@
     "stack-trace": "^0.0.10"
   },
   "peerDependencies": {
-    "@atomist/automation-client": ">=1.5.0",
+    "@atomist/automation-client": ">=1.5.1",
     "@atomist/slack-messages": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.5.1-master.20190528152631",
+    "@atomist/automation-client": "^1.5.1",
     "@atomist/slack-messages": "^1.1.0",
     "@types/mocha": "^5.2.6",
     "@types/power-assert": "^1.5.0",
