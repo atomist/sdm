@@ -24,6 +24,13 @@ import { sprintf } from "sprintf-js";
  * patterns are supported.
  */
 export function format(msg: string, ...args: any[]): string {
-    const fmsg = sprintf(msg, ...args);
-    return fmsg;
+    if (!args || args.length === 0) {
+        return msg;
+    } else {
+        try {
+            return sprintf(msg, ...args);
+        } catch (e) {
+            return msg;
+        }
+    }
 }
