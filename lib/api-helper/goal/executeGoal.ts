@@ -179,7 +179,6 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s", implementationName, goalEvent.sha, err.message);
-        logger.warn(err.stack);
         const result = { code: 1, ...(err.result ? err.result : {}) };
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,
@@ -350,21 +349,19 @@ async function reportGoalError(parameters: {
                                    logInterpreter: InterpretLog,
                                },
                                err: GoalExecutionError): Promise<void> {
-    const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
+    const { implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
-    logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
-        goal.name, implementationName, err.description || err.message);
     if (err.cause) {
-        logger.error(err.cause.stack);
+        logger.warn(err.cause.stack);
         progressLog.write(err.cause.stack);
     } else if (err.result && (err.result as any).error) {
-        logger.error((err.result as any).error.stack);
+        logger.warn((err.result as any).error.stack);
         progressLog.write((err.result as any).error.stack);
     } else {
-        logger.error(err.stack);
+        logger.warn(err.stack);
     }
 
-    progressLog.write("ERROR: " + (err.description || err.message) + "\n");
+    progressLog.write("Error: " + (err.description || err.message) + "\n");
 
     const interpretation = logInterpreter(progressLog.log);
     // The executor might have information about the failure; report it in the channels
