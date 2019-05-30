@@ -105,7 +105,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         );
     }
 
-    logger.info(`Running ${goalEvent.name}. Triggered by ${goalEvent.state} status: ${goalEvent.externalKey}: ${goalEvent.description}`);
+    logger.info(`Running ${goalEvent.uniqueName} on ${goalEvent.sha}`);
 
     async function notifyGoalExecutionListeners(sge: SdmGoalEvent, result?: ExecuteGoalResult, error?: Error): Promise<void> {
         const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
