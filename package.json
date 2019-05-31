@@ -59,9 +59,9 @@
   "devDependencies": {
     "@atomist/automation-client": "^1.5.2",
     "@atomist/slack-messages": "^1.1.0",
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
-    "barrelsby": "^1.0.2",
+    "barrelsby": "^1.1.0",
     "espower-typescript": "^9.0.2",
     "handlebars": "^4.1.2",
     "mocha": "^6.1.4",
@@ -70,10 +70,10 @@
     "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
     "supervisor": "^0.12.0",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.1"
   },
   "directories": {
     "test": "test"
