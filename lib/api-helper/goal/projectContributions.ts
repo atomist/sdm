@@ -29,7 +29,7 @@ import * as path from "path";
 export async function loadProjectContributions<T>(project: GitProject,
                                                   subdirectory: string,
                                                   variable: string): Promise<T[]> {
-    require('ts-node').register({ skipProject: true });
+    require("ts-node").register({ skipProject: true });
 
     const visited: string[] = [];
 
