@@ -52,6 +52,12 @@ export interface AutofixGoalDetails extends FulfillableGoalDetails {
      * result of the provider ExtractAuthor function.
      */
     setAuthor?: boolean | ExtractAuthor;
+
+    /**
+     * Optional flag to indicate this Autofix goal should attempt to load
+     * AutofixRegistrations from .ts and .js files in the project's .atomist/autofix.
+     */
+    loadProjectAutofixes?: boolean;
 }
 
 /**
@@ -69,6 +75,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
 
         let transformPresentation;
         let extractAuthor: ExtractAuthor;
+        let loadProjectAutofixes = false;
         if (!!goalDetailsOrUniqueName) {
             const autofixDetails = goalDetailsOrUniqueName as AutofixGoalDetails;
 
@@ -82,12 +89,15 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
                     extractAuthor = autofixDetails.setAuthor;
                 }
             }
+            if (autofixDetails.loadProjectAutofixes === true) {
+                loadProjectAutofixes = true;
+            }
         }
 
         this.addFulfillment({
             name: `autofix-${this.definition.uniqueName}`,
             logInterpreter: LogSuppressor,
-            goalExecutor: executeAutofixes(this.registrations, transformPresentation, extractAuthor),
+            goalExecutor: executeAutofixes(this.registrations, transformPresentation, extractAuthor, loadProjectAutofixes),
             progressReporter: AutofixProgressReporter,
         });
     }

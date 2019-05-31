@@ -47,6 +47,7 @@ import {
     ProgressTest,
     testProgressReporter,
 } from "../goal/progress/progress";
+import { loadProjectContributions } from "../goal/projectContributions";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { spawnLog } from "../misc/child_process";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
@@ -66,14 +67,15 @@ export interface GoalInvocationParameters {
  * @param {AutofixRegistration[]} registrations
  * @return ExecuteGoal
  */
-export function executeAutofixes(registrations: AutofixRegistration[],
+export function executeAutofixes(autofixRegistrations: AutofixRegistration[],
                                  transformPresentation?: TransformPresentation<GoalInvocationParameters>,
-                                 extractAuthor: ExtractAuthor = NoOpExtractAuthor): ExecuteGoal {
+                                 extractAuthor: ExtractAuthor = NoOpExtractAuthor,
+                                 loadProjectAutofixes: boolean = false): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
-        progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
+
         try {
-            if (registrations.length === 0) {
+            if (autofixRegistrations.length === 0) {
                 return Success;
             }
 
@@ -88,6 +90,17 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     cloneOptions: minimalClone(push),
                 },
                 async project => {
+                    const registrations = [...autofixRegistrations];
+
+                    if (!!loadProjectAutofixes) {
+                        registrations.push(...(await loadProjectContributions<AutofixRegistration>(
+                            project,
+                            ".atomist/autofix",
+                            "Autofix")),
+                        );
+                    }
+
+                    progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
                             success: true,
