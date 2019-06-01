@@ -57,7 +57,7 @@ export interface AutofixGoalDetails extends FulfillableGoalDetails {
 /**
  * Goal that performs autofixes: For example, linting and adding license headers.
  */
-export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
+export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration<any>> {
 
     constructor(private readonly goalDetailsOrUniqueName: AutofixGoalDetails | string
                     = DefaultGoalNameGenerator.generateName("autofix"),
