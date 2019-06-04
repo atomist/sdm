@@ -10,10 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Update deps. [4adc725](https://github.com/atomist/sdm/commit/4adc72558d6164ea6bb0dd2ffb433f4e3bdda1c6)
+-   Reduce the log noise in error cases.  [a90e5cf](https://github.com/atomist/sdm/commit/a90e5cf06a1c059d0614e76118070e9077de028a)
+-   Remove usage of externalKey in log. [760cedf](https://github.com/atomist/sdm/commit/760cedfce2827c0176502291b7aff671fb839367)
 
 ### Fixed
 
 -   Add missing array destructuring. [74704ac](https://github.com/atomist/sdm/commit/74704ac1fc30b57ab9cb63b37070806df1fcac38)
+-   Skip sprintf if no args are given. [e4c6410](https://github.com/atomist/sdm/commit/e4c6410899f6bb23d31678e17355ead87aa09c98)
+-   Fix typing on Autofix goal. [ea2ce5c](https://github.com/atomist/sdm/commit/ea2ce5cd3e0dc0b7cf940bed8e974c0405387aed)
 
 ## [1.5.0](https://github.com/atomist/sdm/compare/1.4.1...1.5.0) - 2019-05-27
 
