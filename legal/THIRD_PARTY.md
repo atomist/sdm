@@ -22,7 +22,7 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |[GPL-3.0](#gpl-30)|3|
 |[ISC](#isc)|67|
 |[MIT AND BSD-3-Clause](#mit-and-bsd-3-clause)|1|
-|[MIT](#mit)|761|
+|[MIT](#mit)|760|
 |[Unlicense](#unlicense)|1|
 |[WTFPL](#wtfpl)|1|
 
@@ -137,7 +137,7 @@ GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-stan
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/automation-client`|`1.5.2`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
+|`@atomist/automation-client`|`1.5.3`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
 |`@atomist/microgrammar`|`1.2.0`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/tree-path`|`1.0.3`|Atomist|[https://github.com/atomist/tree-path](https://github.com/atomist/tree-path)|
 
@@ -245,7 +245,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`@octokit/endpoint`|`5.1.4`||[https://github.com/octokit/endpoint.js](https://github.com/octokit/endpoint.js)|
 |`@octokit/request-error`|`1.0.2`||[https://github.com/octokit/request-error.js](https://github.com/octokit/request-error.js)|
 |`@octokit/request`|`4.1.0`||[https://github.com/octokit/request.js](https://github.com/octokit/request.js)|
-|`@octokit/rest`|`16.27.1`|Gregor Martynus|[https://github.com/octokit/rest.js](https://github.com/octokit/rest.js)|
+|`@octokit/rest`|`16.27.3`|Gregor Martynus|[https://github.com/octokit/rest.js](https://github.com/octokit/rest.js)|
 |`@samverschueren/stream-to-observable`|`0.3.0`||[https://github.com/SamVerschueren/stream-to-observable](https://github.com/SamVerschueren/stream-to-observable)|
 |`@sindresorhus/is`|`0.7.0`|Sindre Sorhus|[https://github.com/sindresorhus/is](https://github.com/sindresorhus/is)|
 |`@typed/curry`|`1.0.1`|Tylor Steinberger|[https://github.com/TylorS/typed-curry](https://github.com/TylorS/typed-curry)|
@@ -312,7 +312,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`@types/valid-url`|`1.0.2`|Steve Hipwell|[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/ws`|`6.0.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/zen-observable`|`0.8.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@wry/context`|`0.4.1`|Ben Newman|[https://github.com/benjamn/wryware](https://github.com/benjamn/wryware)|
+|`@wry/context`|`0.4.2`|Ben Newman|[https://github.com/benjamn/wryware](https://github.com/benjamn/wryware)|
 |`accepts`|`1.3.7`||[https://github.com/jshttp/accepts](https://github.com/jshttp/accepts)|
 |`acorn-es7-plugin`|`1.1.7`|matatbread|[https://github.com/MatAtBread/acorn-es7-plugin](https://github.com/MatAtBread/acorn-es7-plugin)|
 |`acorn`|`5.7.3`||[https://github.com/acornjs/acorn](https://github.com/acornjs/acorn)|
@@ -375,7 +375,6 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`aws4`|`1.8.0`|Michael Hart|[https://github.com/mhart/aws4](https://github.com/mhart/aws4)|
 |`axios-fetch`|`1.1.0`|Matt Lavin||
 |`axios`|`0.19.0`|Matt Zabriskie|[https://github.com/axios/axios](https://github.com/axios/axios)|
-|`axios`|`0.19.0-beta.1`|Matt Zabriskie|[https://github.com/axios/axios](https://github.com/axios/axios)|
 |`babel-polyfill`|`6.26.0`|Sebastian McKenzie|[https://github.com/babel/babel/tree/master/packages/babel-polyfill](https://github.com/babel/babel/tree/master/packages/babel-polyfill)|
 |`babel-runtime`|`6.26.0`|Sebastian McKenzie|[https://github.com/babel/babel/tree/master/packages/babel-runtime](https://github.com/babel/babel/tree/master/packages/babel-runtime)|
 |`babel-types`|`7.0.0-beta.3`|Sebastian McKenzie|[https://github.com/babel/babel/tree/master/packages/babel-types](https://github.com/babel/babel/tree/master/packages/babel-types)|
