@@ -13,7 +13,7 @@ query InProcessSdmGoalSets($fetch: Int!, $registration: [String!]) {
       name
       uniqueName
     }
-    provenance(registration: $registration) @required
+    provenance(registration: $registration) @required {
       channelId
       correlationId
       name
