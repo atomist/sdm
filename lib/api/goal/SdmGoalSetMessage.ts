@@ -41,4 +41,6 @@ export interface SdmGoalSetMessage {
     goals: Array<{ name: string, uniqueName: string }>;
 
     provenance: SdmProvenance;
+
+    tags?: Array<{ name: string, value: string }>;
 }

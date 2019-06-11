@@ -222,6 +222,7 @@ export async function storeGoalSet(ctx: HandlerContext,
                                    goalSetId: string,
                                    goalSet: string,
                                    sdmGoals: SdmGoalMessage[],
+                                   tags: Array<{ name: string, value: string }>,
                                    push: OnPushToAnyBranch.Push): Promise<void> {
     let repo;
     if (!!push) {
@@ -254,6 +255,7 @@ export async function storeGoalSet(ctx: HandlerContext,
             uniqueName: g.uniqueName,
         })),
         provenance: constructProvenance(ctx),
+        tags,
     };
     return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
 }

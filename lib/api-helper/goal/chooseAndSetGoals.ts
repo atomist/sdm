@@ -57,6 +57,7 @@ import {
 } from "../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
+import { TagGoalSet } from "../../api/goal/tagGoalSet";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import {
@@ -88,6 +89,8 @@ export interface ChooseAndSetGoalsRules {
 
     enrichGoal?: EnrichGoal;
 
+    tagGoalSets?: TagGoalSet;
+
     preferencesFactory?: PreferenceStoreFactory;
 
     parameterPromptFactory?: ParameterPromptFactory<any>;
@@ -115,7 +118,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     const configuration = (context as any as ConfigurationAware).configuration;
     const goalSetId = guid();
 
-    const { determinedGoals, goalsToSave } = await determineGoals(
+    const { determinedGoals, goalsToSave, tags } = await determineGoals(
         { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
             credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
         });
@@ -123,8 +126,9 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     if (goalsToSave.length > 0) {
         // First store the goals
         await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
-        // And then store the goalSetId
-        await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, push);
+
+        // And then store the goalSet
+        await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, tags, push);
     }
 
     // Let GoalSetListeners know even if we determined no goals.
@@ -150,7 +154,8 @@ export async function determineGoals(rules: {
                                          repoRefResolver: RepoRefResolver,
                                          goalSetter: GoalSetter,
                                          implementationMapping: GoalImplementationMapper,
-                                         enrichGoal: (g: SdmGoalMessage, pli: PushListenerInvocation) => Promise<SdmGoalMessage>,
+                                         enrichGoal: EnrichGoal,
+                                         tagGoalSet?: TagGoalSet,
                                      },
                                      circumstances: {
                                          credentials: ProjectOperationCredentials,
@@ -164,8 +169,9 @@ export async function determineGoals(rules: {
                                      }): Promise<{
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoalMessage[],
+    tags: Array<{ name: string, value: string }>,
 }> {
-    const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
+    const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping, tagGoalSet } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId, preferences, configuration } = circumstances;
     return projectLoader.doWithProject({
             credentials,
@@ -187,7 +193,7 @@ export async function determineGoals(rules: {
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
             if (!determinedGoals) {
-                return { determinedGoals: undefined, goalsToSave: [] };
+                return { determinedGoals: undefined, goalsToSave: [], tags: [] };
             }
             const goalsToSave = await sdmGoalsFromGoals(
                 implementationMapping,
@@ -200,7 +206,13 @@ export async function determineGoals(rules: {
             // Enrich all goals before they get saved
             await Promise.all(goalsToSave.map(async g1 => enrichGoal(g1, pli)));
 
-            return { determinedGoals, goalsToSave };
+            // Optain tags for the goal set
+            let tags: Array<{ name: string, value: string }> = [];
+            if (!!tagGoalSet) {
+                tags = (await tagGoalSet(goalsToSave, pli)) || [];
+            }
+
+            return { determinedGoals, goalsToSave, tags };
         });
 
 }
