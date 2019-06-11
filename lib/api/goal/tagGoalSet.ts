@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { SdmGoalMessage } from "./SdmGoalMessage";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { SdmGoalMessage } from "./SdmGoalMessage";
 
 /**
  * Create Tags for the goal set containing the provided goals

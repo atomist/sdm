@@ -51,13 +51,13 @@ import {
     isGoalImplementation,
     isGoalSideEffect,
 } from "../../api/goal/support/GoalImplementationMapper";
+import { TagGoalSet } from "../../api/goal/tagGoalSet";
 import {
     GoalsSetListener,
     GoalsSetListenerInvocation,
 } from "../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { TagGoalSet } from "../../api/goal/tagGoalSet";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import {
