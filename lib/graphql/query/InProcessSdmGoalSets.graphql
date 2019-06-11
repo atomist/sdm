@@ -5,6 +5,33 @@ query InProcessSdmGoalSets($fetch: Int!, $registration: [String!]) {
     _first: $fetch
     state: [pre_approved, requested, approved, planned, in_process]
   ) {
-    ...SdmGoalSetFields
+    sha
+    branch
+    goalSet
+    goalSetId
+    goals {
+      name
+      uniqueName
+    }
+    provenance(registration: $registration) @required
+      channelId
+      correlationId
+      name
+      registration
+      ts
+      userId
+      version
+    }
+    repo {
+      name
+      owner
+      providerId
+    }
+    state
+    tags {
+      name
+      value
+    }
+    ts
   }
 }
