@@ -40,6 +40,7 @@ import {
     SdmGoalSetMessage,
 } from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
+import { GoalSetTag } from "../../api/goal/tagGoalSet";
 import {
     OnPushToAnyBranch,
     PushFields,
@@ -222,7 +223,7 @@ export async function storeGoalSet(ctx: HandlerContext,
                                    goalSetId: string,
                                    goalSet: string,
                                    sdmGoals: SdmGoalMessage[],
-                                   tags: Array<{ name: string, value: string }>,
+                                   tags: GoalSetTag[],
                                    push: OnPushToAnyBranch.Push): Promise<void> {
     let repo;
     if (!!push) {

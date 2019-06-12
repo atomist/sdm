@@ -17,8 +17,12 @@
 import { PushListenerInvocation } from "../listener/PushListener";
 import { SdmGoalMessage } from "./SdmGoalMessage";
 
+export interface GoalSetTag {
+    name: string;
+    value?: string;
+}
+
 /**
  * Create Tags for the goal set containing the provided goals
  */
-export type TagGoalSet = (goals: SdmGoalMessage[], pli: PushListenerInvocation) =>
-    Promise<Array<{ name: string, value: string }> | undefined>;
+export type TagGoalSet = (goals: SdmGoalMessage[], pli: PushListenerInvocation) => Promise<GoalSetTag[] | undefined>;

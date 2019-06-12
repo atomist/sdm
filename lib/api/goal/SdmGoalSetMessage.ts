@@ -16,6 +16,7 @@
 
 import { SdmGoalState } from "../../typings/types";
 import { SdmProvenance } from "./SdmGoalMessage";
+import { GoalSetTag } from "./tagGoalSet";
 
 export const GoalSetRootType = "SdmGoalSet";
 
@@ -42,5 +43,5 @@ export interface SdmGoalSetMessage {
 
     provenance: SdmProvenance;
 
-    tags?: Array<{ name: string, value: string }>;
+    tags?: GoalSetTag[];
 }

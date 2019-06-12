@@ -51,7 +51,10 @@ import {
     isGoalImplementation,
     isGoalSideEffect,
 } from "../../api/goal/support/GoalImplementationMapper";
-import { TagGoalSet } from "../../api/goal/tagGoalSet";
+import {
+    GoalSetTag,
+    TagGoalSet,
+} from "../../api/goal/tagGoalSet";
 import {
     GoalsSetListener,
     GoalsSetListenerInvocation,
@@ -170,7 +173,7 @@ export async function determineGoals(rules: {
                                      }): Promise<{
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoalMessage[],
-    tags: Array<{ name: string, value: string }>,
+    tags: GoalSetTag[],
 }> {
     const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping, tagGoalSet } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId, preferences, configuration } = circumstances;
@@ -208,7 +211,7 @@ export async function determineGoals(rules: {
             await Promise.all(goalsToSave.map(async g1 => enrichGoal(g1, pli)));
 
             // Optain tags for the goal set
-            let tags: Array<{ name: string, value: string }> = [];
+            let tags: GoalSetTag[] = [];
             if (!!tagGoalSet) {
                 tags = (await tagGoalSet(goalsToSave, pli)) || [];
             }
