@@ -118,7 +118,7 @@ export interface SoftwareDeliveryMachineOptions {
     /**
      * Callback to add tags to created goal sets
      */
-    tagGoalSets?: TagGoalSet;
+    tagGoalSet?: TagGoalSet;
 
     /**
      * Optional set of keys to sign and verify goals that are produced and received
