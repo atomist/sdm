@@ -89,7 +89,7 @@ export interface ChooseAndSetGoalsRules {
 
     enrichGoal?: EnrichGoal;
 
-    tagGoalSets?: TagGoalSet;
+    tagGoalSet?: TagGoalSet;
 
     preferencesFactory?: PreferenceStoreFactory;
 
@@ -111,7 +111,8 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                         }): Promise<Goals | undefined> {
     const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver, preferencesFactory } = rules;
     const { context, credentials, push } = parameters;
-    const enrichGoal = rules.enrichGoal ? rules.enrichGoal : async g => g;
+    const enrichGoal = !!rules.enrichGoal ? rules.enrichGoal : async g => g;
+    const tagGoalSet = !!rules.tagGoalSet ? rules.tagGoalSet : async () => [];
     const id = repoRefResolver.repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
     const preferences = !!preferencesFactory ? preferencesFactory(parameters.context) : NoPreferenceStore;
@@ -119,7 +120,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     const goalSetId = guid();
 
     const { determinedGoals, goalsToSave, tags } = await determineGoals(
-        { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal }, {
+        { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal, tagGoalSet }, {
             credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
         });
 
