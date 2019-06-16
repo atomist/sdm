@@ -34,6 +34,7 @@ import {
 } from "../../../lib/api/dsl/goalDsl";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
+// tslint:disable-next-line:deprecation
 import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { Locking } from "../../../lib/api/goal/common/Locking";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
@@ -56,6 +57,7 @@ const BuildGoal = new GoalWithFulfillment({
     uniqueName: "build",
 });
 const CodeInspectionGoal = new AutoCodeInspection();
+// tslint:disable-next-line:deprecation
 const FingerprintGoal = new Fingerprint();
 const LockingGoal = Locking;
 const JustBuildGoal = new GoalWithFulfillment({
