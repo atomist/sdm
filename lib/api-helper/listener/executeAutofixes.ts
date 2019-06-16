@@ -66,8 +66,8 @@ export interface GoalInvocationParameters {
  * @return ExecuteGoal
  */
 export function executeAutofixes(registrations: AutofixRegistration[],
-                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>,
-                                 extractAuthor: ExtractAuthor = NoOpExtractAuthor): ExecuteGoal {
+    transformPresentation?: TransformPresentation<GoalInvocationParameters>,
+    extractAuthor: ExtractAuthor = NoOpExtractAuthor): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
         progressLog.write("Evaluating to %d configured autofixes", registrations.length);
@@ -80,12 +80,12 @@ export function executeAutofixes(registrations: AutofixRegistration[],
             const appliedAutofixes: AutofixRegistration[] = [];
             let editMode;
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
-                    credentials,
-                    id,
-                    context,
-                    readOnly: false,
-                    cloneOptions: minimalClone(push),
-                },
+                credentials,
+                id,
+                context,
+                readOnly: false,
+                cloneOptions: minimalClone(push),
+            },
                 async project => {
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
@@ -207,9 +207,9 @@ function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
 }
 
 async function runOne(gi: GoalInvocation,
-                      cri: PushImpactListenerInvocation,
-                      autofix: AutofixRegistration,
-                      extractAuthor: ExtractAuthor): Promise<EditResult> {
+    cri: PushImpactListenerInvocation,
+    autofix: AutofixRegistration,
+    extractAuthor: ExtractAuthor): Promise<EditResult> {
     const { progressLog, configuration } = gi;
     const project = cri.project;
     progressLog.write("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name);
@@ -275,7 +275,7 @@ async function runOne(gi: GoalInvocation,
  * @returns {AutofixRegistration[]}
  */
 export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
-                                         gi: GoalInvocation): AutofixRegistration[] {
+    gi: GoalInvocation): AutofixRegistration[] {
     return autofixes.filter(
         af => !(gi.goalEvent.push.commits || [])
             .some(c => c.message === generateCommitMessageForAutofix(af)));
@@ -288,7 +288,8 @@ export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
  */
 export function generateCommitMessageForAutofix(autofix: AutofixRegistration): string {
     const name = autofix.name.toLowerCase().replace(/ /g, "_");
-    return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${name}]`;
+    const linkToSource = autofix.registrationSourceLocation ? `\n\nThis autofix is defined here: ${autofix.registrationSourceLocation.url}` : "";
+    return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${name}]${linkToSource}`;
 }
 
 export const AutofixProgressTests: ProgressTest[] = [{

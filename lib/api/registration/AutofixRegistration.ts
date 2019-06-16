@@ -17,6 +17,7 @@
 import { NoParameters } from "@atomist/automation-client";
 import { CodeTransformOrTransforms } from "./CodeTransform";
 import { PushSelector } from "./PushRegistration";
+import { RegistrationSourceLocation } from "./RegistrationSourceLocation";
 
 export interface AutofixRegistrationOptions {
 
@@ -30,6 +31,8 @@ export interface AutofixRegistrationOptions {
 export interface AutofixRegistration<P = NoParameters> extends PushSelector {
 
     transform: CodeTransformOrTransforms<P>;
+
+    registrationSourceLocation?: RegistrationSourceLocation;
 
     options?: AutofixRegistrationOptions;
 
