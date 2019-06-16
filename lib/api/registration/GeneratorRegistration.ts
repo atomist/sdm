@@ -23,6 +23,7 @@ import {
     RepoCreationParameters,
     SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
+import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
@@ -32,7 +33,7 @@ import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
  * computes a RemoteRepoRef or Project from the parameters.
  */
 export type StartingPoint<PARAMS> =
-    Project | RemoteRepoRef | ((pi: PARAMS & ParametersInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
+    Project | RemoteRepoRef | ((pi: PARAMS & CommandListenerInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
 
 /**
  * Action that executes after the project has been generated and pushed
