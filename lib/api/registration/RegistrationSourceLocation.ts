@@ -17,9 +17,9 @@
 import * as path from "path";
 import * as trace from "stack-trace";
 /**
- * Where is this registration located in the code? 
+ * Where is this registration located in the code?
  * Populate this with guessSourceLocation()
- * 
+ *
  * This lets an autofix commit message show where the autofix was registered,
  * giving developers the information they need to change it.
  */
@@ -49,7 +49,7 @@ export function guessSourceLocation(): RegistrationSourceLocation | undefined {
 }
 
 interface GuessedLocationWithinProject {
-    relativePath: string, lineNumber: number
+    relativePath: string; lineNumber: number;
 }
 function guessLocationWithinProject(): GuessedLocationWithinProject {
     let stack: trace.StackFrame[];
@@ -66,12 +66,11 @@ function guessLocationWithinProject(): GuessedLocationWithinProject {
     const relativePath = registration.getFileName().replace(appRoot, "");
     return {
         relativePath,
-        lineNumber: registration.getLineNumber()
+        lineNumber: registration.getLineNumber(),
     };
 }
-import * as appRootPath from "app-root-path";
 
-interface GuessedProjectLocation { repoUrl: string, sha?: string }
+interface GuessedProjectLocation { repoUrl: string; sha?: string; }
 function guessProjectLocation(): GuessedProjectLocation {
 
     try {
@@ -80,11 +79,10 @@ function guessProjectLocation(): GuessedProjectLocation {
 
         return {
             repoUrl: remoteUrlToHttp(gitInfo.repository),
-            sha: gitInfo.sha
-        }
+            sha: gitInfo.sha,
+        };
     } catch (gitInfoErr) {
 
-        console.log(gitInfoErr);
         try {
             const packageJson: { repository: string | { url: string } } =
                 require(process.cwd() + path.sep + "package.json");
@@ -94,15 +92,14 @@ function guessProjectLocation(): GuessedProjectLocation {
             }
             if (typeof packageJson.repository === "string") {
                 return {
-                    repoUrl: packageJson.repository
-                }
+                    repoUrl: packageJson.repository,
+                };
             }
             return {
-                repoUrl: packageJson.repository.url
-            }
+                repoUrl: packageJson.repository.url,
+            };
 
         } catch (packageJsonErr) {
-            console.log(packageJsonErr);
             return undefined;
         }
     }
@@ -116,7 +113,7 @@ function guessUrl(projectLocation: GuessedProjectLocation,
     }
     const likelyUrl =
         projectLocation.repoUrl.replace(/\/$/, "")
-            .replace(/.git$/, "")
+            .replace(/.git$/, "");
 
     const descendIntoCommit = "blob/" + (projectLocation.sha || "master");
 

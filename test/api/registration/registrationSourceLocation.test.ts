@@ -27,6 +27,6 @@ describe("guessSourceLocation", () => {
         // this is dependent on location of this file, and line in this file
         assert(result.url.endsWith("test/api/registration/registrationSourceLocation.test.ts#L22"),
             "where is the file part of the link? " + result.url);
-        assert(!result.url.includes("/Users"), "nooo, the local path is in it: <" + result.url + ">")
+        assert(!result.url.includes("/Users"), "nooo, the local path is in it: <" + result.url + ">");
     });
 });
