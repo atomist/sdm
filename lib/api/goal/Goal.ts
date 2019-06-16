@@ -152,7 +152,14 @@ export class GoalWithPrecondition extends Goal {
 
 }
 
+/**
+ * @deprecated prefer isGoalDefinition
+ */
 export function isGoalDefiniton(f: Goal | GoalDefinition): f is GoalDefinition {
+    return (f as GoalDefinition).uniqueName && true;
+}
+
+export function isGoalDefinition(f: Goal | GoalDefinition): f is GoalDefinition {
     return (f as GoalDefinition).uniqueName && true;
 }
 
