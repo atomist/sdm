@@ -107,7 +107,7 @@ function guessProjectLocation(): GuessedProjectLocation {
 }
 
 function guessUrl(projectLocation: GuessedProjectLocation,
-    fileLocation: GuessedLocationWithinProject): string | undefined {
+                  fileLocation: GuessedLocationWithinProject): string | undefined {
     if (!projectLocation) {
         return undefined;
     }
