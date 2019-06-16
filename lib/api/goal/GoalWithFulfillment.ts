@@ -43,7 +43,7 @@ import {
     Goal,
     GoalDefinition,
     GoalWithPrecondition,
-    isGoalDefiniton,
+    isGoalDefinition,
 } from "./Goal";
 import {
     ExecuteGoal,
@@ -163,7 +163,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     public sdm: SoftwareDeliveryMachine;
 
     constructor(public definitionOrGoal: PredicatedGoalDefinition | Goal, ...dependsOn: Goal[]) {
-        super(isGoalDefiniton(definitionOrGoal) ? definitionOrGoal : definitionOrGoal.definition, ...dependsOn);
+        super(isGoalDefinition(definitionOrGoal) ? definitionOrGoal : definitionOrGoal.definition, ...dependsOn);
         registerRegistrable(this);
     }
 
@@ -230,13 +230,13 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             let goalExecutor = fulfillment.goalExecutor;
 
             // Wrap the ExecuteGoal instance with WaitRules if provided
-            if (isGoalDefiniton(this.definitionOrGoal) && !!this.definitionOrGoal.preCondition) {
+            if (isGoalDefinition(this.definitionOrGoal) && !!this.definitionOrGoal.preCondition) {
                 goalExecutor = createPredicatedGoalExecutor(
                     this.definitionOrGoal.uniqueName,
                     goalExecutor,
                     this.definitionOrGoal.preCondition);
             }
-            if (isGoalDefiniton(this.definitionOrGoal) && !!this.definitionOrGoal.retryCondition) {
+            if (isGoalDefinition(this.definitionOrGoal) && !!this.definitionOrGoal.retryCondition) {
                 goalExecutor = createRetryingGoalExecutor(
                     this.definitionOrGoal.uniqueName,
                     goalExecutor,
