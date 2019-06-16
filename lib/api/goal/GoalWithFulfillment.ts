@@ -330,8 +330,8 @@ export class GoalWithFulfillment extends FulfillableGoal {
  * @param options
  */
 export function goal(details: FulfillableGoalDetails = {},
-    goalExecutor?: ExecuteGoal,
-    options?: {
+                     goalExecutor?: ExecuteGoal,
+                     options?: {
         pushTest?: PushTest,
         logInterpreter?: InterpretLog,
         progressReporter?: ReportProgress,
@@ -361,8 +361,8 @@ export function goal(details: FulfillableGoalDetails = {},
  */
 // tslint:disable:cyclomatic-complexity
 export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | string,
-    uniqueName: string,
-    definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
+                                      uniqueName: string,
+                                      definition?: GoalDefinition): { uniqueName: string } | PredicatedGoalDefinition {
     if (typeof goalDetails === "string") {
         return {
             ...(definition || {}),
