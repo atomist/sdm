@@ -25,7 +25,7 @@ describe("guessSourceLocation", () => {
         assert(result.url.startsWith("https://github.com/atomist/sdm/blob/"),
             "where is the repo part of the link? <" + result.url + ">");
         // this is dependent on location of this file, and line in this file
-        assert(result.url.endsWith("test/api/registration/registrationSourceLocation.test.ts#22"),
+        assert(result.url.endsWith("test/api/registration/registrationSourceLocation.test.ts#L22"),
             "where is the file part of the link? " + result.url);
         assert(!result.url.includes("/Users"), "nooo, the local path is in it: <" + result.url + ">")
     });
