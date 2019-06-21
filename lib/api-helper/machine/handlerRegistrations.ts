@@ -369,7 +369,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }
 
-    if (!credentials && !!sdm.credentialsResolver) {
+    if (!!sdm.credentialsResolver) {
         try {
             credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids ? ids[0] : undefined);
         } catch (e) {
