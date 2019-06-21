@@ -151,10 +151,17 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                                                                cr: GeneratorRegistration<P>,
                                                                sdmo: SoftwareDeliveryMachineOptions): Promise<RedirectResult> {
     try {
+
+        const pi = {
+            ...toCommandListenerInvocation(cr, ctx, params, sdmo),
+            ...params,
+        } as any;
+        pi.credentials = await resolveCredentialsPromise(pi.credentials);
+
         const r = await generate(
             computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint, cr, sdmo),
             ctx,
-            params.target.credentials,
+            pi.credentials,
             editorFactory(params, ctx),
             details.projectPersister,
             params.target.repoRef,
@@ -163,12 +170,6 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
         );
 
         if (!!cr.afterAction && r.success === true) {
-            const pi = {
-                ...toCommandListenerInvocation(cr, ctx, params, sdmo),
-                ...params,
-            } as any;
-            pi.credentials = await resolveCredentialsPromise(pi.credentials);
-
             const afterActions = Array.isArray(cr.afterAction) ? cr.afterAction : [cr.afterAction];
 
             for (const afterAction of afterActions) {
