@@ -22,6 +22,7 @@ import {
     logger,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import { replacer } from "@atomist/automation-client/lib/internal/util/string";
 import {
     AnyProjectEditor,
     ProjectEditor,
@@ -43,6 +44,7 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { confirmEditedness } from "./confirmEditedness";
+import stringify = require("json-stringify-safe");
 
 /**
  * Wrap this editor to make it chatty, so it responds to Slack if there's nothing to do.
@@ -60,8 +62,13 @@ export function chattyDryRunAwareEditor(editorName: string,
 
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, params);
             const editResult = await confirmEditedness(tentativeEditResult);
-            logger.debug("Code Transform %s: git status on '%j' is '%j': editResult=%j",
-                editorName, project.id, await project.gitStatus(), editResult);
+            logger.debug(
+                "Code Transform %s on '%s/%s': git status: '%s', edit result: %s",
+                editorName,
+                project.id.owner,
+                project.id.repo,
+                stringify(await project.gitStatus(), replacer),
+                stringify(editResult, replacer));
 
             // Figure out if this CodeTransform is running in dryRun mode; if so capture git diff and don't push changes
             if (!editResult.edited) {
