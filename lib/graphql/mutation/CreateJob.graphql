@@ -1,0 +1,19 @@
+mutation CreateJob(
+  $data: String!
+  $name: String!
+  $description: String!
+  $owner: String!
+  $tasks: [AtmJobTaskInput!]!
+) {
+  createAtmJob(
+    jobInput: {
+      data: $data
+      name: $name
+      description: $description
+      owner: $owner
+      jobTasks: $tasks
+    }
+  ) {
+    id
+  }
+}

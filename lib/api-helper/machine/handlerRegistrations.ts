@@ -45,8 +45,8 @@ import {
 import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
 import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
-import { doWithAllRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
-import { editAll } from "@atomist/automation-client/lib/operations/edit/editAll";
+import { relevantRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
+import { editOne } from "@atomist/automation-client/lib/operations/edit/editAll";
 import {
     EditResult,
     failedEdit,
@@ -103,6 +103,7 @@ import {
 import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
 import { LoggingProgressLog } from "../log/LoggingProgressLog";
 import { formatDate } from "../misc/dateFormat";
+import { createJob } from "../misc/job/createJob";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -154,37 +155,62 @@ ${codeBlock(vr.message)}`,
                     false,
                     ci.context);
 
-            const editMode = toEditModeOrFactory(ctr, ci);
-
             try {
+                const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, ctr.repoFilter));
+                if (ids.length > 1) {
 
-                const results = await editAll<any, any>(
-                    ci.context,
-                    ci.credentials,
-                    chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
-                    editMode,
-                    ci.parameters,
-                    repoFinder,
-                    andFilter(targets.test, ctr.repoFilter),
-                    repoLoader);
-                if (!!ctr.onTransformResults) {
-                    await ctr.onTransformResults(
-                        results,
-                        { ...ci, progressLog: new LoggingProgressLog(ctr.name, "debug") },
-                    );
-                } else if (results.some(r => !!r.error)) {
-                    const errors = results.filter(r => !!r.error);
-                    return ci.addressChannels(
-                        slackErrorMessage(
-                            `Code Transform`,
-                            `Code transform ${italic(ci.commandName)} failed:
+                    const params: any = {
+                        ...ci.parameters,
+                    };
+                    params.targets.repos = undefined;
+                    params.targets.repo = undefined;
 
-${errors.map(err => codeBlock(err.error.message)).join("\n")}`,
-                            ci.context,
-                        ),
-                    );
+                    await createJob(
+                        {
+                            name: `CodeTransform/${ci.commandName}`,
+                            command: ci.commandName,
+                            parameters: ids.map(id => ({
+                                ...params,
+                                targets: {
+                                    owner: id.owner,
+                                    repo: id.repo,
+                                    branch: id.branch,
+                                    sha: id.sha,
+                                },
+                            })),
+                            description: `Running code transform ${italic(ci.commandName)} on ${ids.length} repositories`,
+                        },
+                        ci.context);
+
                 } else {
-                    logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+                    const editMode = toEditModeOrFactory(ctr, ci);
+                    const result = await editOne<any>(
+                        ci.context,
+                        ci.credentials,
+                        chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
+                        editMode,
+                        ids[0],
+                        ci.parameters,
+                        repoLoader);
+                    if (!!ctr.onTransformResults) {
+                        await ctr.onTransformResults(
+                            [result],
+                            { ...ci, progressLog: new LoggingProgressLog(ctr.name, "debug") },
+                        );
+                    } else if (!!result && !!result.error) {
+                        const error = result.error;
+                        return ci.addressChannels(
+                            slackErrorMessage(
+                                `Code Transform`,
+                                `Code transform ${italic(ci.commandName)} failed:
+
+${codeBlock(error.message)}`,
+                                ci.context,
+                            ),
+                        );
+                    } else {
+                        logger.info("No react function to react to result of code transformation '%s'", ctr.name);
+                    }
                 }
             } catch (e) {
                 return ci.addressChannels(
@@ -245,18 +271,52 @@ ${codeBlock(vr.message)}`,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true,
                     ci.context);
-            const results = await doWithAllRepos<CodeInspectionResult<R>, any>(
-                ci.context,
-                ci.credentials,
-                action,
-                ci.parameters,
-                repoFinder,
-                andFilter(targets.test, cir.repoFilter),
-                repoLoader);
-            if (!!cir.onInspectionResults) {
-                await cir.onInspectionResults(results, ci);
-            } else {
-                logger.info("No react function to react to results of code inspection '%s'", cir.name);
+            try {
+                const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, cir.repoFilter));
+                if (ids.length > 1) {
+
+                    const params: any = {
+                        ...ci.parameters,
+                    };
+                    params.targets.repos = undefined;
+                    params.targets.repo = undefined;
+
+                    await createJob(
+                        {
+                            name: `CodeInspection/${ci.commandName}`,
+                            command: ci.commandName,
+                            parameters: ids.map(id => ({
+                                ...params,
+                                targets: {
+                                    owner: id.owner,
+                                    repo: id.repo,
+                                    branch: id.branch,
+                                    sha: id.sha,
+                                },
+                            })),
+                            description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
+                        },
+                        ci.context);
+
+                } else {
+                    const project = await repoLoader(ids[0]);
+                    const result = await action(project, ci.parameters);
+                    if (!!cir.onInspectionResults) {
+                        await cir.onInspectionResults([result], ci);
+                    } else {
+                        logger.info("No react function to react to results of code inspection '%s'", cir.name);
+                    }
+                }
+            } catch (e) {
+                return ci.addressChannels(
+                    slackErrorMessage(
+                        `Code Inspection`,
+                        `Code Inspection ${italic(ci.commandName)} failed:
+
+${codeBlock(e.message)}`,
+                        ci.context,
+                    ),
+                );
             }
         },
     };
