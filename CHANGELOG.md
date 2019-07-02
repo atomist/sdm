@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.5.1...HEAD)
 
+### Added
+
+-   Move code transforms to job support. [#756](https://github.com/atomist/sdm/issues/756)
+
 ### Deprecated
 
 -   Deprecate Fingerprint goal. [4e894f9](https://github.com/atomist/sdm/commit/4e894f9f53e79e3e0f8fd8b868c7f17bf0f05a21)
