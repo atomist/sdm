@@ -121,12 +121,14 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             result,
         };
         await Promise.all(rules.goalExecutionListeners.map(gel => {
+            logger.debug("Before invoking goal execution listener");
             try {
                 return gel(inProcessGoalExecutionListenerInvocation);
             } catch (e) {
                 logger.warn(`GoalExecutionListener failed: ${e.message}`);
                 logger.debug(e);
             }
+            logger.debug("After invoking goal execution listener");
         }));
     }
 
@@ -169,10 +171,12 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             ...hookResult,
         };
 
+        logger.debug("Before notifying goal execution listeners");
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,
             state: SdmGoalState.success,
         }, result);
+        logger.debug("After notifying goal execution listeners");
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
         await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
