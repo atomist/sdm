@@ -254,12 +254,16 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
 
             progressLog.write(`Result: ${serializeResult(result)}`);
             progressLog.write("\\--");
+            logger.debug("Before flushing");
             await progressLog.flush();
+            logger.debug("After flushing");
             return result;
         } else {
             progressLog.write(`Result: skipped (not provided)`);
             progressLog.write("\\--");
+            logger.debug("Before flushing");
             await progressLog.flush();
+            logger.debug("After flushing");
             return Success;
         }
     });
