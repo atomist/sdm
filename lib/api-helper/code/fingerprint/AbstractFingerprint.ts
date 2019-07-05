@@ -28,8 +28,8 @@ export abstract class AbstractFingerprint implements FingerprintData {
                           public readonly abbreviation: string,
                           public readonly version: string,
                           public readonly data: string) {
-        if (data === undefined) {
-            throw new Error("fingerprint data must not be undefined");
+        if (data === undefined || data === null) {
+            throw new Error("fingerprint data must not be undefined or null");
         }
         this.sha = computeShaOf(this.data);
     }
