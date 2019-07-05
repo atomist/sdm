@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import * as jsSHA from "jssha";
  * @return {string}
  */
 export function computeShaOf(s: string): string {
+    if (s === undefined) {
+        throw new Error("Cannot compute SHA of undefined");
+    }
     const shaObj = new jsSHA("SHA-512", "TEXT");
     shaObj.update(s);
     return shaObj.getHash("HEX");
