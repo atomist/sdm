@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as jsSHA from "jssha";
+import * as crypto from "crypto";
 
 /**
  * Compute the sha of the given string
@@ -25,7 +25,5 @@ export function computeShaOf(s: string): string {
     if (s === undefined || s === null) {
         throw new Error("Cannot compute SHA of undefined or null");
     }
-    const shaObj = new jsSHA("SHA-512", "TEXT");
-    shaObj.update(s);
-    return shaObj.getHash("HEX");
+    return crypto.createHash("sha512").update(s).digest("hex");
 }
