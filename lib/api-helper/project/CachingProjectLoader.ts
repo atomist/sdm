@@ -90,7 +90,7 @@ export class CachingProjectLoader implements ProjectLoader {
             params.context.lifecycle.registerDisposable(async () => this.cleanUp(p.baseDir, "disposal"));
         } else {
             // schedule a cleanup timer but don't block the Node.js event loop for this
-            setTimeout(() => this.cleanUp(p.baseDir, "timeout"), 10000).unref();
+            setTimeout(async () => this.cleanUp(p.baseDir, "timeout"), 10000).unref();
             // also store a reference to this project to be deleted when we exit
             this.deleteOnExit.push(p.baseDir);
         }
@@ -102,15 +102,15 @@ export class CachingProjectLoader implements ProjectLoader {
      * @param dir
      * @param reason
      */
-    private cleanUp(dir: string, reason: "timeout" | "disposal" | "eviction" | "shutdown"): void {
-        if (dir && fs.existsSync(dir)) {
+    private async cleanUp(dir: string, reason: "timeout" | "disposal" | "eviction" | "shutdown"): Promise<void> {
+        if (dir && await fs.pathExists(dir)) {
             if (reason === "timeout") {
                 logger.debug(`Deleting project '%s' because a timeout passed`, dir);
             } else {
                 logger.debug(`Deleting project '%s' because %s was triggered`, dir, reason);
             }
             try {
-                fs.removeSync(dir);
+                await fs.remove(dir);
                 const ix = this.deleteOnExit.indexOf(dir);
                 if (ix >= 0) {
                     this.deleteOnExit.slice(ix, 1);
@@ -130,9 +130,7 @@ export class CachingProjectLoader implements ProjectLoader {
             if (this.deleteOnExit.length > 0) {
                 logger.debug("Deleting cached projects");
             }
-            this.deleteOnExit.forEach(p => {
-                this.cleanUp(p, "shutdown");
-            });
+            await Promise.all(this.deleteOnExit.map(p => this.cleanUp(p, "shutdown")));
             return 0;
         }, 10000, `deleting cached projects`);
     }
