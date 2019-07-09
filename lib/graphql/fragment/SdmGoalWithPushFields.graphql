@@ -14,7 +14,12 @@ fragment SdmGoalWithPushFields on SdmGoal {
   description
   url
   externalUrl
+  externalUrls {
+    label
+    url
+  }
   state
+  phase
   externalKey
   goalSet
   goalSetId
@@ -36,6 +41,16 @@ fragment SdmGoalWithPushFields on SdmGoal {
     channelId
   }
   approvalRequired
+  preApproval {
+    correlationId
+    registration
+    name
+    version
+    ts
+    userId
+    channelId
+  }
+  preApprovalRequired
   provenance {
     correlationId
     registration
@@ -46,5 +61,6 @@ fragment SdmGoalWithPushFields on SdmGoal {
     channelId
   }
   data
+  version
   signature
 }
