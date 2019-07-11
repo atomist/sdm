@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.6.0...HEAD)
 
+### Changed
+
+-   Update automation-client and lodash. [82b3dd3](https://github.com/atomist/sdm/commit/82b3dd39fae094838a404e6820fd249ddc936a39)
+
 ## [1.6.0](https://github.com/atomist/sdm/compare/1.5.1...1.6.0) - 2019-07-09
 
 ### Added
