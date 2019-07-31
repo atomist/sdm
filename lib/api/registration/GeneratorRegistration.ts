@@ -70,5 +70,5 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * Note: these hooks fire after the project has been generated and
      * pushed to the remote repository.
      */
-    afterAction?: ProjectAction<PARAMS> | Array<ProjectAction<PARAMS>>;
+    afterAction?: ProjectAction<PARAMS & SeedDrivenGeneratorParameters> | Array<ProjectAction<PARAMS & SeedDrivenGeneratorParameters>>;
 }
