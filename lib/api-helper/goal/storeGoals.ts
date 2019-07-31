@@ -145,7 +145,10 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
             environment: environmentFromGoal(d),
         })));
     }
-
+    let retryFeasible = goal.definition.retryFeasible ? goal.definition.retryFeasible : false;
+    if (!!fulfillment && fulfillment.method === SdmGoalFulfillmentMethod.SideEffect) {
+        retryFeasible = false;
+    }
     return {
         goalSet,
         goalSetId,
@@ -167,7 +170,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         ts: Date.now(),
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
         preApprovalRequired: goal.definition.preApprovalRequired ? goal.definition.preApprovalRequired : false,
-        retryFeasible: goal.definition.retryFeasible ? goal.definition.retryFeasible : false,
+        retryFeasible,
         provenance: [constructProvenance(ctx)],
         preConditions,
         version: 1,
