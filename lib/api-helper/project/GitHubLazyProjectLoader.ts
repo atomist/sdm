@@ -258,9 +258,9 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.push(options)) as any;
     }
 
-    public raisePullRequest(title: string, body: string): Promise<this> {
+    public raisePullRequest(title: string, body: string, targetBranch?: string): Promise<this> {
         this.materializeIfNecessary("raisePullRequest");
-        return this.projectPromise.then(mp => mp.raisePullRequest(title, body)) as any;
+        return this.projectPromise.then(mp => mp.raisePullRequest(title, body, targetBranch)) as any;
     }
 
     public revert(): Promise<this> {
