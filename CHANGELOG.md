@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.6.1...HEAD)
 
+### Added
+
+-   Update GeneratorRegistration Interface for AfterActions. [#758](https://github.com/atomist/sdm/issues/758)
+
 ### Fixed
 
 -   Queue goal doesn't start when canceling a single goal set. [#727](https://github.com/atomist/sdm/issues/727)
