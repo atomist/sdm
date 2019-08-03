@@ -124,7 +124,7 @@ function isDryRun(params: any): boolean {
 }
 
 function slug(id: RemoteRepoRef): string {
-    return `${id.owner}/${id.repo}`;
+    return `${id.owner}/${id.repo}/${id.branch}`;
 }
 
 async function sendDryRunUpdateMessage(codeTransformName: string,
