@@ -33,6 +33,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import stringify = require("json-stringify-safe");
 import {
     DryRunParameter,
     MsgIdParameter,
@@ -44,7 +45,6 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { confirmEditedness } from "./confirmEditedness";
-import stringify = require("json-stringify-safe");
 
 /**
  * Wrap this editor to make it chatty, so it responds to Slack if there's nothing to do.
