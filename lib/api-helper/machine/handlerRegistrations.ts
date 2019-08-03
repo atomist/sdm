@@ -461,9 +461,9 @@ export const DryRunParameter: NamedParameter = {
     defaultValue: false,
     type: "boolean",
 };
-export const DryRunMsgIdParameter: NamedParameter = {
-    name: "dry-run.msgId",
-    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+export const MsgIdParameter: NamedParameter = {
+    name: "msgId",
+    description: "Id of the code transform message",
     required: false,
     type: "string",
     displayable: false,
@@ -474,7 +474,7 @@ export const DryRunMsgIdParameter: NamedParameter = {
  */
 function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
     const params = toParametersListing(c.parameters || {} as any);
-    params.parameters.push(DryRunParameter, DryRunMsgIdParameter);
+    params.parameters.push(DryRunParameter, MsgIdParameter);
     c.parameters = params;
 }
 

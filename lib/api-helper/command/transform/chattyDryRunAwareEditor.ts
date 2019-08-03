@@ -33,10 +33,9 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
-import stringify = require("json-stringify-safe");
 import {
-    DryRunMsgIdParameter,
     DryRunParameter,
+    MsgIdParameter,
 } from "../../machine/handlerRegistrations";
 import { execPromise } from "../../misc/child_process";
 import {
@@ -45,6 +44,7 @@ import {
     slackSuccessMessage,
 } from "../../misc/slack/messages";
 import { confirmEditedness } from "./confirmEditedness";
+import stringify = require("json-stringify-safe");
 
 /**
  * Wrap this editor to make it chatty, so it responds to Slack if there's nothing to do.
@@ -77,12 +77,13 @@ export function chattyDryRunAwareEditor(editorName: string,
                         `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
                         `Code transform ${italic(editorName)} failed while changing ${bold(slug(id))}:\n\n${
                             editResult.error ? codeBlock(editResult.error.message) : ""}`,
-                        context), { id: params[DryRunMsgIdParameter.name] });
+                        context), { id: params[MsgIdParameter.name] });
                 } else {
                     await context.messageClient.respond(
                         slackInfoMessage(
                             `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                            `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`));
+                            `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`),
+                        { id: params[MsgIdParameter.name] });
                 }
             } else if (isDryRun(params)) {
                 let diff = "";
@@ -106,7 +107,7 @@ ${codeBlock(err.message)}`;
                 slackErrorMessage(
                     `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
                     `Code transform ${italic(editorName)} failed while changing ${bold(slug(id))}:\n\n${codeBlock(err.message)}`,
-                    context), { id: params[DryRunMsgIdParameter.name] });
+                    context), { id: params[MsgIdParameter.name] });
             logger.warn("Code Transform error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false };
         }
@@ -130,12 +131,12 @@ async function sendDryRunUpdateMessage(codeTransformName: string,
                                        id: RemoteRepoRef,
                                        params: any,
                                        ctx: HandlerContext): Promise<void> {
-    if (!!params[DryRunMsgIdParameter.name]) {
+    if (!!params[MsgIdParameter.name]) {
         await ctx.messageClient.respond(
             slackInfoMessage(
                 "Code Transform",
                 `Applying code transform ${italic(codeTransformName)} to ${bold(slug(id))}`),
-            { id: params[DryRunMsgIdParameter.name] });
+            { id: params[MsgIdParameter.name] });
     }
 }
 
@@ -143,7 +144,7 @@ async function sendSuccessMessage(codeTransformName: string,
                                   id: RemoteRepoRef,
                                   params: any,
                                   ctx: HandlerContext): Promise<void> {
-    const msgId = params[DryRunMsgIdParameter.name];
+    const msgId = params[MsgIdParameter.name];
     await ctx.messageClient.respond(
         slackSuccessMessage(
             "Code Transform",
@@ -156,7 +157,7 @@ async function sendDryRunSummaryMessage(codeTransformName: string,
                                         diff: string,
                                         params: any,
                                         ctx: HandlerContext): Promise<void> {
-    const msgId = guid();
+    const msgId = params[MsgIdParameter.name] || guid();
     const applyAction = {
         actions: [
             buttonForCommand(
@@ -166,7 +167,7 @@ async function sendDryRunSummaryMessage(codeTransformName: string,
                     // reuse the other parameters, but set the dryRun flag to false and pin to one repo
                     ...params,
                     "dry-run": false,
-                    "dry-run.msgId": msgId,
+                    "msgId": msgId,
                     "targets.sha": params.targets.sha,
                     "targets.owner": id.owner,
                     "targets.repo": id.repo,
