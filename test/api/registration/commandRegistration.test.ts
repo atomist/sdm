@@ -260,7 +260,7 @@ describe("command registrations", () => {
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "targets.repos"));
         assert(instance.parameters.some(p => p.name === "dry-run"));
-        assert(instance.parameters.some(p => p.name === "dry-run.msgId"));
+        assert(instance.parameters.some(p => p.name === "msgId"));
         const pi = instance.freshParametersInstance();
         assert(!!pi);
     });
