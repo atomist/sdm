@@ -143,4 +143,22 @@ describe("createJob", () => {
         assert.deepStrictEqual(result, { id: "123456" });
     });
 
+    it("should reject invalid parameters", async () => {
+
+        try {
+            await createJob({
+                    command: "TestCommand",
+                    registration: "@atomist/sdm-test",
+                    description: "This is a test command",
+                    parameters: [],
+                },
+                undefined,
+            );
+            assert.fail();
+        } catch (e) {
+            assert(e.message === "Invalid parameters passed. Please pass at least one empty object!");
+        }
+
+    });
+
 });

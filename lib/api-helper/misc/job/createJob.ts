@@ -67,7 +67,10 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
     data.secrets = [];
 
     const cmd = typeof command === "string" ? command : command.name;
-    const params = Array.isArray(parameters) ? parameters : [parameters];
+    const params = (Array.isArray(parameters) ? parameters : [parameters]).filter(p => !!p);
+    if (params.length === 0) {
+        throw new Error(`Invalid parameters passed. Please pass at least one empty object!`);
+    }
 
     const result = await ctx.graphClient.mutate<CreateJob.Mutation, CreateJob.Variables>({
         name: "CreateJob",
