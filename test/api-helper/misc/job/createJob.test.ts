@@ -143,4 +143,38 @@ describe("createJob", () => {
         assert.deepStrictEqual(result, { id: "123456" });
     });
 
+    it("should not reject invalid parameters", async () => {
+
+        const result = await createJob({
+            command: "TestCommand",
+            registration: "@atomist/sdm-test",
+            description: "This is a test command",
+            parameters: [],
+        }, {
+            context: {
+                name: "@atomist/sdm-test",
+            },
+            graphClient: {
+                mutate: async options => {
+                    const vars = options.variables;
+                    assert.strictEqual(vars.name, "TestCommand");
+                    assert.strictEqual(vars.description, "This is a test command");
+                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                    assert.strictEqual(vars.tasks.length, 1);
+                    assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                    assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                        type: JobTaskType.Command,
+                        parameters: { },
+                    }));
+                    return {
+                        createAtmJob: { id: "123456" },
+                    } as any;
+                },
+            } as any,
+        } as any);
+
+        assert.deepStrictEqual(result, { id: "123456" });
+
+    });
+
 });
