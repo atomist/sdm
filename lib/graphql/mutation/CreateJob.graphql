@@ -3,6 +3,7 @@ mutation CreateJob(
   $name: String!
   $description: String!
   $owner: String!
+  $concurrentTasks: Int
   $tasks: [AtmJobTaskInput!]!
 ) {
   createAtmJob(
@@ -12,6 +13,7 @@ mutation CreateJob(
       description: $description
       owner: $owner
       jobTasks: $tasks
+      maxRunningTasks: $concurrentTasks
     }
   ) {
     id

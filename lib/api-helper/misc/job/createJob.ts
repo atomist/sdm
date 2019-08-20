@@ -43,6 +43,9 @@ export interface JobDetails<T extends ParameterType> {
     parameters: T | T[];
     name?: string;
     description?: string;
+
+    /** Optional maximum number of concurrent tasks; defaults to running all tasks in parallel */
+    concurrentTasks?: number;
 }
 
 /**
@@ -86,6 +89,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                     parameters: p,
                 }),
             })),
+            concurrentTasks: details.concurrentTasks,
         },
         options: MutationNoCacheOptions,
     });
