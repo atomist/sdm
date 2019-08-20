@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Update GeneratorRegistration Interface for AfterActions. [#758](https://github.com/atomist/sdm/issues/758)
+-   Add concurrentTasks to createJob. [bb21ac6](https://github.com/atomist/sdm/commit/bb21ac650148fe340d1310a0ab75bd61a1aa49ce)
 
 ### Fixed
 
