@@ -30,7 +30,6 @@ import * as stringify from "json-stringify-safe";
 export async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
     if (editResult.edited === undefined) {
         const gs = await (editResult.target as GitProject).gitStatus();
-        logger.debug("Git status: " + stringify(gs));
         return {
             ...editResult,
             edited: !gs.isClean,

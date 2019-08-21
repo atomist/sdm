@@ -85,6 +85,7 @@ export function chattyDryRunAwareEditor(editorName: string,
                             `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`),
                         { id: params[MsgIdParameter.name] });
                 }
+                return { target: project, edited: false, success: false };
             } else if (isDryRun(params)) {
                 let diff = "";
                 try {

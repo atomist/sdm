@@ -202,9 +202,7 @@ ${codeBlock(vr.message)}`,
                         return ci.addressChannels(
                             slackErrorMessage(
                                 `Code Transform`,
-                                `Code transform ${italic(ci.commandName)} failed:
-
-${codeBlock(error.message)}`,
+                                `Code transform ${italic(ci.commandName)} failed${!!error.message ? ":\n\n" + codeBlock(error.message) : "."}`,
                                 ci.context,
                             ),
                         );
@@ -216,9 +214,7 @@ ${codeBlock(error.message)}`,
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Code transform ${italic(ci.commandName)} failed:
-
-${codeBlock(e.message)}`,
+                        `Code transform ${italic(ci.commandName)} failed${!!e.message ? ":\n\n" + codeBlock(e.message) : "."}`,
                         ci.context,
                     ),
                 );
