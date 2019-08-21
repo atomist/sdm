@@ -174,7 +174,9 @@ ${codeBlock(vr.message)}`,
                     };
                     params.targets.repos = undefined;
                     params.targets.repo = undefined;
-                    delete params.job;
+                    delete params["job.name"];
+                    delete params["job.description"];
+                    delete params["job.required"];
 
                     await createJob(
                         {
@@ -188,9 +190,7 @@ ${codeBlock(vr.message)}`,
                                     branch: id.branch,
                                     sha: id.sha,
                                 },
-                                job: {
-                                    required: false,
-                                },
+                                "job.required": false,
                             })),
                             description: _.get(ci.parameters, "job.description")
                                 || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${ids.length === 1 ? "repository" : "repositories"}`,
@@ -301,7 +301,9 @@ ${codeBlock(vr.message)}`,
                     };
                     params.targets.repos = undefined;
                     params.targets.repo = undefined;
-                    delete params.job;
+                    delete params["job.name"];
+                    delete params["job.description"];
+                    delete params["job.required"];
 
                     await createJob(
                         {
@@ -315,9 +317,7 @@ ${codeBlock(vr.message)}`,
                                     branch: id.branch,
                                     sha: id.sha,
                                 },
-                                job: {
-                                    required: false,
-                                },
+                                "job.required": false,
                             })),
                             description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
                         },
@@ -521,8 +521,7 @@ export const JobRequiredParameter: NamedParameter = {
     name: "job.required",
     description: "Is job required",
     required: false,
-    type: "string",
-    displayable: false,
+    type: "boolean",
 };
 
 /**
