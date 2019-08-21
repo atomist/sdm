@@ -62,13 +62,6 @@ export function chattyDryRunAwareEditor(editorName: string,
 
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, params);
             const editResult = await confirmEditedness(tentativeEditResult);
-            logger.debug(
-                "Code Transform %s on '%s/%s': git status: '%s', edit result: %s",
-                editorName,
-                project.id.owner,
-                project.id.repo,
-                stringify(await project.gitStatus(), replacer),
-                stringify(editResult, replacer));
 
             // Figure out if this CodeTransform is running in dryRun mode; if so capture git diff and don't push changes
             if (!editResult.edited) {

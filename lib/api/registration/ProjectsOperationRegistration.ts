@@ -43,4 +43,14 @@ export interface ProjectsOperationRegistration<PARAMS> extends CommandRegistrati
      */
     projectTest?: ProjectPredicate;
 
+    /**
+     * Configure the concurrency behavior of running project operations
+     * on many repos
+     */
+    concurrency?: {
+        /** Maximum number of concurrent project operations would be executing */
+        maxConcurrent?: number;
+        /** Indicate if a Job scheduling is required; even for only one project operation */
+        requiresJob?: boolean;
+    }
 }

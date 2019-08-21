@@ -61,6 +61,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import * as _ from "lodash";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { NoParameterPrompt } from "../../api/context/parameterPrompt";
@@ -123,6 +124,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
     addDryRunParameters(ctr);
+    addJobParameters(ctr);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
@@ -155,19 +157,28 @@ ${codeBlock(vr.message)}`,
                     false,
                     ci.context);
 
+            const concurrency = {
+                maxConcurrent: 2, // TODO make maxConcurrent globally configurable
+                requiresJob: false,
+                ...(ctr.concurrency || {}),
+            };
+
             try {
                 const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, ctr.repoFilter));
-                if (ids.length > 1) {
+                const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
+
+                if (ids.length > 1 || !!requiresJob) {
 
                     const params: any = {
                         ...ci.parameters,
                     };
                     params.targets.repos = undefined;
                     params.targets.repo = undefined;
+                    delete params.job;
 
                     await createJob(
                         {
-                            name: `CodeTransform/${ci.commandName}`,
+                            name: _.get(ci.parameters, "job.name") || `CodeTransform/${ci.commandName}`,
                             command: ci.commandName,
                             parameters: ids.map(id => ({
                                 ...params,
@@ -177,8 +188,13 @@ ${codeBlock(vr.message)}`,
                                     branch: id.branch,
                                     sha: id.sha,
                                 },
+                                job: {
+                                    required: false,
+                                }
                             })),
-                            description: `Running code transform ${italic(ci.commandName)} on ${ids.length} repositories`,
+                            description: _.get(ci.parameters, "job.description")
+                                || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${ids.length === 1 ? "repository" : "repositories"}`,
+                            concurrentTasks: concurrency.maxConcurrent,
                         },
                         ci.context);
 
@@ -227,6 +243,7 @@ ${codeBlock(vr.message)}`,
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     const mo = toMachineOptions(sdm);
+    addJobParameters(cir);
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
@@ -267,15 +284,24 @@ ${codeBlock(vr.message)}`,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true,
                     ci.context);
+
+            const concurrency = {
+                maxConcurrent: 2, // TODO make maxConcurrent globally configurable
+                requiresJob: false,
+                ...(cir.concurrency || {}),
+            };
+
             try {
                 const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, cir.repoFilter));
-                if (ids.length > 1) {
+                const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
+                if (ids.length > 1 || !!requiresJob) {
 
                     const params: any = {
                         ...ci.parameters,
                     };
                     params.targets.repos = undefined;
                     params.targets.repo = undefined;
+                    delete params.job;
 
                     await createJob(
                         {
@@ -289,6 +315,9 @@ ${codeBlock(vr.message)}`,
                                     branch: id.branch,
                                     sha: id.sha,
                                 },
+                                job: {
+                                    required: false,
+                                }
                             })),
                             description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
                         },
@@ -471,6 +500,37 @@ export const MsgIdParameter: NamedParameter = {
 function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
     const params = toParametersListing(c.parameters || {} as any);
     params.parameters.push(DryRunParameter, MsgIdParameter);
+    c.parameters = params;
+}
+
+export const JobNameParameter: NamedParameter = {
+    name: "job.name",
+    description: "Name of the job to create",
+    required: false,
+    type: "string",
+    displayable: false,
+};
+export const JobDescriptionParameter: NamedParameter = {
+    name: "job.description",
+    description: "Description of the job to create",
+    required: false,
+    type: "string",
+    displayable: false,
+};
+export const JobRequiredParameter: NamedParameter = {
+    name: "job.required",
+    description: "Is job required",
+    required: false,
+    type: "string",
+    displayable: false,
+};
+
+/**
+ * Add the job parameter into the list of parameters
+ */
+function addJobParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
+    const params = toParametersListing(c.parameters || {} as any);
+    params.parameters.push(JobNameParameter, JobDescriptionParameter, JobRequiredParameter);
     c.parameters = params;
 }
 
