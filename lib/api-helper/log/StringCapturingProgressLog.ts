@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import stripAnsi from "strip-ansi";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { format } from "./format";
 
@@ -27,6 +28,8 @@ export class StringCapturingProgressLog implements ProgressLog {
 
     public log: string = "";
 
+    public stripAnsi: boolean = false;
+
     public close(): Promise<void> {
         return Promise.resolve();
     }
@@ -36,10 +39,11 @@ export class StringCapturingProgressLog implements ProgressLog {
     }
 
     public write(msg: string, ...args: string[]): void {
+        const m = this.stripAnsi ? stripAnsi(msg) : msg;
         if (this.log) {
-            this.log += format(msg, ...args);
+            this.log += format(m, ...args);
         } else {
-            this.log = format(msg, ...args);
+            this.log = format(m, ...args);
         }
     }
 
