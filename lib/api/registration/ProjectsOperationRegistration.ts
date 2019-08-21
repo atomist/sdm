@@ -52,5 +52,5 @@ export interface ProjectsOperationRegistration<PARAMS> extends CommandRegistrati
         maxConcurrent?: number;
         /** Indicate if a Job scheduling is required; even for only one project operation */
         requiresJob?: boolean;
-    }
+    };
 }

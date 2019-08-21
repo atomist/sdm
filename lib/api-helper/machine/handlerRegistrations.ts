@@ -190,7 +190,7 @@ ${codeBlock(vr.message)}`,
                                 },
                                 job: {
                                     required: false,
-                                }
+                                },
                             })),
                             description: _.get(ci.parameters, "job.description")
                                 || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${ids.length === 1 ? "repository" : "repositories"}`,
@@ -317,7 +317,7 @@ ${codeBlock(vr.message)}`,
                                 },
                                 job: {
                                     required: false,
-                                }
+                                },
                             })),
                             description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
                         },
