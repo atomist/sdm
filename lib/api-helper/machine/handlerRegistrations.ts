@@ -184,7 +184,7 @@ ${codeBlock(vr.message)}`,
                             command: ci.commandName,
                             parameters: ids.map(id => ({
                                 ...params,
-                                targets: {
+                                "targets": {
                                     owner: id.owner,
                                     repo: id.repo,
                                     branch: id.branch,
@@ -311,7 +311,7 @@ ${codeBlock(vr.message)}`,
                             command: ci.commandName,
                             parameters: ids.map(id => ({
                                 ...params,
-                                targets: {
+                                "targets": {
                                     owner: id.owner,
                                     repo: id.repo,
                                     branch: id.branch,
