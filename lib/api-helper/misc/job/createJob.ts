@@ -71,9 +71,6 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
 
     const cmd = typeof command === "string" ? command : command.name;
     let params = (Array.isArray(parameters) ? parameters : [parameters]).filter(p => !!p);
-    if (params.length === 0) {
-       params = [{}] as T[];
-    }
 
     const result = await ctx.graphClient.mutate<CreateJob.Mutation, CreateJob.Variables>({
         name: "CreateJob",

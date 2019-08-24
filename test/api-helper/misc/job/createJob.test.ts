@@ -143,7 +143,7 @@ describe("createJob", () => {
         assert.deepStrictEqual(result, { id: "123456" });
     });
 
-    it("should allow an empty parameter array", async () => {
+    it("should allow an empty parameter array to create no tasks", async () => {
 
         const result = await createJob({
             command: "TestCommand",
@@ -160,11 +160,45 @@ describe("createJob", () => {
                     assert.strictEqual(vars.name, "TestCommand");
                     assert.strictEqual(vars.description, "This is a test command");
                     assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                    assert.strictEqual(vars.tasks.length, 0);
+                    // assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                    // assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                    //     type: JobTaskType.Command,
+                    //     parameters: { },
+                    // }));
+                    return {
+                        createAtmJob: { id: "123456" },
+                    } as any;
+                },
+            } as any,
+        } as any);
+
+        assert.deepStrictEqual(result, { id: "123456" });
+
+    });
+
+    it("should allow an parameter array with empty object to create at least one task", async () => {
+
+        const result = await createJob({
+            command: "TestCommand",
+            registration: "@atomist/sdm-test",
+            description: "This is a test command",
+            parameters: [{}],
+        }, {
+            context: {
+                name: "@atomist/sdm-test",
+            },
+            graphClient: {
+                mutate: async options => {
+                    const vars = options.variables;
+                    assert.strictEqual(vars.name, "TestCommand");
+                    assert.strictEqual(vars.description, "This is a test command");
+                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
                     assert.strictEqual(vars.tasks.length, 1);
                     assert.strictEqual(vars.tasks[0].name, "TestCommand");
                     assert.strictEqual(vars.tasks[0].data, JSON.stringify({
                         type: JobTaskType.Command,
-                        parameters: { },
+                        parameters: {},
                     }));
                     return {
                         createAtmJob: { id: "123456" },
