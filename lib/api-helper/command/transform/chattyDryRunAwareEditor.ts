@@ -113,7 +113,7 @@ function slug(id: RemoteRepoRef): string {
 }
 
 function isChatty(ctr: CodeTransformRegistration): boolean {
-    if (!!ctr.chatty) {
+    if (ctr.chatty !== undefined) {
         return ctr.chatty;
     } else {
         return true;
