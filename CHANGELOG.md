@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add concurrentTasks to createJob. [bb21ac6](https://github.com/atomist/sdm/commit/bb21ac650148fe340d1310a0ab75bd61a1aa49ce)
 -   Single repo operations as jobs. [1b87048](https://github.com/atomist/sdm/commit/1b87048dad545a16d62d4e512c31972c13bc69fc)
 
+### Changed
+
+-   Allow to disable code transform messages. [a517d2b](https://github.com/atomist/sdm/commit/a517d2b778579fb3584ac1d60c571c9043e5e0b2)
+
 ### Fixed
 
 -   Queue goal doesn't start when canceling a single goal set. [#727](https://github.com/atomist/sdm/issues/727)
