@@ -53,4 +53,11 @@ export interface ProjectsOperationRegistration<PARAMS> extends CommandRegistrati
         /** Indicate if a Job scheduling is required; even for only one project operation */
         requiresJob?: boolean;
     };
+
+    /**
+     * Whether or not this project operation should send messages during processing.
+     *
+     * Defaults to true.
+     */
+    chatty?: boolean;
 }

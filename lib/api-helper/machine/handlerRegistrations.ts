@@ -203,7 +203,7 @@ ${codeBlock(vr.message)}`,
                     const result = await editOne<any>(
                         ci.context,
                         ci.credentials,
-                        chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
+                        chattyDryRunAwareEditor(ctr, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
                         editMode,
                         ids[0],
                         ci.parameters,

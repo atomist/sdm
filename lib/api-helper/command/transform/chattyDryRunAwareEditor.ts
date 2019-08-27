@@ -22,9 +22,9 @@ import {
     logger,
     RemoteRepoRef,
 } from "@atomist/automation-client";
-import { replacer } from "@atomist/automation-client/lib/internal/util/string";
 import {
     AnyProjectEditor,
+    EditResult,
     ProjectEditor,
     toEditor,
 } from "@atomist/automation-client/lib/operations/edit/projectEditor";
@@ -33,7 +33,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
-import stringify = require("json-stringify-safe");
+import { CodeTransformRegistration } from "../../../api/registration/CodeTransformRegistration";
 import {
     DryRunParameter,
     MsgIdParameter,
@@ -50,15 +50,14 @@ import { confirmEditedness } from "./confirmEditedness";
  * Wrap this editor to make it chatty, so it responds to Slack if there's nothing to do.
  * It also honors the dryRun parameter flag to just capture the git diff and send it back to Slack instead
  * of pushing changes to Git.
- * @param editorName name of the editor
- * @param {AnyProjectEditor} underlyingEditor
  */
-export function chattyDryRunAwareEditor(editorName: string,
+export function chattyDryRunAwareEditor(ctr: CodeTransformRegistration<any>,
                                         underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context: HandlerContext, params: any) => {
         const id = project.id as RemoteRepoRef;
+        const editorName = ctr.name;
         try {
-            await sendDryRunUpdateMessage(editorName, id, params, context);
+            await sendDryRunUpdateMessage(editorName, id, params, context, ctr);
 
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, params);
             const editResult = await confirmEditedness(tentativeEditResult);
@@ -66,17 +65,9 @@ export function chattyDryRunAwareEditor(editorName: string,
             // Figure out if this CodeTransform is running in dryRun mode; if so capture git diff and don't push changes
             if (!editResult.edited) {
                 if (!editResult.success) {
-                    await context.messageClient.respond(slackErrorMessage(
-                        `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                        `Code transform ${italic(editorName)} failed while changing ${bold(slug(id))}:\n\n${
-                            editResult.error ? codeBlock(editResult.error.message) : ""}`,
-                        context), { id: params[MsgIdParameter.name] });
+                    await sendFailureMessage(editorName, id, params, editResult, context, ctr);
                 } else {
-                    await context.messageClient.respond(
-                        slackInfoMessage(
-                            `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
-                            `Code transform ${italic(editorName)} made no changes to ${bold(slug(id))}`),
-                        { id: params[MsgIdParameter.name] });
+                    await sendNoUpdateMessage(editorName, id, params, context, ctr);
                 }
                 return { target: project, edited: false, success: false };
             } else if (isDryRun(params)) {
@@ -90,10 +81,10 @@ export function chattyDryRunAwareEditor(editorName: string,
 
 ${codeBlock(err.message)}`;
                 }
-                await sendDryRunSummaryMessage(editorName, id, diff, params, context);
+                await sendDryRunSummaryMessage(editorName, id, diff, params, context, ctr);
                 return { target: project, edited: false, success: true };
             } else {
-                await sendSuccessMessage(editorName, id, params, context);
+                await sendSuccessMessage(editorName, id, params, context, ctr);
             }
             return editResult;
         } catch (err) {
@@ -121,11 +112,20 @@ function slug(id: RemoteRepoRef): string {
     return `${id.owner}/${id.repo}/${id.branch}`;
 }
 
+function isChatty(ctr: CodeTransformRegistration): boolean {
+    if (!!ctr.chatty) {
+        return ctr.chatty;
+    } else {
+        return true;
+    }
+}
+
 async function sendDryRunUpdateMessage(codeTransformName: string,
                                        id: RemoteRepoRef,
                                        params: any,
-                                       ctx: HandlerContext): Promise<void> {
-    if (!!params[MsgIdParameter.name]) {
+                                       ctx: HandlerContext,
+                                       ctr: CodeTransformRegistration): Promise<void> {
+    if (isChatty(ctr) && !!params[MsgIdParameter.name]) {
         await ctx.messageClient.respond(
             slackInfoMessage(
                 "Code Transform",
@@ -134,23 +134,56 @@ async function sendDryRunUpdateMessage(codeTransformName: string,
     }
 }
 
+async function sendFailureMessage(codeTransformName: string,
+                                  id: RemoteRepoRef,
+                                  params: any,
+                                  editResult: EditResult,
+                                  ctx: HandlerContext,
+                                  ctr: CodeTransformRegistration): Promise<void> {
+    if (isChatty(ctr)) {
+        await ctx.messageClient.respond(slackErrorMessage(
+            `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
+            `Code transform ${italic(codeTransformName)} failed while changing ${bold(slug(id))}:\n\n${
+                editResult.error ? codeBlock(editResult.error.message) : ""}`,
+            ctx), { id: params[MsgIdParameter.name] });
+    }
+}
+
+async function sendNoUpdateMessage(codeTransformName: string,
+                                   id: RemoteRepoRef,
+                                   params: any,
+                                   ctx: HandlerContext,
+                                   ctr: CodeTransformRegistration): Promise<void> {
+    if (isChatty(ctr)) {
+        await ctx.messageClient.respond(
+            slackInfoMessage(
+                `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
+                `Code transform ${italic(codeTransformName)} made no changes to ${bold(slug(id))}`),
+            { id: params[MsgIdParameter.name] });
+    }
+}
+
 async function sendSuccessMessage(codeTransformName: string,
                                   id: RemoteRepoRef,
                                   params: any,
-                                  ctx: HandlerContext): Promise<void> {
-    const msgId = params[MsgIdParameter.name];
-    await ctx.messageClient.respond(
-        slackSuccessMessage(
-            "Code Transform",
-            `Successfully applied code transform ${italic(codeTransformName)} to ${bold(slug(id))}`),
-        { id: msgId });
+                                  ctx: HandlerContext,
+                                  ctr: CodeTransformRegistration): Promise<void> {
+    if (isChatty(ctr)) {
+        const msgId = params[MsgIdParameter.name];
+        await ctx.messageClient.respond(
+            slackSuccessMessage(
+                "Code Transform",
+                `Successfully applied code transform ${italic(codeTransformName)} to ${bold(slug(id))}`),
+            { id: msgId });
+    }
 }
 
 async function sendDryRunSummaryMessage(codeTransformName: string,
                                         id: RemoteRepoRef,
                                         diff: string,
                                         params: any,
-                                        ctx: HandlerContext): Promise<void> {
+                                        ctx: HandlerContext,
+                                        ctr: CodeTransformRegistration): Promise<void> {
     const msgId = params[MsgIdParameter.name] || guid();
     const applyAction = {
         actions: [
