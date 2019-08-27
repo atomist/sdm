@@ -19,6 +19,7 @@ import { computeShaOf } from "../../misc/sha";
 
 /**
  * Convenient superclass for fingerprints.
+ * @deprecated use fingerprintOf() from fingerprint pack.
  */
 export abstract class AbstractFingerprint implements FingerprintData {
 
