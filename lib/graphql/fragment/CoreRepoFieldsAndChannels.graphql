@@ -14,10 +14,6 @@ fragment CoreRepoFieldsAndChannels on Repo {
       url
     }
   }
-  branches {
-    id
-    name
-  }
   channels {
     team {
       id
