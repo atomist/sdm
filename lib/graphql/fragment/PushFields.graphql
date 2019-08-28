@@ -13,7 +13,7 @@ fragment PushFields on Push {
       }
     }
   }
-  after {
+  after @required {
     url
     sha
     message
