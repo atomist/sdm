@@ -126,6 +126,7 @@ describe("making use of the pushMap structure", async () => {
                     if (pli.push) {
                         return new Goals("this is mysterious");
                     }
+                    return undefined;
                 },
             }]);
 

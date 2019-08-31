@@ -115,6 +115,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                 };
             }
         }
+        return undefined;
     };
 }
 

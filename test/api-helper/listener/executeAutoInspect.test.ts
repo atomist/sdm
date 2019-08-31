@@ -73,6 +73,7 @@ function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): 
         if (re.review.comments.length > 0) {
             return PushImpactResponse.requireApprovalToProceed;
         }
+        return undefined;
     };
 }
 

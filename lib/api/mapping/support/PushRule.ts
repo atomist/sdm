@@ -80,9 +80,9 @@ export class PushRule<V = any> implements StaticPushMapping<V>, Predicated<PushL
             return this.staticValue;
         } else {
             logger.debug(`Push test failed: ${this.pushTest.name}`);
+            return undefined;
         }
     }
-
 }
 
 export function isPredicatedStaticValue<T>(pushMapping: PushMapping<T>): pushMapping is StaticPushMapping<T> & Predicated<PushListenerInvocation> {

@@ -215,6 +215,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
 ${codeBlock(err.message)}`,
                 ctx));
     }
+    return undefined;
 }
 
 /**

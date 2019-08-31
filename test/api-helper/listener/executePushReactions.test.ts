@@ -39,6 +39,7 @@ function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): Pu
             if (stopTheWorld) {
                 return PushImpactResponse.failGoals;
             }
+            return undefined;
         },
     };
 }

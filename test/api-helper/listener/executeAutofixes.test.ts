@@ -259,6 +259,7 @@ describe("executeAutofixes", () => {
                 return false;
             }
             assert.fail();
+            return undefined;
         };
         (p as any as GitProject).commit = async () => undefined;
         (p as any as GitProject).push = async () => undefined;

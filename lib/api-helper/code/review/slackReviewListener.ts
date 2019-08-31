@@ -55,6 +55,7 @@ export function slackReviewListener(opts: Partial<SlackReviewRoutingParams> = {}
             await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels, paramsToUse.deepLink);
             return paramsToUse.pushReactionResponse;
         }
+        return undefined;
     };
 }
 

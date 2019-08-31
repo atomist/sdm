@@ -126,6 +126,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             } catch (e) {
                 logger.warn(`GoalExecutionListener failed: ${e.message}`);
                 logger.debug(e);
+                return undefined;
             }
         }));
     }

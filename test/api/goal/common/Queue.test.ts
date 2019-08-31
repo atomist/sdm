@@ -184,6 +184,7 @@ describe("Queue", () => {
                             };
                         }
                     }
+                    return undefined;
                 },
             };
             let start = 0;
