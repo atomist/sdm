@@ -25,10 +25,8 @@
   },
   "include": [
     "index.ts",
-    "views/**/*.tsx",
     "lib/**/*.ts",
     "test/**/*.ts",
-    "public/**/*.ts"
   ],
   "exclude": [
     ".#*"
