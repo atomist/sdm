@@ -193,7 +193,8 @@ ${codeBlock(vr.message)}`,
                                 "job.required": false,
                             })),
                             description: _.get(ci.parameters, "job.description")
-                                || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${ids.length === 1 ? "repository" : "repositories"}`,
+                                || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${
+                                ids.length === 1 ? "repository" : "repositories"}`,
                             concurrentTasks: concurrency.maxConcurrent,
                         },
                         ci.context);
