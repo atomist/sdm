@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Update GeneratorRegistration Interface for AfterActions. [#758](https://github.com/atomist/sdm/issues/758)
 -   Add concurrentTasks to createJob. [bb21ac6](https://github.com/atomist/sdm/commit/bb21ac650148fe340d1310a0ab75bd61a1aa49ce)
 -   Single repo operations as jobs. [1b87048](https://github.com/atomist/sdm/commit/1b87048dad545a16d62d4e512c31972c13bc69fc)
+-   Fail Goals after timeout . [#681](https://github.com/atomist/sdm/issues/681)
 
 ### Changed
 
