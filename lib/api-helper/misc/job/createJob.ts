@@ -86,7 +86,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                     parameters: p,
                 }),
             })),
-            concurrentTasks: details.concurrentTasks,
+            concurrentTasks: details.concurrentTasks || 1,
         },
         options: MutationNoCacheOptions,
     });
