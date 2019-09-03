@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Allow to disable code transform messages. [a517d2b](https://github.com/atomist/sdm/commit/a517d2b778579fb3584ac1d60c571c9043e5e0b2)
+-   Upgrade to graphql-codegen version 1.7.1. [#768](https://github.com/atomist/sdm/issues/768)
 
 ### Fixed
 
