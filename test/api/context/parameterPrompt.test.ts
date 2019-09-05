@@ -18,7 +18,6 @@ import {
     HandlerContext,
     MessageClient,
 } from "@atomist/automation-client";
-import { WebSocketLifecycle } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketLifecycle";
 import * as assert from "assert";
 import { CommandListenerExecutionInterruptError } from "../../../lib/api-helper/machine/handlerRegistrations";
 import { commandRequestParameterPromptFactory } from "../../../lib/api/context/parameterPrompt";

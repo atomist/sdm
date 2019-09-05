@@ -125,7 +125,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             command: trigger.command,
             source: trigger.source,
             destinations: [destination],
-            parameters: trigger.parameters,
+            parameters: [...(trigger.parameters || []), ...(trigger.mapped_parameters || [])],
             question: !!options.parameterStyle ? options.parameterStyle.toString() : undefined,
             parameter_specs: _.map(newParameters, (v, k) => ({
                 ...v,
