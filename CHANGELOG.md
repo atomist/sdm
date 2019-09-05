@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Queue goal doesn't start when canceling a single goal set. [#727](https://github.com/atomist/sdm/issues/727)
 -   Fix no parameters issue with createJob. [#759](https://github.com/atomist/sdm/issues/759)
 -   `promptFor` not sending continuation message in cluster mode. [#765](https://github.com/atomist/sdm/issues/765)
+-   Include mapped parameters when sending continuation message. [af0729d](https://github.com/atomist/sdm/commit/af0729dd994cc201891f623884cdda04ace3cec1)
 
 ## [1.6.1](https://github.com/atomist/sdm/compare/1.6.0...1.6.1) - 2019-07-11
 
