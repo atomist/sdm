@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.7.0...HEAD)
 
+### Fixed
+
+-   Correct interface for spawnCodeTransform. [#770](https://github.com/atomist/sdm/issues/770)
+
 ## [1.7.0](https://github.com/atomist/sdm/compare/1.6.1...1.7.0) - 2019-09-09
 
 ### Added
