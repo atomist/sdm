@@ -48,7 +48,23 @@ describe("Queue", () => {
                 addGoalImplementation: async (implementationName: string,
                                               goal: Goal,
                                               goalExecutor: ExecuteGoal) => {
-                    const r = await goalExecutor({} as any);
+                    const c: any = {
+                        configuration: {
+                            name: "test",
+                        },
+                        context: {
+                            graphClient: {
+                                query: async () => { },
+                            },
+                        },
+                        goalEvent: {
+                            goalSetId: "x",
+                        },
+                        progressLog: {
+                            write: () => { },
+                        },
+                    };
+                    const r = await goalExecutor(c);
                     assert.strictEqual((r as any).state, SdmGoalState.in_process);
                 },
                 configuration: {

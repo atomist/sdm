@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SpawnLogCommand } from "../../../api-helper/misc/child_process";
+import { SpawnLogInvocation } from "../../../api-helper/misc/child_process";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,
@@ -28,8 +28,8 @@ import { spawnCodeTransform } from "../../command/transform/spawnCodeTransform";
 export function spawnAutofix(name: string,
                              pushTest: PushTest,
                              options: AutofixRegistrationOptions,
-                             command1: SpawnLogCommand,
-                             ...additionalCommands: SpawnLogCommand[]): AutofixRegistration {
+                             command1: SpawnLogInvocation,
+                             ...additionalCommands: SpawnLogInvocation[]): AutofixRegistration {
     return {
         name,
         transform: spawnCodeTransform([command1, ...additionalCommands]),

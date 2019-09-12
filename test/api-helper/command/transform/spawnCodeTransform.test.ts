@@ -37,7 +37,7 @@ describe("spawnCodeTransform", () => {
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(0);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === true);
@@ -54,7 +54,7 @@ describe("spawnCodeTransform", () => {
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(0);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === true);
@@ -73,7 +73,7 @@ describe("spawnCodeTransform", () => {
                 { command: "node", args: ["-e", "process.exit(0);"] },
                 { command: "node", args: ["-e", "process.exit(0);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === true);
@@ -90,7 +90,7 @@ describe("spawnCodeTransform", () => {
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(1);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === false);
@@ -108,7 +108,7 @@ describe("spawnCodeTransform", () => {
             const t = spawnCodeTransform([
                 { command: "node", args: ["-e", "process.exit(4);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === false);
@@ -127,7 +127,7 @@ describe("spawnCodeTransform", () => {
                 { command: "node", args: ["-e", "process.exit(2);"] },
                 { command: "node", args: ["-e", "process.exit(0);"] },
             ]);
-            const r = await t(p, undefined) as TransformResult;
+            const r = await t(p, {} as any) as TransformResult;
             assert(r);
             assert(r.target);
             assert(r.success === false);
