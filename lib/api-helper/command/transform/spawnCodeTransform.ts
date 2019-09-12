@@ -18,16 +18,19 @@ import {
     GitProject,
     GitStatus,
     logger,
+    NoParameters,
 } from "@atomist/automation-client";
 import {
     CodeTransform,
     TransformResult,
 } from "../../../api/registration/CodeTransform";
+import { PushAwareParametersInvocation } from "../../../api/registration/PushAwareParametersInvocation";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import {
     spawnLog,
     SpawnLogCommand,
+    SpawnLogInvocation,
     SpawnLogOptions,
     SpawnLogResult,
 } from "../../misc/child_process";
@@ -66,13 +69,13 @@ async function spawnToTransform(p: GitProject, r: MinSpawnLogResult): Promise<Tr
  * @param log where to log output from commands
  * @return result of commands, success or the first failure
  */
-export function spawnCodeTransform(commands: SpawnLogCommand[], log: ProgressLog = new LoggingProgressLog("spawnCodeTransform")): CodeTransform {
-    return async (p: GitProject) => {
-        log.stripAnsi = true;
+export function spawnCodeTransform(commands: SpawnLogInvocation[], log?: ProgressLog): CodeTransform {
+    return async (p: GitProject, papi: PushAwareParametersInvocation<NoParameters>) => {
         const defaultOptions: SpawnLogOptions = {
             cwd: p.baseDir,
-            log,
+            log: log || papi.progressLog || new LoggingProgressLog("spawnCodeTransform"),
         };
+        defaultOptions.log.stripAnsi = true;
         let commandResult: MinSpawnLogResult;
         for (const cmd of commands) {
             try {
