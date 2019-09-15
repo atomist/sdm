@@ -280,7 +280,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     private materializeIfNecessary(why: string): QueryablePromise<GitProject> {
         if (!this.materializing()) {
-            logger.info("Materializing project %j because of %s", this.id, why);
+            logger.debug("Materializing project %j because of %s", this.id, why);
             this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));
         }
         return this.projectPromise;

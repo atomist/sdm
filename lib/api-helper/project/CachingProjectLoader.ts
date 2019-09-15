@@ -43,12 +43,12 @@ export class CachingProjectLoader implements ProjectLoader {
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         // read-only == false means the consumer is going to make changes; don't cache such projects
         if (!params.readOnly) {
-            logger.info("Forcing fresh clone for non readonly use of '%j'", params.id);
+            logger.debug("Forcing fresh clone for non readonly use of '%j'", params.id);
             return this.saveAndRunAction<T>(this.delegate, params, action);
         }
         // Caching projects by branch references is wrong as the branch might change; give out new versions
         if (!sha({ exact: true }).test(params.id.sha)) {
-            logger.info("Forcing fresh clone for branch use of '%j'", params.id);
+            logger.debug("Forcing fresh clone for branch use of '%j'", params.id);
             return this.saveAndRunAction<T>(this.delegate, params, action);
         }
 
@@ -68,7 +68,7 @@ export class CachingProjectLoader implements ProjectLoader {
 
         if (!project) {
             project = await save(this.delegate, params);
-            logger.info("Caching project '%j' at '%s'", project.id, project.baseDir);
+            logger.debug("Caching project '%j' at '%s'", project.id, project.baseDir);
             this.cache.put(key, project);
         }
 

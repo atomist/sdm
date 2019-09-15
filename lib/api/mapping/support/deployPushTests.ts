@@ -60,7 +60,7 @@ export async function isDeployEnabled(parameters: { context: HandlerContext, id:
             && enablement.SdmDeployEnablement[0].state === "requested";
     } catch (e) {
         logger.error("Cannot determine whether deploy is enabled. Guessing `false`. " + e);
-        logger.info(e.stack);
+        logger.debug(e.stack);
         return false;
     }
 }

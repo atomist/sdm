@@ -72,7 +72,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
             if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
             }
-            logger.info("Planning inspection of %j with %d AutoInspects", id, options.registrations.length);
+            logger.debug("Planning inspection of %j with %d AutoInspects", id, options.registrations.length);
             return configuration.sdm.projectLoader.doWithProject({
                 credentials,
                 id,
@@ -196,7 +196,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             description: reviewCommentCount > 0 ?
                 `Code inspections raised ${reviewCommentCount} review ${reviewCommentCount > 1 ? "comments" : "comment"}` : undefined,
         };
-        logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
+        logger.debug("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };
 }
@@ -221,7 +221,7 @@ async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, revi
                                                   pli: PushListenerInvocation):
     Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
-    logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
+    logger.debug("Consolidated review of %j has %s comments", pli.id, review.comments.length);
 
     return Promise.all(reviewListeners.map(responseFromOneListener(progressLog, { ...pli, review })));
 }

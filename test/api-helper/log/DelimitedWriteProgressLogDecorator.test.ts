@@ -96,7 +96,7 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         await log.flush();
 
         assert.deepEqual(log.log,
-            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day",
+            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day\n",
         );
     });
 
@@ -109,7 +109,7 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         await log.flush();
 
         assert.deepEqual(log.log,
-            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day",
+            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day\n",
         );
     });
 

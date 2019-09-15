@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoalEvent[]):
         case SdmGoalState.skipped:
         case SdmGoalState.canceled:
         case SdmGoalState.stopped:
-            logger.info("Precondition %s in state %s, won't be met", goalKeyString(preconditionKey),
+            logger.debug("Precondition %s in state %s, won't be met", goalKeyString(preconditionKey),
                 preconditionGoal.state);
             return false;
         case SdmGoalState.planned:

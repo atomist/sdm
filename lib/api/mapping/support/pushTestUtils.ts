@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,10 +84,10 @@ export function memoize(pt: PushTest): PushTest {
             let result = pushTestResultMemory.get(key);
             if (result === undefined) {
                 result = await pt.mapping(pti);
-                logger.info(`Evaluated push test [%s] to %s: cache stats=%j`, pt.name, result, pushTestResultMemory.stats);
+                logger.debug(`Evaluated push test [%s] to %s: cache stats=%j`, pt.name, result, pushTestResultMemory.stats);
                 pushTestResultMemory.put(key, result);
             } else {
-                logger.info("Push test [%s] result was cached: " + result);
+                logger.debug("Push test [%s] result was cached: " + result);
             }
             return result;
         },

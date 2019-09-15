@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ export function isMaterialChange(options: MaterialChangeOptions = {}): PushTest 
         const changedFiles = await filesChangedSince(pci.project, pci.push);
 
         if (!changedFiles) {
-            logger.info(
+            logger.debug(
                 "Cannot determine if change is material on '%s/%s'. Failed to enumerate changed files",
                 pci.id.owner,
                 pci.id.repo);

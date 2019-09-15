@@ -224,7 +224,7 @@ ${codeBlock(vr.message)}`,
                             ),
                         );
                     } else {
-                        logger.info("No react function to react to result of code transformation '%s'", ctr.name);
+                        logger.debug("No react function to react to result of code transformation '%s'", ctr.name);
                     }
                 }
             } catch (e) {
@@ -330,7 +330,7 @@ ${codeBlock(vr.message)}`,
                     if (!!cir.onInspectionResults) {
                         await cir.onInspectionResults([result], ci);
                     } else {
-                        logger.info("No react function to react to results of code inspection '%s'", cir.name);
+                        logger.debug("No react function to react to results of code inspection '%s'", cir.name);
                     }
                 }
             } catch (e) {

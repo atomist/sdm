@@ -117,7 +117,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements GoalSetter<F>, GoalSet
                 contributorGoals.push(goals.goals.filter(g => g !== Locking));
                 // If we find the special locking goal, don't add any further goals
                 if (goals.goals.includes(Locking)) {
-                    logger.info("Stopping goal contribution analysis, because %s has locked the goal set", c.name);
+                    logger.debug("Stopping goal contribution analysis, because %s has locked the goal set", c.name);
                     break;
                 }
             }
