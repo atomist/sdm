@@ -66,7 +66,7 @@ export function isMaterialChange(options: MaterialChangeOptions = {}): PushTest 
         const changedFiles = await filesChangedSince(pci.project, pci.push);
 
         if (!changedFiles) {
-            logger.info(
+            logger.debug(
                 "Cannot determine if change is material on '%s/%s'. Failed to enumerate changed files",
                 pci.id.owner,
                 pci.id.repo);

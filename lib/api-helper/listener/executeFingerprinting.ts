@@ -52,7 +52,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
         }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
-            logger.info("Will invoke %d eligible fingerprinters of %d to %j",
+            logger.debug("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: FingerprintData[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             await Promise.all(listeners.map(l =>

@@ -45,7 +45,7 @@ export function localCommandsCodeTransform(commands: SpawnCommand[],
         };
         let commandResult: ChildProcessResult;
         for (const cmd of commands) {
-            logger.info("Executing command %s", stringifySpawnCommand(cmd));
+            logger.debug("Executing command %s", stringifySpawnCommand(cmd));
             commandResult = await spawnAndWatch(cmd, { ...opts, ...cmd.options },
                 log,
                 {

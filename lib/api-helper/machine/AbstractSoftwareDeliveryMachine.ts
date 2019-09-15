@@ -252,7 +252,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     private addExtensionPack(pack: ExtensionPack): this {
-        logger.info("Adding extension pack '%s' version %s from %s",
+        logger.debug("Adding extension pack '%s' version %s from %s",
             pack.name, pack.version, pack.vendor);
         validateConfigurationValues(this.configuration, pack);
         pack.configure(this);

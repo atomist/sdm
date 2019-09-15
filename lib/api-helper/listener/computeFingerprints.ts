@@ -33,7 +33,7 @@ export async function computeFingerprints(pli: PushImpactListenerInvocation,
                                           fingerprinters: Array<PushImpactListener<FingerprinterResult>>): Promise<FingerprintData[]> {
     const results: FingerprintData[][] = await Promise.all(
         fingerprinters.map(async fp => {
-            logger.info("Using fingerprinter %s to fingerprint %j", fp.name, pli.id);
+            logger.debug("Using fingerprinter %s to fingerprint %j", fp.name, pli.id);
             const f = await fp(pli);
             return isFingerprint(f) ? [f] : f;
         }),

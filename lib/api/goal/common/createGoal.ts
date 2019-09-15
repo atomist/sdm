@@ -133,7 +133,7 @@ export function createPredicatedGoalExecutor(uniqueName: string,
                 return goalExecutor(gi);
             }
             tries++;
-            logger.info("Waiting %dms for '%s'", waitRulesToUse.timeoutMillis, uniqueName);
+            logger.debug("Waiting %dms for '%s'", waitRulesToUse.timeoutMillis, uniqueName);
             await wait(waitRulesToUse.timeoutMillis, unref);
         }
     };
