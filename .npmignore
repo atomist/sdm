@@ -15,14 +15,12 @@
 /coverage/
 /log/
 /scripts/
-/src/
+/src/test
 /test/
 /CO*.md
 /Dockerfile
 /assets/kubectl/
 *.log
 *.txt
-*.ts
-!*.d.ts
 /graphql.*.json
 /schema.json
