@@ -43,7 +43,7 @@ class EphemeralProgressLog implements ProgressLog {
 
     public async close(): Promise<void> {
         if (this.writeToLog) {
-            logger.info(`Progress log '${this.name}\n${this.log}'`);
+            logger.info(`Progress log '${this.name}'\n${this.log.trim()}`);
         }
     }
 
