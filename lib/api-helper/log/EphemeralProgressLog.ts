@@ -43,16 +43,18 @@ class EphemeralProgressLog implements ProgressLog {
 
     public async close(): Promise<void> {
         if (this.writeToLog) {
-            logger.debug("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
-            logger.info(this.log);
-            logger.debug("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
+            logger.info(`Progress log '${this.name}\n${this.log}'`);
         }
     }
 
     public write(what: string, ...args: string[]): void {
-        this.log += format(what, ...args);
+        let line = format(what, ...args);
+        if (!line.endsWith("\n")) {
+             line += "\n";
+        }
+        this.log += line;
     }
 
 }
 
-export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);
+export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.uniqueName);

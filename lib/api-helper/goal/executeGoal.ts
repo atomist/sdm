@@ -176,7 +176,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             state: SdmGoalState.success,
         }, result);
 
-        logger.info("Goal '%s'completed with: %j", goalEvent.uniqueName, implementationName, result);
+        logger.info("Goal '%s' completed with: %j", goalEvent.uniqueName, result);
         await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
