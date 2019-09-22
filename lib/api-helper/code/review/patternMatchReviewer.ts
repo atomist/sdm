@@ -75,7 +75,7 @@ export function patternMatchReviewer(name: string,
                         new RegExp(_.escapeRegExp(problem.antiPattern)) :
                         problem.antiPattern;
                     if (rex.test(content)) {
-                        logger.info("%s: Antipattern %s found in %s", name, problem.antiPattern, f.path);
+                        logger.debug("%s: Antipattern %s found in %s", name, problem.antiPattern, f.path);
                         result.comments.push({
                             severity: opts.severity || "error",
                             detail: problem.comment,

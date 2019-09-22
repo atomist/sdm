@@ -285,7 +285,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public scheduleTriggeredListeners(): void {
         const i: TriggeredListenerInvocation = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
-                logger.info("trigger: %j", msg);
+                logger.debug("trigger: %j", msg);
             }),
             sdm: this,
         };

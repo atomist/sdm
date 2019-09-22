@@ -30,10 +30,10 @@ export async function reportFailureInterpretation(stepName: string,
                                                   retryButton?: slack.Action): Promise<void> {
     if (!interpretation) {
         if (fullLog.url) {
-            logger.info("No log interpretation. Log available at: " + fullLog.url);
+            logger.debug("No log interpretation. Log available at: " + fullLog.url);
             return;
         }
-        logger.info("No log interpretation, no log URL. Sending full log to Slack");
+        logger.debug("No log interpretation, no log URL. Sending full log to Slack");
         await addressChannels({
             content: fullLog.log,
             fileType: "text",

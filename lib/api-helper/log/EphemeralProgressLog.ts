@@ -43,9 +43,9 @@ class EphemeralProgressLog implements ProgressLog {
 
     public async close(): Promise<void> {
         if (this.writeToLog) {
-            logger.info("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
+            logger.debug("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
             logger.info(this.log);
-            logger.info("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
+            logger.debug("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
         }
     }
 
