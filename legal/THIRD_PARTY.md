@@ -16,14 +16,14 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |[MIT](#mit)|38|
 
 #### BSD-2-Clause
-BSD 2-Clause "Simplified" License - [http://www.opensource.org/licenses/BSD-2-Clause](http://www.opensource.org/licenses/BSD-2-Clause)
+BSD 2-Clause "Simplified" License - [https://opensource.org/licenses/BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause)
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
 |`esprima`|`4.0.1`|Ariya Hidayat|[https://github.com/jquery/esprima](https://github.com/jquery/esprima)|
 
 #### BSD-3-Clause
-BSD 3-Clause "New" or "Revised" License - [http://www.opensource.org/licenses/BSD-3-Clause](http://www.opensource.org/licenses/BSD-3-Clause)
+BSD 3-Clause "New" or "Revised" License - [https://opensource.org/licenses/BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
@@ -40,7 +40,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 |`minimatch`|`3.0.4`|Isaac Z. Schlueter|[https://github.com/isaacs/minimatch](https://github.com/isaacs/minimatch)|
 
 #### MIT
-MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org/licenses/MIT)
+MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
