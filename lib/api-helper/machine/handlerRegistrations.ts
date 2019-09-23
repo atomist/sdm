@@ -459,7 +459,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         try {
             credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids ? ids[0] : undefined);
         } catch (e) {
-            logger.warn(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
+            logger.debug(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
         }
     }
 
@@ -723,7 +723,7 @@ export async function resolveCredentialsPromise(creds: Promise<ProjectOperationC
         try {
             return await creds;
         } catch (e) {
-            logger.warn(e.message);
+            logger.debug(e.message);
         }
     } else if (!!creds) {
         return creds;

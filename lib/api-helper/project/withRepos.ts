@@ -43,7 +43,7 @@ export async function doWithRepos(sdm: SoftwareDeliveryMachine,
                 { credentials: i.credentials, id: id as RemoteRepoRef, readOnly: true },
                 action)
                 .catch(err => {
-                    logger.warn("Project err: %s", err);
+                    logger.debug("Project err: %s", err);
                 });
         },
     ));

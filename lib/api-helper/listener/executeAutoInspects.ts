@@ -82,9 +82,9 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
                     options.cloneOptions ? options.cloneOptions : minimalClone(goalEvent.push, { detachHead: true }),
             }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
-            logger.error("Error executing review of %j with %d reviewers: %s",
+            logger.debug("Error executing review of %j with %d reviewers: %s",
                 id, options.registrations.length, err.message);
-            logger.warn(err.stack);
+            logger.debug(err.stack);
             return failure(err);
         }
     };

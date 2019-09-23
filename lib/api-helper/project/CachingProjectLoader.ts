@@ -61,7 +61,6 @@ export class CachingProjectLoader implements ProjectLoader {
                 await promisify(fs.access)(project.baseDir);
             } catch {
                 this.cache.evict(key);
-                logger.warn("Invalid cache entry '%s'", key);
                 project = undefined;
             }
         }

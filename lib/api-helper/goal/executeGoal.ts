@@ -270,13 +270,13 @@ function goalToHookFile(sdmGoal: SdmGoalEvent,
 }
 
 export function markStatus(parameters: {
-                                context: HandlerContext,
-                                goalEvent: SdmGoalEvent,
-                                goal: Goal,
-                                result: ExecuteGoalResult,
-                                error?: Error,
-                                progressLogUrl: string,
-                            }): Promise<void> {
+    context: HandlerContext,
+    goalEvent: SdmGoalEvent,
+    goal: Goal,
+    result: ExecuteGoalResult,
+    error?: Error,
+    progressLogUrl: string,
+}): Promise<void> {
     const { context, goalEvent, goal, result, error, progressLogUrl } = parameters;
 
     /* tslint:disable:deprecation */
@@ -315,26 +315,23 @@ export function markStatus(parameters: {
         });
 }
 
-async function markGoalInProcess(parameters: {ctx: HandlerContext,
-                                    goalEvent: SdmGoalEvent,
-                                    goal: Goal,
-                                    progressLogUrl: string,
-                                }): Promise<SdmGoalEvent> {
+async function markGoalInProcess(parameters: {
+    ctx: HandlerContext,
+    goalEvent: SdmGoalEvent,
+    goal: Goal,
+    progressLogUrl: string,
+}): Promise<SdmGoalEvent> {
     const { ctx, goalEvent, goal, progressLogUrl } = parameters;
     goalEvent.state = SdmGoalState.in_process;
     goalEvent.description = goal.inProcessDescription;
     goalEvent.url = progressLogUrl;
-    try {
-        await updateGoal(ctx,
-            goalEvent,
-            {
-                url: progressLogUrl,
-                description: goal.inProcessDescription,
-                state: SdmGoalState.in_process,
-            });
-    } catch (err) {
-        logger.warn("Failed to update %s goal to tell people we are inProcess on it: \n%s", goal.name, err.stack);
-    }
+    await updateGoal(ctx,
+        goalEvent,
+        {
+            url: progressLogUrl,
+            description: goal.inProcessDescription,
+            state: SdmGoalState.in_process,
+        });
     return goalEvent;
 }
 
@@ -471,7 +468,7 @@ class ProgressReportingProgressLog implements ProgressLog {
                     // Intentionally empty
                 })
                     .catch(err => {
-                        logger.warn(`Error occurred reporting progress: %s`, err.message);
+                        logger.debug(`Error occurred reporting progress: %s`, err.message);
                     });
             }
         }

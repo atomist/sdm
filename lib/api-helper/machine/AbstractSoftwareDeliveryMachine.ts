@@ -239,7 +239,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         for (const pack of packs) {
             const found = this.extensionPacks.find(existing => existing.name === pack.name && existing.vendor === pack.vendor);
             if (!!found) {
-                logger.warn("Cannot add extension pack '%s' version %s from %s: We already have version %s of it",
+                logger.warn("Cannot add extension pack '%s' version %s from %s. Version %s already added",
                     pack.name, pack.version, pack.vendor, found.version);
             } else {
                 this.addExtensionPack(pack);
@@ -266,7 +266,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public async notifyStartupListeners(): Promise<void> {
         const i: AdminCommunicationContext = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
-                logger.warn("startup: %j", msg);
+                logger.debug("startup: %j", msg);
             }),
             sdm: this,
         };
