@@ -105,7 +105,8 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         );
     }
 
-    logger.info(`Running ${goalEvent.uniqueName} on ${goalEvent.sha}`);
+    const push = goalEvent.push;
+    logger.info(`Starting goal '%s' on '%s/%s/%s'`, goalEvent.uniqueName, push.repo.owner, push.repo.name, push.branch);
 
     async function notifyGoalExecutionListeners(sge: SdmGoalEvent, result?: ExecuteGoalResult, error?: Error): Promise<void> {
         const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
@@ -175,11 +176,11 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             state: SdmGoalState.success,
         }, result);
 
-        logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
+        logger.info("Goal '%s' completed with: %j", goalEvent.uniqueName, result);
         await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
-        logger.warn("Error executing %s on %s: %s", implementationName, goalEvent.sha, err.message);
+        logger.warn("Error executing goal '%s': %s", goalEvent.uniqueName, err.message);
         const result = { code: 1, ...(err.result ? err.result : {}) };
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,

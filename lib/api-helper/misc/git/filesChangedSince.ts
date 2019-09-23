@@ -49,7 +49,7 @@ export async function filesChangedSince(project: GitProject,
                 const gs = await project.gitStatus();
                 logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
                 const timeOfLastChange = await execPromise("ls", ["-ltr", "."], { cwd: project.baseDir });
-                logger.info("Files with dates: " + timeOfLastChange.stdout);
+                logger.debug("Files with dates: " + timeOfLastChange.stdout);
             } catch (err) {
                 logger.warn("Error while trying extra logging: " + err.stack);
             }

@@ -111,7 +111,7 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
 
             if (!!_.get(result, "Branch[0].id")) {
                 // Branch exists; run the code transform on that branch instead
-                logger.info(`Target branch '${branch}' already exists. Redirecting code transform to run against that branch`);
+                logger.debug(`Target branch '${branch}' already exists. Redirecting code transform to run against that branch`);
                 const newParams = {
                     ...ci.parameters,
                 };
@@ -119,7 +119,7 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
                 return codeTransform.handle(ci.context, newParams);
             } else {
                 // Branch doesn't exist yet; run code transform as is
-                logger.info(`Target branch '${branch}' does not exist. Applying code transform on requested branch`);
+                logger.debug(`Target branch '${branch}' does not exist. Applying code transform on requested branch`);
                 return codeTransform.handle(ci.context, ci.parameters);
             }
         });

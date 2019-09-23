@@ -59,7 +59,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
         const { goalEvent, credentials, id, context, progressLog } = goalInvocation;
         const atomistTeam = context.workspaceId;
 
-        logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
+        logger.debug("Deploying project '%s/%s' with target [%j]", id.owner, id.repo, target);
 
         const targetUrls: string[] = _.get(goalEvent, "push.after.images.imageName");
         await Promise.all(targetUrls.map(async targetUrl => {

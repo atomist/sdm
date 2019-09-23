@@ -277,7 +277,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
         const determinedGoals: Goals = await goalSetter.mapping(pi);
 
         if (!determinedGoals) {
-            logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            logger.info("No goals set by push '%s' to '%s/%s/%s'", push.after.sha, id.owner, id.repo, push.branch);
             return determinedGoals;
         } else {
             const filteredGoals: Goal[] = [];
@@ -300,7 +300,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                     filteredGoals.push(g);
                 }
             });
-            logger.info("Goals for push on %j are %s", id, determinedGoals.name);
+            logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, determinedGoals.name);
             return new Goals(determinedGoals.name, ...filteredGoals);
         }
 

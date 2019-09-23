@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ export function executePushImpact(registrations: PushImpactListenerRegisterable[
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
             const relevantCodeReactions: PushImpactListenerRegistration[] = await relevantCodeActions<PushImpactListenerRegistration>(regs, cri);
-            logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
+            logger.debug("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
                 relevantCodeReactions.length, registrations.length, cri.id,
                 relevantCodeReactions.map(a => a.name).join(),
                 regs.map(a => a.name).join());
@@ -65,7 +65,7 @@ export function executePushImpact(registrations: PushImpactListenerRegisterable[
                 code: allReactions.includes(PushImpactResponse.failGoals) ? 1 : 0,
                 requireApproval: allReactions.includes(PushImpactResponse.requireApprovalToProceed),
             };
-            logger.info("PushReaction responses are %j, result=%j", allReactions, result);
+            logger.debug("PushReaction responses are %j, result=%j", allReactions, result);
             return result;
         });
     };
