@@ -713,8 +713,42 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
         description);
 }
 
-function gitBranchCompatible(name: string): string {
-    return name.replace(/\s+/g, "_"); // What else??
+/**
+ * Takes a potential git branch name and returns a legalised iteration of it
+ *
+ * @param name the git branch name to sanitise.
+ */
+export function gitBranchCompatible(name: string): string {
+    // handles spaces and .. ~ : ^ ? * [ @{
+    let branchName = name.replace(/\s+|(\.\.)+|~+|:+|\^+|\?+|\*+|\[+|(\@\{)+/g, "_");
+
+    // handles double slashes
+    branchName = branchName.replace(/(\/\/)+|(\\)+/g, "/");
+
+    // handles back slashes
+    branchName = branchName.replace(/\\+/g, "/");
+
+    if (branchName.startsWith(".") || branchName.startsWith("/")) {
+        branchName = branchName.substring(1);
+    }
+
+    if (branchName.endsWith(".") || branchName.endsWith("/")) {
+        branchName = branchName.slice(0, -1);
+    }
+
+    const lock = ".lock";
+    if (branchName.endsWith(lock)) {
+        branchName = branchName.slice(0, -lock.length);
+    }
+
+    if (branchName === "@") {
+        branchName = "at";
+    }
+
+    // handles ascii control characters
+    branchName = branchName.replace(/[\x00-\x1F\x7F]+/g, "");
+
+    return branchName;
 }
 
 export async function resolveCredentialsPromise(creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials)
