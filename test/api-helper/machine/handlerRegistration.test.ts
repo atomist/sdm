@@ -15,7 +15,10 @@
  */
 
 import * as assert from "power-assert";
-import { gitBranchCompatible, resolveCredentialsPromise } from "../../../lib/api-helper/machine/handlerRegistrations";
+import {
+    gitBranchCompatible,
+    resolveCredentialsPromise,
+} from "../../../lib/api-helper/machine/handlerRegistrations";
 
 describe("handlerRegistration", () => {
 
