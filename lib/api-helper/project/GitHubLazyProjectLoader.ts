@@ -33,8 +33,10 @@ import {
 import { decode } from "@atomist/automation-client/lib/internal/util/base64";
 import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
+import { NodeFsLocalFile } from "@atomist/automation-client/lib/project/local/NodeFsLocalFile";
 import { FileStream } from "@atomist/automation-client/lib/project/Project";
 import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
+import * as globby from "globby";
 import * as stream from "stream";
 import {
     LazyProject,
@@ -278,6 +280,22 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }
 
+    protected async getFilesInternal(globPatterns: string[]): Promise<ProjectFile[]> {
+        await this.materializeIfNecessary("getFilesInternal");
+
+        const optsToUse = {
+            // We can override these defaults...
+            nodir: true,
+            allowEmpty: true,
+            // ...but we force this one
+            cwd: this.baseDir,
+        };
+        // const paths = await glob.promise(`{${globPatterns.join(",")}}`, optsToUse);
+        const paths = await globby(globPatterns, optsToUse);
+        const files = paths.map(path => new NodeFsLocalFile(this.baseDir, path));
+        return files;
+    }
+
     private materializeIfNecessary(why: string): QueryablePromise<GitProject> {
         if (!this.materializing()) {
             logger.debug("Materializing project %j because of %s", this.id, why);
@@ -285,7 +303,6 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         }
         return this.projectPromise;
     }
-
 }
 
 interface QueryablePromise<T> extends Promise<T> {
