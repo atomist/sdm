@@ -20,9 +20,6 @@ import {
 } from "@atomist/automation-client";
 import { FileStream } from "@atomist/automation-client/lib/project/Project";
 import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
-import { File } from "@atomist/automation-client/src/lib/project/File";
-import { DefaultFiles } from "@atomist/automation-client/src/lib/project/fileGlobs";
-import { globMatchesWithin } from "@atomist/automation-client/src/lib/project/support/AbstractProject";
 import * as stream from "stream";
 
 /**
