@@ -221,13 +221,13 @@ ${codeBlock(err.message)}`,
 /**
  * Retrieve a seed. Set the seed location on the parameters if possible and necessary.
  */
-async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
-                                                                             ctx: HandlerContext,
-                                                                             repoLoader: RepoLoader,
-                                                                             details: GeneratorCommandDetails<any>,
-                                                                             startingPoint: StartingPoint<P>,
-                                                                             cr: CommandRegistration<P>,
-                                                                             sdmo: SoftwareDeliveryMachineOptions): Promise<Project> {
+export async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
+                                                                                    ctx: HandlerContext,
+                                                                                    repoLoader: RepoLoader,
+                                                                                    details: GeneratorCommandDetails<any>,
+                                                                                    startingPoint: StartingPoint<P>,
+                                                                                    cr: CommandRegistration<P>,
+                                                                                    sdmo: SoftwareDeliveryMachineOptions): Promise<Project> {
     if (!startingPoint) {
         if (!params.source || !params.source.repoRef) {
             throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +
