@@ -81,7 +81,6 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
     const data = _.cloneDeep(_.get(ctx, "trigger") || {});
     data.secrets = [];
 
-
     const params = (Array.isArray(parameters) ? parameters : [parameters]).filter(p => !!p);
 
     const result = await ctx.graphClient.mutate<CreateJob.Mutation, CreateJob.Variables>({

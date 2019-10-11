@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { GitCommandGitProject } from "@atomist/automation-client";
+import {
+    CloneOptions,
+    GitCommandGitProject,
+    logger,
+} from "@atomist/automation-client";
+import { DefaultDirectoryManager } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+import {
+    CloneDirectoryInfo,
+    DirectoryManager,
+} from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
+import * as fs from "fs-extra";
 import {
     ProjectLoader,
     ProjectLoadingParameters,
@@ -29,7 +39,9 @@ export const CloningProjectLoader: ProjectLoader = {
         // coords.depth is deprecated; populate it for backwards compatibility
         // tslint:disable-next-line:deprecation
         const cloneOptions = coords.cloneOptions ? coords.cloneOptions : { depth: coords.depth };
-        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, cloneOptions);
+        // If we get a cloneDir we need to wrap the DirectoryManager to return the directory
+        const directoryManager = !!coords.cloneDir ? new ExplicitDirectoryManager(coords.cloneDir) : DefaultDirectoryManager;
+        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, cloneOptions, directoryManager);
         if (p.id.sha === "HEAD") {
             const gs = await p.gitStatus();
             p.id.sha = gs.sha;
@@ -42,3 +54,32 @@ export const CloningProjectLoader: ProjectLoader = {
         return action(p);
     },
 };
+
+class ExplicitDirectoryManager implements DirectoryManager {
+
+    constructor(private readonly cloneDir: string) {
+    }
+
+    public async directoryFor(owner: string, repo: string, branch: string, opts: CloneOptions): Promise<CloneDirectoryInfo> {
+        await fs.ensureDir(this.cloneDir);
+        return {
+            path: this.cloneDir,
+            release: () => this.cleanup(this.cloneDir, opts.keep),
+            invalidate: () => Promise.resolve(),
+            transient: opts.keep === false,
+            provenance: "explicit-directory",
+            type: "empty-directory",
+        };
+    }
+
+    private async cleanup(p: string, keep: boolean): Promise<void> {
+        if (keep) {
+            return;
+        }
+        try {
+            await fs.remove(p);
+        } catch (e) {
+            logger.warn(`Failed to remove '${p}': ${e.message}`);
+        }
+    }
+}
