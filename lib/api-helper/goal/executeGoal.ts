@@ -209,7 +209,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const hook = goalToHookFile(sdmGoal, stage);
 
     // Check configuration to see if hooks should be skipped
-    if (!configurationValue<boolean>("sdm.goal.hooks", true)) {
+    if (!configurationValue<boolean>("sdm.goal.hooks", false)) {
         goalInvocation.progressLog.write("/--");
         goalInvocation.progressLog.write(`Invoking goal hook: ${hook}`);
         goalInvocation.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
@@ -310,7 +310,7 @@ export function markStatus(parameters: {
             externalUrls,
             state: newState,
             phase: result.phase ? result.phase : goalEvent.phase,
-            description: result.description ? result.description : descriptionFromState(goal, newState),
+            description: result.description ? result.description : descriptionFromState(goal, newState, goalEvent),
             error,
             data: result.data ? result.data : goalEvent.data,
         });
@@ -324,13 +324,13 @@ async function markGoalInProcess(parameters: {
 }): Promise<SdmGoalEvent> {
     const { ctx, goalEvent, goal, progressLogUrl } = parameters;
     goalEvent.state = SdmGoalState.in_process;
-    goalEvent.description = goal.inProcessDescription;
+    goalEvent.description = descriptionFromState(goal, SdmGoalState.in_process, goalEvent);
     goalEvent.url = progressLogUrl;
     await updateGoal(ctx,
         goalEvent,
         {
             url: progressLogUrl,
-            description: goal.inProcessDescription,
+            description: descriptionFromState(goal, SdmGoalState.in_process, goalEvent),
             state: SdmGoalState.in_process,
         });
     return goalEvent;
