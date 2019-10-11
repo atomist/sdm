@@ -15,7 +15,6 @@
  */
 
 import { GitCommandGitProject } from "@atomist/automation-client";
-import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
 import {
     ProjectLoader,
     ProjectLoadingParameters,
