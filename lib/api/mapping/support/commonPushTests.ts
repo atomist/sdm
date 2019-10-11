@@ -115,3 +115,25 @@ export const IsPushToBranchWithPullRequest: PushTest = pushTest("Push to branch 
     }
     return false;
 });
+
+/**
+ * Return a push test that matches the repository owner/repo slug
+ * against regular expression.
+ * @param re Regular expression to match against using RegExp.test()
+ * @return Push test performing the match
+ */
+export function isRepo(re: RegExp): PushTest {
+    return pushTest(`Project owner/name slug matches regular expression ${RegExp.toString()}`,
+        async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
+}
+
+/**
+ * Return a push test that matches the repository owner/repo slug
+ * against regular expression.
+ * @param re Regular expression to match against using RegExp.test()
+ * @return Push test performing the match
+ */
+export function isBranch(re: RegExp): PushTest {
+    return pushTest(`Project branch matches regular expression ${RegExp.toString()}`,
+        async pci => re.test(pci.push.branch));
+}
