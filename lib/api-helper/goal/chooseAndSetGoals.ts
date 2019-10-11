@@ -360,7 +360,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
                 allGoals.filter(hasPreconditions)
                     .filter(g => (g.dependsOn || []).includes(dg))
                     .forEach(g => {
-                        _.remove(g.dependsOn, g => g.uniqueName === dg.uniqueName);
+                        _.remove(g.dependsOn, gr => gr.uniqueName === dg.uniqueName);
                         g.dependsOn.push(...newGoals);
                     });
             }
