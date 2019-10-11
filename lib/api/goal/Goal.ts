@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import { PushListenerInvocation } from "../listener/PushListener";
 import {
     BaseContext,
     GitHubStatusContext,
 } from "./GitHubContext";
+import { Goals } from "./Goals";
 import {
     GoalEnvironment,
     IndependentOfEnvironment,

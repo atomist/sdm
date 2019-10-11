@@ -39,6 +39,9 @@ export function filteredView<P extends Project = Project>(p: Project,
                 throw new Error("Don't use sync methods: had " + prop);
             }
             const origMethod = target[prop];
+            if (typeof origMethod !== "function") {
+                return origMethod;
+            }
             const decoratedMethod = decorator[prop];
             return function(...args: any[]): any {
                 return !!decoratedMethod ?
@@ -72,6 +75,11 @@ class FilteredProject implements Partial<Project> {
             return this.project.findFile(path);
         }
         throw new Error(`No file at ${path}`);
+    }
+
+    public async getFiles(globPatterns: string | string[] = []): Promise<ProjectFile[]> {
+        const files = await this.project.getFiles(globPatterns);
+        return files.filter(f => this.filter(f.path));
     }
 
     /**

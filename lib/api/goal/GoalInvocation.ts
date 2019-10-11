@@ -21,6 +21,7 @@ import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliver
 import { PushTest } from "../mapping/PushTest";
 import { ExecuteGoalResult } from "./ExecuteGoalResult";
 import { Goal } from "./Goal";
+import { Parameterized } from "./GoalWithFulfillment";
 import { SdmGoalEvent } from "./SdmGoalEvent";
 
 /**
@@ -48,7 +49,7 @@ export interface GoalProjectListenerRegistration {
     events?: GoalProjectListenerEvent[];
 }
 
-export interface GoalInvocation extends RepoContext {
+export interface GoalInvocation extends RepoContext, Parameterized {
 
     /**
      * This SDM's current configuration

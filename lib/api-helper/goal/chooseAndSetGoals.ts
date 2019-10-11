@@ -23,6 +23,7 @@ import {
     ProjectOperationCredentials,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import {
     AddressChannels,
     addressChannelsFor,
@@ -36,10 +37,15 @@ import {
 import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
     Goal,
+    GoalDefinition,
     GoalWithPrecondition,
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import {
+    getGoalDefinitionFrom,
+    PlannedGoal,
+} from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalFulfillment,
@@ -281,7 +287,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
             return determinedGoals;
         } else {
             const filteredGoals: Goal[] = [];
-            determinedGoals.goals.forEach(g => {
+            (await planGoals(determinedGoals, pi)).goals.forEach(g => {
                 if ((g as any).dependsOn) {
                     const preConditions = (g as any).dependsOn as Goal[];
                     if (preConditions) {
@@ -309,4 +315,79 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
         logger.error(err.stack);
         throw err;
     }
+}
+
+export async function planGoals(goals: Goals, pli: PushListenerInvocation): Promise<Goals> {
+    const existingGoals = [...goals.goals];
+    const allGoals = goals.goals;
+
+    for (const dg of existingGoals) {
+        if (!!(dg as any).plan) {
+            const planResult = await (dg as any).plan(pli, goals);
+            if (!!planResult) {
+
+                const plannedGoals: Array<PlannedGoal | PlannedGoal[]> = [];
+                if (Array.isArray(planResult)) {
+                    plannedGoals.push(...planResult);
+                } else {
+                    plannedGoals.push(planResult);
+                }
+
+                let previousGoals = [];
+                const newGoals = [];
+
+                plannedGoals.forEach(g => {
+                    if (Array.isArray(g)) {
+                        const gNewGoals = [];
+                        for (const gg of g) {
+                            const newGoal = createGoal(gg, dg, newGoals.length + gNewGoals.length, previousGoals);
+                            gNewGoals.push(newGoal);
+                        }
+                        previousGoals = [gNewGoals];
+                        newGoals.push(...gNewGoals);
+                    } else {
+                        const newGoal = createGoal(g, dg, newGoals.length, previousGoals);
+                        newGoals.push(newGoal);
+                        previousGoals = [newGoal];
+                    }
+                });
+
+                // Replace existing goal with new instances
+                const ix = allGoals.findIndex(g => g.uniqueName === dg.uniqueName);
+                allGoals.splice(ix, 1, ...newGoals);
+
+                // Replace all preConditions that point back to the original goal with references to new goals
+                allGoals.filter(hasPreconditions)
+                    .filter(g => (g.dependsOn || []).includes(dg))
+                    .forEach(g => {
+                        _.remove(g.dependsOn, g => g.uniqueName === dg.uniqueName);
+                        g.dependsOn.push(...newGoals);
+                    });
+            }
+        }
+    }
+
+    return new Goals(goals.name, ...allGoals);
+}
+
+function createGoal(g: PlannedGoal, dg: Goal, plannedGoalsCounter: number, previousGoals: Goals[]): Goal {
+    const uniqueName = `${dg.uniqueName}#sdm:${plannedGoalsCounter}`;
+
+    const definition: GoalDefinition & { parameters: PlannedGoal["parameters"] } =
+        _.merge(
+            {},
+            dg.definition,
+            getGoalDefinitionFrom(g.details, uniqueName)) as any;
+
+    definition.uniqueName = uniqueName;
+    definition.parameters = g.parameters;
+
+    const dependsOn = [];
+    if (hasPreconditions(dg)) {
+        dependsOn.push(...dg.dependsOn);
+    }
+    if (!!previousGoals) {
+        dependsOn.push(...previousGoals);
+    }
+    return new GoalWithPrecondition(definition, ...dependsOn);
 }

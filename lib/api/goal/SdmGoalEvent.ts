@@ -55,6 +55,18 @@ export interface SdmGoalEvent extends SdmGoalKey {
      * Current description that goes with the current status
      */
     description?: string;
+    descriptions?: {
+        canceled: string;
+        completed: string;
+        failed: string;
+        inProcess: string;
+        planned: string;
+        requested: string;
+        stopped: string;
+        skipped: string;
+        waitingForApproval: string;
+        waitingForPreApproval: string;
+    };
     url?: string;
     externalUrls?: Array<{ label?: string, url: string }>;
     goalSet: string;
@@ -83,6 +95,7 @@ export interface SdmGoalEvent extends SdmGoalKey {
     externalKey?: string;
 
     data?: string;
+    parameter?: Record<string, any>;
 
     version?: number;
 }
