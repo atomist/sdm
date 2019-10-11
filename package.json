@@ -53,11 +53,11 @@
     "strip-ansi": "^5.2.0"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "^1.7.0",
+    "@atomist/automation-client": "1.8.0-master.20191011121753",
     "@atomist/slack-messages": ">=1.1.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.8.0-master.20191011094832",
+    "@atomist/automation-client": "1.8.0-master.20191011121753",
     "@atomist/slack-messages": "^1.1.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
