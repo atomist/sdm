@@ -38,7 +38,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     public findImplementationBySdmGoal(goal: SdmGoalEvent): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
-            m.goal.context === goal.externalKey);
+            m.goal.uniqueName === uniqueName(goal));
 
         if (matchedNames.length > 1) {
             throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.uniqueName}'`);
