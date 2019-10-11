@@ -20,9 +20,7 @@ import {
     GitHubRepoRef,
     projectUtils,
 } from "@atomist/automation-client";
-
 import * as assert from "power-assert";
-
 import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
 
 describe("filteredView", () => {
