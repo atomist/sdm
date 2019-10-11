@@ -22,7 +22,9 @@ import {
     hasFile,
     hasFileContaining,
     hasFileWithExtension,
+    isBranch,
     IsPushToBranchWithPullRequest,
+    isRepo,
     ToDefaultBranch,
 } from "../../../../lib/api/mapping/support/commonPushTests";
 
@@ -116,13 +118,13 @@ describe("commonPushTests", () => {
 
         it("should find containing", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.java", content: "public class Thing {}" });
-            const r = await hasFileContaining("src/main/java/Thing.java", /class/).mapping({ project } as any as PushListenerInvocation);
+            const r = await hasFileContaining("**/Thing.java", /class/).mapping({ project } as any as PushListenerInvocation);
             assert(r);
         });
 
-        it("should not find whe file does not contain", async () => {
+        it("should not find when file does not contain", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}" });
-            const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).mapping({ project } as any as PushListenerInvocation);
+            const r = await hasFileContaining("**/*.java", /xclass/).mapping({ project } as any as PushListenerInvocation);
             assert(!r);
         });
     });
@@ -166,6 +168,37 @@ describe("commonPushTests", () => {
             const r = await hasFileWithExtension(".xml").mapping({ project } as any as PushListenerInvocation);
             assert(r);
         });
+    });
+
+    describe("isRepo", () => {
+
+        it("should return false if no match", async () => {
+            const r = await isRepo(/atomist\/.*/).mapping({ id: { owner: "atomisthq", repo: "foo"} } as any as PushListenerInvocation);
+            assert(!r);
+        });
+
+        it("should return true for match", async () => {
+            const r = await isRepo(/atomist\/foo.*/).mapping({ id: { owner: "atomist", repo: "foo"} } as any as PushListenerInvocation);
+            assert(r);
+        });
+    });
+
+    describe("isBranch", () => {
+
+        it("should return true for feature branch", async () => {
+            const r = await isBranch(/feature.*/).mapping({ push: { branch: "feature-x"} } as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should return true for match", async () => {
+            const r = await isBranch(/master/).mapping({ push: { branch: "master"} } as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should return false for no match", async () => {
+            const r = await isBranch(/feature.*/).mapping({ push: { branch: "release"} } as any as PushListenerInvocation);
+            assert(!r);
+        })
     });
 
     describe("IsPushToBranchWithPullRequest", () => {
