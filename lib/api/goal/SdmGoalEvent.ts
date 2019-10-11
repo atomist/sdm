@@ -95,7 +95,6 @@ export interface SdmGoalEvent extends SdmGoalKey {
     externalKey?: string;
 
     data?: string;
-    parameters?: Record<string, any>;
 
     version?: number;
 }
