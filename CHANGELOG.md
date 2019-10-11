@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Make output less verbose during development. [#772](https://github.com/atomist/sdm/issues/772)
+-   Switch to globby for glob matching. [#775](https://github.com/atomist/sdm/issues/775)
 
 ### Fixed
 
