@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,18 @@ export interface SdmGoalMessage extends SdmGoalKey {
      * Current description that goes with the current status
      */
     description: string;
+    descriptions: {
+        canceled: string;
+        completed: string;
+        failed: string;
+        inProcess: string;
+        planned: string;
+        requested: string;
+        stopped: string;
+        skipped: string;
+        waitingForApproval: string;
+        waitingForPreApproval: string;
+    };
     url?: string;
     externalUrls?: Array<{ label?: string, url: string }>;
     goalSet: string;
@@ -93,6 +105,7 @@ export interface SdmGoalMessage extends SdmGoalKey {
     externalKey?: string;
 
     data?: string;
+    parameters?: string;
 
     version?: number;
 }
