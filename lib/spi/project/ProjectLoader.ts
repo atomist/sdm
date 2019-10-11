@@ -41,6 +41,11 @@ export interface ProjectLoadingParameters {
      * @deprecated use cloneOptions.depth
      */
     depth?: number;
+
+    /**
+     * Explicitly configured target clone dir
+     */
+    cloneDir?: string;
 }
 
 /**

@@ -51,11 +51,13 @@ export interface StatefulInvocation<S> extends SdmContext {
     facts?: S;
 }
 
+export type DefaultFacts = Record<string, any>;
+
 /**
  * Within evaluation of push rules we can manage state on a push.
  * This interface allows state. This state will not be persisted.
  */
-export interface StatefulPushListenerInvocation<S> extends PushListenerInvocation, StatefulInvocation<S> {
+export interface StatefulPushListenerInvocation<S = DefaultFacts> extends PushListenerInvocation, StatefulInvocation<S> {
 
 }
 
