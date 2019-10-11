@@ -15,6 +15,7 @@
  */
 
 import { GitCommandGitProject } from "@atomist/automation-client";
+import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
 import {
     ProjectLoader,
     ProjectLoadingParameters,
@@ -33,6 +34,11 @@ export const CloningProjectLoader: ProjectLoader = {
         if (p.id.sha === "HEAD") {
             const gs = await p.gitStatus();
             p.id.sha = gs.sha;
+        }
+        if (!!coords.readOnly) {
+            (p as any).shouldCache = true;
+        } else {
+            (p as any).shouldCache = false;
         }
         return action(p);
     },
