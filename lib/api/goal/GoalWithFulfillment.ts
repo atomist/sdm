@@ -22,6 +22,10 @@ import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import {
+    DefaultFacts,
+    StatefulPushListenerInvocation,
+} from "../dsl/goalContribution";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import {
     Registerable,
@@ -50,6 +54,7 @@ import {
     GoalProjectListenerRegistration,
 } from "./GoalInvocation";
 import { DefaultGoalNameGenerator } from "./GoalNameGenerator";
+import { Goals } from "./Goals";
 import { ReportProgress } from "./progress/ReportProgress";
 import {
     GoalEnvironment,
@@ -149,11 +154,28 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
     retryCondition?: RetryOptions;
 }
 
+export interface Parameterized {
+    parameters?: DefaultFacts;
+}
+
+export interface PlannedGoal extends Parameterized {
+    details?: Omit<FulfillableGoalDetails, "uniqueName" | "environment">;
+}
+
+export type PlannedGoals = Record<string, {
+    goals: PlannedGoal | Array<PlannedGoal | PlannedGoal[]>,
+    dependsOn?: string | string[];
+}>;
+
+export interface PlannableGoal {
+    plan?(pli: StatefulPushListenerInvocation, goals: Goals): Promise<PlannedGoals | PlannedGoal>;
+}
+
 /**
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
-export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable {
+export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable, PlannableGoal {
 
     public readonly fulfillments: Fulfillment[] = [];
     public readonly callbacks: GoalFulfillmentCallback[] = [];
@@ -261,6 +283,10 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         }
     }
 
+    public async plan(pli: StatefulPushListenerInvocation, goals: Goals): Promise<PlannedGoals | PlannedGoal> {
+        return undefined;
+    }
+
     private registerCallback(cb: GoalFulfillmentCallback): void {
         this.sdm.goalFulfillmentMapper.addFulfillmentCallback(cb);
     }
@@ -332,10 +358,11 @@ export class GoalWithFulfillment extends FulfillableGoal {
 export function goal(details: FulfillableGoalDetails = {},
                      goalExecutor?: ExecuteGoal,
                      options?: {
-        pushTest?: PushTest,
-        logInterpreter?: InterpretLog,
-        progressReporter?: ReportProgress,
-    }): GoalWithFulfillment {
+                         pushTest?: PushTest,
+                         logInterpreter?: InterpretLog,
+                         progressReporter?: ReportProgress,
+                         plan?: (pli: StatefulPushListenerInvocation, goals: Goals) => Promise<PlannedGoals>,
+                     }): GoalWithFulfillment {
     const def = getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName(details.displayName || "goal"));
     const g = new GoalWithFulfillment(def);
     if (!!goalExecutor) {
@@ -349,6 +376,9 @@ export function goal(details: FulfillableGoalDetails = {},
             goalExecutor,
             ...optsToUse,
         });
+        if (!!optsToUse.plan) {
+            g.plan = optsToUse.plan;
+        }
     }
     return g;
 }
@@ -372,7 +402,7 @@ export function getGoalDefinitionFrom(goalDetails: FulfillableGoalDetails | stri
         const defaultDefinition: Partial<GoalDefinition> = {
             ...(definition || {}),
         };
-        if (goalDetails.descriptions) {
+        if (!!goalDetails && !!goalDetails.descriptions) {
             defaultDefinition.canceledDescription = goalDetails.descriptions.canceled || defaultDefinition.canceledDescription;
             defaultDefinition.completedDescription = goalDetails.descriptions.completed || defaultDefinition.completedDescription;
             defaultDefinition.failedDescription = goalDetails.descriptions.failed || defaultDefinition.failedDescription;

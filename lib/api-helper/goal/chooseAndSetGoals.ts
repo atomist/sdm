@@ -23,6 +23,7 @@ import {
     ProjectOperationCredentials,
     RemoteRepoRef,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import {
     AddressChannels,
     addressChannelsFor,
@@ -33,13 +34,19 @@ import {
     PreferenceStore,
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
+import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
 import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
     Goal,
+    GoalDefinition,
     GoalWithPrecondition,
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import {
+    getGoalDefinitionFrom,
+    PlannedGoal,
+} from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalFulfillment,
@@ -185,7 +192,7 @@ export async function determineGoals(rules: {
             cloneOptions: minimalClone(push, { detachHead: true }),
         },
         async project => {
-            const pli: PushListenerInvocation = {
+            const pli: StatefulPushListenerInvocation = {
                 project,
                 credentials,
                 id,
@@ -194,6 +201,7 @@ export async function determineGoals(rules: {
                 addressChannels,
                 configuration,
                 preferences: preferences || NoPreferenceStore,
+                facts: {},
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
             if (!determinedGoals) {
@@ -281,11 +289,12 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
             return determinedGoals;
         } else {
             const filteredGoals: Goal[] = [];
-            determinedGoals.goals.forEach(g => {
+            const plannedGoals = await planGoals(determinedGoals, pi);
+            plannedGoals.goals.forEach(g => {
                 if ((g as any).dependsOn) {
                     const preConditions = (g as any).dependsOn as Goal[];
                     if (preConditions) {
-                        const filteredPreConditions = preConditions.filter(pc => determinedGoals.goals.some(ag =>
+                        const filteredPreConditions = preConditions.filter(pc => plannedGoals.goals.some(ag =>
                             ag.uniqueName === pc.uniqueName &&
                             ag.environment === pc.environment));
                         if (filteredPreConditions.length > 0) {
@@ -300,8 +309,8 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                     filteredGoals.push(g);
                 }
             });
-            logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, determinedGoals.name);
-            return new Goals(determinedGoals.name, ...filteredGoals);
+            logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, plannedGoals.name);
+            return new Goals(plannedGoals.name, ...filteredGoals);
         }
 
     } catch (err) {
@@ -309,4 +318,116 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
         logger.error(err.stack);
         throw err;
     }
+}
+
+export async function planGoals(goals: Goals, pli: PushListenerInvocation): Promise<Goals> {
+    const allGoals = [...goals.goals];
+    const names = [];
+
+    for (const dg of goals.goals) {
+        if (!!(dg as any).plan) {
+            let planResult = await (dg as any).plan(pli, goals);
+            if (!!planResult) {
+
+                // Check if planResult is a PlannedGoal or PlannedGoals instance
+                if (!_.some(planResult, v => !!v.goals)) {
+                     planResult = { "_": { goals: planResult } };
+                }
+
+                const allNewGoals = [];
+                const goalMapping = new Map<string, Goal[]>();
+                _.forEach(planResult, (planResultGoals, n) => {
+                    names.push(n.replace(/_/g, " "));
+                    const plannedGoals: Array<PlannedGoal | PlannedGoal[]> = [];
+                    if (Array.isArray(planResultGoals.goals)) {
+                        plannedGoals.push(...planResultGoals.goals);
+                    } else {
+                        plannedGoals.push(planResultGoals.goals);
+                    }
+
+                    let previousGoals = [];
+                    const newGoals = [];
+                    plannedGoals.forEach(g => {
+                        if (Array.isArray(g)) {
+                            const gNewGoals = [];
+                            for (const gg of g) {
+                                const newGoal = createGoal(
+                                    gg,
+                                    dg,
+                                    planResultGoals.dependsOn,
+                                    allNewGoals.length + gNewGoals.length,
+                                    previousGoals,
+                                    goalMapping);
+                                gNewGoals.push(newGoal);
+                            }
+                            allNewGoals.push(...gNewGoals);
+                            newGoals.push(...gNewGoals);
+                            previousGoals = [...gNewGoals];
+                        } else {
+                            const newGoal = createGoal(
+                                g,
+                                dg,
+                                planResultGoals.dependsOn,
+                                allNewGoals.length,
+                                previousGoals,
+                                goalMapping);
+                            allNewGoals.push(newGoal);
+                            newGoals.push(newGoal);
+                            previousGoals = [newGoal];
+                        }
+                    });
+
+                    goalMapping.set(n, newGoals);
+                });
+
+                // Replace existing goal with new instances
+                const ix = allGoals.findIndex(g => g.uniqueName === dg.uniqueName);
+                allGoals.splice(ix, 1, ...allNewGoals);
+
+                // Replace all preConditions that point back to the original goal with references to new goals
+                allGoals.filter(hasPreconditions)
+                    .filter(g => (g.dependsOn || []).includes(dg))
+                    .forEach(g => {
+                        _.remove(g.dependsOn, gr => gr.uniqueName === dg.uniqueName);
+                        g.dependsOn.push(...allNewGoals);
+                    });
+            }
+        }
+    }
+
+    return new Goals(goals.name, ...allGoals);
+}
+
+function createGoal(g: PlannedGoal,
+                    dg: Goal,
+                    preConditions: string | string[],
+                    plannedGoalsCounter: number,
+                    previousGoals: Goal[],
+                    goalMapping: Map<string, Goal[]>): Goal {
+    const uniqueName = `${dg.uniqueName}#sdm:${plannedGoalsCounter}`;
+
+    const definition: GoalDefinition & { parameters: PlannedGoal["parameters"] } =
+        _.merge(
+            {},
+            dg.definition,
+            getGoalDefinitionFrom(g.details, uniqueName)) as any;
+
+    definition.uniqueName = uniqueName;
+    definition.parameters = g.parameters;
+
+    const dependsOn = [];
+    if (hasPreconditions(dg)) {
+        dependsOn.push(...dg.dependsOn);
+    }
+    if (!!previousGoals) {
+        dependsOn.push(...previousGoals);
+    }
+    if (!!preConditions) {
+        if (Array.isArray(preConditions)) {
+            dependsOn.push(..._.flatten(preConditions.map(d => goalMapping.get(d)).filter(d => !!d)));
+        } else {
+            dependsOn.push(...goalMapping.get(preConditions));
+        }
+    }
+    return new GoalWithPrecondition(definition, ..._.uniqBy(dependsOn.filter(d => !!d), "uniqueName"));
 }
