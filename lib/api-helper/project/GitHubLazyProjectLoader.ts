@@ -287,6 +287,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
             // We can override these defaults...
             nodir: true,
             allowEmpty: true,
+            dot: true,
             // ...but we force this one
             cwd: this.baseDir,
         };
