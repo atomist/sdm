@@ -32,7 +32,7 @@ describe("Queue", () => {
 
     describe("Queue", () => {
 
-        it("should set up correct goal definition", async () => {
+        it("should set up correct goal details", async () => {
             const q = new Queue({ uniqueName: "queue-test" });
             assert.strictEqual(q.definition.uniqueName, "queue-test");
             assert.strictEqual(q.definition.environment, IndependentOfEnvironment);

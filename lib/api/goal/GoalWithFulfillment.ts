@@ -23,6 +23,7 @@ import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
+import { PushListenerInvocation } from "../listener/PushListener";
 import {
     Registerable,
     registerRegistrable,
@@ -50,6 +51,7 @@ import {
     GoalProjectListenerRegistration,
 } from "./GoalInvocation";
 import { DefaultGoalNameGenerator } from "./GoalNameGenerator";
+import { Goals } from "./Goals";
 import { ReportProgress } from "./progress/ReportProgress";
 import {
     GoalEnvironment,
@@ -149,11 +151,23 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
     retryCondition?: RetryOptions;
 }
 
+export interface Parameterized {
+    parameters?: Record<string, any>;
+}
+
+export interface PlannedGoal extends Parameterized {
+    details?: Omit<FulfillableGoalDetails, "uniqueName" | "environment">;
+}
+
+export interface PlannableGoal {
+    plan?(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoal | Array<PlannedGoal | PlannedGoal[]>>;
+}
+
 /**
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
-export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable {
+export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable, PlannableGoal {
 
     public readonly fulfillments: Fulfillment[] = [];
     public readonly callbacks: GoalFulfillmentCallback[] = [];
@@ -259,6 +273,10 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
                 fulfillment.name,
                 fulfillment.pushTest);
         }
+    }
+
+    public async plan(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoal | Array<PlannedGoal | PlannedGoal[]>> {
+        return undefined;
     }
 
     private registerCallback(cb: GoalFulfillmentCallback): void {

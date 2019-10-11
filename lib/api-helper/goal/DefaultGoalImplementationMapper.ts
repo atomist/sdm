@@ -76,7 +76,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
         const implementationsForGoal = this.implementations.filter(
-            m => m.goal.uniqueName === goal.uniqueName &&
+            m => m.goal.uniqueName === uniqueName(goal) &&
                 m.goal.environment === goal.environment);
 
         const matchingFulfillments: GoalImplementation[] = [];
@@ -94,7 +94,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         }
 
         const knownSideEffects = this.sideEffects.filter(
-            m => m.goal.uniqueName === goal.uniqueName &&
+            m => m.goal.uniqueName === uniqueName(goal) &&
                 m.goal.environment === goal.environment);
         for (const sideEffect of knownSideEffects) {
             if (await sideEffect.pushTest.mapping(inv)) {
@@ -104,17 +104,17 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         return undefined;
     }
 
-    public findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[] {
+    public findFulfillmentCallbackForGoal(sdmGoal: SdmGoalEvent): GoalFulfillmentCallback[] {
         return this.callbacks.filter(c =>
-            c.goal.uniqueName === g.uniqueName &&
+            c.goal.uniqueName === uniqueName(sdmGoal) &&
             // This slice is required because environment is suffixed with /
-            (c.goal.definition.environment.slice(0, -1) === g.environment
-                || c.goal.definition.environment === g.environment));
+            (c.goal.definition.environment.slice(0, -1) === sdmGoal.environment
+                || c.goal.definition.environment === sdmGoal.environment));
     }
 
     public findGoalBySdmGoal(sdmGoal: SdmGoalEvent): Goal | undefined {
         return this.goals.find(g =>
-            g.uniqueName === sdmGoal.uniqueName &&
+            g.uniqueName === uniqueName(sdmGoal) &&
             // This slice is required because environment is suffixed with /
             (g.definition.environment.slice(0, -1) === g.environment
                 || g.definition.environment === g.environment),
@@ -129,4 +129,9 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             throw new Error(`Goal with uniqueName '${goal.uniqueName}' already registered`);
         }
     }
+}
+
+function uniqueName(goal: Pick<SdmGoalEvent, "uniqueName">): string {
+    const un = goal.uniqueName.split("#sdm:");
+    return un[0];
 }
