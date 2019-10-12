@@ -343,7 +343,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
                             const newGoal = createGoal(gg, dg, newGoals.length + gNewGoals.length, previousGoals);
                             gNewGoals.push(newGoal);
                         }
-                        previousGoals = [gNewGoals];
+                        previousGoals = [...gNewGoals];
                         newGoals.push(...gNewGoals);
                     } else {
                         const newGoal = createGoal(g, dg, newGoals.length, previousGoals);
