@@ -318,10 +318,9 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
 }
 
 export async function planGoals(goals: Goals, pli: PushListenerInvocation): Promise<Goals> {
-    const existingGoals = [...goals.goals];
-    const allGoals = goals.goals;
+    const allGoals = [...goals.goals];
 
-    for (const dg of existingGoals) {
+    for (const dg of goals.goals) {
         if (!!(dg as any).plan) {
             const planResult = await (dg as any).plan(pli, goals);
             if (!!planResult) {
@@ -333,22 +332,24 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
                     plannedGoals.push(planResult);
                 }
 
-                let previousGoals = [];
                 const newGoals = [];
+                const goalMapping = new Map<PlannedGoal, Goal>();
 
                 plannedGoals.forEach(g => {
                     if (Array.isArray(g)) {
                         const gNewGoals = [];
                         for (const gg of g) {
-                            const newGoal = createGoal(gg, dg, newGoals.length + gNewGoals.length, previousGoals);
+                            const newGoal = createGoal(
+                                gg,
+                                dg,
+                                newGoals.length + gNewGoals.length,
+                                goalMapping);
                             gNewGoals.push(newGoal);
                         }
-                        previousGoals = [...gNewGoals];
                         newGoals.push(...gNewGoals);
                     } else {
-                        const newGoal = createGoal(g, dg, newGoals.length, previousGoals);
+                        const newGoal = createGoal(g, dg, newGoals.length,  goalMapping);
                         newGoals.push(newGoal);
-                        previousGoals = [newGoal];
                     }
                 });
 
@@ -370,7 +371,10 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
     return new Goals(goals.name, ...allGoals);
 }
 
-function createGoal(g: PlannedGoal, dg: Goal, plannedGoalsCounter: number, previousGoals: Goals[]): Goal {
+function createGoal(g: PlannedGoal,
+                    dg: Goal,
+                    plannedGoalsCounter: number,
+                    goalMapping: Map<PlannedGoal, Goal>): Goal {
     const uniqueName = `${dg.uniqueName}#sdm:${plannedGoalsCounter}`;
 
     const definition: GoalDefinition & { parameters: PlannedGoal["parameters"] } =
@@ -386,8 +390,14 @@ function createGoal(g: PlannedGoal, dg: Goal, plannedGoalsCounter: number, previ
     if (hasPreconditions(dg)) {
         dependsOn.push(...dg.dependsOn);
     }
-    if (!!previousGoals) {
-        dependsOn.push(...previousGoals);
+    if (!!g.dependsOn) {
+        if (Array.isArray(g.dependsOn)) {
+            dependsOn.push(...g.dependsOn.map(d => goalMapping.get(d)).filter(d => !!d));
+        } else {
+            dependsOn.push(goalMapping.get(g.dependsOn));
+        }
     }
-    return new GoalWithPrecondition(definition, ...dependsOn);
+    const goal = new GoalWithPrecondition(definition, ..._.uniqBy(dependsOn.filter(d => !!d), "uniqueName"));
+    goalMapping.set(g, goal);
+    return goal;
 }

@@ -37,7 +37,7 @@ describe("chooseAndSetGoals", () => {
             const postGoal = new GoalWithPrecondition({ uniqueName: "test2" }, goal);
 
             goal.plan = async () => {
-                return [{
+                const a = {
                     details: {
                         displayName: "Test1a",
                         descriptions: {
@@ -47,14 +47,18 @@ describe("chooseAndSetGoals", () => {
                     parameters: {
                         foo: "bar",
                     },
-                }, {
+                };
+                const b = {
                     details: {
                         displayName: "Test2a",
                     },
                     parameters: {
                         bar: "foo",
                     },
-                }];
+                    dependsOn: a,
+                };
+
+                return [a, b];
             };
 
             const goals = (await planGoals(new Goals("test", preGoal, goal, postGoal), {} as any)).goals;

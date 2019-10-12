@@ -157,6 +157,7 @@ export interface Parameterized {
 
 export interface PlannedGoal extends Parameterized {
     details?: Omit<FulfillableGoalDetails, "uniqueName" | "environment">;
+    dependsOn?: PlannedGoal | PlannedGoal[],
 }
 
 export interface PlannableGoal {
