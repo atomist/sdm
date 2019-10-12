@@ -287,11 +287,12 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
             return determinedGoals;
         } else {
             const filteredGoals: Goal[] = [];
-            (await planGoals(determinedGoals, pi)).goals.forEach(g => {
+            const plannedGoals = await planGoals(determinedGoals, pi);
+            plannedGoals.goals.forEach(g => {
                 if ((g as any).dependsOn) {
                     const preConditions = (g as any).dependsOn as Goal[];
                     if (preConditions) {
-                        const filteredPreConditions = preConditions.filter(pc => determinedGoals.goals.some(ag =>
+                        const filteredPreConditions = preConditions.filter(pc => plannedGoals.goals.some(ag =>
                             ag.uniqueName === pc.uniqueName &&
                             ag.environment === pc.environment));
                         if (filteredPreConditions.length > 0) {
