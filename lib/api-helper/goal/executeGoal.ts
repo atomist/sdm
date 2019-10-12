@@ -323,13 +323,13 @@ async function markGoalInProcess(parameters: {
 }): Promise<SdmGoalEvent> {
     const { ctx, goalEvent, goal, progressLogUrl } = parameters;
     goalEvent.state = SdmGoalState.in_process;
-    goalEvent.description = goal.inProcessDescription;
+    goalEvent.description = descriptionFromState(goal, SdmGoalState.in_process, goalEvent);
     goalEvent.url = progressLogUrl;
     await updateGoal(ctx,
         goalEvent,
         {
             url: progressLogUrl,
-            description: goal.inProcessDescription,
+            description: descriptionFromState(goal, SdmGoalState.in_process, goalEvent),
             state: SdmGoalState.in_process,
         });
     return goalEvent;
