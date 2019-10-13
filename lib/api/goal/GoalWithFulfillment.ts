@@ -157,11 +157,15 @@ export interface Parameterized {
 
 export interface PlannedGoal extends Parameterized {
     details?: Omit<FulfillableGoalDetails, "uniqueName" | "environment">;
-    dependsOn?: PlannedGoal | PlannedGoal[],
 }
 
+export type PlannedGoals = Record<string, {
+    goals: PlannedGoal | Array<PlannedGoal | PlannedGoal[]>,
+    dependsOn?: string | string;
+}>;
+
 export interface PlannableGoal {
-    plan?(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoal | Array<PlannedGoal | PlannedGoal[]>>;
+    plan?(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoals>;
 }
 
 /**
@@ -276,7 +280,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         }
     }
 
-    public async plan(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoal | Array<PlannedGoal | PlannedGoal[]>> {
+    public async plan(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoals> {
         return undefined;
     }
 
@@ -351,10 +355,10 @@ export class GoalWithFulfillment extends FulfillableGoal {
 export function goal(details: FulfillableGoalDetails = {},
                      goalExecutor?: ExecuteGoal,
                      options?: {
-        pushTest?: PushTest,
-        logInterpreter?: InterpretLog,
-        progressReporter?: ReportProgress,
-    }): GoalWithFulfillment {
+                         pushTest?: PushTest,
+                         logInterpreter?: InterpretLog,
+                         progressReporter?: ReportProgress,
+                     }): GoalWithFulfillment {
     const def = getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName(details.displayName || "goal"));
     const g = new GoalWithFulfillment(def);
     if (!!goalExecutor) {

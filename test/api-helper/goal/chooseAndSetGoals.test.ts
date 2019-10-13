@@ -55,10 +55,11 @@ describe("chooseAndSetGoals", () => {
                     parameters: {
                         bar: "foo",
                     },
-                    dependsOn: a,
                 };
 
-                return [a, b];
+                return {
+                    test: { goals: [a, b] },
+                };
             };
 
             const goals = (await planGoals(new Goals("test", preGoal, goal, postGoal), {} as any)).goals;
@@ -78,27 +79,89 @@ describe("chooseAndSetGoals", () => {
             assert.deepStrictEqual((goals[3] as any).dependsOn, [goals[1], goals[2]]);
         });
 
-        it("should plan two instances which run in parallel", async () => {
+        it("should plan three instances which run in parallel and sequential", async () => {
             const preGoal = new Goal({ uniqueName: "test0" });
             const goal = new GoalWithFulfillment({ uniqueName: "test1", displayName: "Test1" }, preGoal);
             const postGoal = new GoalWithPrecondition({ uniqueName: "test2" }, goal);
 
             goal.plan = async () => {
-                return [[{
-                    details: {
-                        displayName: "Test1a",
+                return {
+                    test: {
+                        goals: [[{
+                            details: {
+                                displayName: "Test1a",
+                            },
+                            parameters: {
+                                foo: "bar",
+                            },
+                        }, {
+                            details: {
+                                displayName: "Test2a",
+                            },
+                            parameters: {
+                                bar: "foo",
+                            },
+                        }], {
+                            details: {
+                                displayName: "Test3a",
+                            },
+                            parameters: {
+                                bar: "foo",
+                            },
+                        }],
                     },
-                    parameters: {
-                        foo: "bar",
+                };
+            };
+
+            const goals = (await planGoals(new Goals("test", preGoal, goal, postGoal), {} as any)).goals;
+
+            assert.strictEqual(goals.length, 5);
+            assert.deepStrictEqual(goals[0], preGoal);
+            assert.strictEqual(goals[1].name, "Test1a");
+            assert.strictEqual(goals[1].uniqueName, "test1#sdm:0");
+            assert.deepStrictEqual((goals[1].definition as any).parameters, { foo: "bar" });
+            assert.deepStrictEqual((goals[1] as any).dependsOn, [goals[0]]);
+            assert.strictEqual(goals[2].name, "Test2a");
+            assert.strictEqual(goals[2].uniqueName, "test1#sdm:1");
+            assert.deepStrictEqual((goals[2].definition as any).parameters, { bar: "foo" });
+            assert.deepStrictEqual((goals[2] as any).dependsOn, [goals[0]]);
+            assert.strictEqual(goals[3].name, "Test3a");
+            assert.strictEqual(goals[3].uniqueName, "test1#sdm:2");
+            assert.deepStrictEqual((goals[3].definition as any).parameters, { bar: "foo" });
+            assert.deepStrictEqual((goals[3] as any).dependsOn, [goals[0], goals[1], goals[2]]);
+            assert.deepStrictEqual(goals[4], postGoal);
+            assert.deepStrictEqual((goals[4] as any).dependsOn, [goals[1], goals[2], goals[3]]);
+        });
+
+        it("should plan two different sets with dependsOn", async () => {
+            const preGoal = new Goal({ uniqueName: "test0" });
+            const goal = new GoalWithFulfillment({ uniqueName: "test1", displayName: "Test1" }, preGoal);
+            const postGoal = new GoalWithPrecondition({ uniqueName: "test2" }, goal);
+
+            goal.plan = async () => {
+                return {
+                    build: {
+                        goals: {
+                            details: {
+                                displayName: "Test1a",
+                            },
+                            parameters: {
+                                foo: "bar",
+                            },
+                        },
                     },
-                }, {
-                    details: {
-                        displayName: "Test2a",
+                    docker_build: {
+                        goals: {
+                            details: {
+                                displayName: "Test2a",
+                            },
+                            parameters: {
+                                bar: "foo",
+                            },
+                        },
+                        dependsOn: "build",
                     },
-                    parameters: {
-                        bar: "foo",
-                    },
-                }]];
+                };
             };
 
             const goals = (await planGoals(new Goals("test", preGoal, goal, postGoal), {} as any)).goals;
@@ -112,7 +175,7 @@ describe("chooseAndSetGoals", () => {
             assert.strictEqual(goals[2].name, "Test2a");
             assert.strictEqual(goals[2].uniqueName, "test1#sdm:1");
             assert.deepStrictEqual((goals[2].definition as any).parameters, { bar: "foo" });
-            assert.deepStrictEqual((goals[2] as any).dependsOn, [goals[0]]);
+            assert.deepStrictEqual((goals[2] as any).dependsOn, [goals[0], goals[1]]);
             assert.deepStrictEqual(goals[3], postGoal);
             assert.deepStrictEqual((goals[3] as any).dependsOn, [goals[1], goals[2]]);
         });
