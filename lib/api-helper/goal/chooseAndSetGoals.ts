@@ -308,7 +308,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                     filteredGoals.push(g);
                 }
             });
-            logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, determinedGoals.name);
+            logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, plannedGoals.name);
             return new Goals(plannedGoals.name, ...filteredGoals);
         }
 
@@ -389,7 +389,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
         }
     }
 
-    return new Goals([goals.name, ..._.uniq(names)].join(" "), ...allGoals);
+    return new Goals([goals.name, ..._.uniq(names)].join(", "), ...allGoals);
 }
 
 function createGoal(g: PlannedGoal,
