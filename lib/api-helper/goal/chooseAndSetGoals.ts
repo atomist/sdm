@@ -309,7 +309,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                 }
             });
             logger.info("Goals for push '%s' on '%s/%s/%s' are '%s'", push.after.sha, id.owner, id.repo, push.branch, determinedGoals.name);
-            return new Goals(determinedGoals.name, ...filteredGoals);
+            return new Goals(plannedGoals.name, ...filteredGoals);
         }
 
     } catch (err) {
