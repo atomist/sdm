@@ -331,7 +331,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
                 const allNewGoals = [];
                 const goalMapping = new Map<string, Goal[]>();
                 _.forEach(planResult, (planResultGoals, n) => {
-                    names.push(n);
+                    names.push(n.replace(/_/g, " "));
                     const plannedGoals: Array<PlannedGoal | PlannedGoal[]> = [];
                     if (Array.isArray(planResultGoals.goals)) {
                         plannedGoals.push(...planResultGoals.goals);
