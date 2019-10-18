@@ -161,7 +161,7 @@ export interface PlannedGoal extends Parameterized {
 
 export type PlannedGoals = Record<string, {
     goals: PlannedGoal | Array<PlannedGoal | PlannedGoal[]>,
-    dependsOn?: string | string;
+    dependsOn?: string | string[];
 }>;
 
 export interface PlannableGoal {
