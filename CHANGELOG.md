@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.7.0...HEAD)
 
+### Added
+
+-   Fix signature. [#777](https://github.com/atomist/sdm/issues/777)
+
 ### Changed
 
 -   Make output less verbose during development. [#772](https://github.com/atomist/sdm/issues/772)
