@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware } from "@atomist/automation-client";
+import {
+    AutomationContextAware,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
-import { SdmGoalEvent } from "../goal/SdmGoalEvent";
-import { PushTest } from "./PushTest";
 import * as _ from "lodash";
+import { SdmGoalEvent } from "../goal/SdmGoalEvent";
+import { PushListenerInvocation } from "../listener/PushListener";
+import { PushTest } from "./PushTest";
 
 /**
  * Extension to PushTest to pre-condition on SDM goal events, so called GoalTests
@@ -28,18 +32,27 @@ export interface GoalTest extends PushTest {
 }
 
 export function goalTest(name: string,
-                         goalMapping: (goal: SdmGoalEvent) => Promise<boolean>): GoalTest {
+                         goalMapping: (goal: SdmGoalEvent) => Promise<boolean>,
+                         pushMapping: (p: PushListenerInvocation) => Promise<boolean>): GoalTest {
     return {
         name,
         mapping: async pli => {
             const trigger = (pli.context as any as AutomationContextAware).trigger;
             if (!!trigger && isEventIncoming(trigger)) {
                 const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
+
+                // First time around the push test will be invoked via a InMemoryProject
                 if (!!goal) {
-                    return goalMapping(goal);
+                    if (pli.project instanceof InMemoryProject) {
+                        const match = await goalMapping(goal);
+                        (pli as any).facts = _.merge((pli as any).facts, { goalTestMatch: match });
+                        return match;
+                    } else {
+                        return pushMapping(pli);
+                    }
                 }
             }
             return false;
         },
-    }
+    };
 }
