@@ -83,7 +83,7 @@
     "build": "run-s compile test lint doc",
     "clean": "run-p clean:compile clean:test clean:doc clean:run clean:barrels",
     "clean:barrels": "rimraf index.ts",
-    "clean:compile": "rimraf git-info.json build \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
+    "clean:compile": "rimraf git-info.json build \"index.{d.ts,js}{,.map}\" \"{bin,lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
     "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
@@ -107,7 +107,7 @@
     "typedoc": "npm run doc"
   },
   "engines": {
-    "node": ">=8.1.0",
+    "node": ">=8.2.0",
     "npm": ">=5.0.0"
   }
 }
