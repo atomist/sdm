@@ -23,7 +23,6 @@ import {
     Project,
     ProjectOperationCredentials,
     RemoteRepoRef,
-    SimpleProjectEditor,
 } from "@atomist/automation-client";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 

@@ -24,7 +24,6 @@ import {
     spawnLog,
 } from "../../../lib/api-helper/misc/child_process";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
-import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 
 describe("child_process", () => {
 

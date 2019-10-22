@@ -59,8 +59,7 @@ export interface AutofixGoalDetails extends FulfillableGoalDetails {
  */
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration<any>> {
 
-    constructor(private readonly goalDetailsOrUniqueName: AutofixGoalDetails | string
-                    = DefaultGoalNameGenerator.generateName("autofix"),
+    constructor(goalDetailsOrUniqueName: AutofixGoalDetails | string = DefaultGoalNameGenerator.generateName("autofix"),
                 ...dependsOn: Goal[]) {
 
         super({

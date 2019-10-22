@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    GitStatus,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { spawnAutofix } from "../../../../lib/api-helper/code/autofix/spawnAutofix";
 import { predicatePushTest } from "../../../../lib/api/mapping/PushTest";

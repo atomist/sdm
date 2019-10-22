@@ -16,11 +16,12 @@
 
 import {
     buttonForCommand,
-    GitProject,
     guid,
     HandlerContext,
+    isLocalProject,
     logger,
-    RemoteRepoRef,
+    Project,
+    RepoRef,
 } from "@atomist/automation-client";
 import {
     AnyProjectEditor,
@@ -51,10 +52,9 @@ import { confirmEditedness } from "./confirmEditedness";
  * It also honors the dryRun parameter flag to just capture the git diff and send it back to Slack instead
  * of pushing changes to Git.
  */
-export function chattyDryRunAwareEditor(ctr: CodeTransformRegistration<any>,
-                                        underlyingEditor: AnyProjectEditor): ProjectEditor {
-    return async (project: GitProject, context: HandlerContext, params: any) => {
-        const id = project.id as RemoteRepoRef;
+export function chattyDryRunAwareEditor(ctr: CodeTransformRegistration<any>, underlyingEditor: AnyProjectEditor): ProjectEditor {
+    return async (project: Project, context: HandlerContext, params: any) => {
+        const id = project.id;
         const editorName = ctr.name;
         try {
             await sendDryRunUpdateMessage(editorName, id, params, context, ctr);
@@ -71,15 +71,18 @@ export function chattyDryRunAwareEditor(ctr: CodeTransformRegistration<any>,
                 }
                 return { target: project, edited: false, success: false };
             } else if (isDryRun(params)) {
+                if (!isLocalProject(project)) {
+                    const message = `Project is not a local project, cannot diff`;
+                    logger.warn(message);
+                    return { target: project, edited: false, success: true };
+                }
                 let diff = "";
                 try {
                     const gitDiffResult = await execPromise("git", ["diff"], { cwd: project.baseDir });
                     diff = gitDiffResult.stdout;
                 } catch (err) {
                     logger.error(`Error diffing project: %s`, err.message);
-                    diff = `Error obtaining \`git diff\`:
-
-${codeBlock(err.message)}`;
+                    diff = `Error obtaining \`git diff\`:\n\n${codeBlock(err.message)}`;
                 }
                 await sendDryRunSummaryMessage(editorName, id, diff, params, context, ctr);
                 return { target: project, edited: false, success: true };
@@ -108,7 +111,7 @@ function isDryRun(params: any): boolean {
     return !!params && params[DryRunParameter.name] === true;
 }
 
-function slug(id: RemoteRepoRef): string {
+function slug(id: RepoRef): string {
     return `${id.owner}/${id.repo}/${id.branch}`;
 }
 
@@ -121,7 +124,7 @@ function isChatty(ctr: CodeTransformRegistration): boolean {
 }
 
 async function sendDryRunUpdateMessage(codeTransformName: string,
-                                       id: RemoteRepoRef,
+                                       id: RepoRef,
                                        params: any,
                                        ctx: HandlerContext,
                                        ctr: CodeTransformRegistration): Promise<void> {
@@ -135,7 +138,7 @@ async function sendDryRunUpdateMessage(codeTransformName: string,
 }
 
 async function sendFailureMessage(codeTransformName: string,
-                                  id: RemoteRepoRef,
+                                  id: RepoRef,
                                   params: any,
                                   editResult: EditResult,
                                   ctx: HandlerContext,
@@ -144,13 +147,13 @@ async function sendFailureMessage(codeTransformName: string,
         await ctx.messageClient.respond(slackErrorMessage(
             `Code Transform${isDryRun(params) ? " (dry run)" : ""}`,
             `Code transform ${italic(codeTransformName)} failed while changing ${bold(slug(id))}:\n\n${
-                editResult.error ? codeBlock(editResult.error.message) : ""}`,
+            editResult.error ? codeBlock(editResult.error.message) : ""}`,
             ctx), { id: params[MsgIdParameter.name] });
     }
 }
 
 async function sendNoUpdateMessage(codeTransformName: string,
-                                   id: RemoteRepoRef,
+                                   id: RepoRef,
                                    params: any,
                                    ctx: HandlerContext,
                                    ctr: CodeTransformRegistration): Promise<void> {
@@ -164,7 +167,7 @@ async function sendNoUpdateMessage(codeTransformName: string,
 }
 
 async function sendSuccessMessage(codeTransformName: string,
-                                  id: RemoteRepoRef,
+                                  id: RepoRef,
                                   params: any,
                                   ctx: HandlerContext,
                                   ctr: CodeTransformRegistration): Promise<void> {
@@ -179,7 +182,7 @@ async function sendSuccessMessage(codeTransformName: string,
 }
 
 async function sendDryRunSummaryMessage(codeTransformName: string,
-                                        id: RemoteRepoRef,
+                                        id: RepoRef,
                                         diff: string,
                                         params: any,
                                         ctx: HandlerContext,

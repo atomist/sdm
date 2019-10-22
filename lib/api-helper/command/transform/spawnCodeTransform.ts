@@ -19,6 +19,7 @@ import {
     GitStatus,
     logger,
     NoParameters,
+    Project,
 } from "@atomist/automation-client";
 import {
     CodeTransform,
@@ -29,7 +30,6 @@ import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import {
     spawnLog,
-    SpawnLogCommand,
     SpawnLogInvocation,
     SpawnLogOptions,
     SpawnLogResult,
@@ -70,7 +70,8 @@ async function spawnToTransform(p: GitProject, r: MinSpawnLogResult): Promise<Tr
  * @return result of commands, success or the first failure
  */
 export function spawnCodeTransform(commands: SpawnLogInvocation[], log?: ProgressLog): CodeTransform {
-    return async (p: GitProject, papi: PushAwareParametersInvocation<NoParameters>) => {
+    return async (project: Project, papi: PushAwareParametersInvocation<NoParameters>) => {
+        const p = project as GitProject;
         const defaultOptions: SpawnLogOptions = {
             cwd: p.baseDir,
             log: log || papi.progressLog || new LoggingProgressLog("spawnCodeTransform"),

@@ -45,9 +45,7 @@ describe("Queue", () => {
                     assert.strictEqual(e.name, "OnAnySdmGoalSet");
                     assert(e.subscription.includes("test-sdm"));
                 },
-                addGoalImplementation: async (implementationName: string,
-                                              goal: Goal,
-                                              goalExecutor: ExecuteGoal) => {
+                addGoalImplementation: async (implementationName: string, goal: Goal, goalExecutor: ExecuteGoal) => {
                     const c: any = {
                         configuration: {
                             name: "test",
@@ -204,7 +202,7 @@ describe("Queue", () => {
                 },
             };
             let start = 0;
-            let update = 0;
+            // let update = 0;
             const messageClient = {
                 send: msg => {
                     if (!msg.phase) {
@@ -213,7 +211,7 @@ describe("Queue", () => {
                         start++;
                     } else {
                         assert(msg.phase.includes("at"));
-                        update++;
+                        // update++;
                     }
                 },
             };

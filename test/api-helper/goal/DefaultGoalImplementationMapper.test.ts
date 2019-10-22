@@ -227,10 +227,6 @@ describe("DefaultGoalImplementationMapper", () => {
         it("should throw error uniqueName is not unique", async () => {
             const mp = new DefaultGoalImplementationMapper();
 
-            const id = new GitHubRepoRef("a", "b");
-            const p = InMemoryProject.from(id);
-            const pli: PushListenerInvocation = fakePush(p);
-
             const goal = new Goal({
                 uniqueName: "foo1",
                 displayName: "bar",

@@ -15,7 +15,6 @@
  */
 
 import {
-    BitBucketServerRepoRef,
     GitlabRepoRef,
     MappedParameter,
     MappedParameters,

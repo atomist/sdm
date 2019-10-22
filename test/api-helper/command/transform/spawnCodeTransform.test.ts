@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    GitStatus,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { spawnCodeTransform } from "../../../../lib/api-helper/command/transform/spawnCodeTransform";
-import {
-    CodeTransform,
-    TransformResult,
-} from "../../../../lib/api/registration/CodeTransform";
+import { TransformResult } from "../../../../lib/api/registration/CodeTransform";
 
 describe("spawnCodeTransform", () => {
 

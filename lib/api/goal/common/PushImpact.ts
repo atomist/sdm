@@ -36,7 +36,7 @@ import { IndependentOfEnvironment } from "../support/environment";
  */
 export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListenerRegistration> {
 
-    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("push-impact"),
+    constructor(goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("push-impact"),
                 ...dependsOn: Goal[]) {
 
         super({

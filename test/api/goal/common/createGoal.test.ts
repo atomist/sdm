@@ -49,7 +49,7 @@ describe("createGoal", () => {
                     retries: 10,
                     timeoutMillis: 100,
                 }, false);
-            const r = await ge({} as any);
+            await ge({} as any);
             assert.equal(count, 9);
         });
 
@@ -90,6 +90,7 @@ describe("createGoal", () => {
             } catch (e) {
                 assert(e.message.includes("Goal 'test' timed out after max retries"));
             }
+            assert(!executed, "goal execute when should not have");
         });
 
     });

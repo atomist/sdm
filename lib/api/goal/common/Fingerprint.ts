@@ -40,7 +40,7 @@ import { IndependentOfEnvironment } from "../support/environment";
 export class Fingerprint
     extends FulfillableGoalWithRegistrationsAndListeners<FingerprinterRegistration, FingerprintListener> {
 
-    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("fingerprint"),
+    constructor(goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("fingerprint"),
                 ...dependsOn: Goal[]) {
 
         super({

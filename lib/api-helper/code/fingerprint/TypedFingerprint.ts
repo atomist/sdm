@@ -22,10 +22,7 @@ import { AbstractFingerprint } from "./AbstractFingerprint";
  */
 export class TypedFingerprint<T> extends AbstractFingerprint {
 
-    public constructor(name: string,
-                       abbreviation: string,
-                       version: string,
-                       private readonly t: T) {
+    public constructor(name: string, abbreviation: string, version: string, t: T) {
         super(name, abbreviation, version, JSON.stringify(t));
     }
 

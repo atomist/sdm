@@ -17,11 +17,9 @@
 import {
     AutomationContextAware,
     CommandIncoming,
-    configurationValue,
     HandlerContext,
 } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
-import { WebSocketLifecycle } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketLifecycle";
 import { HandlerResponse } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketMessageClient";
 import { Parameter } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import * as _ from "lodash";
@@ -58,8 +56,7 @@ export interface ParameterPromptOptions {
 /**
  * ParameterPrompts let the caller prompt for the provided parameters
  */
-export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>,
-                                       options?: ParameterPromptOptions) => Promise<PARAMS>;
+export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>, options?: ParameterPromptOptions) => Promise<PARAMS>;
 
 /**
  * No-op NoParameterPrompt implementation that never prompts for new parameters
@@ -81,14 +78,12 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
         const newParameters = _.cloneDeep(parameters);
 
         // Find out if - and if - which parameters are actually missing
-        let missing = false;
         let requiredMissing = false;
         const params: any = {};
         for (const parameter in parameters) {
             if (parameters.hasOwnProperty(parameter)) {
                 const existingParameter = existingParameters.find(p => p.name === parameter);
                 if (!existingParameter) {
-                    missing = true;
                     // If required isn't defined it means the parameter is required
                     if (newParameters[parameter].required || newParameters[parameter].required === undefined) {
                         requiredMissing = true;

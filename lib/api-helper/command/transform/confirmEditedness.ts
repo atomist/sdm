@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    logger,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import * as stringify from "json-stringify-safe";
 
 /**
  * Try to work out whether a project was edited, looking at git status
