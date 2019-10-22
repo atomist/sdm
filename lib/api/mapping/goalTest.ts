@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright © 2019 Atomist, Inc.
  *
@@ -14,29 +15,33 @@
  * limitations under the License.
  */
 
+import { AutomationContextAware } from "@atomist/automation-client";
+import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
-import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "./PushTest";
+import * as _ from "lodash";
 
 /**
  * Extension to PushTest to pre-condition on SDM goal events, so called GoalTests
  */
 export interface GoalTest extends PushTest {
 
-    goalMapping: (goal: SdmGoalEvent) => Promise<boolean>;
-    pushMapping: (pli: PushListenerInvocation) => Promise<boolean>;
-
 }
 
 export function goalTest(name: string,
-                         goalMapping: (goal: SdmGoalEvent) => Promise<boolean>,
-                         pushMapping: (pli: PushListenerInvocation) => Promise<boolean> = async () => true): GoalTest {
+                         goalMapping: (goal: SdmGoalEvent) => Promise<boolean>): GoalTest {
     return {
         name,
         // Always return false as this shouldn't be scheduled on pushes
-        mapping: async () => false,
-        // Safe goal and push mapping for later
-        goalMapping,
-        pushMapping,
+        mapping: async pli => {
+            const trigger = (pli.context as any as AutomationContextAware).trigger;
+            if (!!trigger && isEventIncoming(trigger)) {
+                const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
+                if (!!goal) {
+                    return goalMapping(goal);
+                }
+            }
+            return false;
+        },
     }
 }
