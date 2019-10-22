@@ -32,7 +32,6 @@ export function goalTest(name: string,
                          goalMapping: (goal: SdmGoalEvent) => Promise<boolean>): GoalTest {
     return {
         name,
-        // Always return false as this shouldn't be scheduled on pushes
         mapping: async pli => {
             const trigger = (pli.context as any as AutomationContextAware).trigger;
             if (!!trigger && isEventIncoming(trigger)) {
