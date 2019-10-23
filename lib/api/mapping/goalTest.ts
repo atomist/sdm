@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    AutomationContextAware,
-} from "@atomist/automation-client";
+import { AutomationContextAware } from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
+import { SdmGoalState } from "../../typings/types";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
+import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "./PushTest";
 import { AnyPush } from "./support/commonPushTests";
 
@@ -30,8 +30,16 @@ export interface GoalTest extends PushTest {
     pushTest: PushTest;
 }
 
+export function hasGoal(name: string, state?: SdmGoalState, pushTest?: PushTest): GoalTest {
+    return goalTest(
+        `has goal ${name}`,
+        async g => g.name === name && (!state || state === g.state),
+        pushTest,
+    );
+}
+
 export function goalTest(name: string,
-                         goalMapping: (goal: SdmGoalEvent) => Promise<boolean>,
+                         goalMapping: (goal: SdmGoalEvent, pli: PushListenerInvocation) => Promise<boolean>,
                          pushTest: PushTest = AnyPush): GoalTest {
     return {
         name,
@@ -40,7 +48,7 @@ export function goalTest(name: string,
             if (!!trigger && isEventIncoming(trigger)) {
                 const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
                 if (!!goal) {
-                    const match = await goalMapping(goal);
+                    const match = await goalMapping(goal, pli);
                     if (!!match) {
                         if (!pli.project) {
                             return true;
