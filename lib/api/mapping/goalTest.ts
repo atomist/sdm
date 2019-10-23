@@ -16,7 +16,6 @@
 
 import {
     AutomationContextAware,
-    InMemoryProject,
 } from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
