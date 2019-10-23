@@ -43,7 +43,7 @@ export function goalTest(name: string,
                 if (!!goal) {
                     const match = await goalMapping(goal);
                     if (!!match) {
-                        if (pli.project instanceof InMemoryProject) {
+                        if (!pli.project) {
                             return true;
                         } else {
                             return pushTest.mapping(pli);
@@ -57,6 +57,10 @@ export function goalTest(name: string,
     };
 }
 
+/**
+ * Wrap a PushTest to make sure it doesn't get the change to match on goal planning
+ * based on goal events
+ */
 export function notGoalTest(pushTest: PushTest): PushTest {
     return {
         name: pushTest.name,
