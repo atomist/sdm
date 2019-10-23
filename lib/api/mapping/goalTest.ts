@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware } from "@atomist/automation-client";
+import {
+    AutomationContextAware,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
@@ -24,7 +27,6 @@ import { AnyPush } from "./support/commonPushTests";
 /**
  * Extension to PushTest to pre-condition on SDM goal events, so called GoalTests
  */
-// tslint:disable-next-line:no-empty-interface
 export interface GoalTest extends PushTest {
     pushTest: PushTest;
 }
@@ -41,7 +43,11 @@ export function goalTest(name: string,
                 if (!!goal) {
                     const match = await goalMapping(goal);
                     if (!!match) {
-                        return pushTest.mapping(pli);
+                        if (pli.project instanceof InMemoryProject) {
+                            return true;
+                        } else {
+                            return pushTest.mapping(pli);
+                        }
                     }
                 }
             }
