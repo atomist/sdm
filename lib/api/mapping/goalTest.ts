@@ -14,45 +14,55 @@
  * limitations under the License.
  */
 
-import {
-    AutomationContextAware,
-    InMemoryProject,
-} from "@atomist/automation-client";
+import { AutomationContextAware } from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
-import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "./PushTest";
+import { AnyPush } from "./support/commonPushTests";
 
 /**
  * Extension to PushTest to pre-condition on SDM goal events, so called GoalTests
  */
+// tslint:disable-next-line:no-empty-interface
 export interface GoalTest extends PushTest {
-
+    pushTest: PushTest;
 }
 
 export function goalTest(name: string,
                          goalMapping: (goal: SdmGoalEvent) => Promise<boolean>,
-                         pushMapping: (p: PushListenerInvocation) => Promise<boolean>): GoalTest {
+                         pushTest: PushTest = AnyPush): GoalTest {
     return {
         name,
         mapping: async pli => {
             const trigger = (pli.context as any as AutomationContextAware).trigger;
             if (!!trigger && isEventIncoming(trigger)) {
                 const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
-
-                // First time around the push test will be invoked via a InMemoryProject
                 if (!!goal) {
-                    if (pli.project instanceof InMemoryProject) {
-                        const match = await goalMapping(goal);
-                        (pli as any).facts = _.merge((pli as any).facts, { goalTestMatch: match });
-                        return match;
-                    } else {
-                        return pushMapping(pli);
+                    const match = await goalMapping(goal);
+                    if (!!match) {
+                        return pushTest.mapping(pli);
                     }
                 }
             }
             return false;
+        },
+        pushTest,
+    };
+}
+
+export function notGoalTest(pushTest: PushTest): PushTest {
+    return {
+        name: pushTest.name,
+        mapping: async pli => {
+            const trigger = (pli.context as any as AutomationContextAware).trigger;
+            if (!!trigger && isEventIncoming(trigger)) {
+                const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
+                if (!!goal) {
+                    return false;
+                }
+            }
+            return pushTest.mapping(pli);
         },
     };
 }
