@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Make output less verbose during development. [#772](https://github.com/atomist/sdm/issues/772)
 -   Switch to globby for glob matching. [#775](https://github.com/atomist/sdm/issues/775)
+-   Return goal result from executeGoal. [#780](https://github.com/atomist/sdm/issues/780)
 
 ### Fixed
 
