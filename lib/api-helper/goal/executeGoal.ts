@@ -75,15 +75,16 @@ class GoalExecutionError extends Error {
 
     constructor(params: { where: string, result?: ExecuteGoalResult, cause?: Error }) {
         super("Failure in " + params.where);
+        Object.setPrototypeOf(this, new.target.prototype);
         this.where = params.where;
         this.result = params.result;
         this.cause = params.cause;
     }
 
     get description(): string {
-        const resultDescription = this.result ? `Result code ${this.result.code} ${this.result.message}` : "";
-        const causeDescription = this.cause ? `Caused by: ${this.cause.message}` : "";
-        return `Failure in ${this.where}: ${resultDescription} ${causeDescription}`;
+        const resultDescription = this.result ? ` Result code ${this.result.code} ${this.result.message}` : "";
+        const causeDescription = this.cause ? ` Caused by: ${this.cause.message}` : "";
+        return `Failure in ${this.where}:${resultDescription}${causeDescription}`;
     }
 }
 
@@ -145,9 +146,9 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         const goalInvocation = prepareGoalInvocation(gi, projectListeners);
 
         // execute pre hook
-        let result: ExecuteGoalResult = (await executeHook(rules, goalInvocation, inProcessGoalEvent, "pre") || Success);
-        if (isFailure(result)) {
-            throw new GoalExecutionError({ where: "executing pre-goal hook", result });
+        const preHookResult: ExecuteGoalResult = (await executeHook(rules, goalInvocation, inProcessGoalEvent, "pre") || Success);
+        if (isFailure(preHookResult)) {
+            throw new GoalExecutionError({ where: "executing pre-goal hook", result: preHookResult });
         }
         // execute the actual goal
         const goalResult: ExecuteGoalResult = (await prepareGoalExecutor(implementation, inProcessGoalEvent, configuration)(goalInvocation)
@@ -159,16 +160,16 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         }
 
         // execute post hook
-        const hookResult: ExecuteGoalResult =
+        const postHookResult: ExecuteGoalResult =
             (await executeHook(rules, goalInvocation, inProcessGoalEvent, "post")) || Success;
-        if (isFailure(hookResult)) {
-            throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
+        if (isFailure(postHookResult)) {
+            throw new GoalExecutionError({ where: "executing post-goal hooks", result: postHookResult });
         }
 
-        result = {
-            ...result,
+        const result = {
+            ...preHookResult,
             ...goalResult,
-            ...hookResult,
+            ...postHookResult,
         };
 
         await notifyGoalExecutionListeners({
@@ -178,10 +179,10 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
         logger.info("Goal '%s' completed with: %j", goalEvent.uniqueName, result);
         await markStatus({ context, goalEvent, goal, result, progressLogUrl: progressLog.url });
-        return Success;
+        return { ...result, code: 0 };
     } catch (err) {
         logger.warn("Error executing goal '%s': %s", goalEvent.uniqueName, err.message);
-        const result = { code: 1, ...(err.result ? err.result : {}) };
+        const result = { code: 1, ...(err.result || {}) };
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,
             state: SdmGoalState.failure,
@@ -340,13 +341,13 @@ async function markGoalInProcess(parameters: {
  * @return {Promise<void>}
  */
 async function reportGoalError(parameters: {
-                                   goal: Goal,
-                                   implementationName: string,
-                                   addressChannels: AddressChannels,
-                                   progressLog: ProgressLog,
-                                   id: RemoteRepoRef,
-                                   logInterpreter: InterpretLog,
-                               },
+    goal: Goal,
+    implementationName: string,
+    addressChannels: AddressChannels,
+    progressLog: ProgressLog,
+    id: RemoteRepoRef,
+    logInterpreter: InterpretLog,
+},
                                err: GoalExecutionError): Promise<void> {
     const { implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
@@ -465,8 +466,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                    // Intentionally empty
-                })
+                        // Intentionally empty
+                    })
                     .catch(err => {
                         logger.debug(`Error occurred reporting progress: %s`, err.message);
                     });
