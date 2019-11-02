@@ -74,9 +74,9 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
     const preferenceStoreFactory = configurationValue<PreferenceStoreFactory>(
         "sdm.preferenceStoreFactory",
         () => NoPreferenceStore);
-    const concurrentTasks = await preferenceStoreFactory(ctx).get<number>(
+    const concurrentTasks = await preferenceStoreFactory(ctx).get<string>(
         `@atomist/job/${owner}/concurrentTasks`,
-        { defaultValue: details.concurrentTasks });
+        { defaultValue: (details.concurrentTasks || 1).toString() });
 
     const data = _.cloneDeep(_.get(ctx, "trigger") || {});
     data.secrets = [];
@@ -98,7 +98,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                     parameters: p,
                 }),
             })),
-            concurrentTasks: concurrentTasks || 1,
+            concurrentTasks: +concurrentTasks,
         },
         options: MutationNoCacheOptions,
     });
