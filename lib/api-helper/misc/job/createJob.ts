@@ -69,14 +69,13 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
     const { command, parameters, name, description, registration } = details;
     const cmd = typeof command === "string" ? command : command.name;
     const nameToUse = !!name ? name : cmd;
-
     const owner = registration || configurationValue<string>("name");
 
     const preferenceStoreFactory = configurationValue<PreferenceStoreFactory>(
         "sdm.preferenceStoreFactory",
         () => NoPreferenceStore);
     const concurrentTasks = await preferenceStoreFactory(ctx).get<number>(
-        `@atomist/job/${nameToUse}/concurrentTasks`,
+        `@atomist/job/${owner}/concurrentTasks`,
         { defaultValue: details.concurrentTasks });
 
     const data = _.cloneDeep(_.get(ctx, "trigger") || {});
