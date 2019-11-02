@@ -22,6 +22,10 @@ import {
 } from "@atomist/automation-client";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
+import {
+    NoPreferenceStore,
+    PreferenceStoreFactory,
+} from "../../../api/context/preferenceStore";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 import { CreateJob } from "../../../typings/types";
 
@@ -63,19 +67,28 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                                                          ctx: HandlerContext): Promise<{ id: string }> {
 
     const { command, parameters, name, description, registration } = details;
+    const cmd = typeof command === "string" ? command : command.name;
+    const nameToUse = !!name ? name : cmd;
 
     const owner = registration || configurationValue<string>("name");
+
+    const preferenceStoreFactory = configurationValue<PreferenceStoreFactory>(
+        "sdm.preferenceStoreFactory",
+        () => NoPreferenceStore);
+    const concurrentTasks = await preferenceStoreFactory(ctx).get<number>(
+        `@atomist/job/${nameToUse}/concurrentTasks`,
+        { defaultValue: details.concurrentTasks });
 
     const data = _.cloneDeep(_.get(ctx, "trigger") || {});
     data.secrets = [];
 
-    const cmd = typeof command === "string" ? command : command.name;
+
     const params = (Array.isArray(parameters) ? parameters : [parameters]).filter(p => !!p);
 
     const result = await ctx.graphClient.mutate<CreateJob.Mutation, CreateJob.Variables>({
         name: "CreateJob",
         variables: {
-            name: !!name ? name : cmd,
+            name: nameToUse,
             description: !!description ? description : `Executing ${codeLine(cmd)}`,
             owner,
             data: JSON.stringify(data),
@@ -86,7 +99,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                     parameters: p,
                 }),
             })),
-            concurrentTasks: details.concurrentTasks || 1,
+            concurrentTasks: concurrentTasks || 1,
         },
         options: MutationNoCacheOptions,
     });
