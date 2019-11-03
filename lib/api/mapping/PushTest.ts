@@ -16,7 +16,6 @@
 
 import { Project } from "@atomist/automation-client";
 import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
-import { PushListenerInvocation } from "../listener/PushListener";
 import { PredicateMapping } from "./PredicateMapping";
 
 /**
