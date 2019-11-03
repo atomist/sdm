@@ -15,13 +15,14 @@
  */
 
 import { Project } from "@atomist/automation-client";
+import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { PredicateMapping } from "./PredicateMapping";
 
 /**
  * Special PushMapping. Return true if we like this push. Used in goal setting etc.
  */
-export interface PushTest extends PredicateMapping<PushListenerInvocation> {
+export interface PushTest extends PredicateMapping<StatefulPushListenerInvocation> {
 
 }
 
@@ -36,7 +37,7 @@ export type ProjectPredicate = (p: Project) => Promise<boolean>;
  * @param mapping test function
  * @return {PushTest}
  */
-export function pushTest(name: string, mapping: (p: PushListenerInvocation) => Promise<boolean>): PushTest {
+export function pushTest(name: string, mapping: (p: StatefulPushListenerInvocation) => Promise<boolean>): PushTest {
     return {
         name,
         mapping,

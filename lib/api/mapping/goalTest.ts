@@ -18,8 +18,8 @@ import { AutomationContextAware } from "@atomist/automation-client";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
 import { SdmGoalState } from "../../typings/types";
+import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
-import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "./PushTest";
 import { AnyPush } from "./support/commonPushTests";
 
@@ -39,7 +39,7 @@ export function hasGoal(name: string, state?: SdmGoalState, pushTest?: PushTest)
 }
 
 export function goalTest(name: string,
-                         goalMapping: (goal: SdmGoalEvent, pli: PushListenerInvocation) => Promise<boolean>,
+                         goalMapping: (goal: SdmGoalEvent, pli: StatefulPushListenerInvocation) => Promise<boolean>,
                          pushTest: PushTest = AnyPush): GoalTest {
     return {
         name,

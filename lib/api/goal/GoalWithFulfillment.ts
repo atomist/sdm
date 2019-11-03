@@ -22,6 +22,10 @@ import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import {
+    DefaultFacts,
+    StatefulPushListenerInvocation,
+} from "../dsl/goalContribution";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import { PushListenerInvocation } from "../listener/PushListener";
 import {
@@ -152,7 +156,7 @@ export interface PredicatedGoalDefinition extends GoalDefinition {
 }
 
 export interface Parameterized {
-    parameters?: Record<string, any>;
+    parameters?: DefaultFacts;
 }
 
 export interface PlannedGoal extends Parameterized {
@@ -165,7 +169,7 @@ export type PlannedGoals = Record<string, {
 }>;
 
 export interface PlannableGoal {
-    plan?(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoals>;
+    plan?(pli: StatefulPushListenerInvocation, goals: Goals): Promise<PlannedGoals>;
 }
 
 /**

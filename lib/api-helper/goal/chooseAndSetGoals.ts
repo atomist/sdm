@@ -34,6 +34,7 @@ import {
     PreferenceStore,
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
+import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
 import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
     Goal,
@@ -192,7 +193,7 @@ export async function determineGoals(rules: {
             cloneOptions: minimalClone(push, { detachHead: true }),
         },
         async project => {
-            const pli: PushListenerInvocation = {
+            const pli: StatefulPushListenerInvocation = {
                 project,
                 credentials,
                 id,
@@ -201,6 +202,7 @@ export async function determineGoals(rules: {
                 addressChannels,
                 configuration,
                 preferences: preferences || NoPreferenceStore,
+                facts: {},
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
             if (!determinedGoals) {
