@@ -27,7 +27,6 @@ import {
     StatefulPushListenerInvocation,
 } from "../dsl/goalContribution";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
-import { PushListenerInvocation } from "../listener/PushListener";
 import {
     Registerable,
     registerRegistrable,
@@ -284,7 +283,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         }
     }
 
-    public async plan(pli: PushListenerInvocation, goals: Goals): Promise<PlannedGoals> {
+    public async plan(pli: StatefulPushListenerInvocation, goals: Goals): Promise<PlannedGoals> {
         return undefined;
     }
 
