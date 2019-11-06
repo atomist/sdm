@@ -30,9 +30,9 @@ export interface GoalTest extends PushTest {
     pushTest: PushTest;
 }
 
-export function hasGoal(name: string, state?: SdmGoalState, pushTest?: PushTest): GoalTest {
+export function isGoal(name: string, state?: SdmGoalState, pushTest?: PushTest): GoalTest {
     return goalTest(
-        `has goal ${name}`,
+        `is goal ${name}`,
         async g => g.name === name && (!state || state === g.state),
         pushTest,
     );
