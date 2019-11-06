@@ -123,7 +123,7 @@ export const IsPushToBranchWithPullRequest: PushTest = pushTest("Push to branch 
  * @return Push test performing the match
  */
 export function isRepo(re: RegExp): PushTest {
-    return pushTest(`Project owner/name slug matches regular expression ${RegExp.toString()}`,
+    return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`,
         async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
 }
 
@@ -134,6 +134,6 @@ export function isRepo(re: RegExp): PushTest {
  * @return Push test performing the match
  */
 export function isBranch(re: RegExp): PushTest {
-    return pushTest(`Project branch matches regular expression ${RegExp.toString()}`,
+    return pushTest(`Project branch matches regular expression ${re.toString()}`,
         async pci => re.test(pci.push.branch));
 }
