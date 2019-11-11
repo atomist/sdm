@@ -27,7 +27,11 @@ import {
     PreferenceStoreFactory,
 } from "../../../api/context/preferenceStore";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
-import { CreateJob } from "../../../typings/types";
+import {
+    CreateJob,
+    AddJobTasks,
+    ResumeJob,
+} from "../../../typings/types";
 
 export enum JobTaskType {
     Command = "command",
@@ -83,6 +87,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
 
 
     const params = (Array.isArray(parameters) ? parameters : [parameters]).filter(p => !!p);
+    const paramsChunks = _.chunk(params, 250);
 
     const result = await ctx.graphClient.mutate<CreateJob.Mutation, CreateJob.Variables>({
         name: "CreateJob",
@@ -91,7 +96,7 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
             description: !!description ? description : `Executing ${codeLine(cmd)}`,
             owner,
             data: JSON.stringify(data),
-            tasks: params.map(p => ({
+            tasks: (paramsChunks[0] || []).map(p => ({
                 name: cmd,
                 data: JSON.stringify({
                     type: JobTaskType.Command,
@@ -99,6 +104,33 @@ export async function createJob<T extends ParameterType>(details: JobDetails<T>,
                 }),
             })),
             concurrentTasks: +concurrentTasks,
+        },
+        options: MutationNoCacheOptions,
+    });
+
+    if (paramsChunks.length > 1) {
+        for (const paramChunk of paramsChunks.slice(1)) {
+            await ctx.graphClient.mutate<AddJobTasks.Mutation, AddJobTasks.Variables>({
+                name: "AddJobTasks",
+                variables: {
+                    id: result.createAtmJob.id,
+                    tasks: paramChunk.map(p => ({
+                        name: cmd,
+                        data: JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: p,
+                        }),
+                    })),
+                },
+                options: MutationNoCacheOptions,
+            });
+        }
+    }
+
+    await ctx.graphClient.mutate<ResumeJob.Mutation, ResumeJob.Variables>({
+        name: "ResumeJob",
+        variables: {
+            id: result.createAtmJob.id,
         },
         options: MutationNoCacheOptions,
     });

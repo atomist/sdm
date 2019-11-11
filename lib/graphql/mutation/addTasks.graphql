@@ -1,0 +1,11 @@
+mutation AddJobTasks(
+    $id: String!
+    $tasks: [AtmJobTaskInput!]!
+) {
+    addAtmJobTasks(
+        jobId: $id,
+        jobTasks: $tasks
+    ) {
+        id
+    }
+}

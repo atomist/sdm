@@ -37,17 +37,18 @@ describe("createJob", () => {
             },
             graphClient: {
                 mutate: async options => {
-                    const vars = options.variables;
-                    assert.strictEqual(vars.name, "TestCommand");
-                    assert.strictEqual(vars.description, "This is a test command");
-                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
-                    assert.strictEqual(vars.tasks.length, 1);
-                    assert.strictEqual(vars.tasks[0].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[0].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: { foo: "bar" },
-                    }));
-
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 1);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { foo: "bar" },
+                        }));
+                    }
                     return {
                         createAtmJob: { id: "123456" },
                     } as any;
@@ -73,17 +74,18 @@ describe("createJob", () => {
             },
             graphClient: {
                 mutate: async options => {
-                    const vars = options.variables;
-                    assert.strictEqual(vars.name, "TestCommand");
-                    assert.strictEqual(vars.description, "This is a test command");
-                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
-                    assert.strictEqual(vars.tasks.length, 1);
-                    assert.strictEqual(vars.tasks[0].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[0].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: { foo: "bar" },
-                    }));
-
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 1);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { foo: "bar" },
+                        }));
+                    }
                     return {
                         createAtmJob: { id: "123456" },
                     } as any;
@@ -112,26 +114,28 @@ describe("createJob", () => {
             },
             graphClient: {
                 mutate: async options => {
-                    const vars = options.variables;
-                    assert.strictEqual(vars.name, "TestCommand");
-                    assert.strictEqual(vars.description, "This is a test command");
-                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
-                    assert.strictEqual(vars.tasks.length, 3);
-                    assert.strictEqual(vars.tasks[0].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[0].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: { color: "blue" },
-                    }));
-                    assert.strictEqual(vars.tasks[1].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[1].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: { color: "red" },
-                    }));
-                    assert.strictEqual(vars.tasks[2].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[2].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: { color: "green" },
-                    }));
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 3);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { color: "blue" },
+                        }));
+                        assert.strictEqual(vars.tasks[1].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[1].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { color: "red" },
+                        }));
+                        assert.strictEqual(vars.tasks[2].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[2].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { color: "green" },
+                        }));
+                    }
 
                     return {
                         createAtmJob: { id: "123456" },
@@ -156,16 +160,18 @@ describe("createJob", () => {
             },
             graphClient: {
                 mutate: async options => {
-                    const vars = options.variables;
-                    assert.strictEqual(vars.name, "TestCommand");
-                    assert.strictEqual(vars.description, "This is a test command");
-                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
-                    assert.strictEqual(vars.tasks.length, 0);
-                    // assert.strictEqual(vars.tasks[0].name, "TestCommand");
-                    // assert.strictEqual(vars.tasks[0].data, JSON.stringify({
-                    //     type: JobTaskType.Command,
-                    //     parameters: { },
-                    // }));
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 0);
+                        // assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        // assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                        //     type: JobTaskType.Command,
+                        //     parameters: { },
+                        // }));
+                    }
                     return {
                         createAtmJob: { id: "123456" },
                     } as any;
@@ -190,19 +196,69 @@ describe("createJob", () => {
             },
             graphClient: {
                 mutate: async options => {
-                    const vars = options.variables;
-                    assert.strictEqual(vars.name, "TestCommand");
-                    assert.strictEqual(vars.description, "This is a test command");
-                    assert.strictEqual(vars.owner, "@atomist/sdm-test");
-                    assert.strictEqual(vars.tasks.length, 1);
-                    assert.strictEqual(vars.tasks[0].name, "TestCommand");
-                    assert.strictEqual(vars.tasks[0].data, JSON.stringify({
-                        type: JobTaskType.Command,
-                        parameters: {},
-                    }));
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 1);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: {},
+                        }));
+                    }
                     return {
                         createAtmJob: { id: "123456" },
                     } as any;
+                },
+            } as any,
+        } as any);
+
+        assert.deepStrictEqual(result, { id: "123456" });
+
+    });
+
+    it("should allow split parameter into multiple addJobTask calls", async () => {
+        const parameters = Array.from({length: 500}, (v, k) => ({ counter: k }));
+        const result = await createJob({
+            command: "TestCommand",
+            registration: "@atomist/sdm-test",
+            description: "This is a test command",
+            parameters,
+        }, {
+            context: {
+                name: "@atomist/sdm-test",
+            },
+            graphClient: {
+                mutate: async options => {
+                    if (options.name === "CreateJob") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.name, "TestCommand");
+                        assert.strictEqual(vars.description, "This is a test command");
+                        assert.strictEqual(vars.owner, "@atomist/sdm-test");
+                        assert.strictEqual(vars.tasks.length, 250);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { counter: 0 },
+                        }));
+                        return {
+                            createAtmJob: { id: "123456" },
+                        } as any;
+                    } else if (options.name === "AddTasks") {
+                        const vars = options.variables;
+                        assert.strictEqual(vars.id, "123456");
+                        assert.strictEqual(vars.tasks.length, 250);
+                        assert.strictEqual(vars.tasks[0].name, "TestCommand");
+                        assert.strictEqual(vars.tasks[0].data, JSON.stringify({
+                            type: JobTaskType.Command,
+                            parameters: { counter: 250 },
+                        }));
+                        return {
+                            createAtmJob: { id: "123456" },
+                        } as any;
+                    }
                 },
             } as any,
         } as any);
