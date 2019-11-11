@@ -28,8 +28,8 @@ import {
 } from "../../../api/context/preferenceStore";
 import { CommandRegistration } from "../../../api/registration/CommandRegistration";
 import {
-    CreateJob,
     AddJobTasks,
+    CreateJob,
     ResumeJob,
 } from "../../../typings/types";
 
