@@ -140,7 +140,7 @@ function markEndpointStatus(parameters: {
 }): Promise<void> {
     const { context, sdmGoal, endpointGoal, newState, endpoint, error } = parameters;
     return updateGoal(context, sdmGoal, {
-        description: descriptionFromState(endpointGoal, newState),
+        description: descriptionFromState(endpointGoal, newState, sdmGoal),
         url: endpoint,
         state: newState,
         error,
