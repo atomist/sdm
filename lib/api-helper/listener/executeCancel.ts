@@ -65,13 +65,13 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                 repo: goalEvent.repo.name,
                 owner: goalEvent.repo.owner,
                 providerId: goalEvent.repo.providerId,
-                uniqueNames: _.uniq(_.flatten(optsToUse.goals.map(g => {
+                uniqueNames: _.uniq([..._.flatten(optsToUse.goals.map(g => {
                     if (isGoals(g)) {
                         return g.goals.map(gg => gg.uniqueName);
                     } else {
                         return g.uniqueName;
                     }
-                }))),
+                })), ...(optsToUse.goalNames || [])]),
             },
             options: QueryNoCacheOptions,
         });
@@ -88,7 +88,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
 
                     gi.progressLog.write(
                         `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state
-                            }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
+                        }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
 
                     const updatedGoal = _.cloneDeep(goal);
                     updatedGoal.ts = Date.now();

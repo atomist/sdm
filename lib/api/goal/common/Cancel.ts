@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,11 @@ export interface CancelOptions {
      * Goals that should be canceled if they are in a state that allows cancellation
      */
     goals: Array<Goal | Goals>;
+
+    /**
+     * Name of goals that should be canceled if they are in a state that allows cancellation
+     */
+    goalNames?: string | string[];
 
     /**
      * Filter goals to cancel based on goalSet or state
