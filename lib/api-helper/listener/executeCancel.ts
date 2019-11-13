@@ -18,6 +18,7 @@ import {
     addressEvent,
     AutomationContextAware,
     QueryNoCacheOptions,
+    toStringArray,
 } from "@atomist/automation-client";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
@@ -72,6 +73,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                         return g.uniqueName;
                     }
                 }))),
+                names: toStringArray(optsToUse.goalNames || []),
             },
             options: QueryNoCacheOptions,
         });
@@ -88,7 +90,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
 
                     gi.progressLog.write(
                         `Canceling goal '${goal.name} (${goal.uniqueName})' in state '${goal.state
-                            }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
+                        }' of goal set '${goal.goalSet} - ${goal.goalSetId}'`);
 
                     const updatedGoal = _.cloneDeep(goal);
                     updatedGoal.ts = Date.now();
