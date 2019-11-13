@@ -42,6 +42,11 @@ export interface CancelOptions {
     goals: Array<Goal | Goals>;
 
     /**
+     * Name of goals that should be canceled if they are in a state that allows cancellation
+      */
+    goalNames?: string | string[];
+
+    /**
      * Filter goals to cancel based on goalSet or state
      * @param goalSet
      */

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { projectUtils } from "@atomist/automation-client";
+import {
+    projectUtils,
+    toStringArray,
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { PullRequestsForBranch } from "../../../typings/types";
 import {
@@ -53,24 +56,6 @@ export const AnyPush: PushTest = pushTest("Any push", async () => true);
 export function hasFile(path: string): PredicatePushTest {
     return predicatePushTest(`HasFile(${path})`,
         async p => !!(await p.getFile(path)));
-}
-
-/**
- * Return a PushTest testing for the existence of the given file containing the pattern
- * @param {string} path
- * @param pattern regex to look for
- * @return {PushTest}
- */
-export function hasFileContaining(path: string, pattern: RegExp): PredicatePushTest {
-    return predicatePushTest(`HasFile(${path}) containing ${pattern.source}`,
-        async p => {
-            const f = await p.getFile(path);
-            if (!f) {
-                return false;
-            }
-            const content = await f.getContent();
-            return pattern.test(content);
-        });
 }
 
 /**
@@ -115,3 +100,48 @@ export const IsPushToBranchWithPullRequest: PushTest = pushTest("Push to branch 
     }
     return false;
 });
+
+/**
+ * Return a push test that matches the repository owner/repo slug
+ * against regular expression.
+ * @param re Regular expression to match against using RegExp.test()
+ * @return Push test performing the match
+ */
+export function isRepo(re: RegExp): PushTest {
+    return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`,
+        async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
+}
+
+/**
+ * Return a push test that matches the repository branch
+ * against regular expression.
+ * @param re Regular expression to match against using RegExp.test()
+ * @return Push test performing the match
+ */
+export function isBranch(re: RegExp): PushTest {
+    return pushTest(`Project branch matches regular expression ${re.toString()}`,
+        async pci => re.test(pci.push.branch));
+}
+
+/**
+ * Return a PushTest testing for the existence of the given file containing the pattern
+ * @param {string} path
+ * @param pattern regex to look for
+ * @return {PushTest}
+ */
+export function hasFileContaining(pattern: string | string[], content: RegExp = /.*/): PushTest {
+    return pushTest(`Project has files ${toStringArray(pattern).join(", ")} with content ${content.toString()}`,
+        async pci => {
+            const files = await pci.project.getFiles(toStringArray(pattern));
+            if (files.length === 0) {
+                return false;
+            }
+            for (const file of files) {
+                const fc = await file.getContent();
+                if (content.test(fc)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+}
