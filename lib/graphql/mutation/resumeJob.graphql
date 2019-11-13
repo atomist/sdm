@@ -1,5 +1,5 @@
 mutation ResumeJob($id: String!) {
-    resumeAtmJob(jobId: $id) {
-        id
-    }
+  resumeAtmJob(jobId: $id) {
+    id
+  }
 }
