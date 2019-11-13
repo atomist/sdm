@@ -30,6 +30,7 @@ import { ParameterPromptFactory } from "../context/parameterPrompt";
 import { PreferenceStoreFactory } from "../context/preferenceStore";
 import { EnrichGoal } from "../goal/enrichGoal";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
+import { TagGoalSet } from "../goal/tagGoalSet";
 import { RepoTargets } from "./RepoTargets";
 import {
     GoalSigningConfiguration,
@@ -103,6 +104,11 @@ export interface SoftwareDeliveryMachineOptions {
      * Callback to enrich goal metadata before it gets persisted and planned
      */
     enrichGoal?: EnrichGoal;
+
+    /**
+     * Callback to add tags to created goal sets
+     */
+    tagGoalSet?: TagGoalSet;
 
     /**
      * Optional set of keys to sign and verify goals that are produced and received

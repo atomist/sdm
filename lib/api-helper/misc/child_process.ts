@@ -101,12 +101,26 @@ export interface SpawnLogCommand {
 }
 
 /**
+ * Interface similar to [[SpawnLogCommand]] but making the log
+ * property optional since that can typically be obtained other ways
+ * when commands are invoked from within goals.
+ */
+export interface SpawnLogInvocation {
+    /** Executable able to be run by cross-spawn. */
+    command: string;
+    /** Arguments to command */
+    args?: string[];
+    /** Options to customize how command is run. */
+    options?: Partial<SpawnLogOptions>;
+}
+
+/**
  * Result returned by spawnAndLog after running a child process.  It
  * is compatible with handler results.  To support both HandlerResult
  * and SpawnPromiseReturns, the value of code and status are
  * identical.
  */
-export interface SpawnLogResult extends HandlerResult, SpawnPromiseReturns { }
+export type SpawnLogResult = HandlerResult & SpawnPromiseReturns;
 
 /**
  * Spawn a process, logging its standard output and standard error,

@@ -35,11 +35,12 @@ import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that performs fingerprinting. Typically invoked early in a delivery flow.
+ * @deprecated use fingerprintSupport with a PushImpact goal
  */
 export class Fingerprint
     extends FulfillableGoalWithRegistrationsAndListeners<FingerprinterRegistration, FingerprintListener> {
 
-    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("fingerprint"),
+    constructor(goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("fingerprint"),
                 ...dependsOn: Goal[]) {
 
         super({

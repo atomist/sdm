@@ -238,7 +238,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         for (const pack of packs) {
             const found = this.extensionPacks.find(existing => existing.name === pack.name && existing.vendor === pack.vendor);
             if (!!found) {
-                logger.warn("Cannot add extension pack '%s' version %s from %s: We already have version %s of it",
+                logger.warn("Cannot add extension pack '%s' version %s from %s. Version %s already added",
                     pack.name, pack.version, pack.vendor, found.version);
             } else {
                 this.addExtensionPack(pack);
@@ -251,7 +251,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     private addExtensionPack(pack: ExtensionPack): this {
-        logger.info("Adding extension pack '%s' version %s from %s",
+        logger.debug("Adding extension pack '%s' version %s from %s",
             pack.name, pack.version, pack.vendor);
         validateConfigurationValues(this.configuration, pack);
         pack.configure(this);
@@ -265,7 +265,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public async notifyStartupListeners(): Promise<void> {
         const i: AdminCommunicationContext = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
-                logger.warn("startup: %j", msg);
+                logger.debug("startup: %j", msg);
             }),
             sdm: this,
         };
@@ -284,7 +284,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public scheduleTriggeredListeners(): void {
         const i: TriggeredListenerInvocation = {
             addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => {
-                logger.info("trigger: %j", msg);
+                logger.debug("trigger: %j", msg);
             }),
             sdm: this,
         };

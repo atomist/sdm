@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * Progress log to logger, at a desired logging level
@@ -27,8 +28,8 @@ export class LoggingProgressLog implements ProgressLog {
     constructor(public name: string, private readonly level: "debug" | "info" = "debug") {
     }
 
-    public write(pWhat: string): void {
-        let what = pWhat || "";
+    public write(msg: string, ...args: string[]): void {
+        let what = format(msg || "", ...args);
         this.log += what;
         if (what.endsWith("\n\r") || what.endsWith("\r\n")) {
             what = what.slice(0, -2);

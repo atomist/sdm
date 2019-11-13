@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,8 +162,9 @@ function convertToGoals(...pgoals: Array<GoalDefinition | Goal | Goals>): Goal[]
             return g;
         } else if (isGoals(g)) {
             return g.goals;
-        } else {
+        } else if (!!g) {
             return new Goal(g);
         }
-    }));
+        return undefined;
+    })).filter(g => !!g);
 }

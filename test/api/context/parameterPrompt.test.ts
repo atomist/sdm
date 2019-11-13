@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { WebSocketLifecycle } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketLifecycle";
+import {
+    HandlerContext,
+    MessageClient,
+} from "@atomist/automation-client";
 import * as assert from "assert";
 import { CommandListenerExecutionInterruptError } from "../../../lib/api-helper/machine/handlerRegistrations";
 import { commandRequestParameterPromptFactory } from "../../../lib/api/context/parameterPrompt";
@@ -22,10 +25,6 @@ import { commandRequestParameterPromptFactory } from "../../../lib/api/context/p
 describe("parameterPrompt", () => {
 
     describe("commandRequestParameterPromptFactory", () => {
-
-        after(() => {
-            delete (global as any).__runningAutomationClient;
-        });
 
         it("should correctly find already existing parameters", async () => {
             const ctx = {
@@ -42,21 +41,13 @@ describe("parameterPrompt", () => {
         });
 
         it("should ask for missing parameters", async () => {
-            const wsMock: WebSocketLifecycle = {
-                send: msg => {
+            const wsMock: MessageClient = {
+                respond: msg => {
                     assert(msg.parameter_specs.length === 2);
                     assert.strictEqual(msg.parameter_specs[0].name, "bar");
                     assert.strictEqual(msg.parameter_specs[1].name, "test");
                 },
             } as any;
-
-            (global as any).__runningAutomationClient = {
-                configuration: {
-                    ws: {
-                        lifecycle: wsMock,
-                    },
-                },
-            };
 
             const ctx = {
                 trigger: {
@@ -65,6 +56,7 @@ describe("parameterPrompt", () => {
                         { name: "some", value: "other" },
                     ],
                 },
+                messageClient: wsMock,
             };
 
             try {
@@ -81,19 +73,11 @@ describe("parameterPrompt", () => {
         });
 
         it("should not ask for missing optional parameters if there no required missing", async () => {
-            const wsMock: WebSocketLifecycle = {
-                send: msg => {
+            const wsMock: HandlerContext = {
+                respond: () => {
                     assert.fail();
                 },
             } as any;
-
-            (global as any).__runningAutomationClient = {
-                configuration: {
-                    ws: {
-                        lifecycle: wsMock,
-                    },
-                },
-            };
 
             const ctx = {
                 trigger: {
@@ -101,6 +85,7 @@ describe("parameterPrompt", () => {
                         { name: "some", value: "other" },
                     ],
                 },
+                messageClient: wsMock,
             };
 
             const params = await commandRequestParameterPromptFactory(ctx as any)({
@@ -111,22 +96,14 @@ describe("parameterPrompt", () => {
         });
 
         it("should ask for missing optional parameters only when there's at least one required", async () => {
-            const wsMock: WebSocketLifecycle = {
-                send: msg => {
+            const wsMock: MessageClient = {
+                respond: msg => {
                     assert(msg.parameter_specs.length === 3);
                     assert.strictEqual(msg.parameter_specs[0].name, "bar");
                     assert.strictEqual(msg.parameter_specs[1].name, "test");
                     assert.strictEqual(msg.parameter_specs[2].name, "foo");
                 },
             } as any;
-
-            (global as any).__runningAutomationClient = {
-                configuration: {
-                    ws: {
-                        lifecycle: wsMock,
-                    },
-                },
-            };
 
             const ctx = {
                 trigger: {
@@ -135,6 +112,7 @@ describe("parameterPrompt", () => {
                         { name: "superfoo", value: "other" },
                     ],
                 },
+                messageClient: wsMock,
             };
 
             try {

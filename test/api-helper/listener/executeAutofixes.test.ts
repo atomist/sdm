@@ -45,6 +45,7 @@ import {
     CoreRepoFieldsAndChannels,
     OnPushToAnyBranch,
     ScmProvider,
+    SdmGoalState,
 } from "../../../lib/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
@@ -202,6 +203,7 @@ describe("executeAutofixes", () => {
             repoRefResolver: FakeRepoRefResolver,
         } as any)) as ExecuteGoalResult;
         assert.equal(r.code, 0, "Did not return 0");
+        assert.equal(r.state, SdmGoalState.stopped);
         assert(!!p, r.description);
         const foundFile = p.findFileSync("bird");
         assert(!!foundFile, r.description);
@@ -257,6 +259,7 @@ describe("executeAutofixes", () => {
                 return false;
             }
             assert.fail();
+            return undefined;
         };
         (p as any as GitProject).commit = async () => undefined;
         (p as any as GitProject).push = async () => undefined;
@@ -300,6 +303,7 @@ describe("executeAutofixes", () => {
         assert(!!gi.credentials);
         const r = await executeAutofixes([AddThingAutofix], tp)(gi) as ExecuteGoalResult;
         assert.deepStrictEqual(r.code, 0);
+        assert.deepStrictEqual(r.state, SdmGoalState.success);
         assert(!!p);
         const foundFile = p.findFileSync("thing");
         assert(!!foundFile);

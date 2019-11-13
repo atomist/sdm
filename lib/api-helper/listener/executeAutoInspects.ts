@@ -72,7 +72,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
             if (options.registrations.length === 0) {
                 return { code: 0, description: "No code inspections configured", requireApproval: false };
             }
-            logger.info("Planning inspection of %j with %d AutoInspects", id, options.registrations.length);
+            logger.debug("Planning inspection of %j with %d AutoInspects", id, options.registrations.length);
             return configuration.sdm.projectLoader.doWithProject({
                 credentials,
                 id,
@@ -82,9 +82,9 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
                     options.cloneOptions ? options.cloneOptions : minimalClone(goalEvent.push, { detachHead: true }),
             }, applyCodeInspections(goalInvocation, options));
         } catch (err) {
-            logger.error("Error executing review of %j with %d reviewers: %s",
+            logger.debug("Error executing review of %j with %d reviewers: %s",
                 id, options.registrations.length, err.message);
-            logger.warn(err.stack);
+            logger.debug(err.stack);
             return failure(err);
         }
     };
@@ -140,7 +140,7 @@ export function executeAutoInspects(options: AutoInspectOptions): ExecuteGoal {
 function applyCodeInspections(goalInvocation: GoalInvocation,
                               options: AutoInspectOptions): (project: GitProject) => Promise<ExecuteGoalResult> {
     return async project => {
-        const { addressChannels } = goalInvocation;
+        const { addressChannels, progressLog } = goalInvocation;
         const cri = await createPushImpactListenerInvocation(goalInvocation, project);
         const relevantAutoInspects = await relevantCodeActions(options.registrations, cri);
 
@@ -151,6 +151,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
                     const papi: PushAwareParametersInvocation<any> = {
                         ...cli,
                         push: cri,
+                        progressLog,
                     };
                     try {
                         goalInvocation.progressLog.write("Running inspection " + autoInspect.name + "...");
@@ -195,7 +196,7 @@ function applyCodeInspections(goalInvocation: GoalInvocation,
             description: reviewCommentCount > 0 ?
                 `Code inspections raised ${reviewCommentCount} review ${reviewCommentCount > 1 ? "comments" : "comment"}` : undefined,
         };
-        logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
+        logger.debug("Review responses are %j, result=%j", responsesFromReviewListeners, result);
         return result;
     };
 }
@@ -220,7 +221,7 @@ async function gatherResponsesFromReviewListeners(progressLog: ProgressLog, revi
                                                   pli: PushListenerInvocation):
     Promise<PushImpactResponse[]> {
     const review = consolidate(reviews, pli.id);
-    logger.info("Consolidated review of %j has %s comments", pli.id, review.comments.length);
+    logger.debug("Consolidated review of %j has %s comments", pli.id, review.comments.length);
 
     return Promise.all(reviewListeners.map(responseFromOneListener(progressLog, { ...pli, review })));
 }

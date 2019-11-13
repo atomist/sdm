@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ export class WriteToAllProgressLog implements ProgressLog {
         return true;
     }
 
-    public write(what: string): void {
-        this.logs.forEach(log => log.write(what));
+    public write(msg: string, ...args: string[]): void {
+        this.logs.forEach(log => log.write(msg, ...args));
     }
 
     public async flush(): Promise<void> {

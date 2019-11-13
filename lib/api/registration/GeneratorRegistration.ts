@@ -23,6 +23,7 @@ import {
     RepoCreationParameters,
     SeedDrivenGeneratorParameters,
 } from "@atomist/automation-client";
+import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
@@ -32,7 +33,7 @@ import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
  * computes a RemoteRepoRef or Project from the parameters.
  */
 export type StartingPoint<PARAMS> =
-    Project | RemoteRepoRef | ((pi: PARAMS & ParametersInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
+    Project | RemoteRepoRef | ((pi: PARAMS & CommandListenerInvocation<PARAMS>) => (RemoteRepoRef | Project | Promise<Project>));
 
 /**
  * Action that executes after the project has been generated and pushed
@@ -69,5 +70,5 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * Note: these hooks fire after the project has been generated and
      * pushed to the remote repository.
      */
-    afterAction?: ProjectAction<PARAMS> | Array<ProjectAction<PARAMS>>;
+    afterAction?: ProjectAction<PARAMS & SeedDrivenGeneratorParameters> | Array<ProjectAction<PARAMS & SeedDrivenGeneratorParameters>>;
 }

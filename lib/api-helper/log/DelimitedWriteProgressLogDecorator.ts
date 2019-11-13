@@ -15,6 +15,7 @@
  */
 
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * Sometimes new log lines are separated by a character rather than a call to write.
@@ -44,8 +45,8 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
         return this.delegate.isAvailable();
     }
 
-    public write(what: string): void {
-        this.lineBuffer += what;
+    public write(msg: string, ...args: string[]): void {
+        this.lineBuffer += format(msg, ...args);
         const splitLines = this.lineBuffer.split(this.lineDelimiter);
         if (splitLines.length > 1) {
             const completedLines = splitLines.slice(0, splitLines.length - 1);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import * as assert from "power-assert";
 import { DelimitedWriteProgressLogDecorator } from "../../../lib/api-helper/log/DelimitedWriteProgressLogDecorator";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
+import { format } from "../../../lib/api-helper/log/format";
 import { ProgressLog } from "../../../lib/spi/log/ProgressLog";
 
 class ListProgressLog implements ProgressLog {
@@ -33,8 +34,8 @@ class ListProgressLog implements ProgressLog {
         return;
     }
 
-    public write(what: string): void {
-        this.logList.push(what);
+    public write(msg: string, ...args: string[]): void {
+        this.logList.push(format(msg, args));
     }
 
     public async isAvailable(): Promise<boolean> {
@@ -87,7 +88,7 @@ describe("DelimitedWriteProgressLogDecorator", () => {
     });
 
     it("Should include newlines in its log property", async () => {
-        const delegateLog = await createEphemeralProgressLog({} as any, { name: "hi"} as any);
+        const delegateLog = await createEphemeralProgressLog({} as any, { name: "hi" } as any);
         const log = new DelimitedWriteProgressLogDecorator(delegateLog, "\n");
 
         log.write("I'm a lumberjack and I'm OK\nI sleep all");
@@ -95,7 +96,20 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         await log.flush();
 
         assert.deepEqual(log.log,
-            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day",
+            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day\n",
+        );
+    });
+
+    it("should include printf style placeholders", async () => {
+        const delegateLog = await createEphemeralProgressLog({} as any, { name: "hi" } as any);
+        const log = new DelimitedWriteProgressLogDecorator(delegateLog, "\n");
+
+        log.write("I'm a lumberjack and I'm OK\nI sleep all");
+        log.write(" %s and I work %s day", "night", "all");
+        await log.flush();
+
+        assert.deepEqual(log.log,
+            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day\n",
         );
     });
 

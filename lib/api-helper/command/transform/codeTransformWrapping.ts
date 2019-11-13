@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import { SoftwareDeliveryMachine } from "../../../api/machine/SoftwareDeliveryMa
 import { CodeTransformRegistration } from "../../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../api/registration/CommandHandlerRegistration";
 import { BranchForName } from "../../../typings/types";
+import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import { codeTransformRegistrationToCommand } from "../../machine/handlerRegistrations";
 import { RepoTargetingParameters } from "../../machine/RepoTargetingParameters";
 import { toMachineOptions } from "../../machine/toMachineOptions";
@@ -86,7 +87,12 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
             // Obtain the transform presentation to retrieve the target branch
             let branch = id.branch;
             if (codeTransformRegistration.transformPresentation) {
-                const editMode = codeTransformRegistration.transformPresentation(ci, p);
+                const editMode = codeTransformRegistration.transformPresentation(
+                    {
+                        ...ci,
+                        progressLog: new LoggingProgressLog(codeTransformRegistration.name, "debug"),
+                    },
+                    p);
                 if (editModes.isBranchCommit(editMode)) {
                     branch = editMode.branch;
                 }
@@ -105,7 +111,7 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
 
             if (!!_.get(result, "Branch[0].id")) {
                 // Branch exists; run the code transform on that branch instead
-                logger.info(`Target branch '${branch}' already exists. Redirecting code transform to run against that branch`);
+                logger.debug(`Target branch '${branch}' already exists. Redirecting code transform to run against that branch`);
                 const newParams = {
                     ...ci.parameters,
                 };
@@ -113,7 +119,7 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
                 return codeTransform.handle(ci.context, newParams);
             } else {
                 // Branch doesn't exist yet; run code transform as is
-                logger.info(`Target branch '${branch}' does not exist. Applying code transform on requested branch`);
+                logger.debug(`Target branch '${branch}' does not exist. Applying code transform on requested branch`);
                 return codeTransform.handle(ci.context, ci.parameters);
             }
         });

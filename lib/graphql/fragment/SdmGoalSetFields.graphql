@@ -1,0 +1,30 @@
+fragment SdmGoalSetFields on SdmGoalSet {
+  sha
+  branch
+  goalSet
+  goalSetId
+  goals {
+    name
+    uniqueName
+  }
+  provenance {
+    channelId
+    correlationId
+    name
+    registration
+    ts
+    userId
+    version
+  }
+  repo {
+    name
+    owner
+    providerId
+  }
+  state
+  tags {
+    name
+    value
+  }
+  ts
+}

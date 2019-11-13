@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
@@ -46,9 +45,9 @@ describe("Reporting failure interpretation", () => {
             message: "Hi",
             includeFullLog: true,
         };
-        const fullLog = {log: "you are so busted"};
+        const fullLog = { log: "you are so busted" };
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as any, ac);
+            interpretedLog, fullLog, { sha: "abc" } as any, ac);
         assert(spy.sentFullLog);
     });
 
@@ -59,9 +58,9 @@ describe("Reporting failure interpretation", () => {
             message: "Hi",
             includeFullLog: false,
         };
-        const fullLog = {url: "here", log: "you are so busted"};
+        const fullLog = { url: "here", log: "you are so busted" };
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as any, ac);
+            interpretedLog, fullLog, { sha: "abc" } as any, ac);
 
         assert(!spy.sentFullLog);
     });
@@ -72,9 +71,9 @@ describe("Reporting failure interpretation", () => {
             relevantPart: "busted",
             message: "Hi",
         };
-        const fullLog = {url: "here", log: "you are so busted"};
+        const fullLog = { url: "here", log: "you are so busted" };
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as any, ac);
+            interpretedLog, fullLog, { sha: "abc" } as any, ac);
 
         assert(!spy.sentFullLog);
     });
@@ -85,9 +84,9 @@ describe("Reporting failure interpretation", () => {
             relevantPart: "busted",
             message: "Hi",
         };
-        const fullLog = {log: "you are so busted"};
+        const fullLog = { log: "you are so busted" };
         await reportFailureInterpretation("stepName",
-            interpretedLog, fullLog, {sha: "abc"} as any, ac);
+            interpretedLog, fullLog, { sha: "abc" } as any, ac);
         assert(spy.sentFullLog);
     });
 

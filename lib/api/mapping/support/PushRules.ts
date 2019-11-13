@@ -69,7 +69,7 @@ export class PushRules<V> implements PushMapping<V>, GoalSettingStructure<PushLi
             const found = await pc.mapping(pi);
             logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
             if (found) {
-                logger.info("PushRules '%s': Value for push on %j is %j", this.name, pi.id, found);
+                logger.debug("PushRules '%s': Value for push on %j is %j", this.name, pi.id, found);
                 return found;
             } else if (found === null) {
                 return undefined;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// tslint:disable:deprecation
 import { AbstractFingerprint } from "./AbstractFingerprint";
 
 /**
@@ -21,15 +22,8 @@ import { AbstractFingerprint } from "./AbstractFingerprint";
  */
 export class TypedFingerprint<T> extends AbstractFingerprint {
 
-    public constructor(name: string,
-                       abbreviation: string,
-                       version: string,
-                       private readonly t: T) {
-        super(name, abbreviation, version);
-    }
-
-    get data(): string {
-        return JSON.stringify(this.t);
+    public constructor(name: string, abbreviation: string, version: string, t: T) {
+        super(name, abbreviation, version, JSON.stringify(t));
     }
 
     /**

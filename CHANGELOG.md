@@ -5,7 +5,80 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/sdm/compare/1.4.1...HEAD)
+## [Unreleased](https://github.com/atomist/sdm/compare/1.7.0...HEAD)
+
+### Added
+
+-   Fix signature. [#777](https://github.com/atomist/sdm/issues/777)
+
+### Changed
+
+-   Make output less verbose during development. [#772](https://github.com/atomist/sdm/issues/772)
+-   Switch to globby for glob matching. [#775](https://github.com/atomist/sdm/issues/775)
+-   Return goal result from executeGoal. [#780](https://github.com/atomist/sdm/issues/780)
+-   Build up jobs with many tasks. [80b8ba5](https://github.com/atomist/sdm/commit/80b8ba57a2e602c31e94799347769030dcc85a04)
+
+### Fixed
+
+-   Correct interface for spawnCodeTransform. [#770](https://github.com/atomist/sdm/issues/770)
+-   Resolves #669. [#773](https://github.com/atomist/sdm/issues/773)
+
+## [1.7.0](https://github.com/atomist/sdm/compare/1.6.1...1.7.0) - 2019-09-09
+
+### Added
+
+-   Update GeneratorRegistration Interface for AfterActions. [#758](https://github.com/atomist/sdm/issues/758)
+-   Add concurrentTasks to createJob. [bb21ac6](https://github.com/atomist/sdm/commit/bb21ac650148fe340d1310a0ab75bd61a1aa49ce)
+-   Single repo operations as jobs. [1b87048](https://github.com/atomist/sdm/commit/1b87048dad545a16d62d4e512c31972c13bc69fc)
+-   Fail Goals after timeout . [#681](https://github.com/atomist/sdm/issues/681)
+
+### Changed
+
+-   Allow to disable code transform messages. [a517d2b](https://github.com/atomist/sdm/commit/a517d2b778579fb3584ac1d60c571c9043e5e0b2)
+-   Upgrade to graphql-codegen version 1.7.1. [#768](https://github.com/atomist/sdm/issues/768)
+
+### Fixed
+
+-   Queue goal doesn't start when canceling a single goal set. [#727](https://github.com/atomist/sdm/issues/727)
+-   Fix no parameters issue with createJob. [#759](https://github.com/atomist/sdm/issues/759)
+-   `promptFor` not sending continuation message in cluster mode. [#765](https://github.com/atomist/sdm/issues/765)
+-   Include mapped parameters when sending continuation message. [af0729d](https://github.com/atomist/sdm/commit/af0729dd994cc201891f623884cdda04ace3cec1)
+
+## [1.6.1](https://github.com/atomist/sdm/compare/1.6.0...1.6.1) - 2019-07-11
+
+### Changed
+
+-   Update automation-client and lodash. [82b3dd3](https://github.com/atomist/sdm/commit/82b3dd39fae094838a404e6820fd249ddc936a39)
+
+## [1.6.0](https://github.com/atomist/sdm/compare/1.5.1...1.6.0) - 2019-07-09
+
+### Added
+
+-   Move code transforms to job support. [#756](https://github.com/atomist/sdm/issues/756)
+
+### Deprecated
+
+-   Deprecate Fingerprint goal. [4e894f9](https://github.com/atomist/sdm/commit/4e894f9f53e79e3e0f8fd8b868c7f17bf0f05a21)
+
+### Fixed
+
+-   `ProgressLog` is not populated for code transforms. [#745](https://github.com/atomist/sdm/issues/745)
+
+## [1.5.1](https://github.com/atomist/sdm/compare/1.5.0...1.5.1) - 2019-06-04
+
+### Changed
+
+-   Update deps. [4adc725](https://github.com/atomist/sdm/commit/4adc72558d6164ea6bb0dd2ffb433f4e3bdda1c6)
+-   Reduce the log noise in error cases.  [a90e5cf](https://github.com/atomist/sdm/commit/a90e5cf06a1c059d0614e76118070e9077de028a)
+-   Remove usage of externalKey in log. [760cedf](https://github.com/atomist/sdm/commit/760cedfce2827c0176502291b7aff671fb839367)
+
+### Fixed
+
+-   Add missing array destructuring. [74704ac](https://github.com/atomist/sdm/commit/74704ac1fc30b57ab9cb63b37070806df1fcac38)
+-   Skip sprintf if no args are given. [e4c6410](https://github.com/atomist/sdm/commit/e4c6410899f6bb23d31678e17355ead87aa09c98)
+-   Fix typing on Autofix goal. [ea2ce5c](https://github.com/atomist/sdm/commit/ea2ce5cd3e0dc0b7cf940bed8e974c0405387aed)
+
+## [1.5.0](https://github.com/atomist/sdm/compare/1.4.1...1.5.0) - 2019-05-27
 
 ### Added
 
@@ -16,22 +89,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Allow control over transformPresentation with autofix. [#687](https://github.com/atomist/sdm/issues/687)
 -   Allow `afterActions` on generator registrations. [#714](https://github.com/atomist/sdm/issues/714)
 -   Change `Applying Autofix` to `Evaluating Autofix` (or similar). [#719](https://github.com/atomist/sdm/issues/719)
+-   Don't stop auto fix goal when transformPresentation is to a different branch. [#725](https://github.com/atomist/sdm/issues/725)
+-   Add and & or to aggregate PushTests. [a928fdb](https://github.com/atomist/sdm/commit/a928fdb3f9caf2e4eb616f2158b62837de990ec6)
+-   Add adapt functionality from decorator handlers. [8068ee5](https://github.com/atomist/sdm/commit/8068ee5bce9b0d8bbe75aeeea7a6334e5aee3851)
+-   Add support for reading project configuration from a yaml file. [#733](https://github.com/atomist/sdm/issues/733)
+-   Add progressLog to CodeInspection and CodeTransform. [#737](https://github.com/atomist/sdm/issues/737)
+-   Set commit author on autofixes. [fcd10b8](https://github.com/atomist/sdm/commit/fcd10b8c154fc6aa965c83e6c323837d83b49c0e)
+-   Improvements to message sending protocol . [#741](https://github.com/atomist/sdm/issues/741)
+-   Support printf style write method on `ProgressLog`. [#263](https://github.com/atomist/sdm/issues/263)
 
 ### Changed
 
 -   **BREAKING** Clean up push impact invocation. [#703](https://github.com/atomist/sdm/issues/703)
 -   Remove .\* repos default from BitBucketRepoTargets. [2f1fd7a](https://github.com/atomist/sdm/commit/2f1fd7a03b3eb5d38fed455c92abb0dcb46be603)
 -   Rolar log url should use uniqueName not name to avoid collision. [#710](https://github.com/atomist/sdm/issues/710)
+-   Deprecate deployers. [#734](https://github.com/atomist/sdm/issues/734)
 
 ### Deprecated
 
 -   Session ID being used as Bearer in Authorization header. [#689](https://github.com/atomist/sdm/issues/689)
+-   Deprecate deployers. [#734](https://github.com/atomist/sdm/issues/734)
 
 ### Fixed
 
 -   Pass context to project loader for code inspections. [80d367b](https://github.com/atomist/sdm/commit/80d367b1673966056b5aeba5c8c6a9480406c10d)
 -   Make setGoalsWhen respect enclosing PushTest. [#708](https://github.com/atomist/sdm/issues/708)
 -   Use correct base branch for raising autofix PRs. [ff68974](https://github.com/atomist/sdm/commit/ff68974e07d4d73b9ac8ebff126646bd461205e5)
+-   `FulfillmentCallbacks` aren't running on goals without pre conditions. [#701](https://github.com/atomist/sdm/issues/701)
+-   When a GoalExecutionListener fails, the goal stays in progress. [#739](https://github.com/atomist/sdm/issues/739)
+-   ExecuteGoalResult from a ProjectListener is not persisted. [#738](https://github.com/atomist/sdm/issues/738)
 
 ## [1.4.1](https://github.com/atomist/sdm/compare/1.4.0...1.4.1) - 2019-04-01
 

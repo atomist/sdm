@@ -40,6 +40,7 @@ import {
     SdmGoalSetMessage,
 } from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
+import { GoalSetTag } from "../../api/goal/tagGoalSet";
 import {
     OnPushToAnyBranch,
     PushFields,
@@ -144,7 +145,10 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
             environment: environmentFromGoal(d),
         })));
     }
-
+    let retryFeasible = goal.definition.retryFeasible ? goal.definition.retryFeasible : false;
+    if (!!fulfillment && fulfillment.method === SdmGoalFulfillmentMethod.SideEffect) {
+        retryFeasible = false;
+    }
     return {
         goalSet,
         goalSetId,
@@ -166,7 +170,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         ts: Date.now(),
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
         preApprovalRequired: goal.definition.preApprovalRequired ? goal.definition.preApprovalRequired : false,
-        retryFeasible: goal.definition.retryFeasible ? goal.definition.retryFeasible : false,
+        retryFeasible,
         provenance: [constructProvenance(ctx)],
         preConditions,
         version: 1,
@@ -222,6 +226,7 @@ export async function storeGoalSet(ctx: HandlerContext,
                                    goalSetId: string,
                                    goalSet: string,
                                    sdmGoals: SdmGoalMessage[],
+                                   tags: GoalSetTag[],
                                    push: OnPushToAnyBranch.Push): Promise<void> {
     let repo;
     if (!!push) {
@@ -254,6 +259,7 @@ export async function storeGoalSet(ctx: HandlerContext,
             uniqueName: g.uniqueName,
         })),
         provenance: constructProvenance(ctx),
+        tags,
     };
     return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
 }

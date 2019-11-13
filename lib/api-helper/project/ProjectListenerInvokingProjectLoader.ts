@@ -24,6 +24,7 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import {
@@ -51,7 +52,9 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
 
                 // invoke the before listeners
                 const beforeResult = await this.invokeListeners(p, GoalProjectListenerEvent.before);
-                if (beforeResult && beforeResult.code !== 0) {
+                updateGoalProperties(this.gi.goalEvent, beforeResult);
+
+                if (!!beforeResult && beforeResult.code !== 0) {
                     return beforeResult;
                 }
 
@@ -63,7 +66,9 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             } finally {
                 // invoke the after listeners
                 const afterResult = await this.invokeListeners(p, GoalProjectListenerEvent.after);
-                if (afterResult && afterResult.code !== 0) {
+                updateGoalProperties(this.gi.goalEvent, afterResult);
+
+                if (!!afterResult && afterResult.code !== 0) {
                     result = afterResult;
                 }
             }
@@ -103,15 +108,25 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
                     });
 
                 const postResult = await lr.listener(p, this.gi, event);
+                updateGoalProperties(this.gi.goalEvent, postResult);
 
                 this.gi.progressLog.write(`Result: ${postResult ? serializeResult(postResult) : "Success"}`);
                 this.gi.progressLog.write("\\--");
 
-                if (postResult && postResult.code !== 0) {
+                if (!!postResult && postResult.code !== 0) {
                     return postResult;
                 }
             }
         }
         return Success;
+    }
+}
+
+function updateGoalProperties(goalEvent: SdmGoalEvent, result: void | ExecuteGoalResult): void {
+    if (!!result) {
+        goalEvent.description = !!result.description ? result.description : goalEvent.description;
+        goalEvent.data = !!result.data ? result.data : goalEvent.data;
+        goalEvent.externalUrls = !!result.externalUrls ? result.externalUrls : goalEvent.externalUrls;
+        goalEvent.phase = !!result.phase ? result.phase : goalEvent.phase;
     }
 }

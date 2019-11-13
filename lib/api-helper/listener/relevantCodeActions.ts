@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ export async function relevantCodeActions<R extends PushSelector>(registrations:
         registrations.map(async t => (!t.pushTest || await t.pushTest.mapping(pli)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));
 
-    logger.info("Executing code actions on %j. %d are relevant: [%s] of [%s]",
+    logger.debug("Executing code actions on %j. %d are relevant: [%s] of [%s]",
         pli.id, relevantAutoInspects.length,
         relevantAutoInspects.map(a => a.name).join(),
         registrations.map(a => a.name).join());

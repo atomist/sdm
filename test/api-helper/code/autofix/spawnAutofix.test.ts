@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    GitStatus,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { spawnAutofix } from "../../../../lib/api-helper/code/autofix/spawnAutofix";
 import { predicatePushTest } from "../../../../lib/api/mapping/PushTest";
@@ -37,7 +34,7 @@ describe("spawnAutofix", () => {
             { command: "node", args: ["-e", "process.exit(0);"] });
         assert(a.name === "test0");
         assert(a.pushTest.name === "ppt4");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === true);
@@ -55,7 +52,7 @@ describe("spawnAutofix", () => {
             { command: "node", args: ["-e", "process.exit(0);"] });
         assert(a.name === "test1");
         assert(a.pushTest.name === "ppt3");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === true);
@@ -76,7 +73,7 @@ describe("spawnAutofix", () => {
         );
         assert(a.name === "test2");
         assert(a.pushTest.name === "ppt2");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === true);
@@ -94,7 +91,7 @@ describe("spawnAutofix", () => {
             { command: "node", args: ["-e", "process.exit(1);"] });
         assert(a.name === "test3");
         assert(a.pushTest.name === "ppt1");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === false);
@@ -113,7 +110,7 @@ describe("spawnAutofix", () => {
             { command: "node", args: ["-e", "process.exit(4);"] });
         assert(a.name === "test4");
         assert(a.pushTest.name === "ppt0");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === false);
@@ -134,7 +131,7 @@ describe("spawnAutofix", () => {
         );
         assert(a.name === "test5");
         assert(a.pushTest.name === "ppt5");
-        const r = await (a.transform as CodeTransform)(p, undefined) as TransformResult;
+        const r = await (a.transform as CodeTransform)(p, {} as any) as TransformResult;
         assert(r);
         assert(r.target);
         assert(r.success === false);

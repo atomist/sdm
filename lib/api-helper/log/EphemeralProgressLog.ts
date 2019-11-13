@@ -19,6 +19,7 @@ import {
     ProgressLog,
     ProgressLogFactory,
 } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * Implementation of ProgressLog log that returns
@@ -42,16 +43,18 @@ class EphemeralProgressLog implements ProgressLog {
 
     public async close(): Promise<void> {
         if (this.writeToLog) {
-            logger.info("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
-            logger.info(this.log);
-            logger.info("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
+            logger.info(`Progress log '${this.name}'\n${this.log.trim()}`);
         }
     }
 
-    public write(what: string): void {
-        this.log += what;
+    public write(what: string, ...args: string[]): void {
+        let line = format(what, ...args);
+        if (!line.endsWith("\n")) {
+             line += "\n";
+        }
+        this.log += line;
     }
 
 }
 
-export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);
+export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.uniqueName);

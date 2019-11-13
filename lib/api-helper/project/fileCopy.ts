@@ -23,7 +23,6 @@ import {
     Project,
     ProjectOperationCredentials,
     RemoteRepoRef,
-    SimpleProjectEditor,
 } from "@atomist/automation-client";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 
@@ -82,7 +81,7 @@ export function copyFiles(donorProject: Project,
             if (found) {
                 await p.addFile(fm.recipientPath, await found.getContent());
             } else {
-                logger.warn("Path '%s' not found in donor project %s:%s", fm.donorPath, donorProject.id.owner, donorProject.id.repo);
+                logger.debug("Path '%s' not found in donor project %s:%s", fm.donorPath, donorProject.id.owner, donorProject.id.repo);
             }
         }
         return p;
@@ -120,7 +119,7 @@ export function streamFiles(donorProject: Project,
                     logger.log("silly", "file added: ", donorFile.path);
                 })
                 .on("error", e => {
-                    logger.warn("Error copying file: ", e);
+                    logger.debug("Error copying file: ", e);
                     reject(e);
                 });
         });

@@ -40,13 +40,11 @@ export function fakeContext(workspaceId: string = "T123"): HandlerContext & Auto
             name: "test-context",
             workspaceId,
             workspaceName: workspaceId,
-            teamName: workspaceId,
             operation: "operation",
             version: "0.1.0",
             invocationId: "inv-id",
             ts: new Date().getTime(),
             correlationId,
-            messageClient: new DevNullMessageClient(),
         },
         trigger: {} as any,
     };

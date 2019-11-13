@@ -44,14 +44,14 @@ export async function filesChangedSince(project: GitProject,
             return await gitDiff(sha, commitCount, project);
 
         } catch (err) {
-            logger.warn("Error diffing project %j since '%s': %s", project.id, sha, err.message);
+            logger.debug("Error diffing project %j since '%s': %s", project.id, sha, err.message);
             try {
                 const gs = await project.gitStatus();
-                logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
+                logger.debug("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
                 const timeOfLastChange = await execPromise("ls", ["-ltr", "."], { cwd: project.baseDir });
-                logger.info("Files with dates: " + timeOfLastChange.stdout);
+                logger.debug("Files with dates: " + timeOfLastChange.stdout);
             } catch (err) {
-                logger.warn("Error while trying extra logging: " + err.stack);
+                logger.debug("Error while trying extra logging: " + err.stack);
             }
             return undefined;
         }

@@ -6,6 +6,7 @@
     "moduleResolution": "Node",
     "jsx": "React",
     "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
     "lib": [
       "DOM",
@@ -14,11 +15,10 @@
       "ScriptHost",
       "esnext.asynciterable"
     ],
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": false,
-    "noUnusedLocals": false,
     "strict": false,
-    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },

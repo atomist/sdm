@@ -34,6 +34,11 @@ export const CloningProjectLoader: ProjectLoader = {
             const gs = await p.gitStatus();
             p.id.sha = gs.sha;
         }
+        if (!!coords.readOnly) {
+            (p as any).shouldCache = true;
+        } else {
+            (p as any).shouldCache = false;
+        }
         return action(p);
     },
 };

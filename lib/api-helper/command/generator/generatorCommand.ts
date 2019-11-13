@@ -151,10 +151,17 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                                                                cr: GeneratorRegistration<P>,
                                                                sdmo: SoftwareDeliveryMachineOptions): Promise<RedirectResult> {
     try {
+
+        const pi = {
+            ...toCommandListenerInvocation(cr, ctx, params, sdmo),
+            ...params,
+        } as any;
+        pi.credentials = await resolveCredentialsPromise(pi.credentials);
+
         const r = await generate(
             computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint, cr, sdmo),
             ctx,
-            params.target.credentials,
+            pi.credentials,
             editorFactory(params, ctx),
             details.projectPersister,
             params.target.repoRef,
@@ -163,12 +170,6 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
         );
 
         if (!!cr.afterAction && r.success === true) {
-            const pi = {
-                ...toCommandListenerInvocation(cr, ctx, params, sdmo),
-                ...params,
-            } as any;
-            pi.credentials = await resolveCredentialsPromise(pi.credentials);
-
             const afterActions = Array.isArray(cr.afterAction) ? cr.afterAction : [cr.afterAction];
 
             for (const afterAction of afterActions) {
@@ -214,18 +215,19 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
 ${codeBlock(err.message)}`,
                 ctx));
     }
+    return undefined;
 }
 
 /**
  * Retrieve a seed. Set the seed location on the parameters if possible and necessary.
  */
-async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
-                                                                             ctx: HandlerContext,
-                                                                             repoLoader: RepoLoader,
-                                                                             details: GeneratorCommandDetails<any>,
-                                                                             startingPoint: StartingPoint<P>,
-                                                                             cr: CommandRegistration<P>,
-                                                                             sdmo: SoftwareDeliveryMachineOptions): Promise<Project> {
+export async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
+                                                                                    ctx: HandlerContext,
+                                                                                    repoLoader: RepoLoader,
+                                                                                    details: GeneratorCommandDetails<any>,
+                                                                                    startingPoint: StartingPoint<P>,
+                                                                                    cr: CommandRegistration<P>,
+                                                                                    sdmo: SoftwareDeliveryMachineOptions): Promise<Project> {
     if (!startingPoint) {
         if (!params.source || !params.source.repoRef) {
             throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +

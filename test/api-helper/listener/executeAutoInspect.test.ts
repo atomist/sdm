@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): 
         if (re.review.comments.length > 0) {
             return PushImpactResponse.requireApprovalToProceed;
         }
+        return undefined;
     };
 }
 

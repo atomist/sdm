@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import stripAnsi from "strip-ansi";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { format } from "./format";
 
 /**
  * ProgressLog implementation that captures the log into a string and makes it
@@ -26,6 +28,8 @@ export class StringCapturingProgressLog implements ProgressLog {
 
     public log: string = "";
 
+    public stripAnsi: boolean = false;
+
     public close(): Promise<void> {
         return Promise.resolve();
     }
@@ -34,11 +38,12 @@ export class StringCapturingProgressLog implements ProgressLog {
         return Promise.resolve();
     }
 
-    public write(what: string): void {
+    public write(msg: string, ...args: string[]): void {
+        const m = this.stripAnsi ? stripAnsi(msg) : msg;
         if (this.log) {
-            this.log += what;
+            this.log += format(m, ...args);
         } else {
-            this.log = what;
+            this.log = format(m, ...args);
         }
     }
 

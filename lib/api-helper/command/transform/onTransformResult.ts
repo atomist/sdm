@@ -19,11 +19,7 @@ import {
     isBranchCommit,
     isPullRequest,
 } from "@atomist/automation-client/lib/operations/edit/editModes";
-import {
-    Attachment,
-    Field,
-    SlackMessage,
-} from "@atomist/slack-messages";
+import { Field } from "@atomist/slack-messages";
 import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { TransformResult } from "../../../api/registration/CodeTransform";
 import {
@@ -39,9 +35,7 @@ import {
  * @param trs results of transforms
  * @param cli original command invocation
  */
-export async function announceTransformResults(
-    trs: TransformResult[],
-    cli: CommandListenerInvocation): Promise<void> {
+export async function announceTransformResults(trs: TransformResult[], cli: CommandListenerInvocation): Promise<void> {
 
     const messages = trs.map(tr => {
         const projectId = tr.target.id;
@@ -50,9 +44,9 @@ export async function announceTransformResults(
             return slackErrorMessage(title,
                 "Failure in " + cli.commandName + "\n```\n" + tr.error.message + "\n```",
                 cli.context, {
-                    author_name: title,
-                    author_link: tr.target.id.url,
-                });
+                author_name: title,
+                author_link: tr.target.id.url,
+            });
         }
         if (tr.edited) {
             return slackSuccessMessage(title,

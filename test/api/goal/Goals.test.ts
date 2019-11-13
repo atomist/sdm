@@ -17,6 +17,7 @@
 import * as assert from "power-assert";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
+// tslint:disable-next-line:deprecation
 import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
@@ -33,6 +34,7 @@ const AutofixGoal = new Autofix();
 const BuildGoal = new GoalWithFulfillment({
     uniqueName: "build",
 });
+// tslint:disable-next-line:deprecation
 const FingerprintGoal = new Fingerprint();
 const PushImpactGoal = new PushImpact();
 const CodeInspectionGoal = new AutoCodeInspection();

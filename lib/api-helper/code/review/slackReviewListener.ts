@@ -48,13 +48,14 @@ export interface SlackReviewRoutingParams {
 export function slackReviewListener(opts: Partial<SlackReviewRoutingParams> = {}): ReviewListener {
     const paramsToUse = {
         pushReactionResponse: opts.pushReactionResponse,
-        deepLink: opts.deepLink || githubDeepLink,
+        deepLink: opts.deepLink || (githubDeepLink as DeepLink),
     };
     return async ri => {
         if (ri.review.comments.length > 0) {
             await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels, paramsToUse.deepLink);
             return paramsToUse.pushReactionResponse;
         }
+        return undefined;
     };
 }
 
@@ -90,7 +91,7 @@ function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLi
         mrkdwn_in: ["text"],
         fallback: "error",
         actions: !!rc.fix ? [
-            buttonForCommand({text: "Fix"}, rc.fix.command, rc.fix.params),
+            buttonForCommand({ text: "Fix" }, rc.fix.command, rc.fix.params),
         ] : [],
     };
 }

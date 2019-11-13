@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import { AutoCodeInspection } from "../goal/common/AutoCodeInspection";
 import { Autofix } from "../goal/common/Autofix";
+// tslint:disable-next-line:deprecation
 import { Fingerprint } from "../goal/common/Fingerprint";
 import { PushImpact } from "../goal/common/PushImpact";
 
@@ -44,6 +45,8 @@ export interface WellKnownGoals {
     /**
      * Fingerprint goal to add fingerprints to.
      * Fingerprint functionality won't work otherwise.
+     * @deprecated use pushImpactGoal instead
      */
+    // tslint:disable-next-line:deprecation
     fingerprintGoal?: Fingerprint;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    logger,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import * as stringify from "json-stringify-safe";
 
 /**
  * Try to work out whether a project was edited, looking at git status
@@ -30,7 +26,6 @@ import * as stringify from "json-stringify-safe";
 export async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
     if (editResult.edited === undefined) {
         const gs = await (editResult.target as GitProject).gitStatus();
-        logger.debug("Git status: " + stringify(gs));
         return {
             ...editResult,
             edited: !gs.isClean,

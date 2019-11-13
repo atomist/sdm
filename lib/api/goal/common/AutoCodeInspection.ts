@@ -58,8 +58,7 @@ const DefaultAutoCodeInspectionOptions: AutoCodeInspectionOptions = {
 export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<AutoInspectRegistration<any, any>, ReviewListenerRegistration> {
 
-    constructor(private readonly details: FulfillableGoalDetails & AutoCodeInspectionOptions = {},
-                ...dependsOn: Goal[]) {
+    constructor(details: FulfillableGoalDetails & AutoCodeInspectionOptions = {}, ...dependsOn: Goal[]) {
         super({
             ...getGoalDefinitionFrom(details, DefaultGoalNameGenerator.generateName("code-inspection"), CodeInspectionDefinition),
         }, ...dependsOn);

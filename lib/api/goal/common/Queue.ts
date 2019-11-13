@@ -162,7 +162,7 @@ export function handleSdmGoalSetEvent(options: QueueOptions,
 
         if (goalSets && goalSets.SdmGoalSet && goalSets.SdmGoalSet.length > 0) {
             await startGoals(goalSets, optsToUse, definition, ctx);
-            await updateGoals(goalSets, optsToUse, definition, ctx);
+            // await updateGoals(goalSets, optsToUse, definition, ctx);
         }
 
         return Success;
@@ -203,37 +203,6 @@ async function startGoals(goalSets: InProcessSdmGoalSets.Query,
                     description: definition.completedDescription,
                 });
             }
-        }
-    }
-}
-
-async function updateGoals(goalSets: InProcessSdmGoalSets.Query,
-                           options: QueueOptions,
-                           definition: GoalDefinition, ctx: HandlerContext): Promise<void> {
-    // Update pending goal sets with a counter
-    const goalSetsToUpdate = goalSets.SdmGoalSet.slice(options.concurrent)
-        .filter(gs => gs.goals.some(g => g.uniqueName === definition.uniqueName));
-    if (goalSetsToUpdate.length > 0) {
-
-        const queuedGoals = await loadQueueGoals(goalSetsToUpdate, definition, ctx);
-
-        if (!!queuedGoals && queuedGoals.length > 0) {
-
-            for (const goalSetToUpdate of goalSetsToUpdate) {
-                const updGoal = _.maxBy(queuedGoals.filter(g => g.goalSetId === goalSetToUpdate.goalSetId), "ts") as SdmGoalEvent;
-
-                if (!!updGoal) {
-                    const phase = `at ${goalSetsToUpdate.findIndex(gs => gs.goalSetId === updGoal.goalSetId) + 1}`;
-                    if (updGoal.state === SdmGoalState.in_process && updGoal.phase !== phase) {
-                        await updateGoal(ctx, updGoal, {
-                            state: SdmGoalState.in_process,
-                            description: definition.workingDescription,
-                            phase,
-                        });
-                    }
-                }
-            }
-
         }
     }
 }

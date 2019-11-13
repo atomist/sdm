@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,48 +16,19 @@
 
 /* tslint:disable:deprecation */
 
-import {
-    ChildProcessResult,
-    GitProject,
-    logger,
-    spawnAndWatch,
-    SpawnCommand,
-    stringifySpawnCommand,
-} from "@atomist/automation-client";
-import { SpawnOptions } from "child_process";
+import { SpawnCommand } from "@atomist/automation-client";
 import { CodeTransform } from "../../../api/registration/CodeTransform";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { LoggingProgressLog } from "../../log/LoggingProgressLog";
+import { spawnCodeTransform } from "./spawnCodeTransform";
 
 /**
  * Create a code transform wrapping spawned local commands
  * run on the project. For example, allows use of tslint as an editorCommand.
- * @param {SpawnCommand[]} commands to execute
- * @param log progress log (optional, stream to console if not passed in)
- * @return {ProjectEditor}
+ * @param commands to execute
+ * @param log progress log
+ * @return code transform function
  * @deprecated use spawnCodeTransform
  */
-export function localCommandsCodeTransform(commands: SpawnCommand[],
-                                           log: ProgressLog = new LoggingProgressLog("commands")): CodeTransform {
-    return async (p: GitProject) => {
-        const opts: SpawnOptions = {
-            cwd: p.baseDir,
-        };
-        let commandResult: ChildProcessResult;
-        for (const cmd of commands) {
-            logger.info("Executing command %s", stringifySpawnCommand(cmd));
-            commandResult = await spawnAndWatch(cmd, { ...opts, ...cmd.options },
-                log,
-                {
-                    errorFinder: (code, signal) => code !== 0,
-                    stripAnsi: true,
-                });
-            if (commandResult.error) {
-                logger.warn("Error in command %s: %s", stringifySpawnCommand(cmd), commandResult.error);
-                break;
-            }
-        }
-        const status = await p.gitStatus();
-        return { edited: !status.isClean, target: p, success: !commandResult.error };
-    };
+export function localCommandsCodeTransform(commands: SpawnCommand[], log?: ProgressLog): CodeTransform {
+    return spawnCodeTransform(commands, log);
 }

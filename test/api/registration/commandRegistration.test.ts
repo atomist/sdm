@@ -36,6 +36,7 @@ import {
 import { SeedDrivenGeneratorParametersSupport } from "../../../lib/api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CodeTransformRegistration } from "../../../lib/api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../lib/api/registration/CommandHandlerRegistration";
+import { ParameterStyle } from "../../../lib/api/registration/CommandRegistration";
 import { GeneratorRegistration } from "../../../lib/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../lib/api/registration/ParametersBuilder";
 import {
@@ -259,7 +260,7 @@ describe("command registrations", () => {
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "targets.repos"));
         assert(instance.parameters.some(p => p.name === "dry-run"));
-        assert(instance.parameters.some(p => p.name === "dry-run.msgId"));
+        assert(instance.parameters.some(p => p.name === "msgId"));
         const pi = instance.freshParametersInstance();
         assert(!!pi);
     });
@@ -439,6 +440,18 @@ describe("command registrations", () => {
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.strictEqual(pi.name, "foo");
+    });
+
+    it("should register parameterStyle", () => {
+        const reg: CommandHandlerRegistration = {
+            name: "test",
+            parameterStyle: ParameterStyle.Dialog,
+            listener: async () => {
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(undefined, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert.strictEqual(instance.question, "dialog");
     });
 
 });

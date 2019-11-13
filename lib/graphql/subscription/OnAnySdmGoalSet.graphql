@@ -1,16 +1,32 @@
 subscription OnAnySdmGoalSet($registration: [String!]) {
   SdmGoalSet {
-    goalSetId
-    goalSet
-    state
-    provenance(registration: $registration) @required {
-      registration
-    }
     sha
     branch
-    repo {
-      owner
+    goalSet
+    goalSetId
+    goals {
       name
+      uniqueName
     }
+    provenance(registration: $registration) @required {
+      channelId
+      correlationId
+      name
+      registration
+      ts
+      userId
+      version
+    }
+    repo {
+      name
+      owner
+      providerId
+    }
+    state
+    tags {
+      name
+      value
+    }
+    ts
   }
 }

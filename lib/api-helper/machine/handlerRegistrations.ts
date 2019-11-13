@@ -45,8 +45,8 @@ import {
 import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
 import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
-import { doWithAllRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
-import { editAll } from "@atomist/automation-client/lib/operations/edit/editAll";
+import { relevantRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
+import { editOne } from "@atomist/automation-client/lib/operations/edit/editAll";
 import {
     EditResult,
     failedEdit,
@@ -61,6 +61,7 @@ import {
     codeBlock,
     italic,
 } from "@atomist/slack-messages";
+import * as _ from "lodash";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { NoParameterPrompt } from "../../api/context/parameterPrompt";
@@ -101,7 +102,9 @@ import {
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
 import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
+import { LoggingProgressLog } from "../log/LoggingProgressLog";
 import { formatDate } from "../misc/dateFormat";
+import { createJob } from "../misc/job/createJob";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -121,6 +124,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
     addDryRunParameters(ctr);
+    addJobParameters(ctr);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
@@ -138,6 +142,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                     slackErrorMessage(
                         `Code Transform`,
                         `Invalid parameters to code transform ${italic(ci.commandName)}:
+
 ${codeBlock(vr.message)}`,
                         ci.context));
             }
@@ -152,30 +157,81 @@ ${codeBlock(vr.message)}`,
                     false,
                     ci.context);
 
-            const editMode = toEditModeOrFactory(ctr, ci);
+            const concurrency = {
+                maxConcurrent: 2, // TODO make maxConcurrent globally configurable
+                requiresJob: false,
+                ...(ctr.concurrency || {}),
+            };
 
             try {
+                const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, ctr.repoFilter));
+                const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
 
-                const results = await editAll<any, any>(
-                    ci.context,
-                    ci.credentials,
-                    chattyDryRunAwareEditor(ctr.name, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
-                    editMode,
-                    ci.parameters,
-                    repoFinder,
-                    andFilter(targets.test, ctr.repoFilter),
-                    repoLoader);
-                if (!!ctr.onTransformResults) {
-                    await ctr.onTransformResults(results, ci);
+                if (ids.length > 1 || !!requiresJob) {
+
+                    const params: any = {
+                        ...ci.parameters,
+                    };
+                    params.targets.repos = undefined;
+                    params.targets.repo = undefined;
+                    delete params["job.name"];
+                    delete params["job.description"];
+                    delete params["job.required"];
+
+                    await createJob(
+                        {
+                            name: _.get(ci.parameters, "job.name") || `CodeTransform/${ci.commandName}`,
+                            command: ci.commandName,
+                            parameters: ids.map(id => ({
+                                ...params,
+                                "targets": {
+                                    owner: id.owner,
+                                    repo: id.repo,
+                                    branch: id.branch,
+                                    sha: id.sha,
+                                },
+                                "job.required": false,
+                            })),
+                            description: _.get(ci.parameters, "job.description")
+                                || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${
+                                ids.length === 1 ? "repository" : "repositories"}`,
+                            concurrentTasks: concurrency.maxConcurrent,
+                        },
+                        ci.context);
+
                 } else {
-                    logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+                    const editMode = toEditModeOrFactory(ctr, ci);
+                    const result = await editOne<any>(
+                        ci.context,
+                        ci.credentials,
+                        chattyDryRunAwareEditor(ctr, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
+                        editMode,
+                        ids[0],
+                        ci.parameters,
+                        repoLoader);
+                    if (!!ctr.onTransformResults) {
+                        await ctr.onTransformResults(
+                            [result],
+                            { ...ci, progressLog: new LoggingProgressLog(ctr.name, "debug") },
+                        );
+                    } else if (!!result && !!result.error) {
+                        const error = result.error;
+                        return ci.addressChannels(
+                            slackErrorMessage(
+                                `Code Transform`,
+                                `Code transform ${italic(ci.commandName)} failed${!!error.message ? ":\n\n" + codeBlock(error.message) : "."}`,
+                                ci.context,
+                            ),
+                        );
+                    } else {
+                        logger.debug("No react function to react to result of code transformation '%s'", ctr.name);
+                    }
                 }
             } catch (e) {
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Code transform ${italic(ci.commandName)} failed:
-${codeBlock(e.message)}`,
+                        `Code transform ${italic(ci.commandName)} failed${!!e.message ? ":\n\n" + codeBlock(e.message) : "."}`,
                         ci.context,
                     ),
                 );
@@ -188,6 +244,7 @@ ${codeBlock(e.message)}`,
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     const mo = toMachineOptions(sdm);
+    addJobParameters(cir);
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
@@ -205,6 +262,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                     slackErrorMessage(
                         `Code Inspection`,
                         `Invalid parameters to code inspection ${italic(ci.commandName)}:
+
 ${codeBlock(vr.message)}`,
                         ci.context));
             }
@@ -212,7 +270,10 @@ ${codeBlock(vr.message)}`,
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
                     return { repoId: p.id, result: undefined };
                 }
-                return { repoId: p.id, result: await cir.inspection(p, ci) };
+                return {
+                    repoId: p.id,
+                    result: await cir.inspection(p, { ...ci, progressLog: new LoggingProgressLog(cir.name, "debug") }),
+                };
             };
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -224,18 +285,64 @@ ${codeBlock(vr.message)}`,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true,
                     ci.context);
-            const results = await doWithAllRepos<CodeInspectionResult<R>, any>(
-                ci.context,
-                ci.credentials,
-                action,
-                ci.parameters,
-                repoFinder,
-                andFilter(targets.test, cir.repoFilter),
-                repoLoader);
-            if (!!cir.onInspectionResults) {
-                await cir.onInspectionResults(results, ci);
-            } else {
-                logger.info("No react function to react to results of code inspection '%s'", cir.name);
+
+            const concurrency = {
+                maxConcurrent: 2, // TODO make maxConcurrent globally configurable
+                requiresJob: false,
+                ...(cir.concurrency || {}),
+            };
+
+            try {
+                const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, cir.repoFilter));
+                const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
+                if (ids.length > 1 || !!requiresJob) {
+
+                    const params: any = {
+                        ...ci.parameters,
+                    };
+                    params.targets.repos = undefined;
+                    params.targets.repo = undefined;
+                    delete params["job.name"];
+                    delete params["job.description"];
+                    delete params["job.required"];
+
+                    await createJob(
+                        {
+                            name: `CodeInspection/${ci.commandName}`,
+                            command: ci.commandName,
+                            parameters: ids.map(id => ({
+                                ...params,
+                                "targets": {
+                                    owner: id.owner,
+                                    repo: id.repo,
+                                    branch: id.branch,
+                                    sha: id.sha,
+                                },
+                                "job.required": false,
+                            })),
+                            description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
+                        },
+                        ci.context);
+
+                } else {
+                    const project = await repoLoader(ids[0]);
+                    const result = await action(project, ci.parameters);
+                    if (!!cir.onInspectionResults) {
+                        await cir.onInspectionResults([result], ci);
+                    } else {
+                        logger.debug("No react function to react to results of code inspection '%s'", cir.name);
+                    }
+                }
+            } catch (e) {
+                return ci.addressChannels(
+                    slackErrorMessage(
+                        `Code Inspection`,
+                        `Code Inspection ${italic(ci.commandName)} failed:
+
+${codeBlock(e.message)}`,
+                        ci.context,
+                    ),
+                );
             }
         },
     };
@@ -348,11 +455,11 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }
 
-    if (!credentials && !!sdm.credentialsResolver) {
+    if (!!sdm.credentialsResolver) {
         try {
             credentials = sdm.credentialsResolver.commandHandlerCredentials(context, ids ? ids[0] : undefined);
         } catch (e) {
-            logger.warn(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
+            logger.debug(`Failed to obtain credentials from credentialsResolver: ${e.message}`);
         }
     }
 
@@ -380,9 +487,9 @@ export const DryRunParameter: NamedParameter = {
     defaultValue: false,
     type: "boolean",
 };
-export const DryRunMsgIdParameter: NamedParameter = {
-    name: "dry-run.msgId",
-    description: "Run Code Transform in dry run mode so that changes aren't committed to the repository",
+export const MsgIdParameter: NamedParameter = {
+    name: "msgId",
+    description: "Id of the code transform message",
     required: false,
     type: "string",
     displayable: false,
@@ -392,8 +499,38 @@ export const DryRunMsgIdParameter: NamedParameter = {
  * Add the dryRun parameter into the list of parameters
  */
 function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
-    const params = toParametersListing(c.parameters || {});
-    params.parameters.push(DryRunParameter, DryRunMsgIdParameter);
+    const params = toParametersListing(c.parameters || {} as any);
+    params.parameters.push(DryRunParameter, MsgIdParameter);
+    c.parameters = params;
+}
+
+export const JobNameParameter: NamedParameter = {
+    name: "job.name",
+    description: "Name of the job to create",
+    required: false,
+    type: "string",
+    displayable: false,
+};
+export const JobDescriptionParameter: NamedParameter = {
+    name: "job.description",
+    description: "Description of the job to create",
+    required: false,
+    type: "string",
+    displayable: false,
+};
+export const JobRequiredParameter: NamedParameter = {
+    name: "job.required",
+    description: "Is job required",
+    required: false,
+    type: "boolean",
+};
+
+/**
+ * Add the job parameter into the list of parameters
+ */
+function addJobParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
+    const params = toParametersListing(c.parameters || {} as any);
+    params.parameters.push(JobNameParameter, JobDescriptionParameter, JobRequiredParameter);
     c.parameters = params;
 }
 
@@ -558,7 +695,10 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
                                 ci: CommandListenerInvocation<P>): any {
     const description = ctr.description || ctr.name;
     if (!!ctr.transformPresentation) {
-        return (p: Project) => ctr.transformPresentation(ci, p);
+        return (p: Project) => ctr.transformPresentation({
+            ...ci,
+            progressLog: new LoggingProgressLog(ctr.name, "debug"),
+        }, p);
     }
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
@@ -573,8 +713,42 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
         description);
 }
 
-function gitBranchCompatible(name: string): string {
-    return name.replace(/\s+/g, "_"); // What else??
+/**
+ * Takes a potential git branch name and returns a legalised iteration of it
+ *
+ * @param name the git branch name to sanitise.
+ */
+export function gitBranchCompatible(name: string): string {
+    // handles spaces and .. ~ : ^ ? * [ @{
+    let branchName = name.replace(/\s+|(\.\.)+|~+|:+|\^+|\?+|\*+|\[+|(\@\{)+/g, "_");
+
+    // handles double slashes
+    branchName = branchName.replace(/(\/\/)+|(\\)+/g, "/");
+
+    // handles back slashes
+    branchName = branchName.replace(/\\+/g, "/");
+
+    if (branchName.startsWith(".") || branchName.startsWith("/")) {
+        branchName = branchName.substring(1);
+    }
+
+    if (branchName.endsWith(".") || branchName.endsWith("/")) {
+        branchName = branchName.slice(0, -1);
+    }
+
+    const lock = ".lock";
+    if (branchName.endsWith(lock)) {
+        branchName = branchName.slice(0, -lock.length);
+    }
+
+    if (branchName === "@") {
+        branchName = "at";
+    }
+
+    // handles ascii control characters
+    branchName = branchName.replace(/[\x00-\x1F\x7F]+/g, "");
+
+    return branchName;
 }
 
 export async function resolveCredentialsPromise(creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials)
@@ -583,7 +757,7 @@ export async function resolveCredentialsPromise(creds: Promise<ProjectOperationC
         try {
             return await creds;
         } catch (e) {
-            logger.warn(e.message);
+            logger.debug(e.message);
         }
     } else if (!!creds) {
         return creds;

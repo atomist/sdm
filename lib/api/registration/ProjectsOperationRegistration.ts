@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,4 +43,21 @@ export interface ProjectsOperationRegistration<PARAMS> extends CommandRegistrati
      */
     projectTest?: ProjectPredicate;
 
+    /**
+     * Configure the concurrency behavior of running project operations
+     * on many repos
+     */
+    concurrency?: {
+        /** Maximum number of concurrent project operations would be executing */
+        maxConcurrent?: number;
+        /** Indicate if a Job scheduling is required; even for only one project operation */
+        requiresJob?: boolean;
+    };
+
+    /**
+     * Whether or not this project operation should send messages during processing.
+     *
+     * Defaults to true.
+     */
+    chatty?: boolean;
 }

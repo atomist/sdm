@@ -1,15 +1,8 @@
 query SdmGoalsByGoalSetIdAndUniqueName(
   $goalSetId: [String!]
   $uniqueName: [String]
-  $state: [SdmGoalState]
 ) {
-  SdmGoal(
-    _first: 100
-    _showHistory: true
-    goalSetId: $goalSetId
-    uniqueName: $uniqueName
-    state: $state
-  ) {
+  SdmGoal(goalSetId: $goalSetId, uniqueName: $uniqueName) {
     ...SdmGoalWithPushFields
     ...SdmGoalRepo
   }

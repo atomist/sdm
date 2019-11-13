@@ -35,21 +35,28 @@ export enum PreferenceScope {
 export interface PreferenceStore {
 
     /**
-     * Retrieve a preference object via its key.
-     * The key might get scoped to the current SDM if the options.scoped flag is set to true.
-     * @param key
-     * @param options
+     * Retrieve a preference object via its key in the given scope.
      */
-    get<V>(key: string, options?: { scope?: PreferenceScope | string, defaultValue?: V }): Promise<V | undefined>;
+    get<V>(key: string,
+           options?: { scope?: PreferenceScope | string, defaultValue?: V }): Promise<V | undefined>;
 
     /**
-     * Store a preference object with the specified ttl. If options.scoped is set to true
-     * the key preference will be scoped to the current SDM.
-     * @param key
-     * @param value
-     * @param options
+     * Store a preference object with the specified ttl and scope.
      */
-    put<V>(key: string, value: V, options?: { ttl?: number, scope?: PreferenceScope | string }): Promise<V>;
+    put<V>(key: string,
+           value: V,
+           options?: { scope?: PreferenceScope | string, ttl?: number }): Promise<V>;
+
+    /**
+     * List all preferences in a given scope
+     */
+    list<V>(scope: PreferenceScope | string): Promise<Array<{ key: string, value: V }>>;
+
+    /**
+     * Delete a preference in a given scope
+     */
+    delete(key: string,
+           options?: { scope?: PreferenceScope | string }): Promise<void>;
 }
 
 /**
@@ -61,5 +68,10 @@ export const NoPreferenceStore: PreferenceStore = {
     get: async () => undefined,
 
     put: async (key, value) => value,
+
+    list: async () => [],
+
+    delete: async () => {
+    },
 
 };

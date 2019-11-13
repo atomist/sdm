@@ -15,6 +15,7 @@
  */
 
 import {
+    editModes,
     HandlerContext,
     logger,
     RemoteRepoRef,
@@ -28,7 +29,6 @@ import { EditResult } from "@atomist/automation-client/lib/operations/edit/proje
 import { combineEditResults } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
-import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
@@ -36,11 +36,9 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { TransformPresentation } from "../../api/registration/CodeTransformRegistration";
 import { PushAwareParametersInvocation } from "../../api/registration/PushAwareParametersInvocation";
-import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
 import { minimalClone } from "../goal/minimalClone";
@@ -49,6 +47,7 @@ import {
     testProgressReporter,
 } from "../goal/progress/progress";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
+import { spawnLog } from "../misc/child_process";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
@@ -67,10 +66,11 @@ export interface GoalInvocationParameters {
  * @return ExecuteGoal
  */
 export function executeAutofixes(registrations: AutofixRegistration[],
-                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>): ExecuteGoal {
+                                 transformPresentation?: TransformPresentation<GoalInvocationParameters>,
+                                 extractAuthor: ExtractAuthor = NoOpExtractAuthor): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { id, configuration, goalEvent, credentials, context, progressLog } = goalInvocation;
-        progressLog.write(sprintf("Attempting to apply %d configured autofixes", registrations.length));
+        progressLog.write("Evaluating to %d configured autofixes", registrations.length);
         try {
             if (registrations.length === 0) {
                 return Success;
@@ -78,6 +78,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
 
             const push = goalEvent.push;
             const appliedAutofixes: AutofixRegistration[] = [];
+            let editMode;
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
                     id,
@@ -97,7 +98,6 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
 
-                    let editMode;
                     if (!!transformPresentation) {
                         editMode = transformPresentation({
                             ...cri,
@@ -105,7 +105,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                                 goalInvocation,
                             },
                         } as any, project);
-                        if (isBranchCommit(editMode) || isPullRequest(editMode)) {
+                        if (isBranchCommit(editMode)) {
                             if (await project.hasBranch(editMode.branch)) {
                                 await project.checkout(editMode.branch);
                             } else {
@@ -116,13 +116,13 @@ export function executeAutofixes(registrations: AutofixRegistration[],
 
                     const relevantAutofixes: AutofixRegistration[] =
                         filterImmediateAutofixes(await relevantCodeActions(registrations, cri), goalInvocation);
-                    progressLog.write(sprintf("Applying %d relevant autofixes of %d to %s/%s: '%s' of configured '%s'",
+                    progressLog.write("Applying %d relevant autofixes of %d to %s/%s: '%s' of configured '%s'",
                         relevantAutofixes.length,
                         registrations.length,
                         cri.id.owner,
                         cri.id.repo,
                         relevantAutofixes.map(a => a.name).join(", "),
-                        registrations.map(a => a.name).join(", ")));
+                        registrations.map(a => a.name).join(", "));
                     let cumulativeResult: EditResult = {
                         target: cri.project,
                         success: true,
@@ -130,7 +130,7 @@ export function executeAutofixes(registrations: AutofixRegistration[],
                     };
 
                     for (const autofix of _.flatten(relevantAutofixes)) {
-                        const thisEdit = await runOne(cri, autofix, progressLog, configuration);
+                        const thisEdit = await runOne(goalInvocation, cri, autofix, extractAuthor);
                         if (thisEdit.edited) {
                             appliedAutofixes.push(autofix);
                         }
@@ -162,7 +162,7 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
                     code: 0,
                     message: "Edited",
                     description: goalInvocation.goal.stoppedDescription,
-                    state: SdmGoalState.stopped,
+                    state: isNewBranch(editMode, goalEvent.branch) ? SdmGoalState.success : SdmGoalState.stopped,
                     phase: detailMessage(appliedAutofixes),
                 };
             }
@@ -172,7 +172,7 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
             };
         } catch (err) {
             logger.warn("Autofixes failed with '%s':\n%s", err.message, err.stack);
-            progressLog.write(sprintf("Autofixes failed with '%s'", err.message));
+            progressLog.write("Autofixes failed with '%s'", err.message);
             if (err.stdout) {
                 progressLog.write(err.stdout);
             }
@@ -187,6 +187,16 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
     };
 }
 
+/**
+ * Check if this autofix is going to commit to a new branch
+ */
+function isNewBranch(editMode: editModes.EditMode, branch: string): boolean {
+    if (!!editMode && isBranchCommit(editMode)) {
+        return editMode.branch !== branch;
+    }
+    return false;
+}
+
 function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
     // We show only two autofixes by name here as otherwise the message is going to get too long
     if (appliedAutofixes.length <= 2) {
@@ -196,17 +206,19 @@ function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
     }
 }
 
-async function runOne(cri: PushImpactListenerInvocation,
+async function runOne(gi: GoalInvocation,
+                      cri: PushImpactListenerInvocation,
                       autofix: AutofixRegistration,
-                      progressLog: ProgressLog,
-                      configuration: SoftwareDeliveryMachineConfiguration): Promise<EditResult> {
+                      extractAuthor: ExtractAuthor): Promise<EditResult> {
+    const { progressLog, configuration } = gi;
     const project = cri.project;
-    progressLog.write(sprintf("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name));
+    progressLog.write("About to transform %s with autofix '%s'", (project.id as RemoteRepoRef).url, autofix.name);
     try {
         const arg2: HandlerContext & PushAwareParametersInvocation<any> = {
             ...cri.context,
             ...cri,
             push: cri,
+            progressLog,
         } as any;
         const tentativeEditResult = await toScalarProjectEditor(autofix.transform, configuration.sdm)(
             project,
@@ -218,17 +230,28 @@ async function runOne(cri: PushImpactListenerInvocation,
             await project.revert();
             logger.warn("Edited %s with autofix %s and success=false, edited=%d",
                 (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
-            progressLog.write(sprintf("Edited %s with autofix %s and success=false, edited=%d",
-                (project.id as RemoteRepoRef).url, autofix.name, editResult.edited));
+            progressLog.write("Edited %s with autofix %s and success=false, edited=%d",
+                (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
             if (!!autofix.options && autofix.options.ignoreFailure) {
                 // Say we didn't edit and can keep going
                 return { target: project, edited: false, success: false };
             }
         } else if (editResult.edited) {
-            progressLog.write(sprintf("Autofix '%s' made changes", autofix.name));
+            progressLog.write("Autofix '%s' made changes", autofix.name);
             await project.commit(generateCommitMessageForAutofix(autofix));
+
+            const author = await extractAuthor(gi);
+            if (!!author && !!author.name && !!author.email) {
+                await spawnLog(
+                    "git",
+                    ["commit", "--amend", `--author="${author.name} <${author.email}>"`, "--no-edit"],
+                    {
+                        cwd: project.baseDir,
+                        log: progressLog,
+                    });
+            }
         } else {
-            progressLog.write(sprintf("Autofix '%s' made no changes", autofix.name));
+            progressLog.write("Autofix '%s' made no changes", autofix.name);
             logger.debug("No changes were made by autofix %s", autofix.name);
         }
         return editResult;
@@ -239,8 +262,8 @@ async function runOne(cri: PushImpactListenerInvocation,
         await project.revert();
         logger.warn("Ignoring autofix failure %s on %s with autofix %s",
             err.message, (project.id as RemoteRepoRef).url, autofix.name);
-        progressLog.write(sprintf("Ignoring autofix failure %s on %s with autofix %s",
-            err.message, (project.id as RemoteRepoRef).url, autofix.name));
+        progressLog.write("Ignoring autofix failure %s on %s with autofix %s",
+            err.message, (project.id as RemoteRepoRef).url, autofix.name);
         return { target: project, success: false, edited: false };
     }
 }
@@ -277,3 +300,26 @@ export const AutofixProgressTests: ProgressTest[] = [{
  * Default ReportProgress for running autofixes
  */
 export const AutofixProgressReporter: ReportProgress = testProgressReporter(...AutofixProgressTests);
+
+/**
+ * Extract author information from the current goal invocation
+ */
+export type ExtractAuthor = (gi: GoalInvocation) => Promise<{ name: string, email: string } | undefined>;
+
+export const NoOpExtractAuthor: ExtractAuthor = async () => {
+    return undefined;
+};
+
+export const DefaultExtractAuthor: ExtractAuthor = async gi => {
+    const { goalEvent } = gi;
+    const name = _.get(goalEvent, "push.after.author.name");
+    const email = _.get(goalEvent, "push.after.author.emails[0].address");
+    if (!!name && !!email) {
+        return {
+            name,
+            email,
+        };
+    } else {
+        return undefined;
+    }
+};
