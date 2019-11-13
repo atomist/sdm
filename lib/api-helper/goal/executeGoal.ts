@@ -146,7 +146,10 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         const goalInvocation = prepareGoalInvocation(gi, projectListeners);
 
         // execute pre hook
-        const preHookResult: ExecuteGoalResult = (await executeHook(rules, goalInvocation, inProcessGoalEvent, "pre") || Success);
+        const preHookResult: ExecuteGoalResult = (await executeHook(rules, goalInvocation, inProcessGoalEvent, "pre")
+            .catch(async err => {
+                throw new GoalExecutionError({ where: "executing pre-goal hook", cause: err });
+            })) || Success;
         if (isFailure(preHookResult)) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result: preHookResult });
         }
@@ -161,7 +164,10 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
 
         // execute post hook
         const postHookResult: ExecuteGoalResult =
-            (await executeHook(rules, goalInvocation, inProcessGoalEvent, "post")) || Success;
+            (await executeHook(rules, goalInvocation, inProcessGoalEvent, "post")
+                .catch(async err => {
+                    throw new GoalExecutionError({ where: "executing post-goal hook", cause: err });
+                })) || Success;
         if (isFailure(postHookResult)) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: postHookResult });
         }
@@ -182,7 +188,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         return { ...result, code: 0 };
     } catch (err) {
         logger.warn("Error executing goal '%s': %s", goalEvent.uniqueName, err.message);
-        const result = { code: 1, ...(err.result || {}) };
+        const result = handleGitRefErrors({ code: 1, ...(err.result || {}) }, err);
         await notifyGoalExecutionListeners({
             ...inProcessGoalEvent,
             state: SdmGoalState.failure,
@@ -209,7 +215,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const hook = goalToHookFile(sdmGoal, stage);
 
     // Check configuration to see if hooks should be skipped
-    if (!configurationValue<boolean>("sdm.goal.hooks", true)) {
+    if (!configurationValue<boolean>("sdm.goal.hooks", false)) {
         goalInvocation.progressLog.write("/--");
         goalInvocation.progressLog.write(`Invoking goal hook: ${hook}`);
         goalInvocation.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
@@ -310,10 +316,24 @@ export function markStatus(parameters: {
             externalUrls,
             state: newState,
             phase: result.phase ? result.phase : goalEvent.phase,
-            description: result.description ? result.description : descriptionFromState(goal, newState),
+            description: result.description ? result.description : descriptionFromState(goal, newState, goalEvent),
             error,
             data: result.data ? result.data : goalEvent.data,
         });
+}
+
+function handleGitRefErrors(result: ExecuteGoalResult, error: Error & any): ExecuteGoalResult {
+    if (!!error?.cause?.stderr) {
+        const err = error?.cause?.stderr;
+        if (/Remote branch .* not found/.test(err)) {
+            result.state === SdmGoalState.canceled;
+            result.phase = "branch not found";
+        } else if (/reference is not a tree/.test(err)) {
+            result.state === SdmGoalState.canceled;
+            result.phase = "sha not found";
+        }
+    }
+    return result;
 }
 
 async function markGoalInProcess(parameters: {
@@ -324,13 +344,13 @@ async function markGoalInProcess(parameters: {
 }): Promise<SdmGoalEvent> {
     const { ctx, goalEvent, goal, progressLogUrl } = parameters;
     goalEvent.state = SdmGoalState.in_process;
-    goalEvent.description = goal.inProcessDescription;
+    goalEvent.description = descriptionFromState(goal, SdmGoalState.in_process, goalEvent);
     goalEvent.url = progressLogUrl;
     await updateGoal(ctx,
         goalEvent,
         {
             url: progressLogUrl,
-            description: goal.inProcessDescription,
+            description: descriptionFromState(goal, SdmGoalState.in_process, goalEvent),
             state: SdmGoalState.in_process,
         });
     return goalEvent;
@@ -341,13 +361,13 @@ async function markGoalInProcess(parameters: {
  * @return {Promise<void>}
  */
 async function reportGoalError(parameters: {
-    goal: Goal,
-    implementationName: string,
-    addressChannels: AddressChannels,
-    progressLog: ProgressLog,
-    id: RemoteRepoRef,
-    logInterpreter: InterpretLog,
-},
+                                   goal: Goal,
+                                   implementationName: string,
+                                   addressChannels: AddressChannels,
+                                   progressLog: ProgressLog,
+                                   id: RemoteRepoRef,
+                                   logInterpreter: InterpretLog,
+                               },
                                err: GoalExecutionError): Promise<void> {
     const { implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
@@ -466,8 +486,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                        // Intentionally empty
-                    })
+                    // Intentionally empty
+                })
                     .catch(err => {
                         logger.debug(`Error occurred reporting progress: %s`, err.message);
                     });

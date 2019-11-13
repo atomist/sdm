@@ -104,7 +104,7 @@ export class Goal {
     }
 
     get waitingForApprovalDescription(): string {
-        return this.definition.waitingForApprovalDescription || `Approval required: ${this.successDescription}`;
+        return this.definition.waitingForApprovalDescription || `Approval required: ${this.name}`;
     }
 
     get waitingForPreApprovalDescription(): string {
