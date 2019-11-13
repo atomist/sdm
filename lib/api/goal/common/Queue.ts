@@ -162,7 +162,7 @@ export function handleSdmGoalSetEvent(options: QueueOptions,
 
         if (goalSets && goalSets.SdmGoalSet && goalSets.SdmGoalSet.length > 0) {
             await startGoals(goalSets, optsToUse, definition, ctx);
-            // await updateGoals(goalSets, optsToUse, definition, ctx);
+            // await updateGoals(goalSets, optsToUse, details, ctx);
         }
 
         return Success;
