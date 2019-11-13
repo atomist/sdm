@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,12 +44,13 @@ export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementatio
 
 export interface GoalSideEffect {
     sideEffectName: string;
+    registration: string;
     goal: Goal;
     pushTest: PushTest;
 }
 
 export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
-    return !!f && (f as GoalSideEffect).sideEffectName && true;
+    return !!f && (f as GoalSideEffect).sideEffectName &&  (f as GoalSideEffect).registration && true;
 }
 
 /**
@@ -66,6 +67,8 @@ export interface GoalFulfillmentCallback {
  * Registers and looks up goal implementations
  */
 export interface GoalImplementationMapper {
+
+    hasImplementation(): boolean;
 
     addSideEffect(sideEffect: GoalSideEffect): this;
 

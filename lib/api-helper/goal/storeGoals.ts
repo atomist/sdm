@@ -26,6 +26,7 @@ import {
     Goal,
     hasPreconditions,
 } from "../../api/goal/Goal";
+import { Parameterized } from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     GoalRootType,
@@ -107,10 +108,11 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoalKey): boole
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
-export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalFulfillment {
+export function constructSdmGoalImplementation(gi: GoalImplementation, registration: string): SdmGoalFulfillment {
     return {
         method: SdmGoalFulfillmentMethod.Sdm,
         name: gi.implementationName,
+        registration,
     };
 }
 
@@ -125,7 +127,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoalMessage {
     const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
-    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unknown" };
+    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unknown", registration: "unknown" };
 
     if (!id.branch) {
         throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));
@@ -165,6 +167,18 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         },
         state,
         description,
+        descriptions: {
+            planned: goal.plannedDescription,
+            requested: goal.requestedDescription,
+            inProcess: goal.inProcessDescription,
+            completed: goal.successDescription,
+            failed: goal.failureDescription,
+            canceled: goal.canceledDescription,
+            stopped: goal.stoppedDescription,
+            skipped: goal.skippedDescription,
+            waitingForApproval: goal.waitingForApprovalDescription,
+            waitingForPreApproval: goal.waitingForPreApprovalDescription,
+        },
         url,
         externalKey: goal.context,
         ts: Date.now(),
@@ -173,6 +187,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         retryFeasible,
         provenance: [constructProvenance(ctx)],
         preConditions,
+        parameters: !!(goal.definition as Parameterized).parameters ?
+            JSON.stringify((goal.definition as Parameterized).parameters) : undefined,
         version: 1,
     };
 }
@@ -195,28 +211,28 @@ export function constructProvenance(ctx: HandlerContext): SdmProvenance {
     };
 }
 
-export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
+export function descriptionFromState(goal: Goal, state: SdmGoalState, goalEvent?: SdmGoalEvent): string {
     switch (state) {
         case SdmGoalState.planned:
-            return goal.plannedDescription;
+            return _.get(goalEvent, "descriptions.planned", goal.plannedDescription);
         case SdmGoalState.requested:
-            return goal.requestedDescription;
+            return _.get(goalEvent, "descriptions.requested", goal.requestedDescription);
         case SdmGoalState.in_process:
-            return goal.inProcessDescription;
+            return _.get(goalEvent, "descriptions.inProcess", goal.inProcessDescription);
         case SdmGoalState.waiting_for_approval:
-            return goal.waitingForApprovalDescription;
+            return _.get(goalEvent, "descriptions.waitingForApproval", goal.waitingForApprovalDescription);
         case SdmGoalState.waiting_for_pre_approval:
-            return goal.waitingForPreApprovalDescription;
+            return _.get(goalEvent, "descriptions.waitingForPreApproval", goal.waitingForPreApprovalDescription);
         case SdmGoalState.success:
-            return goal.successDescription;
+            return _.get(goalEvent, "descriptions.completed", goal.successDescription);
         case SdmGoalState.failure:
-            return goal.failureDescription;
+            return _.get(goalEvent, "descriptions.failed", goal.failureDescription);
         case SdmGoalState.skipped:
-            return goal.skippedDescription;
+            return _.get(goalEvent, "descriptions.skipped", goal.skippedDescription);
         case SdmGoalState.canceled:
-            return goal.canceledDescription;
+            return _.get(goalEvent, "descriptions.canceled", goal.canceledDescription);
         case SdmGoalState.stopped:
-            return goal.stoppedDescription;
+            return _.get(goalEvent, "descriptions.stopped", goal.stoppedDescription);
         default:
             throw new Error("Unknown goal state " + state);
     }

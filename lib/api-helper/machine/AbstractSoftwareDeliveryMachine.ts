@@ -207,16 +207,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      * For instance, ArtifactGoal succeeds because of an ImageLink event.
      * This tells the SDM that it does not need to run anything when this
      * goal becomes ready.
-     * @param {Goal} goal
-     * @param {string} sideEffectName
-     * @param {PushTest} pushTest
      */
     public addGoalSideEffect(goal: Goal,
                              sideEffectName: string,
+                             registration: string,
                              pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
-            sideEffectName, pushTest,
+            sideEffectName,
+            pushTest,
+            registration,
         });
         return this;
     }
