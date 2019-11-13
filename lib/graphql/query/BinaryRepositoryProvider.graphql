@@ -1,0 +1,14 @@
+query BinaryRepositoryProvider($name: String, $type: BinaryRepositoryType) {
+    BinaryRepositoryProvider(name: $name, type: $type) {
+        state {
+            error
+            name
+        }
+        credential {
+            owner {
+                login
+            }
+            id
+        }
+    }
+}
