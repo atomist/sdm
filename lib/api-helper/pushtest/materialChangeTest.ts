@@ -49,7 +49,7 @@ export interface MaterialChangeOptions {
     directories?: string[];
 
     /**
-     * Glob patters not watch for
+     * Glob patters to watch for
      */
     globs?: string[];
 }
