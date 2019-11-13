@@ -4,12 +4,14 @@ query SdmGoalByShaAndBranch(
   $providerId: String!
   $sha: String!
   $branch: String!
-  $uniqueNames: [String]!
+  $uniqueNames: [String]
+  $names: [String]
 ) {
   SdmGoal(
     sha: [$sha]
     branch: [$branch]
     uniqueName: $uniqueNames
+    name: $names
     _first: 500
     _showHistory: true
   ) {
@@ -72,6 +74,18 @@ query SdmGoalByShaAndBranch(
       userId
       channelId
     }
+    descriptions {
+      canceled
+      completed
+      failed
+      inProcess
+      planned
+      requested
+      stopped
+      waitingForApproval
+      waitingForPreApproval
+    }
+    parameters
     data
     version
     signature
