@@ -68,6 +68,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
         environment: "0-code",
         fulfillment: {
             method: "other",
+            registration: "@atomist/sdm",
             name: "something",
         },
         repo: {
@@ -84,6 +85,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     owner: id.owner,
                     provider: {
                         providerId: "skdfjasd",
+                        apiUrl: "https://api.github.com",
                     },
                 },
                 name: id.repo,

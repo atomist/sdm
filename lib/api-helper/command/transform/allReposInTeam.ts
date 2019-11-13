@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: num
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
-                org.repo.map(r => rrr.toRemoteRepoRef(r, {})));
+                org.repo.map((r: any) => rrr.toRemoteRepoRef(r, {})));
         })
         .then(repos => {
             return (repos.length < PageSize) ?
