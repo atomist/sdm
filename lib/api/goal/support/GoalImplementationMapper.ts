@@ -44,12 +44,13 @@ export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementatio
 
 export interface GoalSideEffect {
     sideEffectName: string;
+    registration: string;
     goal: Goal;
     pushTest: PushTest;
 }
 
 export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
-    return !!f && (f as GoalSideEffect).sideEffectName && true;
+    return !!f && (f as GoalSideEffect).sideEffectName &&  (f as GoalSideEffect).registration && true;
 }
 
 /**

@@ -9,6 +9,7 @@ fragment SdmGoalWithPushFields on SdmGoal {
   }
   fulfillment {
     method
+    registration
     name
   }
   description

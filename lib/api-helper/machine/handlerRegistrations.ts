@@ -599,7 +599,7 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
         } else if (isValueDeclaration(value)) {
             builder.addValues({ name, path: value.path, required: value.required, type: value.type });
         } else {
-            builder.addParameters({ name, ...(value as any) });
+            builder.addParameters({ name, ...(value) });
         }
     }
     return builder;
