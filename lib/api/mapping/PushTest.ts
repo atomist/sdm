@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 
 import { Project } from "@atomist/automation-client";
-import { PushListenerInvocation } from "../listener/PushListener";
+import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
 import { PredicateMapping } from "./PredicateMapping";
 
 /**
  * Special PushMapping. Return true if we like this push. Used in goal setting etc.
  */
-export interface PushTest extends PredicateMapping<PushListenerInvocation> {
+export interface PushTest extends PredicateMapping<StatefulPushListenerInvocation> {
 
 }
 
@@ -36,7 +36,7 @@ export type ProjectPredicate = (p: Project) => Promise<boolean>;
  * @param mapping test function
  * @return {PushTest}
  */
-export function pushTest(name: string, mapping: (p: PushListenerInvocation) => Promise<boolean>): PushTest {
+export function pushTest(name: string, mapping: (p: StatefulPushListenerInvocation) => Promise<boolean>): PushTest {
     return {
         name,
         mapping,
