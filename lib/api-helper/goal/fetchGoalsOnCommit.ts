@@ -46,8 +46,12 @@ export function fetchGoalsFromPush(sdmGoal: SdmGoalEvent): SdmGoalEvent[] {
     return [];
 }
 
-export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoalEvent> {
-    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);
+export async function findSdmGoalOnCommit(ctx: HandlerContext,
+                                          id: RemoteRepoRef,
+                                          providerId: string,
+                                          goal: Goal,
+                                          goalSetId?: string): Promise<SdmGoalEvent> {
+    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId, goalSetId);
     const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g));
     if (matches && matches.length > 1) {
         logger.warn("More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
