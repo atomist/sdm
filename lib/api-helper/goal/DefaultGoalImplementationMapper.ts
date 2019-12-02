@@ -35,8 +35,12 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     private readonly callbacks: GoalFulfillmentCallback[] = [];
     private readonly goals: Goal[] = [];
 
+    public hasImplementation(): boolean {
+        return this.goals.length > 0;
+    }
+
     public findImplementationBySdmGoal(goal: SdmGoalEvent): GoalImplementation {
-        const matchedNames = this.implementations.filter(m =>
+        let matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.uniqueName === uniqueName(goal));
 
@@ -44,8 +48,19 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.uniqueName}'`);
         }
         if (matchedNames.length === 0) {
-            throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
-                `Found ${this.implementations.map(impl => impl.implementationName)}`);
+
+            matchedNames = this.implementations.filter(m =>
+                m.implementationName === goal.fulfillment.name &&
+                m.goal.name === goal.name);
+
+            if (matchedNames.length > 1) {
+                throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.name}'`);
+            }
+
+            if (matchedNames.length === 0) {
+                throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
+                    `Found ${this.implementations.map(impl => impl.implementationName)}`);
+            }
         }
         return matchedNames[0];
     }
