@@ -38,6 +38,7 @@ export interface SdmGoalEvent extends SdmGoalKey {
 
     fulfillment: {
         method: string;
+        registration: string;
         name: string;
     };
 
