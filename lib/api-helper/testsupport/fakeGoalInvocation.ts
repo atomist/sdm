@@ -68,6 +68,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
         environment: "0-code",
         fulfillment: {
             method: "other",
+            registration: "@atomist/sdm",
             name: "something",
         },
         repo: {
