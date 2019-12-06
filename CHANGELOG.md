@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.8.0...HEAD)
 
+### Added
+
+-   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
+
 ## [1.8.0](https://github.com/atomist/sdm/compare/1.7.0...1.8.0) - 2019-12-06
 
 ### Added
