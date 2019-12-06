@@ -1,0 +1,14 @@
+query DockerRegistryProvider($name: String) {
+  DockerRegistryProvider(name: $name) {
+    state {
+      error
+      name
+    }
+    credential {
+      owner {
+        login
+      }
+      id
+    }
+  }
+}
