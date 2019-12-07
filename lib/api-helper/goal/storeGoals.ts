@@ -153,6 +153,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     }
     return {
         goalSet,
+        registration: (ctx as any as AutomationContextAware).context.name,
         goalSetId,
         name: goal.name,
         uniqueName: goal.uniqueName,

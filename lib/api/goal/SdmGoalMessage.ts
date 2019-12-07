@@ -81,6 +81,7 @@ export interface SdmGoalMessage extends SdmGoalKey {
     url?: string;
     externalUrls?: Array<{ label?: string, url: string }>;
     goalSet: string;
+    registration: string;
     goalSetId: string;
     state: SdmGoalState;
     phase?: string;

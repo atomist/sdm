@@ -16,6 +16,7 @@ query SdmGoalByShaAndBranch(
     _showHistory: true
   ) {
     goalSet
+    registration
     goalSetId
     environment
     uniqueName

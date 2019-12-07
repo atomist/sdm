@@ -61,6 +61,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
         uniqueName: "hi",
         name: "Hello",
         goalSet: "goal set",
+        registration: "foo",
         goalSetId: "xuf",
         ts: 42,
         provenance: [],
