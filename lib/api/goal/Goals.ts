@@ -137,7 +137,10 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
 
         this.lastGoals.forEach(g => {
             // Add the preCondition into the last added goals
-            lastGoalsWithPreConditions.push(new GoalWithPrecondition(g.definition, ...convertToGoals(...newGoals)));
+            const newGoal = new GoalWithPrecondition(g.definition, ...convertToGoals(...newGoals));
+            // Preserve the plan function if it exists as it might influence goal planning
+            (newGoal as any).plan = (g as any).plan;
+            lastGoalsWithPreConditions.push(newGoal);
             // Remove the previously added goals
             const ix = this.goals.indexOf(g);
             if (ix >= 0) {
