@@ -391,7 +391,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
 
                 // Replace all preConditions that point back to the original goal with references to new goals
                 allGoals.filter(hasPreconditions)
-                    .filter(g => (g.dependsOn || []).includes(dg))
+                    .filter(g => (g.dependsOn || []).some(gr => gr.uniqueName === dg.uniqueName))
                     .forEach(g => {
                         _.remove(g.dependsOn, gr => gr.uniqueName === dg.uniqueName);
                         g.dependsOn.push(...allNewGoals);

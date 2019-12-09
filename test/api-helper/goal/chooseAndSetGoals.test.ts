@@ -199,5 +199,43 @@ describe("chooseAndSetGoals", () => {
             assert.deepStrictEqual(goals[0].name, goal.name);
             assert.deepStrictEqual((goals[0].definition as any).parameters, { foo: "bar"});
         });
+
+        it("should plan goals with dependencies", async () => {
+            const goal1 = new GoalWithFulfillment({
+                uniqueName: "test1",
+                displayName: "Test1",
+            });
+            const goal2 = new GoalWithFulfillment({
+                uniqueName: "test2",
+                displayName: "Test2",
+            }, goal1);
+            const goal3 = new GoalWithFulfillment({
+                uniqueName: "test3",
+                displayName: "Test3",
+            }, goal1, goal2);
+
+            goal1.plan = async () => {
+                return {
+                    parameters: { foo: "bar" },
+                };
+            };
+            goal2.plan = async () => {
+                return {
+                    parameters: { foo: "bar" },
+                };
+            };
+            goal3.plan = async () => {
+                return {
+                    parameters: { foo: "bar" },
+                };
+            };
+
+            const goals = (await planGoals(new Goals("test", goal1, goal2, goal3), {} as any)).goals;
+
+            assert.strictEqual(goals.length, 3);
+            assert.deepStrictEqual((goals[1] as any).dependsOn[0].definition.uniqueName, "test1#sdm:0");
+            assert.deepStrictEqual((goals[2] as any).dependsOn[0].definition.uniqueName, "test1#sdm:0");
+            assert.deepStrictEqual((goals[2] as any).dependsOn[1].definition.uniqueName, "test2#sdm:0");
+        });
     });
 });
