@@ -42,10 +42,10 @@ export function isGoal(options: { name?: RegExp, state?: SdmGoalState, output?: 
             }
             if (!!options.output) {
                 const data = JSON.parse(g.data || "{}");
-                const outputs: string[] = data["@atomist/sdm/output"];
+                const outputs: Array<{ classifier: string }> = data["@atomist/sdm/output"];
                 if (!outputs) {
                     return false;
-                } else if (!outputs.some(o => options.output.test(o))) {
+                } else if (!outputs.some(o => options.output.test(o.classifier))) {
                     return false;
                 }
             }
