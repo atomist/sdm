@@ -66,7 +66,7 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
             throw new InsufficientDataError("id");
         },
         get context(): HandlerContext {
-            throw new InsufficientDataError("context");
+            return undefined;
         },
         get addressChannels(): AddressChannels {
             throw new InsufficientDataError("addressChannels");

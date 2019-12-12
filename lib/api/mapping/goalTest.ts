@@ -20,6 +20,8 @@ import * as _ from "lodash";
 import { SdmGoalState } from "../../typings/types";
 import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
+import { PushListenerInvocation } from "../listener/PushListener";
+import { PredicateMapping } from "./PredicateMapping";
 import { PushTest } from "./PushTest";
 import { AnyPush } from "./support/commonPushTests";
 
@@ -64,7 +66,7 @@ export function goalTest(name: string,
     return {
         name,
         mapping: async pli => {
-            const trigger = (pli.context as any as AutomationContextAware).trigger;
+            const trigger = (pli?.context as any as AutomationContextAware)?.trigger;
             if (!!trigger && isEventIncoming(trigger)) {
                 const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
                 if (!!goal) {
@@ -90,9 +92,9 @@ export function goalTest(name: string,
  */
 export function notGoalTest(pushTest: PushTest): PushTest {
     return {
-        name: pushTest.name,
+        ...pushTest,
         mapping: async pli => {
-            const trigger = (pli.context as any as AutomationContextAware).trigger;
+            const trigger = (pli?.context as any as AutomationContextAware)?.trigger;
             if (!!trigger && isEventIncoming(trigger)) {
                 const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
                 if (!!goal) {
@@ -102,4 +104,18 @@ export function notGoalTest(pushTest: PushTest): PushTest {
             return pushTest.mapping(pli);
         },
     };
+}
+
+export function wrapPredicateMapping<P extends PushListenerInvocation = PushListenerInvocation>(
+    guards: PredicateMapping<P>): PredicateMapping<P> {
+    return wrapTest(guards);
+}
+
+export function wrapTest<P extends PushListenerInvocation = PushListenerInvocation>(
+    test: PredicateMapping<P>): PredicateMapping<P> {
+    if (!!(test as any).pushTest) {
+        return test;
+    } else {
+        return notGoalTest(test);
+    }
 }

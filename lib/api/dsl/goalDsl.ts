@@ -19,6 +19,7 @@ import {
     Goals,
 } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { wrapPredicateMapping } from "../mapping/goalTest";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
@@ -43,7 +44,7 @@ export class GoalSetterMapping<P extends PushListenerInvocation = PushListenerIn
     }
 
     constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
-        super(guard1, guards, reason);
+        super(wrapPredicateMapping(guard1), (guards || []).map(wrapPredicateMapping), reason);
     }
 
     public setGoals(goalComponent: GoalComponent): this {
@@ -101,7 +102,8 @@ export class GoalSetterMapping<P extends PushListenerInvocation = PushListenerIn
 export function whenPushSatisfies<P extends PushListenerInvocation = PushListenerInvocation>(
     guard1: PredicateMappingTerm<P>,
     ...guards: Array<PredicateMappingTerm<P>>): GoalSetterMapping<P> {
-    return new GoalSetterMapping<P>(toPredicateMapping(guard1), guards.map(toPredicateMapping));
+    return new GoalSetterMapping<P>(
+        toPredicateMapping(guard1), guards.map(toPredicateMapping));
 }
 
 /**
