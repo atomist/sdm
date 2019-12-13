@@ -76,6 +76,7 @@ import {
 } from "../../typings/types";
 import { minimalClone } from "./minimalClone";
 import {
+    constructGoalSet,
     constructSdmGoal,
     constructSdmGoalImplementation,
     storeGoal,
@@ -136,10 +137,10 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 
     if (goalsToSave.length > 0) {
         // First store the goals
-        await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
+        await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
 
         // And then store the goalSet
-        await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, tags, push);
+        await storeGoalSet(context, constructGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, tags, push));
     }
 
     // Let GoalSetListeners know even if we determined no goals.
@@ -275,7 +276,11 @@ async function fulfillment(rules: {
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan, inv.configuration.name);
     } else if (isGoalSideEffect(plan)) {
-        return { method: SdmGoalFulfillmentMethod.SideEffect, name: plan.sideEffectName, registration: plan.registration };
+        return {
+            method: SdmGoalFulfillmentMethod.SideEffect,
+            name: plan.sideEffectName,
+            registration: plan.registration,
+        };
     } else {
         return { method: SdmGoalFulfillmentMethod.Other, name: "unknown", registration: "unknown" };
     }
@@ -336,7 +341,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
 
                 // Check if planResult is a PlannedGoal or PlannedGoals instance
                 if (!_.some(planResult, v => !!v.goals)) {
-                     planResult = { "#": { goals: planResult } };
+                    planResult = { "#": { goals: planResult } };
                 }
 
                 const allNewGoals = [];

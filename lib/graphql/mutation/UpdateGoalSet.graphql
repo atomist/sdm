@@ -1,0 +1,3 @@
+mutation UpdateSdmGoalSet($goalSet: CustomSdmGoalSetInput!) {
+  ingestCustomSdmGoalSet(value: $goalSet)
+}

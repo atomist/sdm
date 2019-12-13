@@ -15,7 +15,6 @@
  */
 
 import {
-    addressEvent,
     AutomationContextAware,
     QueryNoCacheOptions,
     toStringArray,
@@ -28,12 +27,12 @@ import {
 } from "../../api/goal/common/Cancel";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { isGoals } from "../../api/goal/Goals";
-import { GoalRootType } from "../../api/goal/SdmGoalMessage";
 import {
     SdmGoalByShaAndBranch,
     SdmGoalState,
 } from "../../typings/types";
 import { sumSdmGoalEvents } from "../goal/fetchGoalsOnCommit";
+import { storeGoal } from "../goal/storeGoals";
 
 /**
  * Cancel any pending goals that are on the previous commit of the goal's branch
@@ -108,7 +107,7 @@ export function executeCancelGoalSets(options: CancelOptions, name: string): Exe
                     };
                     updatedGoal.provenance.push(prov);
 
-                    await gi.context.messageClient.send(updatedGoal, addressEvent(GoalRootType));
+                    await storeGoal(gi.context, updatedGoal as any);
                 }
 
                 return {

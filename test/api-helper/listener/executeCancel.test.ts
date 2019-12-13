@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { guid } from "@atomist/automation-client";
+import {
+    guid,
+    MutationOptions,
+} from "@atomist/automation-client";
 import { fail } from "power-assert";
 import assert = require("power-assert");
 import { executeCancelGoalSets } from "../../../lib/api-helper/listener/executeCancel";
@@ -188,6 +191,11 @@ describe("executeCancelGoalSets", () => {
             },
             context: {
                 graphClient: {
+                    mutate: async (mutationOptions: MutationOptions<any>) => {
+                        assert.strictEqual(mutationOptions.variables.goal.uniqueName, autofix.uniqueName);
+                        assert.strictEqual(mutationOptions.variables.goal.state, SdmGoalState.canceled);
+                        senrAutofixCancelation = true;
+                    },
                     query: async () => {
 
                         return {
@@ -229,13 +237,6 @@ describe("executeCancelGoalSets", () => {
                                 }],
                             }],
                         };
-                    },
-                },
-                messageClient: {
-                    send: async msg => {
-                        assert.strictEqual(msg.uniqueName, autofix.uniqueName);
-                        assert.strictEqual(msg.state, SdmGoalState.canceled);
-                        senrAutofixCancelation = true;
                     },
                 },
                 context: {

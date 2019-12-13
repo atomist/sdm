@@ -18,8 +18,6 @@ import { SdmGoalState } from "../../typings/types";
 import { SdmProvenance } from "./SdmGoalMessage";
 import { GoalSetTag } from "./tagGoalSet";
 
-export const GoalSetRootType = "SdmGoalSet";
-
 /**
  * Data persisted in the Atomist Cortex
  */
