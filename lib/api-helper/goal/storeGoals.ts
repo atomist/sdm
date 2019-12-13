@@ -48,6 +48,9 @@ import {
     UpdateSdmGoalSetMutationVariables,
 } from "../../typings/types";
 
+// tslint:disable-next-line:no-var-requires
+const omitEmpty = require("omit-empty");
+
 export function environmentFromGoal(goal: Goal): string {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
 }
@@ -89,13 +92,7 @@ export async function updateGoal(ctx: HandlerContext,
         version: before.version,
     };
 
-    await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
-        name: "UpdateSdmGoal",
-        variables: {
-            goal: sdmGoal,
-        },
-        options: MutationNoCacheOptions,
-    });
+    await storeGoal(ctx, sdmGoal);
 }
 
 function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
@@ -206,10 +203,12 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 
 export async function storeGoal(ctx: HandlerContext,
                                 sdmGoal: SdmGoalMessage): Promise<SdmGoalMessage> {
+    const newGoal = omitEmpty(sdmGoal, { omitZero: false });
+    delete (newGoal).push;
     await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
         name: "UpdateSdmGoal",
         variables: {
-            goal: sdmGoal,
+            goal: newGoal,
         },
         options: MutationNoCacheOptions,
     });
@@ -303,7 +302,7 @@ export async function storeGoalSet(ctx: HandlerContext,
     await ctx.graphClient.mutate<UpdateSdmGoalSetMutation, UpdateSdmGoalSetMutationVariables>({
         name: "UpdateSdmGoalSet",
         variables: {
-            goalSet,
+            goalSet: omitEmpty(goalSet, { omitZero: false }),
         },
         options: MutationNoCacheOptions,
     });
