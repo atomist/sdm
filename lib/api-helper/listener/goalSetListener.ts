@@ -18,6 +18,7 @@ import {
     logger,
     QueryNoCacheOptions,
 } from "@atomist/automation-client";
+import * as _ from "lodash";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import { SdmGoalSetForId } from "../../typings/types";
 import {
@@ -42,10 +43,10 @@ export const GoalSetGoalCompletionListener: GoalCompletionListener = async gcl =
         },
         options: QueryNoCacheOptions,
     });
-    if (result && result.SdmGoalSet && result.SdmGoalSet.length === 1) {
-        const goalSet = result.SdmGoalSet[0];
+    const goalSet = _.get(result, "SdmGoalSet[0]");
+    if (!!goalSet) {
         if (goalSet.state !== state) {
-            const newGoalSet: any = {
+            const newGoalSet = {
                 ...goalSet,
                 state,
             };

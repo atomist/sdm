@@ -34,7 +34,6 @@
     "@types/lodash": "^4.14.139",
     "@types/minimatch": "^3.0.3",
     "@types/node": "^12.7.8",
-    "@types/omit-empty": "^1.0.0",
     "@types/sprintf-js": "^1.1.2",
     "@types/stack-trace": "^0.0.29",
     "axios": "^0.19.0",
