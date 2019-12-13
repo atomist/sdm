@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
 
+### Changed
+
+-   Move to using GraphQL mutations for SdmGoal and SdmGoalSet. [#792](https://github.com/atomist/sdm/issues/792)
+
 ### Fixed
 
 -   Old style push rules and goal test create goals on every goal. [#787](https://github.com/atomist/sdm/issues/787)
