@@ -20,6 +20,7 @@ import {
     HandlerContext,
     MessageClient,
     MessageOptions,
+    MutationOptions,
     SlackMessageClient,
 } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
@@ -35,6 +36,11 @@ export function fakeContext(workspaceId: string = "T123"): HandlerContext & Auto
     return {
         workspaceId,
         messageClient: new DevNullMessageClient(),
+        graphClient: {
+            mutate<T, Q>(optionsOrName: MutationOptions<Q> | string): Promise<T> {
+                return undefined;
+            },
+        } as any,
         correlationId,
         context: {
             name: "test-context",

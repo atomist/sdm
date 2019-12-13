@@ -136,7 +136,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 
     if (goalsToSave.length > 0) {
         // First store the goals
-        await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
+        await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
 
         // And then store the goalSet
         await storeGoalSet(context, goalSetId, determinedGoals.name, goalsToSave, tags, push);

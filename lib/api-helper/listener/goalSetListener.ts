@@ -15,13 +15,16 @@
  */
 
 import {
-    addressEvent,
     logger,
+    MutationNoCacheOptions,
     QueryNoCacheOptions,
 } from "@atomist/automation-client";
-import { GoalSetRootType } from "../../api/goal/SdmGoalSetMessage";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
-import { SdmGoalSetForId } from "../../typings/types";
+import {
+    SdmGoalSetForId,
+    UpdateSdmGoalSetMutation,
+    UpdateSdmGoalSetMutationVariables,
+} from "../../typings/types";
 import { goalSetState } from "../goal/storeGoals";
 
 /**
@@ -48,7 +51,14 @@ export const GoalSetGoalCompletionListener: GoalCompletionListener = async gcl =
                 ...goalSet,
                 state,
             };
-            await gcl.context.messageClient.send(newGoalSet, addressEvent(GoalSetRootType));
+
+            await gcl.context.graphClient.mutate<UpdateSdmGoalSetMutation, UpdateSdmGoalSetMutationVariables>({
+                name: "UpdateSdmGoalSet",
+                variables: {
+                    goalSet: newGoalSet,
+                },
+                options: MutationNoCacheOptions,
+            });
         }
     }
 };
