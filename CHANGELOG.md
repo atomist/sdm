@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
+-   Drop WS socket requirement for k8s goal jobs. [#788](https://github.com/atomist/sdm/issues/788)
 
 ### Changed
 
