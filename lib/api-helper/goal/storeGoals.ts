@@ -300,7 +300,6 @@ export function constructGoalSet(ctx: HandlerContext,
 export async function storeGoalSet(ctx: HandlerContext,
                                    goalSet: SdmGoalSetMessage): Promise<void> {
 
-
     await ctx.graphClient.mutate<UpdateSdmGoalSetMutation, UpdateSdmGoalSetMutationVariables>({
         name: "UpdateSdmGoalSet",
         variables: {
