@@ -89,13 +89,7 @@ export async function updateGoal(ctx: HandlerContext,
         version: before.version,
     };
 
-    await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
-        name: "UpdateSdmGoal",
-        variables: {
-            goal: sdmGoal,
-        },
-        options: MutationNoCacheOptions,
-    });
+    await storeGoal(ctx, sdmGoal);
 }
 
 function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
@@ -206,10 +200,12 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 
 export async function storeGoal(ctx: HandlerContext,
                                 sdmGoal: SdmGoalMessage): Promise<SdmGoalMessage> {
+    const newGoal = _.pickBy(sdmGoal);
+    delete (newGoal as any).push;
     await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
         name: "UpdateSdmGoal",
         variables: {
-            goal: sdmGoal,
+            goal: newGoal,
         },
         options: MutationNoCacheOptions,
     });
@@ -303,7 +299,7 @@ export async function storeGoalSet(ctx: HandlerContext,
     await ctx.graphClient.mutate<UpdateSdmGoalSetMutation, UpdateSdmGoalSetMutationVariables>({
         name: "UpdateSdmGoalSet",
         variables: {
-            goalSet,
+            goalSet: _.pickBy(goalSet),
         },
         options: MutationNoCacheOptions,
     });
