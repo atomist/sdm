@@ -15,9 +15,9 @@
  */
 
 import {
-    addressEvent,
     AutomationContextAware,
     HandlerContext,
+    MutationNoCacheOptions,
     RemoteRepoRef,
 } from "@atomist/automation-client";
 import * as _ from "lodash";
@@ -29,24 +29,23 @@ import {
 import { Parameterized } from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
-    GoalRootType,
     SdmGoalFulfillment,
     SdmGoalFulfillmentMethod,
     SdmGoalKey,
     SdmGoalMessage,
     SdmProvenance,
 } from "../../api/goal/SdmGoalMessage";
-import {
-    GoalSetRootType,
-    SdmGoalSetMessage,
-} from "../../api/goal/SdmGoalSetMessage";
+import { SdmGoalSetMessage } from "../../api/goal/SdmGoalSetMessage";
 import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import { GoalSetTag } from "../../api/goal/tagGoalSet";
 import {
     OnPushToAnyBranch,
     PushFields,
     SdmGoalState,
-    SdmGoalWithPushFields,
+    UpdateSdmGoalMutation,
+    UpdateSdmGoalMutationVariables,
+    UpdateSdmGoalSetMutation,
+    UpdateSdmGoalSetMutationVariables,
 } from "../../typings/types";
 
 export function environmentFromGoal(goal: Goal): string {
@@ -64,9 +63,9 @@ export interface UpdateSdmGoalParams {
     phase?: string;
 }
 
-export function updateGoal(ctx: HandlerContext,
-                           before: SdmGoalEvent,
-                           params: UpdateSdmGoalParams): Promise<void> {
+export async function updateGoal(ctx: HandlerContext,
+                                 before: SdmGoalEvent,
+                                 params: UpdateSdmGoalParams): Promise<void> {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) :
         !!before ? before.approval : undefined;
@@ -89,7 +88,14 @@ export function updateGoal(ctx: HandlerContext,
         push: cleanPush(before.push),
         version: before.version,
     };
-    return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
+
+    await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
+        name: "UpdateSdmGoal",
+        variables: {
+            goal: sdmGoal,
+        },
+        options: MutationNoCacheOptions,
+    });
 }
 
 function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
@@ -127,7 +133,11 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoalMessage {
     const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
-    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unknown", registration: "unknown" };
+    const fulfillment = parameters.fulfillment || {
+        method: SdmGoalFulfillmentMethod.Other,
+        name: "unknown",
+        registration: "unknown",
+    };
 
     if (!id.branch) {
         throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));
@@ -194,12 +204,17 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     };
 }
 
-export function storeGoal(ctx: HandlerContext,
-                          sdmGoal: SdmGoalMessage,
-                          push: OnPushToAnyBranch.Push): Promise<SdmGoalMessage> {
-    (sdmGoal as SdmGoalWithPushFields.Fragment).push = cleanPush(push);
-    return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
-        .then(() => sdmGoal);
+export async function storeGoal(ctx: HandlerContext,
+                                sdmGoal: SdmGoalMessage): Promise<SdmGoalMessage> {
+    await ctx.graphClient.mutate<UpdateSdmGoalMutation, UpdateSdmGoalMutationVariables>({
+        name: "UpdateSdmGoal",
+        variables: {
+            goal: sdmGoal,
+        },
+        options: MutationNoCacheOptions,
+    });
+
+    return sdmGoal;
 }
 
 export function constructProvenance(ctx: HandlerContext): SdmProvenance {
@@ -239,12 +254,12 @@ export function descriptionFromState(goal: Goal, state: SdmGoalState, goalEvent?
     }
 }
 
-export async function storeGoalSet(ctx: HandlerContext,
-                                   goalSetId: string,
-                                   goalSet: string,
-                                   sdmGoals: SdmGoalMessage[],
-                                   tags: GoalSetTag[],
-                                   push: OnPushToAnyBranch.Push): Promise<void> {
+export function constructGoalSet(ctx: HandlerContext,
+                                 goalSetId: string,
+                                 goalSet: string,
+                                 sdmGoals: SdmGoalMessage[],
+                                 tags: GoalSetTag[],
+                                 push: OnPushToAnyBranch.Push): SdmGoalSetMessage {
     let repo;
     if (!!push) {
         repo = {
@@ -278,7 +293,22 @@ export async function storeGoalSet(ctx: HandlerContext,
         provenance: constructProvenance(ctx),
         tags,
     };
-    return ctx.messageClient.send(sdmGoalSet, addressEvent(GoalSetRootType));
+
+    return sdmGoalSet;
+}
+
+export async function storeGoalSet(ctx: HandlerContext,
+                                   goalSet: SdmGoalSetMessage): Promise<void> {
+
+
+    await ctx.graphClient.mutate<UpdateSdmGoalSetMutation, UpdateSdmGoalSetMutationVariables>({
+        name: "UpdateSdmGoalSet",
+        variables: {
+            goalSet,
+        },
+        options: MutationNoCacheOptions,
+    });
+
 }
 
 export function goalSetState(goals: Array<Pick<SdmGoalMessage, "name" | "state">>): SdmGoalState {

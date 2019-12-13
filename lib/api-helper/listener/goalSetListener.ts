@@ -15,14 +15,15 @@
  */
 
 import {
-    addressEvent,
     logger,
     QueryNoCacheOptions,
 } from "@atomist/automation-client";
-import { GoalSetRootType } from "../../api/goal/SdmGoalSetMessage";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import { SdmGoalSetForId } from "../../typings/types";
-import { goalSetState } from "../goal/storeGoals";
+import {
+    goalSetState,
+    storeGoalSet,
+} from "../goal/storeGoals";
 
 /**
  * Update the state of the SdmGoalSet as the goals progress
@@ -48,7 +49,8 @@ export const GoalSetGoalCompletionListener: GoalCompletionListener = async gcl =
                 ...goalSet,
                 state,
             };
-            await gcl.context.messageClient.send(newGoalSet, addressEvent(GoalSetRootType));
+
+            await storeGoalSet(gcl.context, newGoalSet as any);
         }
     }
 };
