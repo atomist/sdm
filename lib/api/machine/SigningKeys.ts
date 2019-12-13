@@ -57,12 +57,12 @@ export interface GoalSigningAlgorithm<T> {
     /**
      * Sign the provided normalized goal with the given key
      */
-    sign(goal: string, key: GoalSigningKey<T>): Promise<string>;
+    sign(goal: string, key: GoalSigningKey<T>): string;
 
     /**
      * Verify the provided normalized goal against the signature
      */
-    verify(goal: string, signature: string, key: GoalVerificationKey<T>): Promise<boolean>;
+    verify(goal: string, signature: string, key: GoalVerificationKey<T>): boolean;
 }
 
 export interface GoalSigningConfiguration {

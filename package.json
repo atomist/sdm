@@ -47,6 +47,7 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "minimatch": "^3.0.4",
+    "omit-empty": "^1.0.0",
     "sha-regex": "^1.0.4",
     "sprintf-js": "^1.1.2",
     "stack-trace": "^0.0.10",

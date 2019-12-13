@@ -16,8 +16,6 @@
 
 import { SdmGoalState } from "../../typings/types";
 
-export const GoalRootType = "SdmGoal";
-
 export enum SdmGoalFulfillmentMethod {
     Sdm = "sdm",
     SideEffect = "side-effect",

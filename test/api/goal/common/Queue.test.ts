@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { MutationOptions } from "@atomist/automation-client";
 import * as assert from "assert";
 import { fail } from "power-assert";
 import {
@@ -102,6 +103,16 @@ describe("Queue", () => {
 
         it("should trigger correct goal sets pending", async () => {
             const graphClient = {
+                mutate: async (options: MutationOptions<any>) => {
+                    if (!options.variables.goal.phase) {
+                        assert.strictEqual(options.variables.goal.goalSetId, "2");
+                        assert.strictEqual(options.variables.goal.uniqueName, "test");
+                        start++;
+                    } else {
+                        assert(options.variables.goal.phase.includes("at"));
+                        // update++;
+                    }
+                },
                 query: o => {
                     if (o.name === "InProcessSdmGoalSets") {
                         assert.deepStrictEqual(o.variables.registration, ["test-sdm"]);
@@ -203,18 +214,6 @@ describe("Queue", () => {
             };
             let start = 0;
             // let update = 0;
-            const messageClient = {
-                send: msg => {
-                    if (!msg.phase) {
-                        assert.strictEqual(msg.goalSetId, "2");
-                        assert.strictEqual(msg.uniqueName, "test");
-                        start++;
-                    } else {
-                        assert(msg.phase.includes("at"));
-                        // update++;
-                    }
-                },
-            };
             const e: OnAnySdmGoalSet.Subscription = {
                 SdmGoalSet: [{
                     goalSetId: "4",
@@ -223,7 +222,6 @@ describe("Queue", () => {
             const h = handleSdmGoalSetEvent({}, { uniqueName: "test" }, { name: "test-sdm" } as any);
             const r = await h({ data: e } as any, {
                 graphClient,
-                messageClient,
                 context: { name: "test-sdm", version: "1" },
             } as any, {});
             assert.strictEqual(start, 1);
