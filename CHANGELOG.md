@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Move to using GraphQL mutations for SdmGoal and SdmGoalSet. [#792](https://github.com/atomist/sdm/issues/792)
+-   Clean up YAML definition schema. [#791](https://github.com/atomist/sdm/issues/791)
 
 ### Fixed
 
