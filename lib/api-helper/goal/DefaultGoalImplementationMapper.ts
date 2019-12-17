@@ -118,11 +118,17 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     }
 
     public findFulfillmentCallbackForGoal(sdmGoal: SdmGoalEvent): GoalFulfillmentCallback[] {
-        return this.callbacks.filter(c =>
+        const cbs = this.callbacks.filter(c =>
             c.goal.uniqueName === uniqueName(sdmGoal) &&
             // This slice is required because environment is suffixed with /
             (c.goal.definition.environment.slice(0, -1) === sdmGoal.environment
                 || c.goal.definition.environment === sdmGoal.environment));
+
+        if (cbs.length > 0) {
+            return cbs;
+        }
+
+        return this.callbacks.filter(c => c.goal.name === sdmGoal.fulfillment.name);
     }
 
     public findGoalBySdmGoal(sdmGoal: SdmGoalEvent): Goal | undefined {
