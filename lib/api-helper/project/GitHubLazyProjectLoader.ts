@@ -16,7 +16,7 @@
 
 import {
     configurationValue,
-    DefaultHttpClientFactory,
+    defaultHttpClientFactory,
     GitHubRepoRef,
     GitProject,
     GitPushOptions,
@@ -379,7 +379,7 @@ export async function fileContent(token: string, rr: GitHubRepoRef, path: string
 async function filePromise(token: string, rr: GitHubRepoRef, path: string): Promise<HttpResponse<{ content: string }>> {
     const url = `${rr.scheme}${rr.apiBase}/repos/${rr.owner}/${rr.repo}/contents/${path}?ref=${rr.branch || "master"}`;
     logger.debug(`Requesting file from GitHub at '${url}'`);
-    const httpClient = configurationValue<HttpClientFactory>("http.client.factory", DefaultHttpClientFactory);
+    const httpClient = configurationValue<HttpClientFactory>("http.client.factory", defaultHttpClientFactory());
     return httpClient.create(url).exchange<{ content: string }>(url, {
         method: HttpMethod.Get,
         headers: {
