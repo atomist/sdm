@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
 -   Drop WS socket requirement for k8s goal jobs. [#788](https://github.com/atomist/sdm/issues/788)
+-   Support RegExp Intents and retrieving parameters from them. [#794](https://github.com/atomist/sdm/issues/794)
 
 ### Changed
 
