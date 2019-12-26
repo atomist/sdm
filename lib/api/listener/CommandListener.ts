@@ -36,6 +36,11 @@ export interface CommandListenerInvocation<PARAMS = NoParameters> extends Parame
     ids?: RemoteRepoRef[];
 
     /**
+     * If the intent was a regular expression, the matches to the supplied intent are found here
+     */
+    matches?: RegExpExecArray;
+
+    /**
      * Prompt for additional parameters needed during execution of the command listener.
      *
      * Callers should wait for the returned Promise to resolve. It will resolve with the requested

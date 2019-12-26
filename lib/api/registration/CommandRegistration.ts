@@ -74,7 +74,7 @@ export interface CommandRegistration<PARAMS> {
      * Intent or list of intents. What you need to type to invoke the
      * command, for example via the bot.
      */
-    intent?: string | string[];
+    intent?: string | string[] | RegExp;
 
     /**
      * Tags associated with this command. Useful in searching.

@@ -16,7 +16,7 @@
 
 import {
     configurationValue,
-    DefaultHttpClientFactory,
+    defaultHttpClientFactory,
     GitCommandGitProject,
     HttpMethod,
     logger,
@@ -33,7 +33,7 @@ import { CodeTransform } from "../../api/registration/CodeTransform";
  */
 export function copyFileFromUrl(url: string, path: string): CodeTransform {
     return async p => {
-        const http = configurationValue("http.client.factory", DefaultHttpClientFactory);
+        const http = configurationValue("http.client.factory", defaultHttpClientFactory());
         const response = await http.create(url).exchange<string>(url, { method: HttpMethod.Get });
         return p.addFile(path, response.body);
     };

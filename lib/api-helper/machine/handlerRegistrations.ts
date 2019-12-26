@@ -463,6 +463,11 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         }
     }
 
+    let matches: RegExpExecArray;
+    if (c.intent instanceof RegExp) {
+        matches = c.intent.exec((context as any).trigger.raw_message);
+    }
+
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
     const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt;
     const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
@@ -477,6 +482,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         preferences,
         credentials,
         ids,
+        matches,
     };
 }
 
