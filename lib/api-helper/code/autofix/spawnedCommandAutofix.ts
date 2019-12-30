@@ -16,7 +16,7 @@
 
 /* tslint:disable:deprecation */
 
-import { SpawnCommand } from "@atomist/automation-client";
+import { SpawnCommand } from "@atomist/automation-client/lib/util/spawn";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,

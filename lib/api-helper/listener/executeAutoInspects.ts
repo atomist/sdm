@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+import { failure } from "@atomist/automation-client/lib/HandlerResult";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
-    CloneOptions,
-    failure,
-    GitProject,
-    logger,
     ProjectReview,
-    RepoRef,
     ReviewComment,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     codeBlock,
     italic,

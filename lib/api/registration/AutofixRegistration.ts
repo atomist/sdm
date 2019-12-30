@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NoParameters } from "@atomist/automation-client";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { CodeTransformOrTransforms } from "./CodeTransform";
 import { PushSelector } from "./PushRegistration";
 

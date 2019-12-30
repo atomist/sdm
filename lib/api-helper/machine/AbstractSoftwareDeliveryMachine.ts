@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    Maker,
-    NoParameters,
-} from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { CronJob } from "cron";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";

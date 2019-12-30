@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    NoParameters,
-    Project,
-    RepoRef,
-} from "@atomist/automation-client";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";

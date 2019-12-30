@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    Success,
-} from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     goals,
     Goals,

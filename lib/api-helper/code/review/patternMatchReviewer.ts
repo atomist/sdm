@@ -15,11 +15,11 @@
  */
 
 import {
-    logger,
     ProjectReview,
-    projectUtils,
     Severity,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import { PushTest } from "../../../api/mapping/PushTest";
 import { ReviewerRegistration } from "../../../api/registration/ReviewerRegistration";
@@ -68,7 +68,7 @@ export function patternMatchReviewer(name: string,
         inspection: async (project, cri) => {
             logger.debug("Running regexp review '%s' on %s against %j", name, opts.globPattern, antiPatterns);
             const result: ProjectReview = {repoId: project.id, comments: []};
-            await projectUtils.doWithFiles(project, opts.globPattern, async f => {
+            await doWithFiles(project, opts.globPattern, async f => {
                 const content = await f.getContent();
                 antiPatterns.forEach(problem => {
                     const rex = typeof problem.antiPattern === "string" ?

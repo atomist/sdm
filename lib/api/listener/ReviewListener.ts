@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectReview } from "@atomist/automation-client";
+import { ProjectReview } from "@atomist/automation-client/lib/operations/review/ReviewResult";
 import { PushImpactResponse } from "../registration/PushImpactListenerRegistration";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";

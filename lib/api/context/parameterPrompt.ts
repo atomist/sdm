@@ -16,10 +16,12 @@
 
 import {
     AutomationContextAware,
-    CommandIncoming,
     HandlerContext,
-} from "@atomist/automation-client";
-import { Arg } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
+} from "@atomist/automation-client/lib/HandlerContext";
+import {
+    Arg,
+    CommandIncoming,
+} from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import { HandlerResponse } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketMessageClient";
 import { Parameter } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import * as _ from "lodash";

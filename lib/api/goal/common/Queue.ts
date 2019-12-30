@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    GraphQL,
-    HandlerContext,
-    logger,
-    OnEvent,
-    QueryNoCacheOptions,
-    Success,
-} from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/lib/graph/graphQL";
+import { EventFired } from "@atomist/automation-client/lib/HandleEvent";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { OnEvent } from "@atomist/automation-client/lib/onEvent";
+import SdmGoalSet = InProcessSdmGoalSets.SdmGoalSet;
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import { updateGoal } from "../../../api-helper/goal/storeGoals";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
@@ -48,7 +47,6 @@ import {
 } from "../GoalWithFulfillment";
 import { SdmGoalEvent } from "../SdmGoalEvent";
 import { IndependentOfEnvironment } from "../support/environment";
-import SdmGoalSet = InProcessSdmGoalSets.SdmGoalSet;
 
 /**
  * Options to configure the Queue goal
@@ -122,7 +120,7 @@ export class Queue extends FulfillableGoal {
         sdm.addEvent({
             name: `OnAnySdmGoalSet`,
             description: `Handle queuing for goal ${this.definition.uniqueName}`,
-            subscription: GraphQL.subscription({
+            subscription: subscription({
                 name: "OnAnySdmGoalSet",
                 variables: {
                     registration: [sdm.configuration.name] as any,

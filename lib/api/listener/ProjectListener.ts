@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import {
     RepoListenerInvocation,
     SdmListener,

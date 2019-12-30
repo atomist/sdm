@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    Configuration,
-    HandlerContext,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+import { Configuration } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { AddressChannels } from "./addressChannels";
 import { PreferenceStore } from "./preferenceStore";
 

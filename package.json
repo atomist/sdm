@@ -58,7 +58,7 @@
     "@atomist/slack-messages": "^1.1.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "2.0.0-master.20191224225156",
+    "@atomist/automation-client": "2.0.0-remove-index.20191230145915",
     "@atomist/slack-messages": "^1.1.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
@@ -90,7 +90,7 @@
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
     "clean:test": "rimraf .nyc_output coverage",
-    "compile": "run-s gql:gen compile:barrels compile:ts",
+    "compile": "run-s gql:gen compile:ts",
     "compile:barrels": "run-s clean:barrels compile:barrels:create",
     "compile:barrels:create": "barrelsby --directory . --location top --include \"/lib/(?:api(?:-helper)?|spi|typings)/\" --exclude \"/node_modules/\" --exclude \"\\.d\\.ts\\$\" --exclude \"Projects?OperationRegistration\" --exclude \"Deployment\" --exclude \"SdmGoalMessage\"",
     "compile:ts": "tsc --project .",

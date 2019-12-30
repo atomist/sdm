@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    logger,
-    registerShutdownHook,
-} from "@atomist/automation-client";
+import { registerShutdownHook } from "@atomist/automation-client/lib/internal/util/shutdown";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as fs from "fs-extra";
 import * as sha from "sha-regex";
 import { promisify } from "util";

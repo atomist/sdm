@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    guid,
-} from "@atomist/automation-client";
-
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../lib/api/listener/PushListener";
 import { IsDeployEnabled } from "../../../../lib/api/mapping/support/deployPushTests";

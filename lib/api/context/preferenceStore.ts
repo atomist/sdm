@@ -1,3 +1,5 @@
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+
 /*
  * Copyright © 2019 Atomist, Inc.
  *
@@ -13,8 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { HandlerContext } from "@atomist/automation-client";
 
 /**
  * Creates a PreferenceStore instance provided the HandlerContext of the current execution

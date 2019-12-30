@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { EditMode } from "@atomist/automation-client";
 import {
+    EditMode,
     isBranchCommit,
     isPullRequest,
 } from "@atomist/automation-client/lib/operations/edit/editModes";

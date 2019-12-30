@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
 import {
-    configurationValue,
     failure,
-    GitProject,
-    HandlerContext,
     HandlerResult,
-    logger,
-    RemoteRepoRef,
     Success,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/HandlerResult";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import * as path from "path";
 import { AddressChannels } from "../../api/context/addressChannels";

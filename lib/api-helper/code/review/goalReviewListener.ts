@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Severity } from "@atomist/automation-client";
+import { Severity } from "@atomist/automation-client/lib/operations/review/ReviewResult";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
 import { PushImpactResponse } from "../../../api/registration/PushImpactListenerRegistration";
 import { ReviewListenerRegistration } from "../../../api/registration/ReviewListenerRegistration";

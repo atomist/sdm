@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import {
-    guid,
-    logger,
     RemoteRepoRef,
     RepoId,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/operations/common/RepoId";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { Goal } from "../../api/goal/Goal";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SimpleProjectEditor } from "@atomist/automation-client";
+import { SimpleProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 
 export interface AppendOrCreateCommand {
 

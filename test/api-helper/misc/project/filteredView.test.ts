@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    AllFiles,
-    GitCommandGitProject,
-    GitHubRepoRef,
-    projectUtils,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { AllFiles } from "@atomist/automation-client/lib/project/fileGlobs";
+import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
 import { filteredView } from "../../../../lib/api-helper/misc/project/filteredView";
 
@@ -51,7 +49,7 @@ describe("filteredView", () => {
         // tslint:disable-next-line:no-null-keyword
         const p = await GitCommandGitProject.cloned({ token: null }, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const filtered = filteredView(p, path => path === "pom.xml");
-        const r = await projectUtils.gatherFromFiles(filtered, AllFiles, async f => f.path);
+        const r = await gatherFromFiles(filtered, AllFiles, async f => f.path);
         assert.deepEqual(r, ["pom.xml"]);
     }).timeout(10000);
 

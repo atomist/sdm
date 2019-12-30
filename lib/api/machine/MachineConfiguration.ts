@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
+import { Configuration } from "@atomist/automation-client/lib/configuration";
 
 /**
  * Configuration for software delivery machines

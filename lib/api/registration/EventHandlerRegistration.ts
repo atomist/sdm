@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    Maker,
-    NoParameters,
-    OnEvent,
-} from "@atomist/automation-client";
+import { OnEvent } from "@atomist/automation-client/lib/onEvent";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { ParametersDefinition } from "./ParametersDefinition";
 
 /**

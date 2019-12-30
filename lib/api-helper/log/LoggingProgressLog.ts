@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { format } from "./format";
 

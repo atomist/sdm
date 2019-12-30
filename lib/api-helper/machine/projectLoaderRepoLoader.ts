@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
 import {
     isLazyProjectLoader,

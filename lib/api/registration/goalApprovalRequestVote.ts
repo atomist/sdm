@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { RepoContext } from "../context/SdmContext";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import { computeShaOf } from "../../api-helper/misc/sha";
 import { SdmContext } from "../context/SdmContext";

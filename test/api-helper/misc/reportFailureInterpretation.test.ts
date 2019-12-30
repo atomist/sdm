@@ -16,9 +16,8 @@
 
 import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
-import { AddressChannels } from "../../../lib/api/context/addressChannels";
-
 import { reportFailureInterpretation } from "../../../lib/api-helper/misc/reportFailureInterpretation";
+import { AddressChannels } from "../../../lib/api/context/addressChannels";
 import { InterpretedLog } from "../../../lib/spi/log/InterpretedLog";
 
 describe("Reporting failure interpretation", () => {

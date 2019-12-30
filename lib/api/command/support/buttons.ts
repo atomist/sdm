@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { ParameterType } from "@atomist/automation-client/lib/SmartParameters";
 import {
     buttonForCommand,
     ButtonSpecification,
     menuForCommand,
     MenuSpecification,
     mergeParameters,
-    ParameterType,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { Action } from "@atomist/slack-messages";
 import { CommandRegistration } from "../../registration/CommandRegistration";
 

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    logger,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { PushFields } from "../../../typings/types";
 import { execPromise } from "../child_process";
 

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    guid,
-    MutationOptions,
-} from "@atomist/automation-client";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
+import { MutationOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import { fail } from "power-assert";
 import assert = require("power-assert");
 import { executeCancelGoalSets } from "../../../lib/api-helper/listener/executeCancel";

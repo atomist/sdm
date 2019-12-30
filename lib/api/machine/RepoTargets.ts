@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RepoFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
-    ProjectOperationCredentials,
-    RemoteRepoRef,
     ValidationError,
     ValidationResult,
-} from "@atomist/automation-client";
-import { RepoFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+} from "@atomist/automation-client/lib/SmartParameters";
 
 /**
  * Defines repo targeting for a code inspection or transform

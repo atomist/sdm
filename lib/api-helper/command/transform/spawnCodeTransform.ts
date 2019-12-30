@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    GitStatus,
-    logger,
-    NoParameters,
-    Project,
-} from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { GitStatus } from "@atomist/automation-client/lib/project/git/gitStatus";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     CodeTransform,
     TransformResult,
@@ -76,7 +74,7 @@ export function spawnCodeTransform(commands: SpawnLogInvocation[], log?: Progres
             cwd: p.baseDir,
             log: log || papi.progressLog || new LoggingProgressLog("spawnCodeTransform"),
         };
-        defaultOptions.log.stripAnsi = true;
+        (defaultOptions.log as any).stripAnsi = true;
         let commandResult: MinSpawnLogResult;
         for (const cmd of commands) {
             try {

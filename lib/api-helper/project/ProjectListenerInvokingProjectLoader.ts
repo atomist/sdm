@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitProject,
-    Success,
-} from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     GoalInvocation,

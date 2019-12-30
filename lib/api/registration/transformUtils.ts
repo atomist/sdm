@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    NoParameters,
-    Project,
-    Success,
-} from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
