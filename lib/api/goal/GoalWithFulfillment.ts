@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    configurationValue,
-    RetryOptions,
-} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { RetryOptions } from "@atomist/automation-client/lib/util/retry";
 import * as _ from "lodash";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";

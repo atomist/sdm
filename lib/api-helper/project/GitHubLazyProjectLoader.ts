@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { decode } from "@atomist/automation-client/lib/internal/util/base64";
 import {
-    configurationValue,
-    defaultHttpClientFactory,
     GitHubRepoRef,
+    isGitHubRepoRef,
+} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { TokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { File } from "@atomist/automation-client/lib/project/File";
+import {
     GitProject,
     GitPushOptions,
-    GitStatus,
+} from "@atomist/automation-client/lib/project/git/GitProject";
+import { GitStatus } from "@atomist/automation-client/lib/project/git/gitStatus";
+import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
+import { NodeFsLocalFile } from "@atomist/automation-client/lib/project/local/NodeFsLocalFile";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { FileStream } from "@atomist/automation-client/lib/project/Project";
+import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
+import {
+    defaultHttpClientFactory,
     HttpClientFactory,
     HttpMethod,
     HttpResponse,
-    InMemoryProjectFile,
-    logger,
-    ProjectFile,
-    RemoteRepoRef,
-    TokenCredentials,
-} from "@atomist/automation-client";
-import { decode } from "@atomist/automation-client/lib/internal/util/base64";
-import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { ReleaseFunction } from "@atomist/automation-client/lib/project/local/LocalProject";
-import { NodeFsLocalFile } from "@atomist/automation-client/lib/project/local/NodeFsLocalFile";
-import { FileStream } from "@atomist/automation-client/lib/project/Project";
-import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
+} from "@atomist/automation-client/lib/spi/http/httpClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as globby from "globby";
 import * as stream from "stream";
 import {
@@ -156,7 +160,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         throw new Error("sync methods not supported");
     }
 
-    public async findFile(path: string): Promise<ProjectFile> {
+    public async findFile(path: string): Promise<File> {
         const file = await this.getFile(path);
         if (!file) {
             throw new Error(`No file found: '${path}'`);
@@ -164,11 +168,11 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return file;
     }
 
-    public findFileSync(path: string): ProjectFile {
+    public findFileSync(path: string): File {
         throw new Error("sync methods not supported");
     }
 
-    public async getFile(path: string): Promise<ProjectFile | undefined> {
+    public async getFile(path: string): Promise<File | undefined> {
         if (this.materializing()) {
             return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
@@ -177,7 +181,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
                 (this.params.credentials as TokenCredentials).token,
                 this.id,
                 path);
-            return !!content ? new InMemoryProjectFile(path, content) : undefined;
+            return !!content ? new InMemoryFile(path, content) : undefined;
         }
         this.materializeIfNecessary(`getFile(${path})`);
         return this.projectPromise.then(mp => mp.getFile(path)) as any;
@@ -280,7 +284,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }
 
-    protected async getFilesInternal(globPatterns: string[]): Promise<ProjectFile[]> {
+    protected async getFilesInternal(globPatterns: string[]): Promise<File[]> {
         await this.materializeIfNecessary("getFilesInternal");
 
         const optsToUse = {

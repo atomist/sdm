@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    configurationValue,
-    guid,
-    HandlerContext,
-} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import {
     Attachment,
     SlackMessage,

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    InMemoryProject,
-    Success,
-} from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import {
     executeGoal,

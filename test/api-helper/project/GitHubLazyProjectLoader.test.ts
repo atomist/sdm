@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    GitProject,
-    InMemoryProject,
-    InMemoryProjectFile,
-    Project,
-    projectUtils,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
 import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../lib/api-helper/project/cloningProjectLoader";
@@ -75,7 +73,7 @@ describe("GitHubLazyProjectLoader", () => {
         const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
-        await projectUtils.doWithFiles(p, "**", f => {
+        await doWithFiles(p, "**", f => {
             ++count;
             assert(!!f.getContentSync());
         });
@@ -91,7 +89,7 @@ describe("GitHubLazyProjectLoader", () => {
         const lpl = new GitHubLazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
-        await projectUtils.doWithFiles(p, "**", f => {
+        await doWithFiles(p, "**", f => {
             ++count;
             assert(!!f.getContentSync());
         });
@@ -105,14 +103,14 @@ describe("GitHubLazyProjectLoader", () => {
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
         assert(!f1);
-        await Promise.all([1, 2, 3].map(() => projectUtils.doWithFiles(p, "**", f => {
+        await Promise.all([1, 2, 3].map(() => doWithFiles(p, "**", f => {
             assert(!!f.getContentSync());
         })));
     }).timeout(10000);
 
     it("should commit and push", async () => {
         const id = GitHubRepoRef.from({ owner: "this.is.invalid", repo: "nonsense", branch: "master" });
-        const raw = InMemoryProject.from(id, new InMemoryProjectFile("a", "b")) as any as GitProject;
+        const raw = InMemoryProject.from(id, new InMemoryFile("a", "b")) as any as GitProject;
         let commits = 0;
         let pushes = 0;
         raw.commit = async () => {

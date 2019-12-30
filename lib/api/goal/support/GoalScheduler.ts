@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
+import { Configuration } from "@atomist/automation-client/lib/configuration";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import { GoalInvocation } from "../GoalInvocation";
 

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    MessageClient,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { MessageClient } from "@atomist/automation-client/lib/spi/message/MessageClient";
 import * as assert from "assert";
 import { CommandListenerExecutionInterruptError } from "../../../lib/api-helper/machine/handlerRegistrations";
 import { commandRequestParameterPromptFactory } from "../../../lib/api/context/parameterPrompt";

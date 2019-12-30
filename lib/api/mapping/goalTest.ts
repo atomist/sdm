@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware } from "@atomist/automation-client";
+import { AutomationContextAware } from "@atomist/automation-client/lib/HandlerContext";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
 import { SdmGoalState } from "../../typings/types";

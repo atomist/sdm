@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    logger,
-    QueryNoCacheOptions,
-    RepoRef,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     pushTest,
     PushTest,

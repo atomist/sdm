@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    projectUtils,
-    toStringArray,
-} from "@atomist/automation-client";
+import { toStringArray } from "@atomist/automation-client/lib/internal/util/string";
+import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as _ from "lodash";
 import {
     BinaryRepositoryProvider,
@@ -81,7 +79,7 @@ export function hasFileWithExtension(extension: string): PredicatePushTest {
     }
     const extensionToUse = extension.startsWith(".") ? extension : `.${extension}`;
     return predicatePushTest(`HasFileWithExtension(${extensionToUse}})`,
-        async p => projectUtils.fileExists(p, `**/*${extensionToUse}`, () => true));
+        async p => fileExists(p, `**/*${extensionToUse}`, () => true));
 }
 
 /**

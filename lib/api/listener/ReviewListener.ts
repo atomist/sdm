@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectReview } from "@atomist/automation-client";
+import { ProjectReview } from "@atomist/automation-client/lib/operations/review/ReviewResult";
 import { PushImpactResponse } from "../registration/PushImpactListenerRegistration";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";

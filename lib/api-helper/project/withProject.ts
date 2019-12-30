@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    CloneOptions,
-    GitProject,
-    toStringArray,
-} from "@atomist/automation-client";
+import { toStringArray } from "@atomist/automation-client/lib/internal/util/string";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 import { SpawnSyncOptions } from "child_process";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {

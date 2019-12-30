@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
-import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import { GoalsSetListener } from "../../api/listener/GoalsSetListener";
 import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
@@ -41,8 +40,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
     public readonly startupListeners: StartupListener[] = [];
 
     public readonly triggeredListeners: TriggeredListenerRegistration[] = [];
-
-    public readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
     public readonly userJoiningChannelListeners: UserJoiningChannelListener[] = [];
 
@@ -137,11 +134,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addGoalCompletionListener(l: GoalCompletionListener): this {
         this.goalCompletionListeners.push(l);
-        return this;
-    }
-
-    public addFingerprintDifferenceListener(fdl: FingerprintDifferenceListener): this {
-        this.fingerprintDifferenceListeners.push(fdl);
         return this;
     }
 

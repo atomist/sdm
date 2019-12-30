@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    AutomationContextAware,
-    QueryNoCacheOptions,
-    toStringArray,
-} from "@atomist/automation-client";
+import { AutomationContextAware } from "@atomist/automation-client/lib/HandlerContext";
+import { toStringArray } from "@atomist/automation-client/lib/internal/util/string";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import {

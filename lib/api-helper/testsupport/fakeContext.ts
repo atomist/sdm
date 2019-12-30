@@ -16,13 +16,15 @@
 
 import {
     AutomationContextAware,
-    Destination,
     HandlerContext,
+} from "@atomist/automation-client/lib/HandlerContext";
+import { MutationOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import {
+    Destination,
     MessageClient,
     MessageOptions,
-    MutationOptions,
     SlackMessageClient,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
+import { Configuration } from "@atomist/automation-client/lib/configuration";
 import * as assert from "power-assert";
 import { cancelableGoal } from "../../../lib/api-helper/listener/cancelGoals";
 

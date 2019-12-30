@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { ParameterType } from "@atomist/automation-client/lib/SmartParameters";
 import {
     buttonForCommand,
     ButtonSpecification,
     menuForCommand,
     MenuSpecification,
     mergeParameters,
-    ParameterType,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { Action } from "@atomist/slack-messages";
 import { CommandRegistration } from "../../registration/CommandRegistration";
 

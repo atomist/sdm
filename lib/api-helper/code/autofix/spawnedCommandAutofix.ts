@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /* tslint:disable:deprecation */
 
-import { SpawnCommand } from "@atomist/automation-client";
+import { SpawnCommand } from "@atomist/automation-client/lib/util/spawn";
 import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,

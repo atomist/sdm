@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    configurationValue,
-    HandlerContext,
-    MutationNoCacheOptions,
-    ParameterType,
-} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { ParameterType } from "@atomist/automation-client/lib/SmartParameters";
+import { MutationNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import {

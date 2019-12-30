@@ -14,33 +14,41 @@
  * limitations under the License.
  */
 
-import {
-    addressEvent,
-    HandlerContext,
-    Maker,
-    OnCommand,
-    Project,
-    ProjectPersister,
-    RemoteRepoRef,
-    RepoCreationParameters,
-    RepoRef,
-    SeedDrivenGeneratorParameters,
-    Success,
-} from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
-import { RedirectResult } from "@atomist/automation-client/lib/HandlerResult";
-import { commandHandlerFrom } from "@atomist/automation-client/lib/onCommand";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import {
+    RedirectResult,
+    Success,
+} from "@atomist/automation-client/lib/HandlerResult";
+import {
+    commandHandlerFrom,
+    OnCommand,
+} from "@atomist/automation-client/lib/onCommand";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
 import { ProjectAction } from "@atomist/automation-client/lib/operations/common/projectAction";
 import {
     isRemoteRepoRef,
     ProviderType,
+    RemoteRepoRef,
+    RepoRef,
 } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
 import { AnyProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { generate } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
-import { isProject } from "@atomist/automation-client/lib/project/Project";
-import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    generate,
+    ProjectPersister,
+} from "@atomist/automation-client/lib/operations/generate/generatorUtils";
+import { RepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/RepoCreationParameters";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
+import {
+    isProject,
+    Project,
+} from "@atomist/automation-client/lib/project/Project";
+import { addressEvent } from "@atomist/automation-client/lib/spi/message/MessageClient";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/lib/util/constructionUtils";
 import {
     bold,
     codeBlock,

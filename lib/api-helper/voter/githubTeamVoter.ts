@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    HttpMethod,
-    secured,
-    TokenCredentials,
-} from "@atomist/automation-client";
+import { TokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { isGitHubTeamMember } from "@atomist/automation-client/lib/secured";
+import { HttpMethod } from "@atomist/automation-client/lib/spi/http/httpClient";
 import * as _ from "lodash";
 import {
     GoalApprovalRequestVote,
@@ -61,7 +59,7 @@ export function gitHubTeamVoter(team: string = "atomist-automation"): GoalApprov
         }
         login = login || approval.userId;
 
-        if (await secured.isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
+        if (await isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
             return {
                 vote: GoalApprovalRequestVote.Granted,
             };

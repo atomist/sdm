@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 
 /**
  * Try to work out whether a project was edited, looking at git status

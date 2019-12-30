@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@ import {
     MappedParameter,
     MappedParameters,
     Parameter,
-    validationPatterns,
-    ValidationResult,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/decorators";
 import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
 import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
+import { ValidationResult } from "@atomist/automation-client/lib/SmartParameters";
 import { RepoTargets } from "../../machine/RepoTargets";
+import {
+    GitBranchRegExp,
+    GitShaRegExp,
+} from "../support/commonValidationPatterns";
 
 /**
  * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping
@@ -36,10 +39,10 @@ export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackPa
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Ref", ...validationPatterns.GitShaRegExp, required: false })
+    @Parameter({ description: "Ref", ...GitShaRegExp, required: false })
     public sha: string;
 
-    @Parameter({ description: "Branch", ...validationPatterns.GitBranchRegExp, required: false })
+    @Parameter({ description: "Branch", ...GitBranchRegExp, required: false })
     public branch: string = "master";
 
     @Parameter({ description: "regex", required: false })

@@ -16,7 +16,6 @@
 
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../listener/ClosedIssueListener";
-import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { GoalCompletionListener } from "../listener/GoalCompletionListener";
 import { GoalsSetListener } from "../listener/GoalsSetListener";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
@@ -108,12 +107,6 @@ export interface ListenerRegistrationManager {
     addGoalsSetListener(l: GoalsSetListener): this;
 
     addGoalCompletionListener(l: GoalCompletionListener): this;
-
-    /**
-     * @param {FingerprintDifferenceListener} fh
-     * @return {this}
-     */
-    addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 

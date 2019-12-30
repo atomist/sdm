@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BaseParameter } from "@atomist/automation-client";
+import { BaseParameter } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
 
 /**
  * Validation pattern for semantic versions

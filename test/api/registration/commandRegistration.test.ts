@@ -15,16 +15,16 @@
  */
 
 import {
-    GitHubRepoRef,
-    InMemoryProject,
-    InMemoryProjectFile,
     Parameter,
     Parameters,
-    SeedDrivenGeneratorParameters,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/decorators";
 import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as assert from "power-assert";
 import { isSeedDrivenGeneratorParameters } from "../../../lib/api-helper/command/generator/generatorCommand";
@@ -365,7 +365,7 @@ describe("command registrations", () => {
     it("should default parameters or in memory project without maker", async () => {
         const g: GeneratorRegistration = {
             name: "foo",
-            startingPoint: InMemoryProject.of(new InMemoryProjectFile("a", "b")),
+            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
@@ -378,7 +378,7 @@ describe("command registrations", () => {
     it("should create command handler from generator", async () => {
         const g: GeneratorRegistration = {
             name: "foo",
-            startingPoint: InMemoryProject.of(new InMemoryProjectFile("a", "b")),
+            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
             transform: async p => p,
         };
         generatorRegistrationToCommand(undefined, g);

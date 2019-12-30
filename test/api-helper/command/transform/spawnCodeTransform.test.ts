@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import * as assert from "power-assert";
 import { spawnCodeTransform } from "../../../../lib/api-helper/command/transform/spawnCodeTransform";
 import { TransformResult } from "../../../../lib/api/registration/CodeTransform";

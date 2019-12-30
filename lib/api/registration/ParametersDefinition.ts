@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { BaseParameter } from "@atomist/automation-client";
-import { BaseValue } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
+import {
+    BaseParameter,
+    BaseValue,
+} from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
 
 export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersObject<PARAMS>;
 

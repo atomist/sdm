@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CloneOptions } from "@atomist/automation-client";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 import { PushFields } from "../../typings/types";
 
 export function minimalClone(push: PushFields.Fragment, extras: Partial<CloneOptions> = {}): CloneOptions {

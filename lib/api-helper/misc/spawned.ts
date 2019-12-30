@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import {
     ChildProcessResult,
-    configurationValue,
     spawnAndWatch as clientSpawnAndWatch,
     SpawnCommand,
     SpawnWatchOptions,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/util/spawn";
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";

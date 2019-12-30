@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { Maker } from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
-import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/lib/util/constructionUtils";
 import * as _ from "lodash";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 

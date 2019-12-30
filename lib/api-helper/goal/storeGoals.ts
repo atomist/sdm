@@ -17,9 +17,9 @@
 import {
     AutomationContextAware,
     HandlerContext,
-    MutationNoCacheOptions,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/HandlerContext";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { MutationNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import {

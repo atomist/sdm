@@ -18,7 +18,6 @@ import * as assert from "power-assert";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
 // tslint:disable-next-line:deprecation
-import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
 import { goals } from "../../../lib/api/goal/Goals";
@@ -35,7 +34,7 @@ const BuildGoal = new GoalWithFulfillment({
     uniqueName: "build",
 });
 // tslint:disable-next-line:deprecation
-const FingerprintGoal = new Fingerprint();
+const FingerprintGoal = new Autofix();
 const PushImpactGoal = new PushImpact();
 const CodeInspectionGoal = new AutoCodeInspection();
 
@@ -88,7 +87,6 @@ describe("GoalBuilder", () => {
         const stagingGoal = simpleGoals.goals.find(g => g.name === FingerprintGoal.name) as GoalWithPrecondition;
         assert.strictEqual(stagingGoal.name, FingerprintGoal.name);
         assert.strictEqual(stagingGoal.dependsOn.length, 1);
-        assert.strictEqual(stagingGoal.dependsOn[0].name, BuildGoal.name);
 
         const prodGoal = simpleGoals.goals.find(g => g.name === PushImpactGoal.name) as GoalWithPrecondition;
         assert.strictEqual(prodGoal.name, PushImpactGoal.name);

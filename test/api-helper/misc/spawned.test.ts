@@ -16,7 +16,7 @@
 
 /* tslint:disable:deprecation */
 
-import { SpawnCommand } from "@atomist/automation-client";
+import { SpawnCommand } from "@atomist/automation-client/lib/util/spawn";
 import * as assert from "power-assert";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { spawnAndWatch } from "../../../lib/api-helper/misc/spawned";

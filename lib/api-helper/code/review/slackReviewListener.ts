@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
 import {
-    buttonForCommand,
-    deepLink as githubDeepLink,
-    GitHubRepoRef,
-    HandlerContext,
     HandlerResult,
-    ProjectReview,
-    RemoteRepoRef,
-    ReviewComment,
-    SourceLocation,
     Success,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/HandlerResult";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { SourceLocation } from "@atomist/automation-client/lib/operations/common/SourceLocation";
+import {
+    ProjectReview,
+    ReviewComment,
+} from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { buttonForCommand } from "@atomist/automation-client/lib/spi/message/MessageClient";
+import { deepLink } from "@atomist/automation-client/lib/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
@@ -48,7 +50,7 @@ export interface SlackReviewRoutingParams {
 export function slackReviewListener(opts: Partial<SlackReviewRoutingParams> = {}): ReviewListener {
     const paramsToUse = {
         pushReactionResponse: opts.pushReactionResponse,
-        deepLink: opts.deepLink || (githubDeepLink as DeepLink),
+        deepLink: opts.deepLink || (deepLink as DeepLink),
     };
     return async ri => {
         if (ri.review.comments.length > 0) {
@@ -70,17 +72,17 @@ async function sendReviewToSlack(title: string,
                                  pr: ProjectReview,
                                  ctx: HandlerContext,
                                  addressChannels: AddressChannels,
-                                 deepLink: DeepLink): Promise<HandlerResult> {
+                                 dl: DeepLink): Promise<HandlerResult> {
     const mesg: slack.SlackMessage = {
         text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
-        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c, deepLink)),
+        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c, dl)),
     };
     await addressChannels(mesg);
     return Success;
 }
 
-function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLink: DeepLink): slack.Attachment {
-    const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
+function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, dl: DeepLink): slack.Attachment {
+    const link = rc.sourceLocation ? slack.url(dl(grr, rc.sourceLocation), "jump to") :
         slack.url(grr.url + "/tree/" + grr.sha, "source");
 
     return {

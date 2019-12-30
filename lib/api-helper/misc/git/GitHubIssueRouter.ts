@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 
 import {
-    Issue,
+    isTokenCredentials,
     ProjectOperationCredentials,
+} from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import {
+    Issue,
     raiseIssue,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
-import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+} from "@atomist/automation-client/lib/util/gitHub";
 import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 /**

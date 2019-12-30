@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    EditMode,
-    NoParameters,
-    Project,
-} from "@atomist/automation-client";
+import { EditMode } from "@atomist/automation-client/lib/operations/edit/editModes";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { TransformResult } from "./CodeTransform";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";

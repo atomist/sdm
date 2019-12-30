@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    configurationValue,
-    HandlerContext,
-    logger,
-    QueryNoCacheOptions,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { Goal } from "../../api/goal/Goal";
