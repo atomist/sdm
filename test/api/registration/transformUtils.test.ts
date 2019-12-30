@@ -16,7 +16,7 @@
 
 // tslint:disable:deprecation
 
-import { InMemoryProject } from "@atomist/automation-client";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "assert";
 import {
     CodeTransform,

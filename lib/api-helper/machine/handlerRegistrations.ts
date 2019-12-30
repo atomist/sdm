@@ -17,36 +17,31 @@
 // tslint:disable:deprecation
 // tslint:disable:max-file-line-count
 
-import {
-    ConfigurationAware,
-    editModes,
-    GitHubRepoRef,
-    GitProject,
-    HandlerContext,
-    logger,
-    Maker,
-    NoParameters,
-    OnCommand,
-    Project,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-    RepoFinder,
-    RepoLoader,
-    Success,
-} from "@atomist/automation-client";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import {
+    ConfigurationAware,
+    HandlerContext,
+} from "@atomist/automation-client/lib/HandlerContext";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
 import {
     declareMappedParameter,
     declareParameter,
     declareSecret,
     declareValue,
 } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
+import { OnCommand } from "@atomist/automation-client/lib/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
 import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
 import { relevantRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
 import { editOne } from "@atomist/automation-client/lib/operations/edit/editAll";
+import { PullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
 import {
     EditResult,
     failedEdit,
@@ -55,8 +50,17 @@ import {
 } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
-import { isProject } from "@atomist/automation-client/lib/project/Project";
-import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import {
+    isProject,
+    Project,
+} from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/lib/util/constructionUtils";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     codeBlock,
     italic,
@@ -709,12 +713,12 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
         const tms = ci.parameters;
-        return new editModes.PullRequest(
+        return new PullRequest(
             tms.desiredBranchName,
             tms.desiredPullRequestTitle || description);
     }
     // Default it if not supplied
-    return new editModes.PullRequest(
+    return new PullRequest(
         `transform-${gitBranchCompatible(ctr.name)}-${formatDate()}`,
         description);
 }

@@ -15,18 +15,21 @@
  */
 
 import {
-    GitlabRepoRef,
     MappedParameter,
     MappedParameters,
     Parameter,
     Parameters,
-    ProjectOperationCredentials,
-    validationPatterns,
-    ValidationResult,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/decorators";
+import { GitlabRepoRef } from "@atomist/automation-client/lib/operations/common/GitlabRepoRef";
 import { FallbackParams } from "@atomist/automation-client/lib/operations/common/params/FallbackParams";
 import { TargetsParams } from "@atomist/automation-client/lib/operations/common/params/TargetsParams";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { ValidationResult } from "@atomist/automation-client/lib/SmartParameters";
 import { RepoTargets } from "../../machine/RepoTargets";
+import {
+    GitBranchRegExp,
+    GitShaRegExp,
+} from "../support/commonValidationPatterns";
 
 /**
  * Targets for working with BitBucket repo(s).
@@ -47,10 +50,10 @@ export class GitlabRepoTargets extends TargetsParams implements FallbackParams, 
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({ description: "Ref", ...validationPatterns.GitShaRegExp, required: false })
+    @Parameter({ description: "Ref", ...GitShaRegExp, required: false })
     public sha: string;
 
-    @Parameter({ description: "Branch Defaults to 'master'", ...validationPatterns.GitBranchRegExp, required: false })
+    @Parameter({ description: "Branch Defaults to 'master'", ...GitBranchRegExp, required: false })
     public branch: string = "master";
 
     @Parameter({ description: "regex", required: false })

@@ -16,7 +16,7 @@
 
 /* tslint:disable:deprecation */
 
-import { SpawnCommand } from "@atomist/automation-client";
+import { SpawnCommand } from "@atomist/automation-client/lib/util/spawn";
 import { CodeTransform } from "../../../api/registration/CodeTransform";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { spawnCodeTransform } from "./spawnCodeTransform";

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    Configuration,
-    HandlerContext,
-    QueryNoCacheOptions,
-} from "@atomist/automation-client";
+import { Configuration } from "@atomist/automation-client/lib/configuration";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import * as _ from "lodash";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { CanceledSdmGoal } from "../../typings/types";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MutationOptions } from "@atomist/automation-client";
+import { MutationOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import * as assert from "assert";
 import { fail } from "power-assert";
 import {

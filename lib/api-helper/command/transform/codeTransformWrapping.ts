@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    editModes,
-    logger,
-    QueryNoCacheOptions,
-    Success,
-} from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { isBranchCommit } from "@atomist/automation-client/lib/operations/edit/editModes";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     codeLine,
     italic,
@@ -93,7 +91,7 @@ function handleBranchAwareCodeTransform(codeTransformRegistration: CodeTransform
                         progressLog: new LoggingProgressLog(codeTransformRegistration.name, "debug"),
                     },
                     p);
-                if (editModes.isBranchCommit(editMode)) {
+                if (isBranchCommit(editMode)) {
                     branch = editMode.branch;
                 }
             }

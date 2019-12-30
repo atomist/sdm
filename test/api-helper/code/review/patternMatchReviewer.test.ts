@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    AllFiles,
-    InMemoryProject,
-    InMemoryProjectFile,
-} from "@atomist/automation-client";
+import { AllFiles } from "@atomist/automation-client/lib/project/fileGlobs";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { patternMatchReviewer } from "../../../../lib/api-helper/code/review/patternMatchReviewer";
 import { ReviewerRegistration } from "../../../../lib/api/registration/ReviewerRegistration";
@@ -33,7 +31,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: /t.*/,
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryProjectFile("a", "b"));
+        const project = InMemoryProject.of(new InMemoryFile("a", "b"));
         const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 0);
     });
@@ -46,7 +44,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: /t.*/,
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
+        const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
         const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
@@ -60,7 +58,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b test"));
+        const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
         const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 0);
     });
@@ -73,7 +71,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs suck test"));
+        const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs suck test"));
         const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
@@ -87,7 +85,7 @@ describe("patternMatchReviewer", () => {
                 antiPattern: "frogs /[&(* suck",
                 comment: "something else",
             });
-        const project = InMemoryProject.of(new InMemoryProjectFile("thing", "b frogs /[&(* suck test"));
+        const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs /[&(* suck test"));
         const rr = await rer.inspection(project, undefined);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");

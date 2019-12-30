@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CloneOptions } from "@atomist/automation-client";
+import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutoInspectRegistration } from "../../registration/AutoInspectRegistration";

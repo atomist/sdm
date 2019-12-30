@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     doWithRetry,
-    logger,
     RetryOptions,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/util/retry";
 import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { PushTest } from "../../mapping/PushTest";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";

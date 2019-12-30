@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Severity } from "@atomist/automation-client";
+import { Severity } from "@atomist/automation-client/lib/operations/review/ReviewResult";
 import * as assert from "power-assert";
 import {
     ApproveGoalIfErrorComments,

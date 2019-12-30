@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
 import {
     addressChannelsFor,
     HasChannels,

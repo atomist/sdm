@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    Destination,
-    GitProject,
-    HandlerContext,
-    logger,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { Destination } from "@atomist/automation-client/lib/spi/message/MessageClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";

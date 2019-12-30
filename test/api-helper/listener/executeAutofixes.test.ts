@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    GitProject,
-    InMemoryProject,
-    InMemoryProjectFile,
-    projectUtils,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
 import { ActionResult } from "@atomist/automation-client/lib/action/ActionResult";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { PullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
 import {
     executeAutofixes,
@@ -52,7 +50,7 @@ export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
     pushTest: pushTest(
         "Is TypeScript",
-        async (pi: PushListenerInvocation) => projectUtils.fileExists(pi.project, "**/*.ts", () => true),
+        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("thing", "1");
@@ -72,7 +70,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
     name: "AddThing",
     pushTest: pushTest(
         "Is TypeScript",
-        async (pi: PushListenerInvocation) => projectUtils.fileExists(pi.project, "**/*.ts", () => true),
+        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("bird", ci.parameters.bird);
@@ -143,7 +141,7 @@ describe("executeAutofixes", () => {
     it("should execute header adder and find no match", async () => {
         const id = new GitHubRepoRef("a", "b");
         const initialContent = "public class Thing {}";
-        const f = new InMemoryProjectFile("src/main/java/Thing.java", initialContent);
+        const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
         (p as any as GitProject).revert = async () => undefined;
         (p as any as GitProject).gitStatus = async () => ({
@@ -162,7 +160,7 @@ describe("executeAutofixes", () => {
     it("should execute header adder and find a match and add a header", async () => {
         const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
         const initialContent = "public class Thing {}";
-        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => undefined;
         (p as any as GitProject).commit = async () => undefined;
@@ -188,7 +186,7 @@ describe("executeAutofixes", () => {
     it("should execute with parameter and find a match and add a header", async () => {
         const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
         const initialContent = "public class Thing {}";
-        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => undefined;
         (p as any as GitProject).commit = async () => undefined;
@@ -213,7 +211,7 @@ describe("executeAutofixes", () => {
     it("should execute with parameter and find push", async () => {
         const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
         const initialContent = "public class Thing {}";
-        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => undefined;
         (p as any as GitProject).commit = async () => undefined;
@@ -251,7 +249,7 @@ describe("executeAutofixes", () => {
             branch: "master",
         });
         const initialContent = "public class Thing {}";
-        const f = new InMemoryProjectFile("src/Thing.ts", initialContent);
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => undefined;
         (p as any as GitProject).hasBranch = async name => {

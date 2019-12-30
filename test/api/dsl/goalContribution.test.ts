@@ -16,10 +16,10 @@
 
 import {
     GitHubRepoRef,
-    InMemoryProject,
-    InMemoryProjectFile,
-} from "@atomist/automation-client";
-import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+    isGitHubRepoRef,
+} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import {
@@ -35,7 +35,6 @@ import {
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
 // tslint:disable-next-line:deprecation
-import { Fingerprint } from "../../../lib/api/goal/common/Fingerprint";
 import { Locking } from "../../../lib/api/goal/common/Locking";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { suggestAction } from "../../../lib/api/goal/common/suggestAction";
@@ -58,7 +57,7 @@ const BuildGoal = new GoalWithFulfillment({
 });
 const CodeInspectionGoal = new AutoCodeInspection();
 // tslint:disable-next-line:deprecation
-const FingerprintGoal = new Fingerprint();
+const FingerprintGoal = new Autofix();
 const LockingGoal = Locking;
 const JustBuildGoal = new GoalWithFulfillment({
     uniqueName: "just-build",
@@ -137,7 +136,7 @@ describe("goalContribution", () => {
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 3);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
-            assert.equal(goals.name, "SomeGoalSet, Sending message, fingerprint");
+            assert.equal(goals.name, "SomeGoalSet, Sending message, autofix");
         });
 
         it("should respect sealed goals", async () => {
@@ -226,7 +225,6 @@ describe("goalContribution", () => {
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 2);
             assert.deepEqual(goals.goals, [mg, FingerprintGoal]);
-            assert.equal(goals.name, "Sending message, fingerprint");
         });
 
     });
@@ -308,7 +306,7 @@ describe("goalContribution", () => {
                 whenPushSatisfies(async () => true)
                     .setGoals(JustBuildGoal)));
             const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryProjectFile("src/atomist.config.ts", "content")));
+                new InMemoryFile("src/atomist.config.ts", "content")));
             const goals: Goals = await sdm.pushMapping.mapping(push);
             assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));
@@ -326,7 +324,7 @@ describe("goalContribution", () => {
                     .setGoals(JustBuildGoal),
             ));
             const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryProjectFile("src/atomist.config.ts", "content")));
+                new InMemoryFile("src/atomist.config.ts", "content")));
             const goals: Goals = await sdm.pushMapping.mapping(push);
             assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));

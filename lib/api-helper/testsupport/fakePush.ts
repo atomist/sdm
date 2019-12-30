@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    GitProject,
-    Project,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import { AddressNoChannels } from "../../api/context/addressChannels";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { PushListenerInvocation } from "../../api/listener/PushListener";

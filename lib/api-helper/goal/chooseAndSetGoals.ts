@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+import { Configuration } from "@atomist/automation-client/lib/configuration";
 import {
-    Configuration,
     ConfigurationAware,
-    guid,
     HandlerContext,
-    logger,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/HandlerContext";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import {
     AddressChannels,

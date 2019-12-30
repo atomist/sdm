@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    WritableLog,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { WritableLog } from "@atomist/automation-client/lib/util/child_process";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 /**

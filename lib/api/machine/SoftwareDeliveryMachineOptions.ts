@@ -19,11 +19,10 @@
 import {
     AnyOptions,
     Configuration,
-    Maker,
-    ProjectPersister,
-    RepoFinder,
-} from "@atomist/automation-client";
-import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
+} from "@atomist/automation-client/lib/configuration";
+import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
+import { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
+import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -45,12 +44,6 @@ import {
  * also to facilitate testing.
  */
 export interface SoftwareDeliveryMachineOptions {
-
-    /**
-     * Store for artifacts produced during the build process
-     * @deprecated Use project listeners to store artifacts
-     */
-    artifactStore?: ArtifactStore;
 
     /**
      * Object used to load projects

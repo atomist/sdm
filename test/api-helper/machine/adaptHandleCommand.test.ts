@@ -15,18 +15,20 @@
  */
 
 import {
-    HandlerContext,
-    HandlerResult,
+    ConfigurableCommandHandler,
     MappedParameter,
     MappedParameters,
     Parameter,
     Secret,
     Secrets,
-    Success,
     Tags,
-} from "@atomist/automation-client";
-import { ConfigurableCommandHandler } from "@atomist/automation-client/lib/decorators";
+} from "@atomist/automation-client/lib/decorators";
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import {
+    HandlerResult,
+    Success,
+} from "@atomist/automation-client/lib/HandlerResult";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";

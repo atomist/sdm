@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { sprintf } from "sprintf-js";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";

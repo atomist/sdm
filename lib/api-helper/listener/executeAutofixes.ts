@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
-    editModes,
-    HandlerContext,
-    logger,
-    RemoteRepoRef,
-    Success,
-} from "@atomist/automation-client";
-import {
+    EditMode,
     isBranchCommit,
     isPullRequest,
 } from "@atomist/automation-client/lib/operations/edit/editModes";
 import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
@@ -190,7 +188,7 @@ ${appliedAutofixes.map(af => ` * ${codeLine(af.name)}`).join("\n")}
 /**
  * Check if this autofix is going to commit to a new branch
  */
-function isNewBranch(editMode: editModes.EditMode, branch: string): boolean {
+function isNewBranch(editMode: EditMode, branch: string): boolean {
     if (!!editMode && isBranchCommit(editMode)) {
         return editMode.branch !== branch;
     }

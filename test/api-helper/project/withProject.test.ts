@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    InMemoryProject,
-    InMemoryProjectFile,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import {
     doWithProject,
@@ -38,7 +36,7 @@ describe("withProject", () => {
             const fgi = fakeGoalInvocation(GitHubRepoRef.from({ owner: "atomist", repo: "sdm" }), {
                 projectLoader: {
                     doWithProject<T>(params: ProjectLoadingParameters, wlp: WithLoadedProject<T>): Promise<T> {
-                        const p = InMemoryProject.of(new InMemoryProjectFile("foo", "")) as any;
+                        const p = InMemoryProject.of(new InMemoryFile("foo", "")) as any;
                         return wlp(p);
                     },
                 },

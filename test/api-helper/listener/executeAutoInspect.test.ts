@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    DefaultReviewComment,
-    GitHubRepoRef,
-    InMemoryProject,
-    InMemoryProjectFile,
-    projectUtils,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { DefaultReviewComment } from "@atomist/automation-client/lib/operations/review/ReviewResult";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
 import { executeAutoInspects } from "../../../lib/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../lib/api-helper/testsupport/fakeGoalInvocation";
@@ -40,7 +38,7 @@ const HatesTheWorld: ReviewerRegistration = {
     pushTest: TruePushTest,
     inspection: async project => ({
         repoId: project.id,
-        comments: await projectUtils.gatherFromFiles(project, "**/*", async f =>
+        comments: await gatherFromFiles(project, "**/*", async f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {
@@ -116,7 +114,7 @@ describe("executeAutoInspects", () => {
 
     it("should hate anything it finds", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeAutoInspects({
@@ -142,7 +140,7 @@ describe("executeAutoInspects", () => {
 
     it("should find push", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const rwlc = fakeGoalInvocation(id, {
             projectLoader: new SingleProjectLoader(p),
         } as any);
@@ -167,7 +165,7 @@ describe("executeAutoInspects", () => {
 
     it("should hate anything it finds, without requiring approval", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithoutApproval(reviewEvents);
         const ge = executeAutoInspects({
@@ -190,7 +188,7 @@ describe("executeAutoInspects", () => {
 
     it("should hate anything it finds and return a goal failure", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerFailingTheGoal(reviewEvents);
         const ge = executeAutoInspects({
@@ -211,7 +209,7 @@ describe("executeAutoInspects", () => {
 
     it("consolidate reviewers", async () => {
         const id = new GitHubRepoRef("a", "b");
-        const p = InMemoryProject.from(id, new InMemoryProjectFile("thing", "1"));
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeAutoInspects({

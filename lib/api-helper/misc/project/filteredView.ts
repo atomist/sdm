@@ -15,10 +15,12 @@
  */
 
 import {
+    File,
+} from "@atomist/automation-client/lib/project/File";
+import {
+    FileStream,
     Project,
-    ProjectFile,
-} from "@atomist/automation-client";
-import { FileStream } from "@atomist/automation-client/lib/project/Project";
+} from "@atomist/automation-client/lib/project/Project";
 import { AbstractProject } from "@atomist/automation-client/lib/project/support/AbstractProject";
 import * as stream from "stream";
 
@@ -64,20 +66,20 @@ class FilteredProject implements Partial<Project> {
                 private readonly  filter: (path: string) => boolean) {
     }
 
-    public getFile(path: string): Promise<ProjectFile | undefined> {
+    public getFile(path: string): Promise<File | undefined> {
         return this.filter(path) ?
             this.project.getFile(path) :
             undefined;
     }
 
-    public findFile(path: string): Promise<ProjectFile> {
+    public findFile(path: string): Promise<File> {
         if (this.filter(path)) {
             return this.project.findFile(path);
         }
         throw new Error(`No file at ${path}`);
     }
 
-    public async getFiles(globPatterns: string | string[] = []): Promise<ProjectFile[]> {
+    public async getFiles(globPatterns: string | string[] = []): Promise<File[]> {
         const files = await this.project.getFiles(globPatterns);
         return files.filter(f => this.filter(f.path));
     }

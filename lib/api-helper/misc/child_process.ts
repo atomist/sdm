@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    configurationValue,
-    HandlerResult,
-    logger,
-    WritableLog,
-} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { HandlerResult } from "@atomist/automation-client/lib/HandlerResult";
 import {
     execPromise,
     ExecPromiseError,
@@ -29,7 +25,9 @@ import {
     spawnPromise,
     SpawnPromiseOptions,
     SpawnPromiseReturns,
+    WritableLog,
 } from "@atomist/automation-client/lib/util/child_process";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { ChildProcess } from "child_process";
 import * as os from "os";
 import { ProgressLog } from "../../spi/log/ProgressLog";

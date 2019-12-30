@@ -17,7 +17,6 @@
 import { AutoCodeInspection } from "../goal/common/AutoCodeInspection";
 import { Autofix } from "../goal/common/Autofix";
 // tslint:disable-next-line:deprecation
-import { Fingerprint } from "../goal/common/Fingerprint";
 import { PushImpact } from "../goal/common/PushImpact";
 
 /**
@@ -42,11 +41,4 @@ export interface WellKnownGoals {
      */
     autofixGoal?: Autofix;
 
-    /**
-     * Fingerprint goal to add fingerprints to.
-     * Fingerprint functionality won't work otherwise.
-     * @deprecated use pushImpactGoal instead
-     */
-    // tslint:disable-next-line:deprecation
-    fingerprintGoal?: Fingerprint;
 }

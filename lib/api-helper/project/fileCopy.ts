@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+import { Project } from "@atomist/automation-client/lib/project/Project";
 import {
-    configurationValue,
     defaultHttpClientFactory,
-    GitCommandGitProject,
     HttpMethod,
-    logger,
-    Project,
-    ProjectOperationCredentials,
-    RemoteRepoRef,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/spi/http/httpClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 
 /**

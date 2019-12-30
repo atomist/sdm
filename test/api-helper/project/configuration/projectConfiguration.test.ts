@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    InMemoryProject,
-    InMemoryProjectFile,
-} from "@atomist/automation-client";
+import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { projectConfigurationValue } from "../../../../lib/api-helper/project/configuration/projectConfiguration";
 
@@ -25,7 +23,7 @@ describe("projectConfigurationValue", () => {
 
     it("should read config setting from file", async () => {
         const project = InMemoryProject.of(
-            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ npm: { publish: { access: "private" }} })));
+            new InMemoryFile(".atomist/config.json", JSON.stringify({ npm: { publish: { access: "private" }} })));
         assert.strictEqual(await projectConfigurationValue<string>("npm.publish.access", project), "private");
         return;
     });
@@ -38,21 +36,21 @@ describe("projectConfigurationValue", () => {
 
     it("should return default value when config value doesn't exist", async () => {
         const project = InMemoryProject.of(
-            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
+            new InMemoryFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
         assert.strictEqual(await projectConfigurationValue<string>("npm.publish.access", project, "private"), "private");
         return;
     });
 
     it("should return given type when config value exists", async () => {
         const project = InMemoryProject.of(
-            new InMemoryProjectFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
+            new InMemoryFile(".atomist/config.json", JSON.stringify({ sdm: { enable: ["@atomist/atomist-sdm"] } })));
         assert.deepEqual(await projectConfigurationValue<string[]>("sdm.enable", project), ["@atomist/atomist-sdm"]);
         return;
     });
 
     it("should read config setting from yaml file", async () => {
         const project = InMemoryProject.of(
-            new InMemoryProjectFile(".atomist/config.yaml", `---
+            new InMemoryFile(".atomist/config.yaml", `---
 npm:
   publish:
     access: private

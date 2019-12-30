@@ -15,15 +15,15 @@
  */
 
 import {
-    CloneOptions,
+    DefaultDirectoryManager,
     GitCommandGitProject,
-    logger,
-} from "@atomist/automation-client";
-import { DefaultDirectoryManager } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
+} from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 import {
     CloneDirectoryInfo,
+    CloneOptions,
     DirectoryManager,
 } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as fs from "fs-extra";
 import {
     ProjectLoader,

@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-import {
-    buttonForCommand,
-    guid,
-    HandlerContext,
-    isLocalProject,
-    logger,
-    Project,
-    RepoRef,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
     AnyProjectEditor,
     EditResult,
     ProjectEditor,
     toEditor,
 } from "@atomist/automation-client/lib/operations/edit/projectEditor";
+import { isLocalProject } from "@atomist/automation-client/lib/project/local/LocalProject";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { buttonForCommand } from "@atomist/automation-client/lib/spi/message/MessageClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import {
     bold,
     codeBlock,

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    NoParameters,
-    Project,
-    RepoRef,
-} from "@atomist/automation-client";
+import { RepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import { Project } from "@atomist/automation-client/lib/project/Project";
+import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 import { PushAwareParametersInvocation } from "./PushAwareParametersInvocation";

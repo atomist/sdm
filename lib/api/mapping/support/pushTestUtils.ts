@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { LruCache } from "../../../api-helper/project/support/LruCache";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { isMapping } from "../Mapping";

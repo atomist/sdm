@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    QueryNoCacheOptions,
-} from "@atomist/automation-client";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import { SdmGoalSetForId } from "../../typings/types";
