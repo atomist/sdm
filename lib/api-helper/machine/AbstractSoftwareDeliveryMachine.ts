@@ -16,10 +16,10 @@
 
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
-import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { logger } from "@atomist/automation-client/lib/util/logger";
+import { CronJob } from "cron";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import {

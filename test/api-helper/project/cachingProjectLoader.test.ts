@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    GitCommandGitProject,
-    GitHubRepoRef,
-    InMemoryProject,
-} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { dirSync } from "tmp-promise";
 import { computeShaOf } from "../../../lib/api-helper/misc/sha";
