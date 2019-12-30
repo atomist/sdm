@@ -23,7 +23,10 @@ import { FallbackParams } from "@atomist/automation-client/lib/operations/common
 import { GitHubTargetsParams } from "@atomist/automation-client/lib/operations/common/params/GitHubTargetsParams";
 import { ValidationResult } from "@atomist/automation-client/lib/SmartParameters";
 import { RepoTargets } from "../../machine/RepoTargets";
-import { GitBranchRegExp, GitShaRegExp } from "../support/commonValidationPatterns";
+import {
+    GitBranchRegExp,
+    GitShaRegExp,
+} from "../support/commonValidationPatterns";
 
 /**
  * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping

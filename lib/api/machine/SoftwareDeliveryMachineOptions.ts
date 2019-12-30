@@ -16,7 +16,10 @@
 
 // tslint:disable:deprecation
 
-import { AnyOptions, Configuration } from "@atomist/automation-client/lib/configuration";
+import {
+    AnyOptions,
+    Configuration,
+} from "@atomist/automation-client/lib/configuration";
 import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
