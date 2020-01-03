@@ -23,15 +23,15 @@ import { ProjectLoadingParameters } from "../../../spi/project/ProjectLoader";
  * @return {any}
  */
 export function cacheKey(params: ProjectLoadingParameters): string {
-    return sprintf("%s:%s:%s:%s@%s:%s:%s:%s:%s:%s",
+    return sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s@%s",
         params.id.owner,
         params.id.repo,
         params.id.branch,
         params.id.sha,
-        params.id.url,
         params.cloneOptions.keep,
         params.cloneOptions.alwaysDeep,
         params.cloneOptions.noSingleBranch,
         params.cloneOptions.depth,
-        params.cloneOptions.detachHead);
+        params.cloneOptions.detachHead,
+        params.id.url);
 }
