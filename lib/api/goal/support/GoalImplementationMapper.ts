@@ -23,6 +23,7 @@ import {
     ExecuteGoal,
     GoalProjectListenerRegistration,
 } from "../GoalInvocation";
+import { PlannedGoal } from "../GoalWithFulfillment";
 import { ReportProgress } from "../progress/ReportProgress";
 import { SdmGoalEvent } from "../SdmGoalEvent";
 
@@ -51,6 +52,10 @@ export interface GoalSideEffect {
 
 export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName &&  (f as GoalSideEffect).registration && true;
+}
+
+export function isGoalFulfillment(g: any): g is PlannedGoal["fulfillment"] {
+    return !!g && !!(g as PlannedGoal["fulfillment"]).name && !!(g as PlannedGoal["fulfillment"]).registration;
 }
 
 /**

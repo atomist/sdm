@@ -55,6 +55,7 @@ import {
 } from "../../api/goal/SdmGoalMessage";
 import {
     GoalImplementationMapper,
+    isGoalFulfillment,
     isGoalImplementation,
     isGoalSideEffect,
 } from "../../api/goal/support/GoalImplementationMapper";
@@ -275,6 +276,13 @@ async function fulfillment(rules: {
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan, inv.configuration.name);
+    } else if (isGoalFulfillment(g.definition)) {
+        const fulfillment = g.definition;
+        return {
+            method: SdmGoalFulfillmentMethod.SideEffect,
+            name: fulfillment.name,
+            registration: fulfillment.registration,
+        };
     } else if (isGoalSideEffect(plan)) {
         return {
             method: SdmGoalFulfillmentMethod.SideEffect,
@@ -416,7 +424,7 @@ function createGoal(g: PlannedGoal,
                     goalMapping: Map<string, Goal[]>): Goal {
     const uniqueName = `${dg.uniqueName}#sdm:${plannedGoalsCounter}`;
 
-    const definition: GoalDefinition & { parameters: PlannedGoal["parameters"] } =
+    const definition: GoalDefinition & { parameters: PlannedGoal["parameters"], fulfillment: PlannedGoal["fulfillment"] } =
         _.merge(
             {},
             dg.definition,
@@ -424,6 +432,7 @@ function createGoal(g: PlannedGoal,
 
     definition.uniqueName = uniqueName;
     definition.parameters = g.parameters;
+    definition.fulfillment = g.fulfillment;
 
     const dependsOn = [];
     if (hasPreconditions(dg)) {
