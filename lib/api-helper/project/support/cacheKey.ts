@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { sprintf } from "sprintf-js";
+import { ProjectLoadingParameters } from "../../../spi/project/ProjectLoader";
 
 /**
- * Compute a cache key from the given remote repo ref and sha
+ * Compute a cache key from the given ProjectLoadingParameters
  * @param {RemoteRepoRef} id
  * @return {any}
  */
-export function cacheKeyForSha(id: RemoteRepoRef): string {
-    return sprintf("%s:%s:%s:%s@%s", id.owner, id.repo, id.branch, id.sha, id.url);
+export function cacheKey(params: ProjectLoadingParameters): string {
+    return sprintf("%s:%s:%s:%s@%s:%s:%s:%s:%s:%s",
+        params.id.owner,
+        params.id.repo,
+        params.id.branch,
+        params.id.sha,
+        params.id.url,
+        params.cloneOptions.keep,
+        params.cloneOptions.alwaysDeep,
+        params.cloneOptions.noSingleBranch,
+        params.cloneOptions.depth,
+        params.cloneOptions.detachHead);
 }

@@ -39,7 +39,7 @@ describe("cachingProjectLoader", () => {
         assert(p1 as any === p);
     });
 
-    describe("should respect clone parameters", () => {
+    describe("should respect ProjectLoadingParameters", () => {
 
         let clonedCalledTimes: number;
         let originalCloned: any;
@@ -76,17 +76,18 @@ describe("cachingProjectLoader", () => {
             Object.defineProperty(GitCommandGitProject, "cloned", originalCloned);
         });
 
-        it("disparate", async () => {
+        it("disparate clone params", async () => {
 
             const id = new GitHubRepoRef("a", "b", sha);
             const cp = new CachingProjectLoader();
             await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 1 } }, async () => { });
             await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5 } }, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5, alwaysDeep: false } }, async () => { });
 
-            assert.equal(clonedCalledTimes, 2);
+            assert.equal(clonedCalledTimes, 3);
         });
 
-        it("homogeneous", async () => {
+        it("homogeneous clone params", async () => {
 
             const id = new GitHubRepoRef("a", "b", sha);
             const cp = new CachingProjectLoader();
