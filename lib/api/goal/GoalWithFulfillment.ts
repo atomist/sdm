@@ -159,6 +159,10 @@ export interface Parameterized {
 
 export interface PlannedGoal extends Parameterized {
     details?: Omit<FulfillableGoalDetails, "uniqueName" | "environment">;
+    fulfillment?: {
+        registration: string;
+        name: string;
+    };
 }
 
 export type PlannedGoals = Record<string, {
