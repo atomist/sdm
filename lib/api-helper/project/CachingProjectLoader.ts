@@ -18,6 +18,7 @@ import { registerShutdownHook } from "@atomist/automation-client/lib/internal/ut
 import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as fs from "fs-extra";
+import * as _ from "lodash";
 import * as sha from "sha-regex";
 import { promisify } from "util";
 import {
@@ -35,7 +36,7 @@ import { SimpleCache } from "./support/SimpleCache";
  */
 export class CachingProjectLoader implements ProjectLoader {
 
-    private readonly cache: SimpleCache<GitProject>;
+    private readonly cache: SimpleCache<GitProject | ProjectLoadingParameters>;
     private readonly deleteOnExit: string[] = [];
 
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
@@ -53,11 +54,12 @@ export class CachingProjectLoader implements ProjectLoader {
         logger.debug("Attempting to reuse clone for readonly use of '%j'", params.id);
         const key = cacheKeyForSha(params.id);
         let project = this.cache.get(key);
+
         if (!!project) {
-            // Validate it, as the directory may have been cleaned up
-            try {
-                await promisify(fs.access)(project.baseDir);
-            } catch {
+            if (await this.cachedProjectIsValid(project, params)) {
+                project = project as GitProject;
+            } else {
+                logger.debug("Evicting project '%j' from cache", project.id);
                 this.cache.evict(key);
                 project = undefined;
             }
@@ -66,11 +68,25 @@ export class CachingProjectLoader implements ProjectLoader {
         if (!project) {
             project = await save(this.delegate, params);
             logger.debug("Caching project '%j' at '%s'", project.id, project.baseDir);
-            this.cache.put(key, project);
+            this.cache.put(key, {...project, ...params});
         }
 
         logger.debug("About to invoke action. Cache stats: %j", this.cache.stats);
-        return action(project);
+        return action(project as GitProject);
+    }
+
+    private async cachedProjectIsValid(project: GitProject | ProjectLoadingParameters, params: ProjectLoadingParameters): Promise<boolean> {
+        if (!_.isEqual((project as ProjectLoadingParameters).cloneOptions, params.cloneOptions)) {
+            return false;
+        }
+        // Validate it, as the directory may have been cleaned up
+        try {
+            await promisify(fs.access)((project as GitProject).baseDir);
+        } catch {
+            return false;
+        }
+
+        return true;
     }
 
     /**

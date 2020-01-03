@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import {
+    GitCommandGitProject,
+    GitHubRepoRef,
+    InMemoryProject,
+} from "@atomist/automation-client";
 import * as assert from "power-assert";
+import { dirSync } from "tmp-promise";
+import { computeShaOf } from "../../../lib/api-helper/misc/sha";
 import {
     CachingProjectLoader,
     save,
@@ -30,8 +35,66 @@ describe("cachingProjectLoader", () => {
         const p = InMemoryProject.from(id);
         const pl = new SingleProjectLoader(p);
         const cp = new CachingProjectLoader(pl);
-        const p1 = await save(cp, {id, credentials: undefined, readOnly: true});
+        const p1 = await save(cp, { id, credentials: undefined, readOnly: true });
         assert(p1 as any === p);
+    });
+
+    describe("should respect clone parameters", () => {
+
+        let clonedCalledTimes: number;
+        let originalCloned: any;
+        let sha: string;
+        let tmpBaseDir: any;
+
+        before(() => {
+            originalCloned = Object.getOwnPropertyDescriptor(GitCommandGitProject, "cloned");
+        });
+
+        beforeEach(() => {
+            clonedCalledTimes = 0;
+            sha = computeShaOf(Math.random().toString(36).substring(2));
+            tmpBaseDir = dirSync();
+
+            Object.defineProperty(GitCommandGitProject, "cloned", {
+                value: () => {
+                    clonedCalledTimes++;
+                    return {
+                        baseDir: tmpBaseDir.name,
+                        id: {
+                            sha: `${sha}`,
+                        },
+                    };
+                },
+            });
+        });
+
+        afterEach(() => {
+            tmpBaseDir.removeCallback();
+        });
+
+        after(() => {
+            Object.defineProperty(GitCommandGitProject, "cloned", originalCloned);
+        });
+
+        it("disparate", async () => {
+
+            const id = new GitHubRepoRef("a", "b", sha);
+            const cp = new CachingProjectLoader();
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 1 } }, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5 } }, async () => { });
+
+            assert.equal(clonedCalledTimes, 2);
+        });
+
+        it("homogeneous", async () => {
+
+            const id = new GitHubRepoRef("a", "b", sha);
+            const cp = new CachingProjectLoader();
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 4 } }, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 4 } }, async () => { });
+
+            assert.equal(clonedCalledTimes, 1);
+        });
     });
 
 });
