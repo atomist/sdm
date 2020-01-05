@@ -54,8 +54,9 @@ export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName &&  (f as GoalSideEffect).registration && true;
 }
 
-export function isGoalFulfillment(g: any): g is PlannedGoal["fulfillment"] {
-    return !!g && !!(g as PlannedGoal["fulfillment"]).name && !!(g as PlannedGoal["fulfillment"]).registration;
+export function isGoalFulfillment(g: { fulfillment?: PlannedGoal["fulfillment"]}):
+    g is { fulfillment: PlannedGoal["fulfillment"]} {
+    return !!g && !!g.fulfillment && !!g.fulfillment.name && !!g.fulfillment.registration;
 }
 
 /**

@@ -276,12 +276,12 @@ async function fulfillment(rules: {
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan, inv.configuration.name);
-    } else if (isGoalFulfillment(g.definition)) {
-        const fulfillment = g.definition;
+    } else if (isGoalFulfillment(g.definition as any)) {
+        const ff = (g.definition as any).fulfillment;
         return {
             method: SdmGoalFulfillmentMethod.SideEffect,
-            name: fulfillment.name,
-            registration: fulfillment.registration,
+            name: ff.name,
+            registration: ff.registration,
         };
     } else if (isGoalSideEffect(plan)) {
         return {
