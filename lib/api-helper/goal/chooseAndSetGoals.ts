@@ -46,6 +46,7 @@ import { Goals } from "../../api/goal/Goals";
 import {
     getGoalDefinitionFrom,
     PlannedGoal,
+    PlannedGoals,
 } from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
@@ -348,7 +349,7 @@ export async function planGoals(goals: Goals, pli: PushListenerInvocation): Prom
             if (!!planResult) {
 
                 // Check if planResult is a PlannedGoal or PlannedGoals instance
-                if (!_.some(planResult, v => !!v.goals)) {
+                if (!_.some(planResult, v => !!v && !!v.goals)) {
                     planResult = { "#": { goals: planResult } };
                 }
 
