@@ -46,7 +46,6 @@ import { Goals } from "../../api/goal/Goals";
 import {
     getGoalDefinitionFrom,
     PlannedGoal,
-    PlannedGoals,
 } from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
