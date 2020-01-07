@@ -19,7 +19,6 @@ import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
 import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import { CronJob } from "cron";
 import * as _ from "lodash";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import {
@@ -290,7 +289,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
         this.triggeredListeners.forEach(t => {
             if (t.trigger && t.trigger.cron) {
-                const cron = new CronJob({
+                const cj = require("cron");
+                const cron = new cj.CronJob({
                     cronTime: t.trigger.cron,
                     onTick: () => t.listener(i),
                     unrefTimeout: true,
