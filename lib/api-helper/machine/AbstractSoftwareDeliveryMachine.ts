@@ -16,6 +16,7 @@
 
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
+import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import { logger } from "@atomist/automation-client/lib/util/logger";
@@ -236,13 +237,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         for (const pack of packs) {
             const found = this.extensionPacks.find(existing => existing.name === pack.name && existing.vendor === pack.vendor);
             if (!!found) {
-                logger.warn("Cannot add extension pack '%s' version %s from %s. Version %s already added",
-                    pack.name, pack.version, pack.vendor, found.version);
-            } else {
-                this.addExtensionPack(pack);
-                if (!!pack.goalContributions) {
-                    this.addGoalContributions(pack.goalContributions);
-                }
+                pack.name = `${pack.name}-${guid().slice(0, 7)}`;
+            }
+            this.addExtensionPack(pack);
+            if (!!pack.goalContributions) {
+                this.addGoalContributions(pack.goalContributions);
             }
         }
         return this;
