@@ -155,9 +155,6 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         })));
     }
     let retryFeasible = goal.definition.retryFeasible ? goal.definition.retryFeasible : false;
-    if (!!fulfillment && fulfillment.method === SdmGoalFulfillmentMethod.SideEffect) {
-        retryFeasible = false;
-    }
     return {
         goalSet,
         registration: (ctx as any as AutomationContextAware).context.name,
