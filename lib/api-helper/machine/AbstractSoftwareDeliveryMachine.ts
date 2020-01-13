@@ -63,9 +63,7 @@ import { IngesterRegistration } from "../../api/registration/IngesterRegistratio
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
 import { GoalSetGoalCompletionListener } from "../listener/goalSetListener";
-import {
-    LogSuppressor,
-} from "../log/logInterpreters";
+import { LogSuppressor } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
 
