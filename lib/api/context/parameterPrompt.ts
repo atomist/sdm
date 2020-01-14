@@ -53,6 +53,11 @@ export interface ParameterPromptOptions {
      * Configure strategy on how to ask for parameters in chat or web
      */
     parameterStyle?: ParameterStyle;
+
+    /**
+     * Configure auto submit strategy for when all required parameters are collected
+     */
+    autoSubmit?: boolean;
 }
 
 /**
@@ -115,7 +120,8 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
 
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
-        const response: HandlerResponse & { parameters: Arg[], parameter_specs: Parameter[], question: any } = {
+        const response: HandlerResponse
+            & { parameters: Arg[], parameter_specs: Parameter[], question: any, auto_submit: boolean } = {
             api_version: "1",
             correlation_id: trigger.correlation_id,
             team: trigger.team,
@@ -123,6 +129,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             source: trigger.source,
             destinations: [destination],
             parameters: [...(trigger.parameters || []), ...(trigger.mapped_parameters || [])],
+            auto_submit: !!options.autoSubmit ? options.autoSubmit : undefined,
             question: !!options.parameterStyle ? options.parameterStyle.toString() : undefined,
             parameter_specs: _.map(newParameters, (v, k) => ({
                 ...v,
