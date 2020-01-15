@@ -154,7 +154,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
             environment: environmentFromGoal(d),
         })));
     }
-    let retryFeasible = goal.definition.retryFeasible ? goal.definition.retryFeasible : false;
+    const retryFeasible = goal.definition.retryFeasible ? goal.definition.retryFeasible : false;
     return {
         goalSet,
         registration: (ctx as any as AutomationContextAware).context.name,
