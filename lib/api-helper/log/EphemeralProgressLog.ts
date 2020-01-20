@@ -48,12 +48,10 @@ class EphemeralProgressLog implements ProgressLog {
     }
 
     public write(what: string, ...args: string[]): void {
-        let line: string;
-        if (!what) {
-            line = "Attempt to write falsey value: " + new Error("Falsey value write").stack;
-        } else {
-            line = format(what, ...args);
+        if (!what && what !== "") {
+            return;
         }
+        let line = format(what, ...args);
         if (!line.endsWith("\n")) {
             line += "\n";
         }
