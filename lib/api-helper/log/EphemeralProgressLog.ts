@@ -33,7 +33,7 @@ class EphemeralProgressLog implements ProgressLog {
 
     public url: string = undefined;
 
-    constructor(public name: string, private readonly writeToLog: boolean = true) {}
+    constructor(public name: string, private readonly writeToLog: boolean = true) { }
 
     public async isAvailable(): Promise<boolean> { return true; }
 
@@ -48,9 +48,14 @@ class EphemeralProgressLog implements ProgressLog {
     }
 
     public write(what: string, ...args: string[]): void {
-        let line = format(what, ...args);
+        let line: string;
+        if (!what) {
+            line = "Attempt to write falsey value: " + new Error("Falsey value write").stack;
+        } else {
+            line = format(what, ...args);
+        }
         if (!line.endsWith("\n")) {
-             line += "\n";
+            line += "\n";
         }
         this.log += line;
     }
