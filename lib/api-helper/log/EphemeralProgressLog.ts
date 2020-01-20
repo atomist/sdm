@@ -48,6 +48,9 @@ class EphemeralProgressLog implements ProgressLog {
     }
 
     public write(what: string, ...args: string[]): void {
+        if (!what && what !== "") {
+            return;
+        }
         let line = format(what, ...args);
         if (!line.endsWith("\n")) {
              line += "\n";
