@@ -58,7 +58,7 @@
     "@atomist/slack-messages": "^1.1.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "2.0.0-remove-index.20191230145915",
+    "@atomist/automation-client": "2.0.0-master.20200131200849",
     "@atomist/slack-messages": "^1.1.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
@@ -90,7 +90,7 @@
     "clean:test": "rimraf .nyc_output coverage",
     "compile": "run-s gql:gen compile:ts",
     "compile:ts": "tsc --project .",
-    "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc lib",
     "fmt": "run-s fmt:gql",
     "fmt:gql": "prettier --write \"lib/graphql/**/*.graphql\"",
     "gql:gen": "atm-gql-gen",
@@ -100,8 +100,7 @@
     "lint:fix": "run-p lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
-    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
-    "typedoc": "npm run doc"
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "engines": {
     "node": ">=8.2.0",
