@@ -32,11 +32,21 @@ export interface GoalTest extends PushTest {
     pushTest: PushTest;
 }
 
-export function isGoal(options: { name?: RegExp, state?: SdmGoalState, output?: RegExp, pushTest?: PushTest, data?: RegExp } = {}): GoalTest {
+export function isGoal(options: {
+    name?: RegExp,
+    registration?: RegExp,
+    state?: SdmGoalState,
+    output?: RegExp,
+    pushTest?: PushTest,
+    data?: RegExp
+} = {}): GoalTest {
     return goalTest(
         `is goal ${JSON.stringify(options)}`,
         async g => {
             if (!!options.name && !options.name.test(g.name)) {
+                return false;
+            }
+            if (!!options.registration && !options.registration.test(g.registration)) {
                 return false;
             }
             if (!!options.state && options.state !== g.state) {
