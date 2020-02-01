@@ -33,20 +33,24 @@ export interface GoalTest extends PushTest {
 }
 
 export function isGoal(options: {
-    name?: RegExp,
-    registration?: RegExp,
+    name?: string | RegExp,
+    registration?: string | RegExp,
     state?: SdmGoalState,
-    output?: RegExp,
+    output?: string | RegExp,
     pushTest?: PushTest,
-    data?: RegExp
+    data?: string | RegExp,
 } = {}): GoalTest {
     return goalTest(
         `is goal ${JSON.stringify(options)}`,
         async g => {
-            if (!!options.name && !options.name.test(g.name)) {
+            if (!!options.name &&
+                !matchStringOrRegexp(options.name, g.name) &&
+                !matchStringOrRegexp(options.name, g.uniqueName) &&
+                !matchStringOrRegexp(options.name, `${g.registration}/${g.name}`) &&
+                !matchStringOrRegexp(options.name, `${g.registration}/${g.uniqueName}`)) {
                 return false;
             }
-            if (!!options.registration && !options.registration.test(g.registration)) {
+            if (!!options.registration && matchStringOrRegexp(options.registration, g.registration)) {
                 return false;
             }
             if (!!options.state && options.state !== g.state) {
@@ -57,17 +61,25 @@ export function isGoal(options: {
                 const outputs: Array<{ classifier: string }> = data["@atomist/sdm/output"];
                 if (!outputs) {
                     return false;
-                } else if (!outputs.some(o => options.output.test(o.classifier))) {
+                } else if (!outputs.some(o => matchStringOrRegexp(options.output, o.classifier))) {
                     return false;
                 }
             }
-            if (!!options.data && !options.data.test(g.data)) {
+            if (!!options.data && !matchStringOrRegexp(options.data, g.data)) {
                 return false;
             }
             return true;
         },
         options.pushTest,
     );
+}
+
+function matchStringOrRegexp(pattern: string | RegExp, toMatch: string): boolean {
+    if (typeof pattern === "string") {
+        return pattern === toMatch;
+    } else {
+        return pattern.test(toMatch);
+    }
 }
 
 export function goalTest(name: string,
