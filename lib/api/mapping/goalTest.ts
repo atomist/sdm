@@ -34,7 +34,6 @@ export interface GoalTest extends PushTest {
 
 export function isGoal(options: {
     name?: string | RegExp,
-    registration?: string | RegExp,
     state?: SdmGoalState,
     output?: string | RegExp,
     pushTest?: PushTest,
@@ -44,13 +43,8 @@ export function isGoal(options: {
         `is goal ${JSON.stringify(options)}`,
         async g => {
             if (!!options.name &&
-                !matchStringOrRegexp(options.name, g.name) &&
-                !matchStringOrRegexp(options.name, g.uniqueName) &&
                 !matchStringOrRegexp(options.name, `${g.registration}/${g.name}`) &&
                 !matchStringOrRegexp(options.name, `${g.registration}/${g.uniqueName}`)) {
-                return false;
-            }
-            if (!!options.registration && matchStringOrRegexp(options.registration, g.registration)) {
                 return false;
             }
             if (!!options.state && options.state !== g.state) {
