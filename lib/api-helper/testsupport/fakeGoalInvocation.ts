@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import {
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { Goal } from "../../api/goal/Goal";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
@@ -53,6 +54,7 @@ export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDelivery
                 ...options,
             },
         } as any,
+        skill: createSkillContext(fakeContext("T1111")),
     };
 }
 

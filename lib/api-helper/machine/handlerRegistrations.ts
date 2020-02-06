@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ import { isTransformModeSuggestion } from "../../api/command/target/TransformMod
 import { NoParameterPrompt } from "../../api/context/parameterPrompt";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { SdmContext } from "../../api/context/SdmContext";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import {
     isValidationError,
@@ -487,6 +488,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         credentials,
         ids,
         matches,
+        skill: createSkillContext(context),
     };
 }
 

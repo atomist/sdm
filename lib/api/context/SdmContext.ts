@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/lib/oper
 import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { AddressChannels } from "./addressChannels";
 import { PreferenceStore } from "./preferenceStore";
+import { SkillContext } from "./skillConfiguration";
 
 /**
  * Context for an SDM action, whether a listener invocation or internal action
@@ -55,6 +56,7 @@ export interface SdmContext {
 
     configuration: Configuration;
 
+    skill: SkillContext;
 }
 
 /**
