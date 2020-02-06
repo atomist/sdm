@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import { AddressNoChannels } from "../../api/context/addressChannels";
 import { NoParameterPrompt } from "../../api/context/parameterPrompt";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
+import { createSkillContext } from "../../api/context/skillContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { fakeContext } from "./fakeContext";
 
@@ -31,5 +32,6 @@ export function fakeCommandListenerInvocation<P>(opts: Partial<CommandListenerIn
         preferences: NoPreferenceStore,
         credentials: opts.credentials,
         ...opts,
+        skill: createSkillContext(fakeContext()),
     };
 }

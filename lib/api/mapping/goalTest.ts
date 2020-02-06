@@ -68,7 +68,7 @@ export function isGoal(options: {
     );
 }
 
-function matchStringOrRegexp(pattern: string | RegExp, toMatch: string): boolean {
+export function matchStringOrRegexp(pattern: string | RegExp, toMatch: string): boolean {
     if (typeof pattern === "string") {
         return pattern === toMatch;
     } else {
@@ -103,16 +103,16 @@ export function goalTest(name: string,
 }
 
 /**
- * Wrap a PushTest to make sure it doesn't get the change to match on goal planning
+ * Wrap a PushTest to make sure it doesn't get the chance to match on goal planning
  * based on goal events
  */
-export function notGoalTest(pushTest: PushTest): PushTest {
+export function notGoalOrOutputTest(pushTest: PushTest): PushTest {
     return {
         ...pushTest,
         mapping: async pli => {
             const trigger = (pli?.context as any as AutomationContextAware)?.trigger;
             if (!!trigger && isEventIncoming(trigger)) {
-                const goal = _.get(trigger, "data.SdmGoal[0]") as SdmGoalEvent;
+                const goal = _.get(trigger, "data.SdmGoal[0]") || _.get(trigger, "data.SkillOutput[0]");
                 if (!!goal) {
                     return false;
                 }
@@ -132,6 +132,6 @@ export function wrapTest<P extends PushListenerInvocation = PushListenerInvocati
     if (!!(test as any).pushTest) {
         return test;
     } else {
-        return notGoalTest(test);
+        return notGoalOrOutputTest(test);
     }
 }
