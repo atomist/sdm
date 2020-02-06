@@ -68,7 +68,7 @@ export function isGoal(options: {
     );
 }
 
-function matchStringOrRegexp(pattern: string | RegExp, toMatch: string): boolean {
+export function matchStringOrRegexp(pattern: string | RegExp, toMatch: string): boolean {
     if (typeof pattern === "string") {
         return pattern === toMatch;
     } else {
@@ -103,7 +103,7 @@ export function goalTest(name: string,
 }
 
 /**
- * Wrap a PushTest to make sure it doesn't get the change to match on goal planning
+ * Wrap a PushTest to make sure it doesn't get the chance to match on goal planning
  * based on goal events
  */
 export function notGoalTest(pushTest: PushTest): PushTest {
