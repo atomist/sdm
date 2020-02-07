@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Drop WS socket requirement for k8s goal jobs. [#788](https://github.com/atomist/sdm/issues/788)
 -   Support RegExp Intents and retrieving parameters from them. [#794](https://github.com/atomist/sdm/issues/794)
 -   Add registration to goal test. [db15c06](https://github.com/atomist/sdm/commit/db15c067e6574639d23d0d1361f3fd82c7895214)
+-   Support for configuration in command and event handlers. [#801](https://github.com/atomist/sdm/issues/801)
 
 ### Changed
 
