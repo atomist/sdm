@@ -21,7 +21,7 @@ export interface SkillContext {
 }
 
 export interface SkillConfiguration {
-    name: string,
+    name: string;
     parameters: Record<string, any>;
 }
 
@@ -34,8 +34,8 @@ export function createSkillContext(ctx: HandlerContext): SkillContext {
             configuration: {
                 name: configuration.name,
                 parameters,
-            }
-        }
+            },
+        };
     }
     return {};
 }

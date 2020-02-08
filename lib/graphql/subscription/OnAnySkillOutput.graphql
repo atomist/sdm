@@ -1,15 +1,15 @@
 subscription OnAnySkillOutput {
-    SkillOutput {
-        classifier
-        content
-        skill {
-            name
-            version
-        }
-        type
-        uri
-        push {
-            ...PushFields
-        }
+  SkillOutput {
+    classifier
+    content
+    skill {
+      name
+      version
     }
+    type
+    uri
+    push {
+      ...PushFields
+    }
+  }
 }
