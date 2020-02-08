@@ -20,6 +20,7 @@ import { GitProject } from "@atomist/automation-client/lib/project/git/GitProjec
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { AddressNoChannels } from "../../api/context/addressChannels";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { fakeContext } from "./fakeContext";
 
@@ -46,5 +47,6 @@ export function fakePush(project?: Project, pli: Partial<PushListenerInvocation>
         preferences: NoPreferenceStore,
         credentials: { token: "fake-token" },
         ...pli,
+        skill: createSkillContext(fakeContext()),
     };
 }

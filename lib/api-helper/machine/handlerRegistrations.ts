@@ -71,6 +71,7 @@ import { isTransformModeSuggestion } from "../../api/command/target/TransformMod
 import { NoParameterPrompt } from "../../api/context/parameterPrompt";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { SdmContext } from "../../api/context/SdmContext";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import {
     isValidationError,
@@ -487,6 +488,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
         credentials,
         ids,
         matches,
+        skill: createSkillContext(context),
     };
 }
 

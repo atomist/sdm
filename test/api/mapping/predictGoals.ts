@@ -21,6 +21,7 @@ import { GitProject } from "@atomist/automation-client/lib/project/git/GitProjec
 import * as _ from "lodash";
 import { AddressChannels } from "../../../lib/api/context/addressChannels";
 import { PreferenceStore } from "../../../lib/api/context/preferenceStore";
+import { SkillContext } from "../../../lib/api/context/skillConfiguration";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushListenerInvocation } from "../../../lib/api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../../lib/api/machine/SoftwareDeliveryMachine";
@@ -77,6 +78,9 @@ export function throwingPushListenerInvocation(knownBits: Partial<PushListenerIn
         },
         get credentials(): ProjectOperationCredentials {
             throw new InsufficientDataError("credentials");
+        },
+        get skill(): SkillContext {
+            return undefined;
         },
         ...knownBits,
     };
@@ -188,7 +192,10 @@ async function deconstructPushRule<T>(psm: StaticPushMapping<T> & Predicated<Pus
     }
 }
 
-interface UnknownTestPrediction { unknownRoads: Array<{ name: string, reason: string }>; }
+interface UnknownTestPrediction {
+    unknownRoads: Array<{ name: string, reason: string }>;
+}
+
 type TestPrediction = { result: boolean } | UnknownTestPrediction;
 
 function hasPredictedResult(tp: TestPrediction): tp is { result: boolean } {

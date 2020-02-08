@@ -29,6 +29,7 @@ import {
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
@@ -258,6 +259,7 @@ function createParametersInvocation(goalInvocation: GoalInvocation,
         configuration: goalInvocation.configuration,
         credentials: goalInvocation.credentials,
         parameters: autoInspect.parametersInstance,
+        skill: createSkillContext(goalInvocation.context),
     };
 }
 

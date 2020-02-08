@@ -20,6 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/lib/oper
 import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { AddressChannels } from "./addressChannels";
 import { PreferenceStore } from "./preferenceStore";
+import { SkillContext } from "./skillConfiguration";
 
 /**
  * Context for an SDM action, whether a listener invocation or internal action
@@ -55,6 +56,7 @@ export interface SdmContext {
 
     configuration: Configuration;
 
+    skill: SkillContext;
 }
 
 /**

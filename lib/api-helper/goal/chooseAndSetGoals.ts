@@ -34,6 +34,7 @@ import {
     PreferenceStore,
     PreferenceStoreFactory,
 } from "../../api/context/preferenceStore";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { StatefulPushListenerInvocation } from "../../api/dsl/goalContribution";
 import { EnrichGoal } from "../../api/goal/enrichGoal";
 import {
@@ -157,6 +158,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         goalSetName: determinedGoals ? determinedGoals.name : undefined,
         goalSet: determinedGoals,
         push,
+        skill: createSkillContext(context),
     };
     await Promise.all(goalsListeners.map(l => l(gsi)));
     return determinedGoals;
@@ -204,6 +206,7 @@ export async function determineGoals(rules: {
                 configuration,
                 preferences: preferences || NoPreferenceStore,
                 facts: {},
+                skill: createSkillContext(context),
             };
             const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
             if (!determinedGoals) {

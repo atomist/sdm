@@ -19,6 +19,7 @@ import { GitProject } from "@atomist/automation-client/lib/project/git/GitProjec
 import { Destination } from "@atomist/automation-client/lib/spi/message/MessageClient";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
+import { createSkillContext } from "../../api/context/skillConfiguration";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { filesChangedSince } from "../misc/git/filesChangedSince";
@@ -51,6 +52,7 @@ export async function createPushImpactListenerInvocation(goalInvocation: GoalInv
         filesChanged,
         commit: goalEvent.push.after,
         push,
+        skill: createSkillContext(context),
     };
 }
 
