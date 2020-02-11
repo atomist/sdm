@@ -15,6 +15,7 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { dirSync } from "tmp-promise";
