@@ -93,7 +93,7 @@ describe("cachingProjectLoader", () => {
             const cp = new CachingProjectLoader();
 
             await cp.doWithProject({ id, credentials: undefined, readOnly: true}, async () => { });
-            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { alwaysDeep: false }}, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { alwaysDeep: false, depth: 1 }}, async () => { });
             assert.equal(clonedCalledTimes, 1);
         });
 

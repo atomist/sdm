@@ -32,14 +32,10 @@ export function cacheKey(params: ProjectLoadingParameters): string {
         params.id.repo,
         params.id.branch,
         params.id.sha,
-        coerceUndefined(params?.cloneOptions?.keep),
-        coerceUndefined(params?.cloneOptions?.alwaysDeep),
-        coerceUndefined(params?.cloneOptions?.noSingleBranch),
-        coerceUndefined(params?.cloneOptions?.depth),
-        coerceUndefined(params?.cloneOptions?.detachHead),
+        params.cloneOptions?.keep || false,
+        params.cloneOptions?.alwaysDeep || false,
+        params.cloneOptions?.noSingleBranch || false,
+        params.cloneOptions?.depth || 1,
+        params.cloneOptions?.detachHead || false,
         params.id.url);
-}
-
-function coerceUndefined(a: any): boolean {
-    return a === undefined ? false : a;
 }
