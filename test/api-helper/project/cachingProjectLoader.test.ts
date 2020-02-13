@@ -74,18 +74,30 @@ describe("cachingProjectLoader", () => {
             Object.defineProperty(GitCommandGitProject, "cloned", originalCloned);
         });
 
-        it("disparate clone params", async () => {
+        it("disparate clone options", async () => {
 
             const id = new GitHubRepoRef("a", "b", sha);
             const cp = new CachingProjectLoader();
+
             await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 1 } }, async () => { });
             await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5 } }, async () => { });
             await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5, alwaysDeep: false } }, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { depth: 5, alwaysDeep: true } }, async () => { });
 
             assert.equal(clonedCalledTimes, 3);
         });
 
-        it("homogeneous clone params", async () => {
+        it("no clone options", async () => {
+
+            const id = new GitHubRepoRef("a", "b", sha);
+            const cp = new CachingProjectLoader();
+
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true}, async () => { });
+            await cp.doWithProject({ id, credentials: undefined, readOnly: true, cloneOptions: { alwaysDeep: false }}, async () => { });
+            assert.equal(clonedCalledTimes, 1);
+        });
+
+        it("homogeneous clone options", async () => {
 
             const id = new GitHubRepoRef("a", "b", sha);
             const cp = new CachingProjectLoader();

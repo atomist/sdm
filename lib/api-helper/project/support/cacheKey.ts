@@ -18,7 +18,11 @@ import { sprintf } from "sprintf-js";
 import { ProjectLoadingParameters } from "../../../spi/project/ProjectLoader";
 
 /**
- * Compute a cache key from the given ProjectLoadingParameters
+ * Compute a cache key from the given ProjectLoadingParameters.
+ *
+ * In this context undefined and false are functionally equivalent, so
+ * undefined values are coerced to false.
+ *
  * @param {RemoteRepoRef} id
  * @return {any}
  */
@@ -28,10 +32,14 @@ export function cacheKey(params: ProjectLoadingParameters): string {
         params.id.repo,
         params.id.branch,
         params.id.sha,
-        params.cloneOptions.keep,
-        params.cloneOptions.alwaysDeep,
-        params.cloneOptions.noSingleBranch,
-        params.cloneOptions.depth,
-        params.cloneOptions.detachHead,
+        coerceUndefined(params?.cloneOptions?.keep),
+        coerceUndefined(params?.cloneOptions?.alwaysDeep),
+        coerceUndefined(params?.cloneOptions?.noSingleBranch),
+        coerceUndefined(params?.cloneOptions?.depth),
+        coerceUndefined(params?.cloneOptions?.detachHead),
         params.id.url);
+}
+
+function coerceUndefined(a: any): boolean {
+    return a === undefined ? false : a;
 }
