@@ -26,7 +26,7 @@ import {
     WithLoadedProject,
 } from "../../spi/project/ProjectLoader";
 import { CloningProjectLoader } from "./cloningProjectLoader";
-import { cacheKeyForSha } from "./support/cacheKey";
+import { cacheKey } from "./support/cacheKey";
 import { LruCache } from "./support/LruCache";
 import { SimpleCache } from "./support/SimpleCache";
 
@@ -51,7 +51,7 @@ export class CachingProjectLoader implements ProjectLoader {
         }
 
         logger.debug("Attempting to reuse clone for readonly use of '%j'", params.id);
-        const key = cacheKeyForSha(params.id);
+        const key = cacheKey(params);
         let project = this.cache.get(key);
         if (!!project) {
             // Validate it, as the directory may have been cleaned up
