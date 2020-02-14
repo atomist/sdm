@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add registration to goal test. [db15c06](https://github.com/atomist/sdm/commit/db15c067e6574639d23d0d1361f3fd82c7895214)
 -   Support for configuration in command and event handlers. [#801](https://github.com/atomist/sdm/issues/801)
 -   Push test for skill configuration. [#805](https://github.com/atomist/sdm/issues/805)
+-   Add support for skill output. [#808](https://github.com/atomist/sdm/issues/808)
 
 ### Changed
 
