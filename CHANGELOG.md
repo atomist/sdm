@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Move to using GraphQL mutations for SdmGoal and SdmGoalSet. [#792](https://github.com/atomist/sdm/issues/792)
 -   Clean up YAML definition schema. [#791](https://github.com/atomist/sdm/issues/791)
+-   Goal caching/Skill output should only be stored for success goals. [#807](https://github.com/atomist/sdm/issues/807)
 
 ### Fixed
 
