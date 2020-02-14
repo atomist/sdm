@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import * as path from "path";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { createSkillContext } from "../../api/context/skillContext";
 import {
     ExecuteGoalResult,
     isFailure,
@@ -121,6 +122,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             goalEvent: sge,
             error,
             result,
+            skill: createSkillContext(context),
         };
         await Promise.all(rules.goalExecutionListeners.map(gel => {
             try {

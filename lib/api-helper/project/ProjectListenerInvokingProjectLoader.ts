@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import { Success } from "@atomist/automation-client/lib/HandlerResult";
 import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { createSkillContext } from "../../api/context/skillContext";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     GoalInvocation,
@@ -85,6 +86,7 @@ export class ProjectListenerInvokingProjectLoader implements ProjectLoader {
             id: this.gi.id,
             project: p,
             push: this.gi.goalEvent.push,
+            skill: createSkillContext(this.gi.context),
         };
 
         for (const lr of this.listeners) {
