@@ -45,12 +45,13 @@ export function createSkillContext<C extends Record<string, any> = any>(ctx: Han
     if (!!configuration) {
         const parameters = {};
         (configuration.parameters || []).forEach(p => parameters[p.name] = p.value);
-        return {
+        const skillContext: SkillContext<C> = {
             configuration: {
                 name: configuration.name,
                 parameters,
             },
-        } as SkillContext<C>;
+        } as unknown;
+        return skillContext;
     }
     return {};
 }
