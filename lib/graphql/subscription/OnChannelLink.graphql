@@ -1,0 +1,14 @@
+subscription OnChannelLink {
+  ChannelLink {
+    repo {
+      ...CoreRepoFieldsAndChannels
+    }
+    channel {
+      team {
+        id
+      }
+      name
+      id
+    }
+  }
+}

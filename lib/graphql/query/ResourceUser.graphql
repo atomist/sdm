@@ -1,0 +1,13 @@
+query ResourceUser($id: String!) {
+  ChatId(userId: $id) {
+    person {
+      gitHubId {
+        login
+        credential {
+          secret
+          scopes
+        }
+      }
+    }
+  }
+}

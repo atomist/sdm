@@ -1,0 +1,13 @@
+subscription OnAnyJobTask($registration: String) {
+  AtmJobTask(owner: $registration, state: created) {
+    id
+    data
+    name
+    job {
+      id
+      data
+    }
+    state
+    message
+  }
+}

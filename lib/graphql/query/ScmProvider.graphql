@@ -1,8 +1,11 @@
-query SCMProvider($providerId: String!) {
+query ScmProvider($providerId: String!) {
   SCMProvider(providerId: $providerId) {
     providerType
     url
     providerId
     apiUrl
+    credential {
+      secret
+    }
   }
 }

@@ -1,0 +1,15 @@
+query RepositoryByOwnerAndName($owner: String, $name: String) {
+  Repo(owner: $owner, name: $name) {
+    id
+    name
+    owner
+    org {
+      provider {
+        providerId
+        providerType
+        apiUrl
+        url
+      }
+    }
+  }
+}

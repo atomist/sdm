@@ -1,0 +1,3 @@
+mutation DeleteResourceProvider($id: ID!) {
+  deleteResourceProvider(id: $id)
+}

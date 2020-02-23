@@ -1,0 +1,10 @@
+# deprecated, use PersonByChatId
+query PersonQuery($screenName: String!) {
+  ChatId(screenName: $screenName) {
+    userId
+    screenName
+    person @required {
+      ...PersonFields
+    }
+  }
+}

@@ -1,0 +1,6 @@
+subscription OnAnyApprovedSdmGoal($registration: [String]) {
+  SdmGoal(state: [approved, pre_approved], registration: $registration) {
+    ...SdmGoalFields
+    ...SdmGoalRepo
+  }
+}

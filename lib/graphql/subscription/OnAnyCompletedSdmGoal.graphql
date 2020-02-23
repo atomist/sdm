@@ -1,0 +1,17 @@
+subscription OnAnyCompletedSdmGoal($registration: [String]) {
+  SdmGoal(
+    state: [
+      in_process
+      failure
+      success
+      stopped
+      canceled
+      waiting_for_pre_approval
+      waiting_for_approval
+    ]
+    registration: $registration
+  ) {
+    ...SdmGoalWithGoalsFields
+    ...SdmGoalRepo
+  }
+}

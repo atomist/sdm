@@ -1,0 +1,9 @@
+query ScmProviderByType($providerType: ProviderType!) {
+  SCMProvider(providerType: $providerType) {
+    providerId
+    apiUrl
+    credential {
+      secret
+    }
+  }
+}

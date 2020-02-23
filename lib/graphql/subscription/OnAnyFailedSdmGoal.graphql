@@ -1,0 +1,6 @@
+subscription OnAnyFailedSdmGoal($registration: [String]) {
+  SdmGoal(state: [failure, stopped, canceled], registration: $registration) {
+    ...SdmGoalWithGoalsFields
+    ...SdmGoalRepo
+  }
+}

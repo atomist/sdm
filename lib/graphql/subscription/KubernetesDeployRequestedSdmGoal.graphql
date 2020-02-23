@@ -1,0 +1,111 @@
+subscription KubernetesDeployRequestedSdmGoal($fulfillmentName: String!) {
+  SdmGoal(state: [in_process]) {
+    uniqueName
+    name
+    id
+    environment
+    sha
+    branch
+    push {
+      id
+      timestamp
+      branch
+      before {
+        sha
+        message
+        committer {
+          login
+        }
+      }
+      after {
+        sha
+        message
+        committer {
+          login
+        }
+        images {
+          image
+          imageName
+        }
+      }
+      repo {
+        name
+        owner
+        org {
+          provider {
+            providerId
+          }
+        }
+      }
+      commits {
+        sha
+        timestamp
+        message
+        author {
+          login
+          name
+        }
+      }
+    }
+    repo {
+      name
+      owner
+      providerId
+    }
+    fulfillment(name: [$fulfillmentName]) @required {
+      method
+      name
+      registration
+    }
+    description
+    descriptions {
+      canceled
+      completed
+      failed
+      inProcess
+      requested
+      skipped
+      stopped
+      waitingForApproval
+      waitingForPreApproval
+    }
+    url
+    externalUrl
+    state
+    externalKey
+    goalSet
+    registration
+    goalSetId
+    phase
+    ts
+    error
+    retryFeasible
+    provenance {
+      correlationId
+      registration
+      name
+      version
+      ts
+      userId
+      channelId
+    }
+    preConditions {
+      environment
+      name
+    }
+    approvalRequired
+    preApproval {
+      correlationId
+      registration
+      name
+      version
+      ts
+      userId
+      channelId
+    }
+    preApprovalRequired
+    data
+    parameters
+    version
+  }
+}

@@ -1,0 +1,16 @@
+mutation SetTeamConfiguration(
+  $namespace: String!
+  $name: String!
+  $value: String!
+  $ttl: Int
+) {
+  setTeamConfiguration(
+    namespace: $namespace
+    name: $name
+    value: $value
+    ttlSecs: $ttl
+  ) {
+    name
+    namespace
+  }
+}
