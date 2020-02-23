@@ -1,0 +1,26 @@
+query PullRequestForSha($owner: String!, $repo: String!, $sha: String!) {
+  PullRequest {
+    name
+    title
+    body
+    id
+    number
+    author {
+      person {
+        chatId {
+          screenName
+        }
+      }
+    }
+    repo(owner: $owner, name: $repo) @required {
+      ...CoreRepoFieldsAndChannels
+    }
+    head(sha: $sha) @required {
+      message
+    }
+    base {
+      sha
+      message
+    }
+  }
+}

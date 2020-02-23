@@ -1,5 +1,7 @@
 query DockerRegistryProvider($name: String) {
   DockerRegistryProvider(name: $name) {
+    url
+    name
     state {
       error
       name

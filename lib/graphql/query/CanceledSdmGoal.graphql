@@ -3,6 +3,7 @@ query CanceledSdmGoal($goalSetId: String!, $uniqueName: String!) {
     goalSetId: [$goalSetId]
     uniqueName: [$uniqueName]
     state: [canceled]
+    _showHistory: true
   ) {
     id
   }

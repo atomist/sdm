@@ -1,0 +1,12 @@
+mutation SetResourceProviderState(
+  $id: ID!
+  $state: ResourceProviderStateName!
+  $error: String!
+) {
+  setResourceProviderState(
+    id: $id
+    providerState: { state: $state, error: $error }
+  ) {
+    id
+  }
+}

@@ -1,0 +1,9 @@
+query TeamConfigurationByNamespace($namespace: String!) {
+  TeamConfiguration(namespace: $namespace) {
+    name
+    namespace
+    value
+    ttlSecs
+    createdAt
+  }
+}

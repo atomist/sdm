@@ -1,0 +1,146 @@
+fragment SdmGoalWithGoalsFields on SdmGoal {
+  environment
+  uniqueName
+  name
+  sha
+  branch
+  fulfillment {
+    method
+    registration
+    name
+  }
+  description
+  url
+  externalUrl
+  externalUrls {
+    label
+    url
+  }
+  state
+  phase
+  externalKey
+  goalSet
+  registration
+  goalSetId
+  ts
+  error
+  retryFeasible
+  preConditions {
+    environment
+    uniqueName
+    name
+  }
+  approval {
+    correlationId
+    registration
+    name
+    version
+    ts
+    userId
+    channelId
+  }
+  approvalRequired
+  preApproval {
+    correlationId
+    registration
+    name
+    version
+    ts
+    userId
+    channelId
+  }
+  preApprovalRequired
+  provenance {
+    correlationId
+    registration
+    name
+    version
+    ts
+    userId
+    channelId
+  }
+  data
+  push {
+    ...PushFields
+    goals {
+      ...SdmGoalRepo
+      environment
+      uniqueName
+      name
+      sha
+      branch
+      fulfillment {
+        method
+        registration
+        name
+      }
+      description
+      url
+      externalUrl
+      externalUrls {
+        label
+        url
+      }
+      state
+      phase
+      externalKey
+      goalSet
+      registration
+      goalSetId
+      ts
+      error
+      retryFeasible
+      preConditions {
+        environment
+        uniqueName
+        name
+      }
+      approval {
+        correlationId
+        registration
+        name
+        version
+        ts
+        userId
+        channelId
+      }
+      approvalRequired
+      preApproval {
+        correlationId
+        registration
+        name
+        version
+        ts
+        userId
+        channelId
+      }
+      preApprovalRequired
+      provenance {
+        correlationId
+        registration
+        name
+        version
+        ts
+        userId
+        channelId
+      }
+      descriptions {
+        canceled
+        completed
+        failed
+        inProcess
+        planned
+        requested
+        stopped
+        skipped
+        waitingForApproval
+        waitingForPreApproval
+      }
+      parameters
+      data
+      version
+    }
+  }
+  version
+  signature
+}
