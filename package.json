@@ -1,7 +1,7 @@
 {
   "name": "@spring-team/my-flow",
   "version": "0.1.0",
-  "description": "Atomist event handler example",
+  "description": "Test branch of Atomist event handler example",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
