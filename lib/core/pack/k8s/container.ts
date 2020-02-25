@@ -47,23 +47,12 @@ import { GoalScheduler } from "../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../api/registration/ServiceRegistration";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../../typings/types";
-import { loadKubeConfig } from "../../pack/k8s/kubernetes/config";
-import {
-    k8sJobEnv,
-    KubernetesGoalScheduler,
-    readNamespace,
-} from "../../pack/k8s/scheduler/KubernetesGoalScheduler";
-import {
-    K8sServiceRegistrationType,
-    K8sServiceSpec,
-} from "../../pack/k8s/scheduler/service";
-import { toArray } from "../../util/misc/array";
 import {
     CacheEntry,
     CacheOutputGoalDataKey,
     cachePut,
     cacheRestore,
-} from "../cache/goalCaching";
+} from "../../goal/cache/goalCaching";
 import {
     Container,
     ContainerInput,
@@ -74,13 +63,24 @@ import {
     ContainerScheduler,
     GoalContainer,
     GoalContainerVolume,
-} from "./container";
-import { prepareSecrets } from "./provider";
+} from "../../goal/container/container";
+import { prepareSecrets } from "../../goal/container/provider";
 import {
     containerEnvVars,
     prepareInputAndOutput,
     processResult,
-} from "./util";
+} from "../../goal/container/util";
+import { loadKubeConfig } from "../../pack/k8s/kubernetes/config";
+import {
+    K8sServiceRegistrationType,
+    K8sServiceSpec,
+} from "../../pack/k8s/scheduler/service";
+import { toArray } from "../../util/misc/array";
+import {
+    k8sJobEnv,
+    KubernetesGoalScheduler,
+    readNamespace,
+} from "./scheduler/KubernetesGoalScheduler";
 
 // tslint:disable:max-file-line-count
 
