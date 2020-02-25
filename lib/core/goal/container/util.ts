@@ -15,7 +15,6 @@
  */
 
 import { MutationNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
-import { LeveledLogMethod } from "@atomist/automation-client/lib/util/logger";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import * as path from "path";
@@ -23,7 +22,6 @@ import { SdmContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
 import {
     OnBuildCompleteForDryRun,
     PushFields,
@@ -155,20 +153,7 @@ export async function prepareInputAndOutput(input: string, output: string, gi: G
     }
 }
 
-/**
- * Write to client and progress logs.  Add newline to progress log.
- *
- * @param msg Message to write, should not have newline at end
- * @param l Logger method, e.g., `logger.warn`
- * @param p Progress log
- */
-export function loglog(msg: string, l: LeveledLogMethod, p: ProgressLog): void {
-    l(msg);
-    p.write(msg + "\n");
-}
-
-export async function processResult(result: any,
-                                    gi: GoalInvocation): Promise<ExecuteGoalResult | undefined> {
+export async function processResult(result: any, gi: GoalInvocation): Promise<ExecuteGoalResult | undefined> {
     const { goalEvent, context } = gi;
     if (!!result) {
         if (result.SdmGoal) {
