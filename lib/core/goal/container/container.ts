@@ -274,8 +274,6 @@ export class Container extends FulfillableGoalWithRegistrations<ContainerRegistr
             if (!goalSchedulers.some(gs => gs instanceof kgs.KubernetesGoalScheduler)) {
                 if (!process.env.ATOMIST_ISOLATED_GOAL && kgs.isConfiguredInEnv("kubernetes", "kubernetes-all")) {
                     sdm.configuration.sdm.goalScheduler = [...goalSchedulers, new kgs.KubernetesGoalScheduler()];
-                    const kjdgcl = require("../../pack/k8s/scheduler/KubernetesJobDeletingGoalCompletionListener");
-                    sdm.addGoalCompletionListener(new kjdgcl.KubernetesJobDeletingGoalCompletionListenerFactory(sdm).create());
                 }
             }
         } else if (runningAsGoogleCloudFunction()) {
@@ -295,10 +293,10 @@ export class Container extends FulfillableGoalWithRegistrations<ContainerRegistr
         registration.name = (registration.name || `container-${this.definition.displayName}`).replace(/\.+/g, "-");
         if (!this.details.scheduler) {
             if (runningInK8s()) {
-                const k8sContainerScheduler = require("./k8s").k8sContainerScheduler;
+                const k8sContainerScheduler = require("../../pack/k8s/container").k8sContainerScheduler;
                 this.details.scheduler = k8sContainerScheduler;
             } else if (runningAsGoogleCloudFunction()) {
-                const k8sSkillContainerScheduler = require("./k8s").k8sSkillContainerScheduler;
+                const k8sSkillContainerScheduler = require("../../pack/k8s/container").k8sSkillContainerScheduler;
                 this.details.scheduler = k8sSkillContainerScheduler;
             } else {
                 this.details.scheduler = dockerContainerScheduler;
