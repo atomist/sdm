@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,8 @@ const credentials = {
 
 describe("GitHubLazyProjectLoader", () => {
 
-    before(function(): void {
+    before(function(this: Mocha.Context): void {
         if (!process.env.GITHUB_TOKEN) {
-            // tslint:disable-next-line:no-invalid-this
             this.skip();
         }
     });

@@ -53,14 +53,12 @@ describe("pack/k8s/kubernetes/application", () => {
 
     });
 
-    describe("upsertApplication & deleteApplication", function(): void {
+    describe("upsertApplication & deleteApplication", function(this: Mocha.Suite): void {
 
-        // tslint:disable-next-line:no-invalid-this
         this.timeout(10000);
 
-        before(async function(): Promise<void> {
+        before(async function(this: Mocha.Context): Promise<void> {
             if (!await k8sAvailable()) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
             beforeRetry();

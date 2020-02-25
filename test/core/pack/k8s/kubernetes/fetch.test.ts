@@ -1392,14 +1392,12 @@ describe("pack/k8s/kubernetes/fetch", () => {
 
     });
 
-    describe("kubernetesFetch", function(): void {
+    describe("kubernetesFetch", function(this: Mocha.Suite): void {
 
-        // tslint:disable-next-line:no-invalid-this
         this.timeout(15000);
 
-        before(async function(): Promise<void> {
+        before(async function(this: Mocha.Context): Promise<void> {
             if (!await k8sAvailable()) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
             beforeRetry();

@@ -243,20 +243,15 @@ describe("goal/container/docker", () => {
             },
         } as any;
 
-        before(async function dockerCheckProjectSetup(): Promise<void> {
-            // tslint:disable-next-line:no-invalid-this
+        before(async function dockerCheckProjectSetup(this: Mocha.Context): Promise<void> {
             this.timeout(20000);
             if (runningInK8s() || (!process.env.DOCKER_HOST && !fs.existsSync("/var/run/docker.sock"))) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
-                return;
             }
             try {
                 await execPromise("docker", ["pull", containerTestImage], { timeout: 18000 });
             } catch (e) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
-                return;
             }
             await fs.ensureDir(projectDir);
             tmpDirs.push(projectDir);
