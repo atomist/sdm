@@ -106,7 +106,7 @@
   "scripts": {
     "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
     "build": "run-s compile test lint doc",
-    "build:fast": "run-s compile test:js lint doc",
+    "build:fast": "run-p compile-test lint doc",
     "clean": "run-p clean:compile clean:test clean:doc clean:run",
     "clean:compile": "rimraf git-info.json build \"index.{d.ts,js}{,.map}\" \"{bin,lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
@@ -116,6 +116,7 @@
     "clean:test": "rimraf .nyc_output coverage",
     "compile": "run-s gql:gen compile:ts",
     "compile:ts": "tsc --project .",
+    "compile-test": "run-s compile test:js",
     "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc lib",
     "fmt": "run-s fmt:gql",
     "fmt:gql": "prettier --write \"lib/graphql/**/*.graphql\"",
