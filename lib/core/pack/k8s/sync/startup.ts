@@ -21,7 +21,7 @@ import { createJob } from "../../../../api-helper/misc/job/createJob";
 import { fakeContext } from "../../../../api-helper/testsupport/fakeContext";
 import { StartupListener } from "../../../../api/listener/StartupListener";
 import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliveryMachine";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 import { queryForScmProvider } from "./repo";
 import { KubernetesSync } from "./sync";
 

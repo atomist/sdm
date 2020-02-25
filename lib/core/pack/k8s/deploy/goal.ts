@@ -37,7 +37,7 @@ import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliver
 import { PushTest } from "../../../../api/mapping/PushTest";
 import { AnyPush } from "../../../../api/mapping/support/commonPushTests";
 import { SdmGoalState } from "../../../../typings/types";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 import { KubernetesApplication } from "../kubernetes/request";
 import { getClusterLabel } from "./cluster";
 import { generateKubernetesGoalEventData } from "./data";

@@ -67,8 +67,8 @@ import {
     cachePut,
     cacheRestore,
 } from "../../../../goal/cache/goalCaching";
-import { shouldFulfill } from "../../../../internal/delivery/goals/support/validateGoal";
-import { verifyGoal } from "../../../../internal/signing/goalSigning";
+import { shouldFulfill } from "../../../../delivery/goals/support/validateGoal";
+import { verifyGoal } from "../../../../signing/goalSigning";
 import { toArray } from "../../../../util/misc/array";
 import { formatDuration } from "../../../../util/misc/time";
 

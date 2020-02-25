@@ -18,7 +18,7 @@ import { MachineConfiguration } from "../../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { HandlerBasedSoftwareDeliveryMachine } from "../internal/machine/HandlerBasedSoftwareDeliveryMachine";
+import { HandlerBasedSoftwareDeliveryMachine } from "./HandlerBasedSoftwareDeliveryMachine";
 import { infoSupport } from "../pack/info/exposeInfo";
 import { jobSupport } from "../pack/job/job";
 

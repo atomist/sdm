@@ -32,7 +32,7 @@ import {
     pushTest,
     PushTest,
 } from "../../../../api/mapping/PushTest";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 import {
     KubernetesSyncOptions,
     SyncRepoRef,

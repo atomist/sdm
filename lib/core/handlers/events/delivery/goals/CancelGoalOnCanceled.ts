@@ -37,7 +37,7 @@ import { cancelableGoal } from "../../../../../api-helper/listener/cancelGoals";
 import { SdmGoalEvent } from "../../../../../api/goal/SdmGoalEvent";
 import { SoftwareDeliveryMachineConfiguration } from "../../../../../api/machine/SoftwareDeliveryMachineOptions";
 import { OnSpecificCanceledSdmGoal } from "../../../../../typings/types";
-import { verifyGoal } from "../../../../internal/signing/goalSigning";
+import { verifyGoal } from "../../../../signing/goalSigning";
 
 @EventHandler("Cancel the currently executing goal",
     () => subscription({

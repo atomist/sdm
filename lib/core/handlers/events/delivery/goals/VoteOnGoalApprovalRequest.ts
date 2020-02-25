@@ -51,8 +51,8 @@ import {
     OnAnyApprovedSdmGoal,
     SdmGoalState,
 } from "../../../../../typings/types";
-import { shouldHandle } from "../../../../internal/delivery/goals/support/validateGoal";
-import { verifyGoal } from "../../../../internal/signing/goalSigning";
+import { shouldHandle } from "../../../../delivery/goals/support/validateGoal";
+import { verifyGoal } from "../../../../signing/goalSigning";
 
 /**
  * Vote on approved goals.

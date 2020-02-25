@@ -24,7 +24,7 @@ import * as _ from "lodash";
 import { DeepPartial } from "ts-essentials";
 import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
-import { readSdmVersion } from "../../../internal/delivery/build/local/projectVersioner";
+import { readSdmVersion } from "../../../delivery/build/local/projectVersioner";
 import { validName } from "../kubernetes/name";
 import { KubernetesApplication } from "../kubernetes/request";
 import { K8sDefaultNamespace } from "../support/namespace";

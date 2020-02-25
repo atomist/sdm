@@ -17,7 +17,7 @@
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { StartupListener } from "../../../../api/listener/StartupListener";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 import { kubeConfigContext } from "../kubernetes/config";
 
 /**

@@ -19,7 +19,7 @@ import { ExtensionPack } from "../../../api/machine/ExtensionPack";
 import {
     isGitHubAction,
     isInLocalMode,
-} from "../../internal/machine/modes";
+} from "../../machine/modes";
 import {
     createPendingGitHubStatusOnGoalSet,
     setGitHubStatusOnGoalCompletion,

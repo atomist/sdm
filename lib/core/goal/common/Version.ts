@@ -26,7 +26,7 @@ import { AnyPush } from "../../../api/mapping/support/commonPushTests";
 import {
     executeVersioner,
     ProjectVersioner,
-} from "../../internal/delivery/build/local/projectVersioner";
+} from "../../delivery/build/local/projectVersioner";
 
 /**
  * Register a ProjectVersioner for a certain type of push

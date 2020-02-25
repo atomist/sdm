@@ -45,8 +45,8 @@ import { SoftwareDeliveryMachineConfiguration } from "../../../../../api/machine
 import { CredentialsResolver } from "../../../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyCompletedSdmGoal } from "../../../../../typings/types";
-import { shouldHandle } from "../../../../internal/delivery/goals/support/validateGoal";
-import { verifyGoal } from "../../../../internal/signing/goalSigning";
+import { shouldHandle } from "../../../../delivery/goals/support/validateGoal";
+import { verifyGoal } from "../../../../signing/goalSigning";
 
 /**
  * Respond to a failure or success status by running listeners

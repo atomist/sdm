@@ -19,7 +19,7 @@ import * as _ from "lodash";
 import * as os from "os";
 import { RepoContext } from "../../../api/context/SdmContext";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
-import { getGoalVersion } from "../../internal/delivery/build/local/projectVersioner";
+import { getGoalVersion } from "../../delivery/build/local/projectVersioner";
 import { camelCase } from "./util";
 
 // tslint:disable-next-line:cyclomatic-complexity

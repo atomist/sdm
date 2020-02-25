@@ -17,7 +17,7 @@
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 import { KubernetesApplication } from "../kubernetes/request";
 
 export type ExternalUrls = Array<{ label?: string, url: string }>;

@@ -20,7 +20,7 @@ import * as _ from "lodash";
 import { metadata } from "../../../api-helper/misc/extensionPack";
 import { ExtensionPack } from "../../../api/machine/ExtensionPack";
 import { SdmGoalState } from "../../../typings/types";
-import { isInLocalMode } from "../../internal/machine/modes";
+import { isInLocalMode } from "../../machine/modes";
 import {
     cancelGoalSetsCommand,
     listPendingGoalSetsCommand,

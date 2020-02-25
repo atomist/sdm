@@ -29,7 +29,7 @@ import {
     ResourceProviderStateName,
     SetResourceProviderState,
 } from "../../../../typings/types";
-import { isInLocalMode } from "../../../internal/machine/modes";
+import { isInLocalMode } from "../../../machine/modes";
 
 /**
  * If the SDM is the cluster master, not running in local mode, and

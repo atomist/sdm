@@ -23,7 +23,7 @@ import {
     getGoalDefinitionFrom,
 } from "../../../api/goal/GoalWithFulfillment";
 import { SoftwareDeliveryMachine } from "../../../api/machine/SoftwareDeliveryMachine";
-import { executeTag } from "../../internal/delivery/build/executeTag";
+import { executeTag } from "../../delivery/build/executeTag";
 
 /**
  * Properties to customize [[Tag]] goal.
