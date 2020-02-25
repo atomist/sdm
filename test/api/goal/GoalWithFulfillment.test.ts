@@ -27,7 +27,7 @@ describe("GoalWithFulfillment", () => {
 
         it("should create an empty goal", () => {
             const g = goal();
-            assert(g.uniqueName.startsWith("goal#GoalWithFulfillment.test.ts"));
+            assert(g.uniqueName.startsWith("goal#GoalWithFulfillment.test."));
             assert.strictEqual(g.uniqueName, g.name);
             assert.strictEqual(g.environment, IndependentOfEnvironment);
         });

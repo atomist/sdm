@@ -137,7 +137,7 @@ describe("pack/k8s/deploy/externalUrls", () => {
                 delete process.env.ATOMIST_MODE;
             }
             assert(u === undefined);
-        });
+        }).timeout(5000);
 
         it("should return default-like endpoint in local mode", async () => {
             let mode: string;
@@ -160,7 +160,7 @@ describe("pack/k8s/deploy/externalUrls", () => {
                 delete process.env.ATOMIST_MODE;
             }
             assert(/^http:\/\/\d+\.\d+\.\d+\.\d+\/$/.test(u));
-        });
+        }).timeout(5000);
 
         it("should return endpoint in local mode", async () => {
             let mode: string;
@@ -184,7 +184,7 @@ describe("pack/k8s/deploy/externalUrls", () => {
                 delete process.env.ATOMIST_MODE;
             }
             assert(/^https:\/\/\d+\.\d+\.\d+\.\d+\/bush\/kate\/hounds-of-love\/cloudbusting\/$/.test(u));
-        });
+        }).timeout(5000);
 
     });
 

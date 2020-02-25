@@ -25,7 +25,7 @@ describe("GoalNameGenerator", () => {
             const goal = new Autofix();
             const name = goal.definition.uniqueName;
             assert(name.startsWith("autofix"));
-            assert(name.includes("GoalNameGenerator.test.ts:"));
+            assert(name.includes("GoalNameGenerator.test."));
         });
     });
 });

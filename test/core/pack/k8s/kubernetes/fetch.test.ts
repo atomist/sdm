@@ -1395,7 +1395,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
     describe("kubernetesFetch", function(): void {
 
         // tslint:disable-next-line:no-invalid-this
-        this.timeout(10000);
+        this.timeout(15000);
 
         before(async function(): Promise<void> {
             if (!await k8sAvailable()) {

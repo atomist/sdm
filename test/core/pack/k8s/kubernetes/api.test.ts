@@ -452,7 +452,7 @@ describe("pack/k8s/kubernetes/api", () => {
                 assert(!dl.stdout.includes(d.metadata.name));
                 const sl = await execPromise("kubectl", ["get", "-n", d.metadata.namespace, "services"]);
                 assert(!sl.stdout.includes(s.metadata.name));
-            });
+            }).timeout(10000);
 
             it("should throw a proper error", async () => {
                 const s = {

@@ -144,7 +144,7 @@ describe("pack/k8s/kubernetes/delete", function(): void {
             assert(dr.length === 1);
             assert(dr[0].kind === "ClusterRole");
             assert(dr[0].metadata.name === na);
-        });
+        }).timeout(10000);
 
     });
 

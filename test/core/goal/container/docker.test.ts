@@ -344,7 +344,7 @@ describe("goal/container/docker", () => {
             const x = egr as ExecuteGoalResult;
             assert(x.code === 0, logData);
             assert(x.message === "Successfully completed container job");
-        }).timeout(10000);
+        }).timeout(15000);
 
         it("should report when main container fails", async () => {
             const r = {
