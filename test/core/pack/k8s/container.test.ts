@@ -43,11 +43,11 @@ import {
     executeK8sJob,
     K8sContainerRegistration,
     k8sFulfillmentCallback,
-} from "../../../../lib/core/goal/container/k8s";
+} from "../../../../lib/core/pack/k8s/container";
 import { loadKubeConfig } from "../../../../lib/core/pack/k8s/kubernetes/config";
 import { KubernetesGoalScheduler } from "../../../../lib/core/pack/k8s/scheduler/KubernetesGoalScheduler";
 import { SdmGoalState } from "../../../../lib/typings/types";
-import { containerTestImage } from "./util";
+import { containerTestImage } from "../../goal/container/util";
 
 /* tslint:disable:max-file-line-count */
 
