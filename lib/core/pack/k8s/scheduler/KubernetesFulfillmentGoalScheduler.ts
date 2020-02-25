@@ -37,7 +37,7 @@ export interface KubernetesFulfillmentOptions {
 export function defaultKubernetesFulfillmentOptions(): KubernetesFulfillmentOptions {
     return {
         registration: "@atomist/k8s-sdm-skill",
-        name: require("../../../goal/container/k8s").K8sContainerFulfillerName,
+        name: require("../container").K8sContainerFulfillerName,
     };
 }
 

@@ -48,24 +48,12 @@ import { GoalScheduler } from "../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../api/registration/ServiceRegistration";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../../typings/types";
-import { loadKubeConfig } from "../../pack/k8s/kubernetes/config";
-import {
-    k8sJobEnv,
-    KubernetesGoalScheduler,
-    readNamespace,
-} from "../../pack/k8s/scheduler/KubernetesGoalScheduler";
-import {
-    K8sServiceRegistrationType,
-    K8sServiceSpec,
-} from "../../pack/k8s/scheduler/service";
-import { k8sErrMsg } from "../../pack/k8s/support/error";
-import { toArray } from "../../util/misc/array";
 import {
     CacheEntry,
     CacheOutputGoalDataKey,
     cachePut,
     cacheRestore,
-} from "../cache/goalCaching";
+} from "../../goal/cache/goalCaching";
 import {
     Container,
     ContainerInput,
@@ -76,13 +64,25 @@ import {
     ContainerScheduler,
     GoalContainer,
     GoalContainerVolume,
-} from "./container";
-import { prepareSecrets } from "./provider";
+} from "../../goal/container/container";
+import { prepareSecrets } from "../../goal/container/provider";
 import {
     containerEnvVars,
     prepareInputAndOutput,
     processResult,
-} from "./util";
+} from "../../goal/container/util";
+import { toArray } from "../../util/misc/array";
+import { loadKubeConfig } from "./kubernetes/config";
+import {
+    k8sJobEnv,
+    KubernetesGoalScheduler,
+    readNamespace,
+} from "./scheduler/KubernetesGoalScheduler";
+import {
+    K8sServiceRegistrationType,
+    K8sServiceSpec,
+} from "./scheduler/service";
+import { k8sErrMsg } from "./support/error";
 
 // tslint:disable:max-file-line-count
 
@@ -143,6 +143,9 @@ export interface K8sContainerRegistration extends ContainerRegistration {
     volumes?: K8sGoalContainerVolume[];
 }
 
+/**
+ * Container scheduler to use when running in Kubernetes.
+ */
 export const k8sContainerScheduler: ContainerScheduler = (goal, registration: K8sContainerRegistration) => {
     goal.addFulfillment({
         goalExecutor: executeK8sJob(),
@@ -155,6 +158,9 @@ export const k8sContainerScheduler: ContainerScheduler = (goal, registration: K8
     });
 };
 
+/**
+ * Container scheduler to use when running in Google Cloud Functions.
+ */
 export const k8sSkillContainerScheduler: ContainerScheduler = (goal, registration: K8sContainerRegistration) => {
     goal.addFulfillment({
         goalExecutor: executeK8sJob(),

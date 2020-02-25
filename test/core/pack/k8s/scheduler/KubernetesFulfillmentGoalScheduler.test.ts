@@ -20,7 +20,7 @@ import { goal } from "../../../../../lib/api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../../../../lib/api/goal/SdmGoalEvent";
 import { SdmGoalFulfillmentMethod } from "../../../../../lib/api/goal/SdmGoalMessage";
 import { container } from "../../../../../lib/core/goal/container/container";
-import { K8sContainerFulfillerName } from "../../../../../lib/core/goal/container/k8s";
+import { K8sContainerFulfillerName } from "../../../../../lib/core/pack/k8s/container";
 import { KubernetesFulfillmentGoalScheduler } from "../../../../../lib/core/pack/k8s/scheduler/KubernetesFulfillmentGoalScheduler";
 import { SdmGoalState } from "../../../../../lib/typings/types";
 
