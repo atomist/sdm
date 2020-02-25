@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Support for configuration in command and event handlers. [#801](https://github.com/atomist/sdm/issues/801)
 -   Push test for skill configuration. [#805](https://github.com/atomist/sdm/issues/805)
 -   Add support for skill output. [#808](https://github.com/atomist/sdm/issues/808)
+-   Move sdm-core into sdm. [#811](https://github.com/atomist/sdm/issues/811)
 
 ### Changed
 
