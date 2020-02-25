@@ -33,6 +33,7 @@ import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import * as os from "os";
+import { goalData } from "../../../../api-helper/goal/sdmGoal";
 import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
@@ -330,11 +331,12 @@ export function createJobSpec(podSpec: k8s.V1Pod, podNs: string, gi: GoalInvocat
     // Add additional specs from registered services to the job spec
     if (_.get(gi.configuration, "sdm.k8s.service.enabled", true)) {
         if (!!goalEvent.data) {
-            let data: any = {};
+            let data: any;
             try {
-                data = JSON.parse(goalEvent.data);
+                data = goalData(goalEvent);
             } catch (e) {
                 logger.warn(`Failed to parse goal data on '${goalEvent.uniqueName}'`);
+                data = {};
             }
             if (!!data[ServiceRegistrationGoalDataKey]) {
                 _.forEach(data[ServiceRegistrationGoalDataKey], (v, k) => {
