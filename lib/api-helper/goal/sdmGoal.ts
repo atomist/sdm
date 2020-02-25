@@ -35,22 +35,35 @@ export function goalKeyString(gk: SdmGoalKey): string {
 }
 
 /**
- * Retrieve the goal data
- * Note: this purposely only works if the data field is stringified JSON.
+ * Read and parse goal event data.  If the goal event has no data,
+ * return an empty object.  Note: this purposely only works if the
+ * data field is stringified JSON.
+ *
  * @param sdmGoal
+ * @return JSON parsed goal event data property
  */
 export function goalData(sdmGoal: SdmGoalEvent): any {
-    try {
-        return JSON.parse(sdmGoal.data || "");
-    } catch (e) {
-        throw new Error("Goal data is not stringified JSON");
+    if (!sdmGoal?.data) {
+        return {};
     }
+    let data: any;
+    try {
+        data = JSON.parse(sdmGoal.data);
+    } catch (e) {
+        e.message = `Failed to parse goal event data for ${sdmGoal.uniqueName} as JSON '${sdmGoal.data}': ${e.message}`;
+        throw e;
+    }
+    return data;
 }
 
 /**
- * Merge the provided data into the goal data
+ * Return a shallow merge the provided `data` and the goal event data
+ * property, parsed as JSON.  Properties in `data` take precedence
+ * over those in the parsed goal event data object.
+ *
  * @param data
  * @param sdmGoal
+ * @return shallow merge of data and SDM goal event data property
  */
 export function mergeGoalData(data: any, sdmGoal: SdmGoalEvent): any {
     return {

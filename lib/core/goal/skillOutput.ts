@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { goalData } from "../../api-helper/goal/sdmGoal";
 import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
 import {
     CustomSkillOutputInput,
@@ -42,7 +43,7 @@ export const SkillOutputGoalExecutionListener: GoalExecutionListener = async gi 
         return;
     }
 
-    const data = JSON.parse(goalEvent.data || "{}");
+    const data = goalData(goalEvent);
     const entries: Array<CacheEntry & { type: string, uri: string }> = data[CacheOutputGoalDataKey] || [];
 
     for (const entry of entries.filter(e => !!e.type && !!e.classifier && !!e.uri)) {

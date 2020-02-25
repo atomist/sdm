@@ -17,6 +17,7 @@
 import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { RetryOptions } from "@atomist/automation-client/lib/util/retry";
 import * as _ from "lodash";
+import { goalData } from "../../api-helper/goal/sdmGoal";
 import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -223,7 +224,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             callback: async (goalEvent, repoContext) => {
                 const service = await registration.service(goalEvent, repoContext);
                 if (!!service) {
-                    const data = JSON.parse(goalEvent.data || "{}");
+                    const data = goalData(goalEvent);
                     const servicesData = {};
                     _.set<any>(servicesData, `${ServiceRegistrationGoalDataKey}.${registration.name}`, service);
                     goalEvent.data = JSON.stringify(_.merge(data, servicesData));

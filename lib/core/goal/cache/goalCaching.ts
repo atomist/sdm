@@ -20,6 +20,7 @@ import { GitProject } from "@atomist/automation-client/lib/project/git/GitProjec
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as _ from "lodash";
+import { goalData } from "../../../api-helper/goal/sdmGoal";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import {
     GoalInvocation,
@@ -147,8 +148,7 @@ export function cachePut(options: GoalCacheOptions,
 
     return {
         name: listenerName,
-        listener: async (p: GitProject,
-                         gi: GoalInvocation): Promise<void | ExecuteGoalResult> => {
+        listener: async (p: GitProject, gi: GoalInvocation): Promise<void | ExecuteGoalResult> => {
             const { goalEvent } = gi;
             if (!!isCacheEnabled(gi) && !process.env.ATOMIST_ISOLATED_GOAL_INIT) {
                 const cloneEntries = _.cloneDeep(entries);
@@ -171,7 +171,7 @@ export function cachePut(options: GoalCacheOptions,
                 }
 
                 // Set outputs on the goal data
-                const data = JSON.parse(goalEvent.data || "{}");
+                const data = goalData(goalEvent);
                 const newData = {
                     [CacheOutputGoalDataKey]: [
                         ...(data[CacheOutputGoalDataKey] || []),
@@ -179,7 +179,7 @@ export function cachePut(options: GoalCacheOptions,
                     ],
                 };
                 goalEvent.data = JSON.stringify({
-                    ...(JSON.parse(goalEvent.data || "{}")),
+                    ...(goalData(goalEvent)),
                     ...newData,
                 });
             }
@@ -281,7 +281,7 @@ export function cacheRestore(options: GoalCacheRestoreOptions,
 
             // Set inputs on the goal data
             const { goalEvent } = gi;
-            const data = JSON.parse(goalEvent.data || "{}");
+            const data = goalData(goalEvent);
             const newData = {
                 [CacheInputGoalDataKey]: [
                     ...(data[CacheInputGoalDataKey] || []),
@@ -291,7 +291,7 @@ export function cacheRestore(options: GoalCacheRestoreOptions,
                 ],
             };
             goalEvent.data = JSON.stringify({
-                ...(JSON.parse(goalEvent.data || "{}")),
+                ...(goalData(goalEvent)),
                 ...newData,
             });
         },

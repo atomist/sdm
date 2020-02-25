@@ -17,6 +17,7 @@
 import { AutomationContextAware } from "@atomist/automation-client/lib/HandlerContext";
 import { isEventIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import * as _ from "lodash";
+import { goalData } from "../../api-helper/goal/sdmGoal";
 import { SdmGoalState } from "../../typings/types";
 import { StatefulPushListenerInvocation } from "../dsl/goalContribution";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
@@ -51,7 +52,7 @@ export function isGoal(options: {
                 return false;
             }
             if (!!options.output) {
-                const data = JSON.parse(g.data || "{}");
+                const data = goalData(g);
                 const outputs: Array<{ classifier: string }> = data["@atomist/sdm/output"];
                 if (!outputs) {
                     return false;

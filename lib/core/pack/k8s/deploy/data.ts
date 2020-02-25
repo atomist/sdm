@@ -22,6 +22,7 @@ import * as dockerfileParser from "docker-file-parser";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { DeepPartial } from "ts-essentials";
+import { goalData } from "../../../../api-helper/goal/sdmGoal";
 import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
 import { readSdmVersion } from "../../../internal/delivery/build/local/projectVersioner";
@@ -93,7 +94,7 @@ export function generateKubernetesGoalEventData(
             const slug = goalEventSlug(goalEvent);
             let eventData: any;
             try {
-                eventData = JSON.parse(goalEvent.data || "{}");
+                eventData = goalData(goalEvent);
             } catch (e) {
                 logger.warn(`Failed to parse goal event data for ${slug} as JSON: ${e.message}`);
                 logger.warn(`Ignoring current value of goal event data: ${goalEvent.data}`);
@@ -127,14 +128,10 @@ export function generateKubernetesGoalEventData(
  * @return Parsed [[KubernetesApplication]] object
  */
 export function getKubernetesGoalEventData(goalEvent: SdmGoalEvent): KubernetesApplication | undefined {
-    if (!goalEvent || !goalEvent.data) {
-        return undefined;
-    }
     let data: any;
     try {
-        data = JSON.parse(goalEvent.data);
+        data = goalData(goalEvent);
     } catch (e) {
-        e.message = `Failed to parse goal event data (${goalEvent.data}): ${e.message}`;
         logger.error(e.message);
         throw e;
     }
