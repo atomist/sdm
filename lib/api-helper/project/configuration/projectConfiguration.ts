@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import yaml = require("js-yaml");
+import * as yaml from "js-yaml";
 import * as _ from "lodash";
 
 /**

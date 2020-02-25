@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import assert = require("power-assert");
+import * as assert from "power-assert";
 import {
     createJob,
     JobTaskType,
@@ -220,7 +220,7 @@ describe("createJob", () => {
     });
 
     it("should allow split parameter into multiple addJobTask calls", async () => {
-        const parameters = Array.from({length: 500}, (v, k) => ({ counter: k }));
+        const parameters = Array.from({ length: 500 }, (v, k) => ({ counter: k }));
         const result = await createJob({
             command: "TestCommand",
             registration: "@atomist/sdm-test",
