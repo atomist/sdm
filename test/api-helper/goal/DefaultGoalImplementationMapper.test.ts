@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
-import assert = require("power-assert");
+import * as assert from "power-assert";
 import { DefaultGoalImplementationMapper } from "../../../lib/api-helper/goal/DefaultGoalImplementationMapper";
 import { fakePush } from "../../../lib/api-helper/testsupport/fakePush";
 import { Goal } from "../../../lib/api/goal/Goal";

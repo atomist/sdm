@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import assert = require("power-assert");
+import * as assert from "power-assert";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
 
 describe("GoalNameGenerator", () => {

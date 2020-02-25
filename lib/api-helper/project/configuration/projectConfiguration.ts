@@ -17,7 +17,7 @@
 import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import yaml = require("js-yaml");
+import * as yaml from "js-yaml";
 import * as _ from "lodash";
 
 /**

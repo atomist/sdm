@@ -23,7 +23,7 @@ import {
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { redact } from "@atomist/automation-client/lib/util/redact";
 import * as _ from "lodash";
-import os = require("os");
+import * as os from "os";
 import { format } from "../../api-helper/log/format";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
