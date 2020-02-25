@@ -117,9 +117,8 @@ describe("support/cache", () => {
 
     describe("GoogleCloudStorageGoalCacheArchiveStore", () => {
 
-        before(function(): void {
+        before(function(this: Mocha.Context): void {
             if (!process.env.GOOGLE_APPLICATION_CREDENTIALS || !process.env.GCS_TEST_BUCKET) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
         });

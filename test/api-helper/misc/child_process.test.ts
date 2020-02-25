@@ -149,7 +149,7 @@ describe("child_process", () => {
             let closed = false;
             let exited = false;
             const cp = spawn("node", ["-e", script]);
-            cp.on("exit", (code, signal) => {
+            cp.on("exit", () => {
                 exited = true;
             });
             cp.on("close", (code, signal) => {
@@ -165,9 +165,8 @@ describe("child_process", () => {
             assert(closed, `child process ${cp.pid} should have closed`);
         });
 
-        it("should fall through to SIGKILL", async function(): Promise<void> {
+        it("should fall through to SIGKILL", async function(this: Mocha.Context): Promise<void> {
             if (os.platform() === "win32") {
-                /* tslint:disable-next-line:no-invalid-this */
                 this.skip();
             }
             // delay to allow the spawned node process to start and set up signal handler
@@ -179,7 +178,7 @@ describe("child_process", () => {
             let closed = false;
             let exited = false;
             const cp = spawn("node", ["-e", script]);
-            cp.on("exit", (code, signal) => {
+            cp.on("exit", () => {
                 exited = true;
             });
             cp.on("close", (code, signal) => {

@@ -22,11 +22,10 @@ import { ToPublicRepo } from "../../../../lib/core/mapping/pushtest/toPublicRepo
 describe("pushToPublicRepo", () => {
 
     let credentials: any;
-    before(function(): void {
+    before(function(this: Mocha.Context): void {
         if (process.env.GITHUB_TOKEN) {
             credentials = { token: process.env.GITHUB_TOKEN };
         } else {
-            // tslint:disable-next-line:no-invalid-this
             this.skip();
         }
     });

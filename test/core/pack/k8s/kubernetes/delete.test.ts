@@ -37,14 +37,12 @@ import {
     rng,
 } from "../k8s";
 
-describe("pack/k8s/kubernetes/delete", function(): void {
+describe("pack/k8s/kubernetes/delete", function(this: Mocha.Suite): void {
 
-    // tslint:disable-next-line:no-invalid-this
     this.timeout(5000);
 
-    before(async function(): Promise<void> {
+    before(async function(this: Mocha.Context): Promise<void> {
         if (!await k8sAvailable()) {
-            // tslint:disable-next-line:no-invalid-this
             this.skip();
         }
         beforeRetry();
@@ -56,12 +54,11 @@ describe("pack/k8s/kubernetes/delete", function(): void {
     describe("deleteAppResources", () => {
 
         let clients: KubernetesClients;
-        before(function(): void {
+        before(function(this: Mocha.Context): void {
             let config: k8s.KubeConfig;
             try {
                 config = loadKubeConfig();
             } catch (e) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
             clients = makeApiClients(config);

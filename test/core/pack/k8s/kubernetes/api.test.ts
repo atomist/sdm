@@ -75,14 +75,12 @@ describe("pack/k8s/kubernetes/api", () => {
 
     });
 
-    describe("integration", function(): void {
+    describe("integration", function(this: Mocha.Suite): void {
 
-        // tslint:disable-next-line:no-invalid-this
         this.timeout(5000);
 
-        before(async function(): Promise<void> {
+        before(async function(this: Mocha.Context): Promise<void> {
             if (!await k8sAvailable()) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
             beforeRetry();
@@ -94,12 +92,11 @@ describe("pack/k8s/kubernetes/api", () => {
         describe("K8sObjectApi.specUriPath", () => {
 
             let client: K8sObjectApi;
-            before(function(): void {
+            before(function(this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
                 } catch (e) {
-                    // tslint:disable-next-line:no-invalid-this
                     this.skip();
                 }
             });
@@ -331,12 +328,11 @@ describe("pack/k8s/kubernetes/api", () => {
         describe("baseRequestOptions", () => {
 
             let client: K8sObjectApi;
-            before(function(): void {
+            before(function(this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
                 } catch (e) {
-                    // tslint:disable-next-line:no-invalid-this
                     this.skip();
                 }
             });

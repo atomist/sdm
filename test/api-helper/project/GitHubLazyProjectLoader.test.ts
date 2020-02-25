@@ -33,9 +33,8 @@ const credentials = {
 
 describe("GitHubLazyProjectLoader", () => {
 
-    before(function(): void {
+    before(function(this: Mocha.Context): void {
         if (!process.env.GITHUB_TOKEN) {
-            // tslint:disable-next-line:no-invalid-this
             this.skip();
         }
     });

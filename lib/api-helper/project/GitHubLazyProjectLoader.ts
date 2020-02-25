@@ -79,9 +79,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     private projectPromise: QueryablePromise<GitProject>;
 
-    constructor(id: RemoteRepoRef,
-                private readonly delegate: ProjectLoader,
-                private readonly params: ProjectLoadingParameters) {
+    constructor(id: RemoteRepoRef, private readonly delegate: ProjectLoader, private readonly params: ProjectLoadingParameters) {
         super(id);
     }
 
@@ -198,8 +196,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const resultStream = new stream.Transform({ objectMode: true });
-        resultStream._transform = function(chunk: any, encoding: string, done: stream.TransformCallback): void {
-            // tslint:disable-next-line:no-invalid-this
+        resultStream._transform = function(this: stream.Transform, chunk: any, encoding: string, done: stream.TransformCallback): void {
             this.push(chunk);
             done();
         };
@@ -227,9 +224,7 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public createAndSetRemote(gid: RemoteRepoRef,
-                              description: string,
-                              visibility: "private" | "public"): Promise<this> {
+    public createAndSetRemote(gid: RemoteRepoRef, description: string, visibility: "private" | "public"): Promise<this> {
         this.materializeIfNecessary("createAndSetRemote");
         return this.projectPromise.then(mp => mp.createAndSetRemote(gid, description, visibility)) as any;
     }

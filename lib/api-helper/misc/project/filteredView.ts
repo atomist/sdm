@@ -31,8 +31,7 @@ import * as stream from "stream";
  * @param filter function to filter file paths. Return true to eliminate a file
  * @return {Promise<LocalProject>}
  */
-export function filteredView<P extends Project = Project>(p: Project,
-                                                          filter: (path: string) => boolean): P {
+export function filteredView<P extends Project = Project>(p: Project, filter: (path: string) => boolean): P {
     // Use an ES6 proxy to bring back memories of Spring AOP
     const handler = {
         get: (target, prop) => {
@@ -45,10 +44,9 @@ export function filteredView<P extends Project = Project>(p: Project,
                 return origMethod;
             }
             const decoratedMethod = decorator[prop];
-            return function(...args: any[]): any {
+            return function(this: any, ...args: any[]): any {
                 return !!decoratedMethod ?
                     decoratedMethod.apply(decorator, args) :
-                    // tslint:disable-next-line:no-invalid-this
                     origMethod.apply(this, args);
             };
         },
@@ -62,8 +60,7 @@ export function filteredView<P extends Project = Project>(p: Project,
  */
 class FilteredProject implements Partial<Project> {
 
-    constructor(private readonly project: Project,
-                private readonly  filter: (path: string) => boolean) {
+    constructor(private readonly project: Project, private readonly filter: (path: string) => boolean) {
     }
 
     public getFile(path: string): Promise<File | undefined> {
@@ -92,7 +89,7 @@ class FilteredProject implements Partial<Project> {
      */
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const filter = this.filter;
-        const onlyIncludedFilters = new stream.Transform({objectMode: true});
+        const onlyIncludedFilters = new stream.Transform({ objectMode: true });
         onlyIncludedFilters._transform = function(f: any, encoding: string, done: stream.TransformCallback): void {
             if (filter(f.path)) {
                 this.push(f);
