@@ -1,0 +1,15 @@
+subscription OnSpecificCanceledSdmGoal(
+  $goalSetId: String!
+  $uniqueName: String!
+) {
+  SdmGoal(
+    goalSetId: [$goalSetId]
+    uniqueName: [$uniqueName]
+    state: [canceled]
+  ) {
+    id
+    uniqueName
+    name
+    state
+  }
+}

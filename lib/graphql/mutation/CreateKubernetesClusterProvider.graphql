@@ -1,0 +1,5 @@
+mutation CreateKubernetesClusterProvider($name: String!, $url: String) {
+  createKubernetesClusterProvider(name: $name, url: $url) {
+    id
+  }
+}

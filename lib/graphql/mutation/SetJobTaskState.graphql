@@ -1,0 +1,5 @@
+mutation SetJobTaskState($id: ID!, $state: AtmJobTaskStateInput!) {
+  setAtmJobTaskState(id: $id, jobTaskState: $state) {
+    id
+  }
+}

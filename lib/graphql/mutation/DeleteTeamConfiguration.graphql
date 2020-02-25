@@ -1,0 +1,6 @@
+mutation DeleteTeamConfiguration($namespace: String!, $name: String!) {
+  deleteTeamConfiguration(namespace: $namespace, name: $name) {
+    name
+    namespace
+  }
+}

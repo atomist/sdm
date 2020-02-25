@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import {
     InProcessSdmGoalSets,
     OnAnySdmGoalSet,
+    SdmGoalFields,
     SdmGoalsByGoalSetIdAndUniqueName,
     SdmGoalState,
-    SdmGoalWithPushFields,
 } from "../../../typings/types";
 import { SoftwareDeliveryMachine } from "../../machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../machine/SoftwareDeliveryMachineOptions";
@@ -91,6 +91,7 @@ export class Queue extends FulfillableGoal {
                     name: "InProcessSdmGoalSets",
                     variables: {
                         fetch: optsToUse.fetch + optsToUse.concurrent,
+                        offset: 0,
                         registration: [configuration.name],
                     },
                     options: QueryNoCacheOptions,
@@ -153,6 +154,7 @@ export function handleSdmGoalSetEvent(options: QueueOptions,
             name: "InProcessSdmGoalSets",
             variables: {
                 fetch: optsToUse.fetch + optsToUse.concurrent,
+                offset: 0,
                 registration: [configuration.name],
             },
             options: QueryNoCacheOptions,
@@ -169,7 +171,7 @@ export function handleSdmGoalSetEvent(options: QueueOptions,
 
 async function loadQueueGoals(goalsSets: SdmGoalSet[],
                               definition: GoalDefinition,
-                              ctx: HandlerContext): Promise<SdmGoalWithPushFields.Fragment[]> {
+                              ctx: HandlerContext): Promise<SdmGoalFields.Fragment[]> {
     return (await ctx.graphClient.query<SdmGoalsByGoalSetIdAndUniqueName.Query, SdmGoalsByGoalSetIdAndUniqueName.Variables>({
         name: "SdmGoalsByGoalSetIdAndUniqueName",
         variables: {
@@ -177,7 +179,7 @@ async function loadQueueGoals(goalsSets: SdmGoalSet[],
             uniqueName: [definition.uniqueName],
         },
         options: QueryNoCacheOptions,
-    })).SdmGoal as SdmGoalWithPushFields.Fragment[] || [];
+    })).SdmGoal as SdmGoalFields.Fragment[] || [];
 }
 
 async function startGoals(goalSets: InProcessSdmGoalSets.Query,

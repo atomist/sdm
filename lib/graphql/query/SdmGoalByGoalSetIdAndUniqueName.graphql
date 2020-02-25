@@ -3,7 +3,7 @@ query SdmGoalsByGoalSetIdAndUniqueName(
   $uniqueName: [String]
 ) {
   SdmGoal(goalSetId: $goalSetId, uniqueName: $uniqueName) {
-    ...SdmGoalWithPushFields
+    ...SdmGoalFields
     ...SdmGoalRepo
   }
 }

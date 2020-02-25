@@ -1,0 +1,23 @@
+query LastEndpoint(
+  $name: String!
+  $owner: String!
+  $branch: String!
+  $statusContext: String!
+) {
+  Repo(owner: $owner, name: $name) {
+    branches(name: $branch) {
+      commit @required {
+        sha
+        statuses(context: $statusContext) {
+          context
+          description
+          state
+          targetUrl
+        }
+        pushes(first: 1, orderBy: [timestamp_desc]) {
+          id
+        }
+      }
+    }
+  }
+}

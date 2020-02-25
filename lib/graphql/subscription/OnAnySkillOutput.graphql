@@ -1,7 +1,6 @@
 subscription OnAnySkillOutput {
   SkillOutput {
     classifier
-    content
     skill {
       name
       version

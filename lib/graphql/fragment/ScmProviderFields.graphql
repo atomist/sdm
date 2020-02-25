@@ -1,0 +1,9 @@
+fragment ScmProviderFields on SCMProvider {
+  apiUrl
+  credential {
+    secret
+  }
+  providerId
+  providerType
+  url
+}

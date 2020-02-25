@@ -1,0 +1,7 @@
+query SdmPreferenceByKey($key: [String!]) {
+  SdmPreference(key: $key) {
+    key
+    value
+    ttl
+  }
+}

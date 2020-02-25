@@ -1,0 +1,17 @@
+query RepoScmProvider($repo: String!, $owner: String!) {
+  Repo(name: $repo, owner: $owner) {
+    branches {
+      name
+    }
+    defaultBranch
+    name
+    org {
+      owner
+      ownerType
+      scmProvider {
+        ...ScmProviderFields
+      }
+    }
+    owner
+  }
+}

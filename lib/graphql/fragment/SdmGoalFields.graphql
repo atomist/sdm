@@ -73,6 +73,9 @@ fragment SdmGoalFields on SdmGoal {
   }
   parameters
   data
+  push {
+    ...PushFields
+  }
   version
   signature
 }
