@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
@@ -52,7 +52,7 @@ export async function upsertIngress(req: KubernetesResourceRequest): Promise<k8s
     try {
         await req.clients.ext.readNamespacedIngress(spec.metadata.name, spec.metadata.namespace);
     } catch (e) {
-        logger.debug(`Failed to read ingress ${slug}, creating: ${errMsg(e)}`);
+        logger.debug(`Failed to read ingress ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating ingress ${slug} using '${logObject(spec)}'`);
         await logRetry(() => req.clients.ext.createNamespacedIngress(spec.metadata.namespace, spec), `create ingress ${slug}`);
         return spec;

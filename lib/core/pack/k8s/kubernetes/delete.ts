@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import {
     K8sDeleteResponse,
@@ -46,13 +46,13 @@ export async function deleteSpec(spec: k8s.KubernetesObject): Promise<K8sDeleteR
         const kc = loadKubeConfig();
         client = kc.makeApiClient(K8sObjectApi);
     } catch (e) {
-        e.message = `Failed to create Kubernetes client: ${errMsg(e)}`;
+        e.message = `Failed to create Kubernetes client: ${k8sErrMsg(e)}`;
         throw e;
     }
     try {
         await client.read(spec);
     } catch (e) {
-        logger.debug(`Kubernetes resource ${slug} does not exist: ${errMsg(e)}`);
+        logger.debug(`Kubernetes resource ${slug} does not exist: ${k8sErrMsg(e)}`);
         return undefined;
     }
     logger.info(`Deleting resource ${slug} using '${logObject(spec)}'`);
@@ -171,7 +171,7 @@ export async function deleteAppResources(arg: DeleteAppResourcesArg): Promise<k8
             continu = listResp.body.metadata._continue;
         } while (!!continu);
     } catch (e) {
-        e.message = `Failed to list ${arg.kind} for ${slug}: ${errMsg(e)}`;
+        e.message = `Failed to list ${arg.kind} for ${slug}: ${k8sErrMsg(e)}`;
         throw e;
     }
     const deleted: k8s.KubernetesObject[] = [];
@@ -190,7 +190,7 @@ export async function deleteAppResources(arg: DeleteAppResourcesArg): Promise<k8
             }
             deleted.push(resource);
         } catch (e) {
-            e.message = `Failed to delete ${resourceSlug} for ${slug}: ${errMsg(e)}`;
+            e.message = `Failed to delete ${resourceSlug} for ${slug}: ${k8sErrMsg(e)}`;
             errs.push(e);
         }
     }
