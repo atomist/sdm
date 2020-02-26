@@ -18,7 +18,7 @@ import {
     doWithRetry,
     RetryOptions,
 } from "@atomist/automation-client/lib/util/retry";
-import { errMsg } from "./error";
+import { k8sErrMsg } from "./error";
 
 /**
  * Extract Kubernetes errors for doWithRetry.
@@ -30,7 +30,7 @@ export async function logRetry<T>(f: () => Promise<T>, desc: string, options?: R
             r = await f();
         } catch (e) {
             if (!(e instanceof Error)) {
-                const err = new Error(errMsg(e));
+                const err = new Error(k8sErrMsg(e));
                 Object.keys(e).forEach(k => (err as any)[k] = e[k]);
                 throw err;
             }

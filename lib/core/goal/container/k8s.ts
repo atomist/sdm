@@ -58,6 +58,7 @@ import {
     K8sServiceRegistrationType,
     K8sServiceSpec,
 } from "../../pack/k8s/scheduler/service";
+import { k8sErrMsg } from "../../pack/k8s/support/error";
 import { toArray } from "../../util/misc/array";
 import {
     CacheEntry,
@@ -769,22 +770,5 @@ function containerCleanup(c: ContainerDetritus): void {
     }
     if (c.watcher?.abort) {
         c.watcher.abort();
-    }
-}
-
-/** Try to find a Kubernetes API error message. */
-export function k8sErrMsg(e: any): string {
-    if (e.message && typeof e.message === "string") {
-        return e.message;
-    } else if (e.body && typeof e.body === "string") {
-        return e.body;
-    } else if (e.body?.message && typeof e.body.message === "string") {
-        return e.body.message;
-    } else if (e.response?.body && typeof e.response.body === "string") {
-        return e.response.body;
-    } else if (e.response?.body?.message && typeof e.response.body.message === "string") {
-        return e.response.body.message;
-    } else {
-        return "Kubernetes API request error";
     }
 }

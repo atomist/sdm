@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import {
     applicationLabels,
@@ -51,7 +51,7 @@ export async function upsertService(req: KubernetesResourceRequest): Promise<k8s
     try {
         await req.clients.core.readNamespacedService(spec.metadata.name, spec.metadata.namespace);
     } catch (e) {
-        logger.debug(`Failed to read service ${slug}, creating: ${errMsg(e)}`);
+        logger.debug(`Failed to read service ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating service ${slug} using '${logObject(spec)}'`);
         await logRetry(() => req.clients.core.createNamespacedService(spec.metadata.namespace, spec), `create service ${slug}`);
         return spec;

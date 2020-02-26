@@ -31,7 +31,7 @@ import {
     parseKubernetesSpecs,
     specSlug,
 } from "../kubernetes/spec";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { cleanName } from "../support/name";
 import { defaultCloneOptions } from "./clone";
 import { k8sSpecGlob } from "./diff";
@@ -140,13 +140,13 @@ function syncApply(opts: KubernetesSyncOptions): (p: GitProject) => Promise<void
                         await applySpec(spec);
                     } catch (e) {
                         const slug = specSlug(spec);
-                        e.message = `Failed to apply spec '${slug}' from '${specFile.path}': ${errMsg(e)}`;
+                        e.message = `Failed to apply spec '${slug}' from '${specFile.path}': ${k8sErrMsg(e)}`;
                         logger.error(e.message);
                         errors.push(e);
                     }
                 }
             } catch (e) {
-                e.message = `Failed to apply '${specFile.path}': ${errMsg(e)}`;
+                e.message = `Failed to apply '${specFile.path}': ${k8sErrMsg(e)}`;
                 logger.error(e.message);
                 errors.push(e);
             }

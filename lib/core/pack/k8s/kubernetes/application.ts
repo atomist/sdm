@@ -15,7 +15,7 @@
  */
 
 import * as k8s from "@kubernetes/client-node";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import {
     KubernetesClients,
     makeApiClients,
@@ -73,7 +73,7 @@ export async function upsertApplication(app: KubernetesApplication, sdmFulfiller
         k8sResources.push(await upsertIngress(req));
         return k8sResources.filter(r => !!r);
     } catch (e) {
-        e.message = `Failed to upsert '${reqString(req)}': ${errMsg(e)}`;
+        e.message = `Failed to upsert '${reqString(req)}': ${k8sErrMsg(e)}`;
         throw e;
     }
 }
@@ -170,7 +170,7 @@ export async function deleteApplication(del: KubernetesDelete): Promise<k8s.Kube
             const x = await deleteAppResources({ ...rd, req });
             deleted.push(...x);
         } catch (e) {
-            e.message = `Failed to delete ${rd.kind} for ${slug}: ${errMsg(e)}`;
+            e.message = `Failed to delete ${rd.kind} for ${slug}: ${k8sErrMsg(e)}`;
             errs.push(e);
         }
     }
