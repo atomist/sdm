@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import {
     K8sObjectApi,
@@ -43,13 +43,13 @@ export async function applySpec(spec: k8s.KubernetesObject): Promise<K8sObjectRe
         const kc = loadKubeConfig();
         client = kc.makeApiClient(K8sObjectApi);
     } catch (e) {
-        e.message = `Failed to create Kubernetes client: ${errMsg(e)}`;
+        e.message = `Failed to create Kubernetes client: ${k8sErrMsg(e)}`;
         throw e;
     }
     try {
         await client.read(spec);
     } catch (e) {
-        logger.debug(`Failed to read resource ${slug}: ${errMsg(e)}`);
+        logger.debug(`Failed to read resource ${slug}: ${k8sErrMsg(e)}`);
         logger.info(`Creating resource ${slug} using '${logObject(spec)}'`);
         return logRetry(() => client.create(spec), `create resource ${slug}`);
     }

@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
@@ -42,7 +42,7 @@ export async function upsertServiceAccount(req: KubernetesResourceRequest): Prom
     try {
         await req.clients.core.readNamespacedServiceAccount(spec.metadata.name, spec.metadata.namespace);
     } catch (e) {
-        logger.debug(`Failed to read service account ${slug}, creating: ${errMsg(e)}`);
+        logger.debug(`Failed to read service account ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating service account ${slug} using '${logObject(spec)}'`);
         await logRetry(() => req.clients.core.createNamespacedServiceAccount(spec.metadata.namespace, spec),
             `create service account ${slug}`);

@@ -39,12 +39,12 @@ import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
 import { GoalScheduler } from "../../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../../api/registration/ServiceRegistration";
-import { k8sErrMsg } from "../../../goal/container/k8s";
 import { toArray } from "../../../util/misc/array";
 import {
     loadKubeClusterConfig,
     loadKubeConfig,
 } from "../kubernetes/config";
+import { k8sErrMsg } from "../support/error";
 import { K8sNamespaceFile } from "../support/namespace";
 import {
     K8sServiceRegistrationType,
