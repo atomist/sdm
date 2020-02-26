@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
@@ -41,7 +41,7 @@ export async function upsertNamespace(req: KubernetesResourceRequest): Promise<k
         await req.clients.core.readNamespace(spec.metadata.name);
         logger.debug(`Namespace ${slug} exists`);
     } catch (e) {
-        logger.debug(`Failed to get namespace ${slug}, creating: ${errMsg(e)}`);
+        logger.debug(`Failed to get namespace ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating namespace ${slug} using '${logObject(spec)}'`);
         await logRetry(() => req.clients.core.createNamespace(spec), `create namespace ${slug}`);
         return spec;
@@ -51,7 +51,7 @@ export async function upsertNamespace(req: KubernetesResourceRequest): Promise<k
         await logRetry(() => req.clients.core.patchNamespace(spec.metadata.name, spec,
             undefined, undefined, undefined, undefined, patchHeaders()), `patch namespace ${slug}`);
     } catch (e) {
-        logger.warn(`Failed to patch existing namespace ${slug}, ignoring: ${errMsg(e)}`);
+        logger.warn(`Failed to patch existing namespace ${slug}, ignoring: ${k8sErrMsg(e)}`);
     }
     return spec;
 }

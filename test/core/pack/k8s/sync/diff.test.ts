@@ -77,16 +77,14 @@ describe("pack/k8s/sync/diff", () => {
 
     });
 
-    describe("diffPush", function(): void {
+    describe("diffPush", function(this: Mocha.Suite): void {
 
-        // tslint:disable-next-line:no-invalid-this
         this.timeout(10000);
 
-        before(async function(): Promise<void> {
+        before(async function(this: Mocha.Context): Promise<void> {
             try {
                 await execPromise("git", ["fetch", "origin", "test-branch-do-not-delete"]);
             } catch (e) {
-                // tslint:disable-next-line:no-invalid-this
                 this.skip();
             }
         });

@@ -37,7 +37,7 @@ import {
     KubernetesSyncOptions,
     SyncRepoRef,
 } from "../config";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { changeResource } from "./change";
 import { diffPush } from "./diff";
 import { isRemoteRepo } from "./repo";
@@ -124,7 +124,7 @@ export const K8sSync: ExecuteGoal = async gi => {
             try {
                 await changeResource(p, change);
             } catch (e) {
-                e.message = `Failed to ${change.change} '${change.path}' resource for commit ${change.sha}: ${errMsg(e)}`;
+                e.message = `Failed to ${change.change} '${change.path}' resource for commit ${change.sha}: ${k8sErrMsg(e)}`;
                 log.write(e.message);
                 errs.push(e);
             }

@@ -21,6 +21,7 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { MutationNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
 import * as _ from "lodash";
+import * as omitEmpty from "omit-empty";
 import { sprintf } from "sprintf-js";
 import {
     Goal,
@@ -47,9 +48,6 @@ import {
     UpdateSdmGoalSetMutation,
     UpdateSdmGoalSetMutationVariables,
 } from "../../typings/types";
-
-// tslint:disable-next-line:no-var-requires
-const omitEmpty = require("omit-empty");
 
 export function environmentFromGoal(goal: Goal): string {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least

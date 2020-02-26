@@ -43,11 +43,11 @@ import {
     executeK8sJob,
     K8sContainerRegistration,
     k8sFulfillmentCallback,
-} from "../../../../lib/core/goal/container/k8s";
+} from "../../../../lib/core/pack/k8s/container";
 import { loadKubeConfig } from "../../../../lib/core/pack/k8s/kubernetes/config";
 import { KubernetesGoalScheduler } from "../../../../lib/core/pack/k8s/scheduler/KubernetesGoalScheduler";
 import { SdmGoalState } from "../../../../lib/typings/types";
-import { containerTestImage } from "./util";
+import { containerTestImage } from "../../goal/container/util";
 
 /* tslint:disable:max-file-line-count */
 
@@ -1782,8 +1782,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
 
             let originalOsHostname: any;
             let k8sCore: k8s.CoreV1Api;
-            before(async function minikubeCheckProjectSetup(): Promise<void> {
-                // tslint:disable-next-line:no-invalid-this
+            before(async function minikubeCheckProjectSetup(this: Mocha.Context): Promise<void> {
                 this.timeout(20000);
                 try {
                     // see if minikube is available and responding
@@ -1792,7 +1791,6 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     const kc = loadKubeConfig();
                     k8sCore = kc.makeApiClient(k8s.CoreV1Api);
                 } catch (e) {
-                    // tslint:disable-next-line:no-invalid-this
                     this.skip();
                 }
                 originalOsHostname = Object.getOwnPropertyDescriptor(os, "hostname");

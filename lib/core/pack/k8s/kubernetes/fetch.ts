@@ -16,7 +16,7 @@
 
 import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { K8sObjectApi } from "./api";
 import {
     KubernetesClients,
@@ -172,7 +172,7 @@ export async function kubernetesFetch(options: KubernetesFetchOptions = defaultK
         client = kc.makeApiClient(K8sObjectApi);
         clients = makeApiClients(kc);
     } catch (e) {
-        e.message = `Failed to create Kubernetes client: ${errMsg(e)}`;
+        e.message = `Failed to create Kubernetes client: ${k8sErrMsg(e)}`;
         throw e;
     }
 

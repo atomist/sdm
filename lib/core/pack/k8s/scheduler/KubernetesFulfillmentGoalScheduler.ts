@@ -16,6 +16,7 @@
 
 import * as _ from "lodash";
 import { minimalClone } from "../../../../api-helper/goal/minimalClone";
+import { goalData } from "../../../../api-helper/goal/sdmGoal";
 import { descriptionFromState } from "../../../../api-helper/goal/storeGoals";
 import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
@@ -36,7 +37,7 @@ export interface KubernetesFulfillmentOptions {
 export function defaultKubernetesFulfillmentOptions(): KubernetesFulfillmentOptions {
     return {
         registration: "@atomist/k8s-sdm-skill",
-        name: require("../../../goal/container/k8s").K8sContainerFulfillerName,
+        name: require("../container").K8sContainerFulfillerName,
     };
 }
 
@@ -82,7 +83,7 @@ export class KubernetesFulfillmentGoalScheduler implements GoalScheduler {
             });
         }
 
-        const data: any = JSON.parse(goalEvent.data || "{}");
+        const data: any = goalData(goalEvent);
         const newData: any = {};
         delete registration.callback;
         _.set<any>(newData, ContainerRegistrationGoalDataKey, registration);

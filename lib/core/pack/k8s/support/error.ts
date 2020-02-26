@@ -24,7 +24,7 @@ import * as request from "request";
  * @param e Some sort of Error or similar
  * @return Error message
  */
-export function errMsg(e: any): string {
+export function k8sErrMsg(e: any): string {
     if (!e) {
         return stringify(e);
     } else if (typeof e === "string") {
@@ -36,7 +36,7 @@ export function errMsg(e: any): string {
     } else if (requestErrMsg(e)) {
         return requestErrMsg(e);
     } else {
-        return stringify(e, keyFilter);
+        return `Kubernetes API request error: ${stringify(e, keyFilter)}`;
     }
 }
 
