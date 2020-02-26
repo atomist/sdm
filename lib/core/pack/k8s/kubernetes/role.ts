@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
@@ -43,7 +43,7 @@ export async function upsertRole(req: KubernetesResourceRequest): Promise<k8s.V1
         try {
             await req.clients.rbac.readClusterRole(spec.metadata.name);
         } catch (e) {
-            logger.debug(`Failed to read cluster role ${slug}, creating: ${errMsg(e)}`);
+            logger.debug(`Failed to read cluster role ${slug}, creating: ${k8sErrMsg(e)}`);
             logger.info(`Creating cluster role ${slug} using '${logObject(spec)}'`);
             await logRetry(() => req.clients.rbac.createClusterRole(spec), `create cluster role ${slug}`);
             return spec;
@@ -57,7 +57,7 @@ export async function upsertRole(req: KubernetesResourceRequest): Promise<k8s.V1
         try {
             await req.clients.rbac.readNamespacedRole(spec.metadata.name, spec.metadata.namespace);
         } catch (e) {
-            logger.debug(`Failed to read role ${slug}, creating: ${errMsg(e)}`);
+            logger.debug(`Failed to read role ${slug}, creating: ${k8sErrMsg(e)}`);
             logger.info(`Creating role ${slug} using '${logObject(spec)}'`);
             await logRetry(() => req.clients.rbac.createNamespacedRole(spec.metadata.namespace, spec), `create role ${slug}`);
             return spec;

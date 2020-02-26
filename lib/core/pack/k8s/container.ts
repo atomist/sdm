@@ -31,6 +31,7 @@ import {
     Merge,
 } from "ts-essentials";
 import { minimalClone } from "../../../api-helper/goal/minimalClone";
+import { goalData } from "../../../api-helper/goal/sdmGoal";
 import { RepoContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import {
@@ -81,6 +82,7 @@ import {
     KubernetesGoalScheduler,
     readNamespace,
 } from "./scheduler/KubernetesGoalScheduler";
+import { k8sErrMsg } from "./support/error";
 
 // tslint:disable:max-file-line-count
 
@@ -189,7 +191,7 @@ export function k8sFulfillmentCallback(
         }
 
         // Preserve the container registration in the goal data before it gets munged with internals
-        let data = parseGoalEventData(goalEvent);
+        let data = goalData(goalEvent);
         let newData: any = {};
         delete spec.callback;
         _.set<any>(newData, ContainerRegistrationGoalDataKey, spec);
@@ -338,7 +340,7 @@ export function k8sFulfillmentCallback(
         };
 
         // Store k8s service registration in goal data
-        data = JSON.parse(goalEvent.data || "{}");
+        data = goalData(goalEvent);
         newData = {};
         _.set<any>(newData, `${ServiceRegistrationGoalDataKey}.${registration.name}`, serviceSpec);
         goalEvent.data = JSON.stringify(_.merge(data, newData));
@@ -355,7 +357,7 @@ export function k8sFulfillmentCallback(
 export const scheduleK8sJob: ExecuteGoal = async gi => {
     const { goalEvent } = gi;
     const { uniqueName } = goalEvent;
-    const data = parseGoalEventData(goalEvent);
+    const data = goalData(goalEvent);
     const containerReg: K8sContainerRegistration = data["@atomist/sdm/container"];
     if (!containerReg) {
         throw new Error(`Goal ${uniqueName} event data has no container spec: ${goalEvent.data}`);
@@ -416,7 +418,7 @@ export function executeK8sJob(): ExecuteGoal {
         const inputDir = process.env.ATOMIST_INPUT_DIR || ContainerInput;
         const outputDir = process.env.ATOMIST_OUTPUT_DIR || ContainerOutput;
 
-        const data = parseGoalEventData(goalEvent);
+        const data = goalData(goalEvent);
         if (!data[ContainerRegistrationGoalDataKey]) {
             throw new Error("Failed to read k8s ContainerRegistration from goal data");
         }
@@ -560,24 +562,6 @@ export function executeK8sJob(): ExecuteGoal {
 }
 
 /**
- * Read and parse container goal registration from goal event data.
- */
-export function parseGoalEventData(goalEvent: SdmGoalEvent): any {
-    const goalName = goalEvent.uniqueName;
-    if (!goalEvent || !goalEvent.data) {
-        return {};
-    }
-    let data: any;
-    try {
-        data = JSON.parse(goalEvent.data);
-    } catch (e) {
-        e.message = `Failed to parse goal event data for ${goalName} as JSON '${goalEvent.data}': ${e.message}`;
-        throw e;
-    }
-    return data;
-}
-
-/**
  * If running as isolated goal, use [[executeK8sJob]] to execute the
  * goal.  Otherwise, schedule the goal execution as a Kubernetes job
  * using [[scheduleK8sJob]].
@@ -591,7 +575,7 @@ const containerFulfillerCacheRestore: GoalProjectListenerRegistration = {
     name: "cache restore",
     events: [GoalProjectListenerEvent.before],
     listener: async (project, gi) => {
-        const data = parseGoalEventData(gi.goalEvent);
+        const data = goalData(gi.goalEvent);
         if (!data[ContainerRegistrationGoalDataKey]) {
             throw new Error(`Goal ${gi.goal.uniqueName} has no Kubernetes container registration: ${gi.goalEvent.data}`);
         }
@@ -786,22 +770,5 @@ function containerCleanup(c: ContainerDetritus): void {
     }
     if (c.watcher?.abort) {
         c.watcher.abort();
-    }
-}
-
-/** Try to find a Kubernetes API error message. */
-export function k8sErrMsg(e: any): string {
-    if (e.message && typeof e.message === "string") {
-        return e.message;
-    } else if (e.body && typeof e.body === "string") {
-        return e.body;
-    } else if (e.body?.message && typeof e.body.message === "string") {
-        return e.body.message;
-    } else if (e.response?.body && typeof e.response.body === "string") {
-        return e.response.body;
-    } else if (e.response?.body?.message && typeof e.response.body.message === "string") {
-        return e.response.body.message;
-    } else {
-        return "Kubernetes API request error";
     }
 }

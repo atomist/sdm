@@ -19,7 +19,7 @@ import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import {
     applicationLabels,
@@ -49,7 +49,7 @@ export async function upsertDeployment(req: KubernetesResourceRequest): Promise<
     try {
         await req.clients.apps.readNamespacedDeployment(spec.metadata.name, spec.metadata.namespace);
     } catch (e) {
-        logger.debug(`Failed to read deployment ${slug}, creating: ${errMsg(e)}`);
+        logger.debug(`Failed to read deployment ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating deployment ${slug} using '${logObject(spec)}'`);
         await logRetry(() => req.clients.apps.createNamespacedDeployment(spec.metadata.namespace, spec),
             `create deployment ${slug}`);

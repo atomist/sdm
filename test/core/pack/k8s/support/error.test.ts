@@ -16,30 +16,30 @@
 
 import * as assert from "power-assert";
 import {
-    errMsg,
+    k8sErrMsg,
     maskString,
     requestErrMsg,
     requestError,
 } from "../../../../../lib/core/pack/k8s/support/error";
 
-describe("pack/k8s/support/error", () => {
+describe("core/pack/k8s/support/error", () => {
 
-    describe("errMsg", () => {
+    describe("k8sErrMsg", () => {
 
         it("should handle undefined", () => {
-            const m = errMsg(undefined);
+            const m = k8sErrMsg(undefined);
             assert(m === undefined);
         });
 
         it("should handle null", () => {
             // tslint:disable-next-line:no-null-keyword
-            const m = errMsg(null);
+            const m = k8sErrMsg(null);
             assert(m === "null");
         });
 
         it("should handle an Error", () => {
             const r = new Error("Blitzen Trapper");
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             const e = "Blitzen Trapper";
             assert(m === e);
         });
@@ -123,7 +123,7 @@ describe("pack/k8s/support/error", () => {
                 retriesLeft: 5,
             };
             /* tslint:enable:max-line-length no-null-keyword */
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             assert(m === r.body.message);
         });
 
@@ -169,7 +169,7 @@ describe("pack/k8s/support/error", () => {
                 retriesLeft: 5,
             };
             /* tslint:disable:no-null-keyword */
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             assert(m === "404 page not found\n");
         });
 
@@ -177,21 +177,21 @@ describe("pack/k8s/support/error", () => {
             const r = {
                 blitzenTrapper: "Furr",
             };
-            const m = errMsg(r);
-            const e = JSON.stringify(r);
+            const m = k8sErrMsg(r);
+            const e = `Kubernetes API request error: {"blitzenTrapper":"Furr"}`;
             assert(m === e);
         });
 
         it("should handle an array", () => {
             const r = ["Blitzen", "Trapper", "Furr"];
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             const e = JSON.stringify(r);
             assert(m === e);
         });
 
         it("should handle a string", () => {
             const r = "Blitzen Trapper";
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             assert(m === r);
         });
 
@@ -208,8 +208,9 @@ describe("pack/k8s/support/error", () => {
                     JWT: "Echo/Always On/Easy Con",
                 },
             };
-            const m = errMsg(r);
-            const e = `{"blitzenTrapper":"Furr","token":"**************","Key":"******","song":{"JWT":"E*********************n"}}`;
+            const m = k8sErrMsg(r);
+            const e = "Kubernetes API request error: " +
+                `{"blitzenTrapper":"Furr","token":"**************","Key":"******","song":{"JWT":"E*********************n"}}`;
             assert(m === e);
         });
 
@@ -221,7 +222,7 @@ describe("pack/k8s/support/error", () => {
                     },
                 },
             };
-            const m = errMsg(r);
+            const m = k8sErrMsg(r);
             assert(m === "Blitzen Trapper");
         });
 

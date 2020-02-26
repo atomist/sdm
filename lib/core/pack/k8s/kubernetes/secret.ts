@@ -21,7 +21,7 @@ import {
     decrypt,
     encrypt,
 } from "../support/crypto";
-import { errMsg } from "../support/error";
+import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
@@ -55,7 +55,7 @@ export async function upsertSecrets(req: KubernetesResourceRequest): Promise<k8s
         try {
             await req.clients.core.readNamespacedSecret(secret.metadata.name, spec.metadata.namespace);
         } catch (e) {
-            logger.debug(`Failed to read secret ${secretName}, creating: ${errMsg(e)}`);
+            logger.debug(`Failed to read secret ${secretName}, creating: ${k8sErrMsg(e)}`);
             logger.info(`Creating secret ${slug} using '${logObject(spec)}'`);
             await logRetry(() => req.clients.core.createNamespacedSecret(spec.metadata.namespace, spec),
                 `create secret ${secretName} for ${slug}`);
