@@ -432,7 +432,9 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
             return Success;
         } catch (err) {
             if (err instanceof CommandListenerExecutionInterruptError) {
-                return Success;
+                return {
+                    code: -1,
+                };
             } else {
                 logger.error("Error executing command '%s': %s", cli.commandName, err.message);
                 logger.error(err.stack);
