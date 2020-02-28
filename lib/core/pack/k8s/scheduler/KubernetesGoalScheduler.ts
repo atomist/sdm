@@ -33,12 +33,16 @@ import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import * as os from "os";
-import { goalData } from "../../../../api-helper/goal/sdmGoal";
+import {
+    goalData,
+    sdmGoalTimeout,
+} from "../../../../api-helper/goal/sdmGoal";
 import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
 import { GoalScheduler } from "../../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../../api/registration/ServiceRegistration";
+import { runningInK8s } from "../../../goal/container/util";
 import { toArray } from "../../../util/misc/array";
 import {
     loadKubeClusterConfig,
@@ -52,23 +56,41 @@ import {
 } from "./service";
 
 /**
- * Options to configure the k8s goal scheduling support
+ * Options to configure the Kubernetes goal scheduling support.
  */
 export interface KubernetesGoalSchedulerOptions {
+    /**
+     * Set to `true` to run all goals as Kubernetes jobs if the
+     * `ATOMIST_GOAL_SCHEDULER` environment variable is set to
+     * "kubernetes".
+     */
     isolateAll?: boolean;
-    podSpec?: k8s.V1Pod;
+    /**
+     * Pod spec to use as basis for job spec.  This pod spec is deeply
+     * merged with the running SDM pod spec, if available, with this
+     * pod spec taking preference.  If the running SDM pod spec is not
+     * available and this is not provided, an error is thrown during
+     * initialization.
+     */
+    podSpec?: k8s.V1PodSpec;
 }
 
 /**
- * GoalScheduler implementation that schedules SDM goals inside k8s jobs.
- *
- * It reuses the podSpec of the deployed SDM to create a new jobSpec from.
- * Subclasses may change the spec and job creation behavior by overwriting beforeCreation
- * and/or afterCreation methods.
+ * Return the configured Kubernetes job time-to-live,
+ * `sdm.k8s.job.ttl` or, if that is not available, twice the value
+ * returned by [[sdmGoalTimeout]].
+ */
+export function k8sJobTtl(cfg?: Configuration): number {
+    return cfg?.sdm?.k8s?.job?.ttl || configurationValue<number>("sdm.k8s.job.ttl", 2 * sdmGoalTimeout(cfg));
+}
+
+/**
+ * GoalScheduler implementation that schedules SDM goals as Kubernetes
+ * jobs.
  */
 export class KubernetesGoalScheduler implements GoalScheduler {
 
-    public podSpec: k8s.V1Pod;
+    public podSpec: k8s.V1PodSpec;
 
     constructor(private readonly options: KubernetesGoalSchedulerOptions = { isolateAll: false }) {
     }
@@ -170,27 +192,33 @@ export class KubernetesGoalScheduler implements GoalScheduler {
         return;
     }
 
+    /**
+     * If running in Kubernetes, read current pod spec.  Populate
+     * `this.podSpec` with a merge of `this.options.podSpec` and the
+     * current pod spec.  If neither is available, throw an error.
+     */
     public async initialize(configuration: Configuration): Promise<void> {
         const podName = process.env.ATOMIST_POD_NAME || os.hostname();
         const podNs = await readNamespace();
-
-        try {
-            const kc = loadKubeClusterConfig();
-            const core = kc.makeApiClient(k8s.CoreV1Api);
-
-            this.podSpec = (await core.readNamespacedPod(podName, podNs)).body;
-        } catch (e) {
-            logger.error(`Failed to obtain parent pod spec from k8s: ${k8sErrMsg(e)}`);
-
-            if (!!this.options.podSpec) {
-                this.podSpec = this.options.podSpec;
-            } else {
-                throw new Error(`Failed to obtain parent pod spec from k8s: ${k8sErrMsg(e)}`);
+        let parentPodSpec: k8s.V1PodSpec;
+        if (runningInK8s()) {
+            try {
+                const kc = loadKubeClusterConfig();
+                const core = kc.makeApiClient(k8s.CoreV1Api);
+                parentPodSpec = (await core.readNamespacedPod(podName, podNs)).body.spec;
+            } catch (e) {
+                logger.error(`Failed to obtain parent pod spec from k8s: ${k8sErrMsg(e)}`);
+                if (!this.options.podSpec) {
+                    throw new Error(`Failed to obtain parent pod spec from k8s: ${k8sErrMsg(e)}`);
+                }
             }
+        } else if (!this.options.podSpec) {
+            throw new Error(`Not running in Kubernetes and no pod spec provided`);
         }
+        this.podSpec = _.merge({}, this.options.podSpec, parentPodSpec);
 
         if (configuration.cluster.enabled === false || cluster.isMaster) {
-            const cleanupInterval = configuration.sdm.k8s?.job?.cleanupInterval || 1000 * 60 * 10;
+            const cleanupInterval = configuration.sdm.k8s?.job?.cleanupInterval || 1000 * 60 * 1;
             setInterval(async () => {
                 try {
                     await this.cleanUp(configuration);
@@ -206,13 +234,16 @@ export class KubernetesGoalScheduler implements GoalScheduler {
      * Extension point to allow for custom clean up logic.
      */
     protected async cleanUp(configuration: Configuration): Promise<void> {
-        return cleanupJobs(configuration);
+        await cleanupJobs(configuration);
     }
 }
 
 /**
- * Cleanup scheduled k8s goal jobs
- * @returns {Promise<void>}
+ * Delete Kubernetes jobs created by this SDM that have either
+ *
+ * -   exceeded their time-to-live, as returned by [[k8sJobTtl]]
+ * -   have pod whose first container has exited, indicating the goal has
+ *     timed out or some other error has occured
  */
 async function cleanupJobs(configuration: Configuration): Promise<void> {
     const selector = `atomist.com/creator=${sanitizeName(configuration.name)}`;
@@ -222,26 +253,58 @@ async function cleanupJobs(configuration: Configuration): Promise<void> {
         logger.debug(`No scheduled goal Kubernetes jobs found for label selector '${selector}'`);
         return;
     }
-    const ttl: number = configuration.sdm.k8s?.job?.ttl || configuration.sdm.goal?.timeout * 2 || 1000 * 60 * 30;
-    const now = Date.now();
-    const oldJobs = jobs.filter(j => {
-        if (!j.status?.startTime) {
-            return false;
-        }
-        const jobAge = now - j.status.startTime.getTime();
-        return jobAge > ttl;
-    });
-    if (oldJobs.length < 1) {
-        logger.debug(`No scheduled goal Kubernetes jobs were older than TTL '${ttl}'`);
-        return;
+    const pods = await listPods(selector);
+    const zombiePods = pods.filter(zombiePodFilter);
+
+    const ttl = k8sJobTtl(configuration);
+
+    const killJobs = jobs.filter(killJobFilter(zombiePods, ttl));
+    if (killJobs.length < 1) {
+        logger.debug(`No scheduled goal Kubernetes jobs were older than TTL '${ttl}' or zombies`);
+    } else {
+        logger.debug("Deleting scheduled goal Kubernetes jobs: " +
+            killJobs.map(j => `${j.metadata.namespace}/${j.metadata.name}`).join(","));
     }
-    logger.debug("Deleting old scheduled goal Kubernetes jobs: " +
-        oldJobs.map(j => `${j.metadata.namespace}/${j.metadata.name}`).join(","));
-    for (const oldJob of oldJobs) {
-        const job = { name: oldJob.metadata.name, namespace: oldJob.metadata.namespace };
+    for (const delJob of killJobs) {
+        const job = { name: delJob.metadata.name, namespace: delJob.metadata.namespace };
         await deleteJob(job);
         await deletePods(job);
     }
+}
+
+/**
+ * Return true for pods whose first container has terminated but at
+ * least one other container has not.
+ */
+export function zombiePodFilter(pod: k8s.V1Pod): boolean {
+    if (!pod.status?.containerStatuses || pod.status.containerStatuses.length < 1) {
+        return false;
+    }
+    const watcher = pod.status.containerStatuses[0];
+    const rest = pod.status.containerStatuses.slice(1);
+    return !!watcher.state?.terminated && rest.some(p => !p.state?.terminated);
+}
+
+/**
+ * Return true for jobs that have exceeded the TTL or whose child is
+ * in the provided list of pods.  Return false otherwise.
+ */
+export function killJobFilter(pods: k8s.V1Pod[], ttl: number): (j: k8s.V1Job) => boolean {
+    return (job: k8s.V1Job): boolean => {
+        const now = Date.now();
+        if (!job.status?.startTime) {
+            return false;
+        }
+        const jobAge = now - job.status.startTime.getTime();
+        if (jobAge > ttl) {
+            return true;
+        }
+
+        if (pods.some(p => p.metadata?.ownerReferences?.some(o => o.kind === "Job" && o.name === job.metadata.name))) {
+            return true;
+        }
+        return false;
+    };
 }
 
 /** Unique name for goal to use in k8s job spec. */
@@ -250,9 +313,9 @@ function k8sJobGoalName(goalEvent: SdmGoalEvent): string {
 }
 
 /** Unique name for job to use in k8s job spec. */
-export function k8sJobName(podSpec: k8s.V1Pod, goalEvent: SdmGoalEvent): string {
+export function k8sJobName(podSpec: k8s.V1PodSpec, goalEvent: SdmGoalEvent): string {
     const goalName = k8sJobGoalName(goalEvent);
-    return `${podSpec.spec.containers[0].name}-job-${goalEvent.goalSetId.slice(0, 7)}-${goalName}`
+    return `${podSpec.containers[0].name}-job-${goalEvent.goalSetId.slice(0, 7)}-${goalName}`
         .slice(0, 63).replace(/[^a-z0-9]*$/, "");
 }
 
@@ -260,7 +323,7 @@ export function k8sJobName(podSpec: k8s.V1Pod, goalEvent: SdmGoalEvent): string 
  * Kubernetes container spec environment variables that specify an SDM
  * running in single-goal mode.
  */
-export function k8sJobEnv(podSpec: k8s.V1Pod, goalEvent: SdmGoalEvent, context: HandlerContext): k8s.V1EnvVar[] {
+export function k8sJobEnv(podSpec: k8s.V1PodSpec, goalEvent: SdmGoalEvent, context: HandlerContext): k8s.V1EnvVar[] {
     const goalName = k8sJobGoalName(goalEvent);
     const jobName = k8sJobName(podSpec, goalEvent);
     const envVars: k8s.V1EnvVar[] = [
@@ -310,7 +373,7 @@ export function k8sJobEnv(podSpec: k8s.V1Pod, goalEvent: SdmGoalEvent, context: 
  * @param podNs
  * @param gi
  */
-export function createJobSpec(podSpec: k8s.V1Pod, podNs: string, gi: GoalInvocation): k8s.V1Job {
+export function createJobSpec(podSpec: k8s.V1PodSpec, podNs: string, gi: GoalInvocation): k8s.V1Job {
     const { goalEvent, context } = gi;
 
     const jobSpec = createJobSpecWithAffinity(podSpec, gi);
@@ -394,10 +457,10 @@ export function createJobSpec(podSpec: k8s.V1Pod, podNs: string, gi: GoalInvocat
  * Create a k8s Job spec with affinity to jobs for the same goal set
  * @param goalSetId
  */
-function createJobSpecWithAffinity(podSpec: k8s.V1Pod, gi: GoalInvocation): k8s.V1Job {
+function createJobSpecWithAffinity(podSpec: k8s.V1PodSpec, gi: GoalInvocation): k8s.V1Job {
     const { goalEvent, configuration, context } = gi;
 
-    _.defaultsDeep(podSpec.spec.affinity, {
+    _.defaultsDeep(podSpec.affinity, {
         podAffinity: {
             preferredDuringSchedulingIgnoredDuringExecution: [
                 {
@@ -423,7 +486,7 @@ function createJobSpecWithAffinity(podSpec: k8s.V1Pod, gi: GoalInvocation): k8s.
 
     // Clean up podSpec
     // See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#pod-v1-core note on nodeName
-    delete podSpec.spec.nodeName;
+    delete podSpec.nodeName;
 
     const labels = {
         "atomist.com/goal-set-id": goalEvent.goalSetId,
@@ -460,7 +523,7 @@ function createJobSpecWithAffinity(podSpec: k8s.V1Pod, gi: GoalInvocation): k8s.
                 metadata: {
                     labels,
                 },
-                spec: podSpec.spec,
+                spec: podSpec,
             },
         },
     } as any;
@@ -529,8 +592,42 @@ export function sanitizeName(name: string): string {
 }
 
 /**
- * List k8s jobs for a single namespace or cluster-wide depending on evn configuration
+ * Read the namespace from the following sources in order.  It returns
+ * the first truthy value found.
+ *
+ * 1. ATOMIST_POD_NAMESPACE environment variable
+ * 2. ATOMIST_DEPLOYMENT_NAMESPACE environment variable
+ * 3. Contents of [[K8sNamespaceFile]]
+ * 4. "default"
+ *
+ * service account files.  Falls back to the default namespace if no
+ * other configuration can be found.
+ */
+export async function readNamespace(): Promise<string> {
+    let podNs = process.env.ATOMIST_POD_NAMESPACE || process.env.ATOMIST_DEPLOYMENT_NAMESPACE;
+    if (!!podNs) {
+        return podNs;
+    }
+
+    if (await fs.pathExists(K8sNamespaceFile)) {
+        podNs = (await fs.readFile(K8sNamespaceFile)).toString().trim();
+    }
+    if (!!podNs) {
+        return podNs;
+    }
+
+    return "default";
+}
+
+/**
+ * List Kubernetes jobs matching the provided label selector.  Jobs
+ * are listed across all namespaces if
+ * `configuration.sdm.k8s.job.singleNamespace` is not set to `false`.
+ * If that configuration value is not set or set to `true`, jobs are
+ * listed from the namespace provide by [[readNamespace]].
+ *
  * @param labelSelector
+ * @return array of Kubernetes jobs matching the label selector
  */
 export async function listJobs(labelSelector?: string): Promise<k8s.V1Job[]> {
     const kc = loadKubeConfig();
@@ -561,26 +658,8 @@ export async function listJobs(labelSelector?: string): Promise<k8s.V1Job[]> {
 }
 
 /**
- * Read the namespace of the deployment from environment and k8s service account files.
- * Falls back to the default namespace and no other configuration can be found.
+ * Delete the provided job.  Failures are ignored.
  */
-export async function readNamespace(): Promise<string> {
-    let podNs = process.env.ATOMIST_POD_NAMESPACE || process.env.ATOMIST_DEPLOYMENT_NAMESPACE;
-    if (!!podNs) {
-        return podNs;
-    }
-
-    if (await fs.pathExists(K8sNamespaceFile)) {
-        podNs = (await fs.readFile(K8sNamespaceFile)).toString().trim();
-    }
-
-    if (!!podNs) {
-        return podNs;
-    }
-
-    return "default";
-}
-
 export async function deleteJob(job: { name: string, namespace: string }): Promise<void> {
     try {
         const kc = loadKubeConfig();
@@ -598,6 +677,44 @@ export async function deleteJob(job: { name: string, namespace: string }): Promi
     }
 }
 
+/**
+ * List Kubernetes pods matching the provided label selector.  Jobs
+ * are listed in a the current namespace or cluster-wide depending on
+ * evn configuration
+ *
+ * @param labelSelector
+ */
+export async function listPods(labelSelector?: string): Promise<k8s.V1Pod[]> {
+    const kc = loadKubeConfig();
+    const core = kc.makeApiClient(k8s.CoreV1Api);
+
+    const pods: k8s.V1Pod[] = [];
+    let continu: string | undefined;
+    try {
+        if (configurationValue<boolean>("sdm.k8s.job.singleNamespace", true)) {
+            const podNs = await readNamespace();
+            do {
+                const listResponse = await core.listNamespacedPod(podNs, undefined, undefined, continu, undefined, labelSelector);
+                pods.push(...listResponse.body.items);
+                continu = listResponse.body.metadata?._continue;
+            } while (continu);
+        } else {
+            do {
+                const listResponse = await core.listPodForAllNamespaces(undefined, continu, undefined, labelSelector);
+                pods.push(...listResponse.body.items);
+                continu = listResponse.body.metadata?._continue;
+            } while (continu);
+        }
+    } catch (e) {
+        e.message = `Failed to list scheduled goal Kubernetes pods: ${k8sErrMsg(e)}`;
+        throw e;
+    }
+    return pods;
+}
+
+/**
+ * Delete the provided pods.  Failures are ignored.
+ */
 export async function deletePods(job: { name: string, namespace: string }): Promise<void> {
     try {
         const kc = loadKubeConfig();

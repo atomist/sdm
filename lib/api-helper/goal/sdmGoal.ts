@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import {
+    Configuration,
+    configurationValue,
+} from "@atomist/automation-client/lib/configuration";
 import { sprintf } from "sprintf-js";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
@@ -70,4 +74,11 @@ export function mergeGoalData(data: any, sdmGoal: SdmGoalEvent): any {
         ...goalData(sdmGoal),
         ...data,
     };
+}
+
+/**
+ * Return configured SDM goal timeout or default value, 10 minutes.
+ */
+export function sdmGoalTimeout(cfg?: Configuration): number {
+    return cfg?.sdm?.goal?.timeout || configurationValue<number>("sdm.goal.timeout", 1000 * 60 * 10);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import {
     ChildProcessResult,
     spawnAndWatch as clientSpawnAndWatch,
@@ -23,6 +22,7 @@ import {
 } from "@atomist/automation-client/lib/util/spawn";
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { sdmGoalTimeout } from "../goal/sdmGoal";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 
 /* tslint:disable:deprecation */
@@ -44,7 +44,7 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
 
     // Set the goal default timeout to 10mins
     if (!spOpts.timeout) {
-        spOpts.timeout = configurationValue<number>("sdm.goal.timeout", 1000 * 60 * 10);
+        spOpts.timeout = sdmGoalTimeout();
     }
 
     return clientSpawnAndWatch(spawnCommand, options, delimitedLog, spOpts);

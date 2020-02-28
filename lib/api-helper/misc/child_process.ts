@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { HandlerResult } from "@atomist/automation-client/lib/HandlerResult";
 import {
     execPromise,
@@ -31,6 +30,7 @@ import { logger } from "@atomist/automation-client/lib/util/logger";
 import { ChildProcess } from "child_process";
 import * as os from "os";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { sdmGoalTimeout } from "../goal/sdmGoal";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 
 /** Re-export child process objects from automation-client. */
@@ -143,7 +143,7 @@ export type SpawnLogResult = HandlerResult & SpawnPromiseReturns;
 export async function spawnLog(cmd: string, args: string[], opts: SpawnLogOptions): Promise<SpawnLogResult> {
     opts.errorFinder = (opts.errorFinder) ? opts.errorFinder : SuccessIsReturn0ErrorFinder;
     opts.log = new DelimitedWriteProgressLogDecorator(opts.log, "\n");
-    opts.timeout = (opts.timeout) ? opts.timeout : configurationValue<number>("sdm.goal.timeout", 10 * 60 * 1000);
+    opts.timeout = (opts.timeout) ? opts.timeout : sdmGoalTimeout();
 
     const spResult = await spawnPromise(cmd, args, opts);
     const slResult = {

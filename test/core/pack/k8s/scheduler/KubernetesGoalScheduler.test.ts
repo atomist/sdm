@@ -23,11 +23,13 @@ import {
     isConfiguredInEnv,
     k8sJobEnv,
     k8sJobName,
+    killJobFilter,
+    zombiePodFilter,
 } from "../../../../../lib/core/pack/k8s/scheduler/KubernetesGoalScheduler";
 
 /* tslint:disable:max-file-line-count */
 
-describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
+describe("core/pack/k8s/scheduler/KubernetesGoalScheduler", () => {
 
     describe("isConfiguredInEnv", () => {
 
@@ -82,14 +84,12 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
     describe("k8sJobName", () => {
 
         it("should return a job name", () => {
-            const p: k8s.V1Pod = {
-                spec: {
-                    containers: [
-                        {
-                            name: "wild-horses",
-                        },
-                    ],
-                },
+            const p: k8s.V1PodSpec = {
+                containers: [
+                    {
+                        name: "wild-horses",
+                    },
+                ],
             } as any;
             const g: SdmGoalEvent = {
                 goalSetId: "abcdef0-123456789-abcdef",
@@ -101,14 +101,12 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
         });
 
         it("should truncate a long job name", () => {
-            const p: k8s.V1Pod = {
-                spec: {
-                    containers: [
-                        {
-                            name: "whos-gonna-ride-your-wild-horses",
-                        },
-                    ],
-                },
+            const p: k8s.V1PodSpec = {
+                containers: [
+                    {
+                        name: "whos-gonna-ride-your-wild-horses",
+                    },
+                ],
             } as any;
             const g: SdmGoalEvent = {
                 goalSetId: "abcdef0-123456789-abcdef",
@@ -120,14 +118,12 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
         });
 
         it("should safely truncate a long job name", () => {
-            const p: k8s.V1Pod = {
-                spec: {
-                    containers: [
-                        {
-                            name: "i-think-theyve-got-your-alias-youve-been-living-un",
-                        },
-                    ],
-                },
+            const p: k8s.V1PodSpec = {
+                containers: [
+                    {
+                        name: "i-think-theyve-got-your-alias-youve-been-living-un",
+                    },
+                ],
             } as any;
             const g: SdmGoalEvent = {
                 goalSetId: "abcdef0-123456789-abcdef",
@@ -156,14 +152,12 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
         });
 
         it("should produce a valid set of environment variables", () => {
-            const p: k8s.V1Pod = {
-                spec: {
-                    containers: [
-                        {
-                            name: "brief-candles",
-                        },
-                    ],
-                },
+            const p: k8s.V1PodSpec = {
+                containers: [
+                    {
+                        name: "brief-candles",
+                    },
+                ],
             } as any;
             const g: SdmGoalEvent = {
                 goalSetId: "0abcdef-123456789-abcdef",
@@ -238,324 +232,221 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
 
         it("should create a job spec", () => {
             /* tslint:disable:no-null-keyword */
-            const p: any = {
-                apiVersion: "v1",
-                kind: "Pod",
-                metadata: {
-                    annotations: {
-                        "atomist.com/k8vent": "{\"webhooks\":[\"https://webhook.atomist.com/atomist/kube/teams/T29E48P34\"]}",
-                        "cni.projectcalico.org/podIP": "10.12.1.37/32",
-                    },
-                    creationTimestamp: "2019-12-16T21:21:14Z",
-                    generateName: "demo-sdm-55f7655fbd-",
-                    labels: {
-                        "app.kubernetes.io/managed-by": "atomist_k8s-sdm_k8s-internal-demo",
-                        "app.kubernetes.io/name": "demo-sdm",
-                        "app.kubernetes.io/part-of": "demo-sdm",
-                        "atomist.com/workspaceId": "T29E48P34",
-                        "pod-template-hash": "55f7655fbd",
-                    },
-                    name: "demo-sdm-55f7655fbd-m2m8b",
-                    namespace: "sdm",
-                    ownerReferences: [
-                        {
-                            apiVersion: "apps/v1",
-                            blockOwnerDeletion: true,
-                            controller: true,
-                            kind: "ReplicaSet",
-                            name: "demo-sdm-55f7655fbd",
-                            uid: "fd8932c8-2049-11ea-aa2f-42010a8e0170",
+            const p: k8s.V1PodSpec = {
+                affinity: {
+                    nodeAffinity: {
+                        requiredDuringSchedulingIgnoredDuringExecution: {
+                            nodeSelectorTerms: [
+                                {
+                                    matchExpressions: [
+                                        {
+                                            key: "sandbox.gke.io/runtime",
+                                            operator: "In",
+                                            values: [
+                                                "gvisor",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
                         },
-                    ],
-                    resourceVersion: "123925201",
-                    selfLink: "/api/v1/namespaces/sdm/pods/demo-sdm-55f7655fbd-m2m8b",
-                    uid: "fd8c78dd-2049-11ea-aa2f-42010a8e0170",
+                    },
                 },
-                spec: {
-                    affinity: {
-                        nodeAffinity: {
-                            requiredDuringSchedulingIgnoredDuringExecution: {
-                                nodeSelectorTerms: [
-                                    {
-                                        matchExpressions: [
-                                            {
-                                                key: "sandbox.gke.io/runtime",
-                                                operator: "In",
-                                                values: [
-                                                    "gvisor",
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
+                containers: [
+                    {
+                        env: [
+                            {
+                                name: "ATOMIST_CONFIG_PATH",
+                                value: "/opt/atm/client.config.json",
                             },
+                            {
+                                name: "ATOMIST_GOAL_SCHEDULER",
+                                value: "kubernetes",
+                            },
+                            {
+                                name: "HOME",
+                                value: "/home/atomist",
+                            },
+                            {
+                                name: "TMPDIR",
+                                value: "/tmp",
+                            },
+                        ],
+                        image: "atomist/demo-sdm:1.0.0-master.20191216211453",
+                        imagePullPolicy: "IfNotPresent",
+                        livenessProbe: {
+                            failureThreshold: 3,
+                            httpGet: {
+                                path: "/health",
+                                port: "http" as unknown as object,
+                                scheme: "HTTP",
+                            },
+                            initialDelaySeconds: 20,
+                            periodSeconds: 10,
+                            successThreshold: 1,
+                            timeoutSeconds: 1,
+                        },
+                        name: "demo-sdm",
+                        ports: [
+                            {
+                                containerPort: 2866,
+                                name: "http",
+                                protocol: "TCP",
+                            },
+                        ],
+                        readinessProbe: {
+                            failureThreshold: 3,
+                            httpGet: {
+                                path: "/health",
+                                port: "http" as unknown as object,
+                                scheme: "HTTP",
+                            },
+                            initialDelaySeconds: 20,
+                            periodSeconds: 10,
+                            successThreshold: 1,
+                            timeoutSeconds: 1,
+                        },
+                        resources: {
+                            limits: {
+                                cpu: "1",
+                                memory: "2Gi",
+                            },
+                            requests: {
+                                cpu: "500m",
+                                memory: "1Gi",
+                            },
+                        },
+                        securityContext: {
+                            allowPrivilegeEscalation: false,
+                            privileged: false,
+                            readOnlyRootFilesystem: true,
+                            runAsGroup: 2866,
+                            runAsNonRoot: true,
+                            runAsUser: 2866,
+                        },
+                        terminationMessagePath: "/dev/termination-log",
+                        terminationMessagePolicy: "File",
+                        volumeMounts: [
+                            {
+                                mountPath: "/home/atomist",
+                                name: "atomist-home",
+                            },
+                            {
+                                mountPath: "/opt/atm",
+                                name: "demo-sdm",
+                                readOnly: true,
+                            },
+                            {
+                                mountPath: "/tmp",
+                                name: "sdm-tmp",
+                            },
+                            {
+                                mountPath: "/var/run/secrets/kubernetes.io/serviceaccount",
+                                name: "demo-sdm-token-vkrr4",
+                                readOnly: true,
+                            },
+                        ],
+                    },
+                ],
+                dnsPolicy: "ClusterFirst",
+                enableServiceLinks: true,
+                initContainers: [
+                    {
+                        args: [
+                            "git config --global user.email 'bot@atomist.com' \u0026\u0026 git config --global user.name 'Atomist Bot'",
+                        ],
+                        command: [
+                            "/bin/sh",
+                            "-c",
+                        ],
+                        env: [
+                            {
+                                name: "HOME",
+                                value: "/home/atomist",
+                            },
+                        ],
+                        image: "atomist/sdm-base:0.4.0-20191204153918",
+                        imagePullPolicy: "IfNotPresent",
+                        name: "atomist-home-git",
+                        resources: {},
+                        securityContext: {
+                            allowPrivilegeEscalation: false,
+                            privileged: false,
+                            readOnlyRootFilesystem: true,
+                            runAsGroup: 2866,
+                            runAsNonRoot: true,
+                            runAsUser: 2866,
+                        },
+                        terminationMessagePath: "/dev/termination-log",
+                        terminationMessagePolicy: "File",
+                        volumeMounts: [
+                            {
+                                mountPath: "/home/atomist",
+                                name: "atomist-home",
+                            },
+                            {
+                                mountPath: "/var/run/secrets/kubernetes.io/serviceaccount",
+                                name: "demo-sdm-token-vkrr4",
+                                readOnly: true,
+                            },
+                        ],
+                    },
+                ],
+                nodeName: "gke-k8-int-demo-wi-gvisor-pool-1-f54fa5e3-tc7n",
+                priority: 0,
+                restartPolicy: "Always",
+                runtimeClassName: "gvisor",
+                schedulerName: "default-scheduler",
+                securityContext: {
+                    fsGroup: 2866,
+                },
+                serviceAccount: "demo-sdm",
+                serviceAccountName: "demo-sdm",
+                terminationGracePeriodSeconds: 30,
+                tolerations: [
+                    {
+                        effect: "NoSchedule",
+                        key: "sandbox.gke.io/runtime",
+                        operator: "Equal",
+                        value: "gvisor",
+                    },
+                    {
+                        effect: "NoExecute",
+                        key: "node.kubernetes.io/not-ready",
+                        operator: "Exists",
+                        tolerationSeconds: 300,
+                    },
+                    {
+                        effect: "NoExecute",
+                        key: "node.kubernetes.io/unreachable",
+                        operator: "Exists",
+                        tolerationSeconds: 300,
+                    },
+                ],
+                volumes: [
+                    {
+                        name: "demo-sdm",
+                        secret: {
+                            defaultMode: 288,
+                            secretName: "demo-sdm",
                         },
                     },
-                    containers: [
-                        {
-                            env: [
-                                {
-                                    name: "ATOMIST_CONFIG_PATH",
-                                    value: "/opt/atm/client.config.json",
-                                },
-                                {
-                                    name: "ATOMIST_GOAL_SCHEDULER",
-                                    value: "kubernetes",
-                                },
-                                {
-                                    name: "HOME",
-                                    value: "/home/atomist",
-                                },
-                                {
-                                    name: "TMPDIR",
-                                    value: "/tmp",
-                                },
-                            ],
-                            image: "atomist/demo-sdm:1.0.0-master.20191216211453",
-                            imagePullPolicy: "IfNotPresent",
-                            livenessProbe: {
-                                failureThreshold: 3,
-                                httpGet: {
-                                    path: "/health",
-                                    port: "http",
-                                    scheme: "HTTP",
-                                },
-                                initialDelaySeconds: 20,
-                                periodSeconds: 10,
-                                successThreshold: 1,
-                                timeoutSeconds: 1,
-                            },
-                            name: "demo-sdm",
-                            ports: [
-                                {
-                                    containerPort: 2866,
-                                    name: "http",
-                                    protocol: "TCP",
-                                },
-                            ],
-                            readinessProbe: {
-                                failureThreshold: 3,
-                                httpGet: {
-                                    path: "/health",
-                                    port: "http",
-                                    scheme: "HTTP",
-                                },
-                                initialDelaySeconds: 20,
-                                periodSeconds: 10,
-                                successThreshold: 1,
-                                timeoutSeconds: 1,
-                            },
-                            resources: {
-                                limits: {
-                                    cpu: "1",
-                                    memory: "2Gi",
-                                },
-                                requests: {
-                                    cpu: "500m",
-                                    memory: "1Gi",
-                                },
-                            },
-                            securityContext: {
-                                allowPrivilegeEscalation: false,
-                                privileged: false,
-                                readOnlyRootFilesystem: true,
-                                runAsGroup: 2866,
-                                runAsNonRoot: true,
-                                runAsUser: 2866,
-                            },
-                            terminationMessagePath: "/dev/termination-log",
-                            terminationMessagePolicy: "File",
-                            volumeMounts: [
-                                {
-                                    mountPath: "/home/atomist",
-                                    name: "atomist-home",
-                                },
-                                {
-                                    mountPath: "/opt/atm",
-                                    name: "demo-sdm",
-                                    readOnly: true,
-                                },
-                                {
-                                    mountPath: "/tmp",
-                                    name: "sdm-tmp",
-                                },
-                                {
-                                    mountPath: "/var/run/secrets/kubernetes.io/serviceaccount",
-                                    name: "demo-sdm-token-vkrr4",
-                                    readOnly: true,
-                                },
-                            ],
-                        },
-                    ],
-                    dnsPolicy: "ClusterFirst",
-                    enableServiceLinks: true,
-                    initContainers: [
-                        {
-                            args: [
-                                "git config --global user.email 'bot@atomist.com' \u0026\u0026 git config --global user.name 'Atomist Bot'",
-                            ],
-                            command: [
-                                "/bin/sh",
-                                "-c",
-                            ],
-                            env: [
-                                {
-                                    name: "HOME",
-                                    value: "/home/atomist",
-                                },
-                            ],
-                            image: "atomist/sdm-base:0.4.0-20191204153918",
-                            imagePullPolicy: "IfNotPresent",
-                            name: "atomist-home-git",
-                            resources: {},
-                            securityContext: {
-                                allowPrivilegeEscalation: false,
-                                privileged: false,
-                                readOnlyRootFilesystem: true,
-                                runAsGroup: 2866,
-                                runAsNonRoot: true,
-                                runAsUser: 2866,
-                            },
-                            terminationMessagePath: "/dev/termination-log",
-                            terminationMessagePolicy: "File",
-                            volumeMounts: [
-                                {
-                                    mountPath: "/home/atomist",
-                                    name: "atomist-home",
-                                },
-                                {
-                                    mountPath: "/var/run/secrets/kubernetes.io/serviceaccount",
-                                    name: "demo-sdm-token-vkrr4",
-                                    readOnly: true,
-                                },
-                            ],
-                        },
-                    ],
-                    nodeName: "gke-k8-int-demo-wi-gvisor-pool-1-f54fa5e3-tc7n",
-                    priority: 0,
-                    restartPolicy: "Always",
-                    runtimeClassName: "gvisor",
-                    schedulerName: "default-scheduler",
-                    securityContext: {
-                        fsGroup: 2866,
+                    {
+                        emptyDir: {},
+                        name: "atomist-home",
                     },
-                    serviceAccount: "demo-sdm",
-                    serviceAccountName: "demo-sdm",
-                    terminationGracePeriodSeconds: 30,
-                    tolerations: [
-                        {
-                            effect: "NoSchedule",
-                            key: "sandbox.gke.io/runtime",
-                            operator: "Equal",
-                            value: "gvisor",
+                    {
+                        emptyDir: {},
+                        name: "sdm-tmp",
+                    },
+                    {
+                        name: "demo-sdm-token-vkrr4",
+                        secret: {
+                            defaultMode: 420,
+                            secretName: "demo-sdm-token-vkrr4",
                         },
-                        {
-                            effect: "NoExecute",
-                            key: "node.kubernetes.io/not-ready",
-                            operator: "Exists",
-                            tolerationSeconds: 300,
-                        },
-                        {
-                            effect: "NoExecute",
-                            key: "node.kubernetes.io/unreachable",
-                            operator: "Exists",
-                            tolerationSeconds: 300,
-                        },
-                    ],
-                    volumes: [
-                        {
-                            name: "demo-sdm",
-                            secret: {
-                                defaultMode: 288,
-                                secretName: "demo-sdm",
-                            },
-                        },
-                        {
-                            emptyDir: {},
-                            name: "atomist-home",
-                        },
-                        {
-                            emptyDir: {},
-                            name: "sdm-tmp",
-                        },
-                        {
-                            name: "demo-sdm-token-vkrr4",
-                            secret: {
-                                defaultMode: 420,
-                                secretName: "demo-sdm-token-vkrr4",
-                            },
-                        },
-                    ],
-                },
-                status: {
-                    conditions: [
-                        {
-                            lastProbeTime: null,
-                            lastTransitionTime: "2019-12-16T21:21:16Z",
-                            status: "True",
-                            type: "Initialized",
-                        },
-                        {
-                            lastProbeTime: null,
-                            lastTransitionTime: "2019-12-16T21:22:08Z",
-                            status: "True",
-                            type: "Ready",
-                        },
-                        {
-                            lastProbeTime: null,
-                            lastTransitionTime: "2019-12-16T21:22:08Z",
-                            status: "True",
-                            type: "ContainersReady",
-                        },
-                        {
-                            lastProbeTime: null,
-                            lastTransitionTime: "2019-12-16T21:21:14Z",
-                            status: "True",
-                            type: "PodScheduled",
-                        },
-                    ],
-                    containerStatuses: [
-                        {
-                            containerID: "containerd://73d40ea2793c605801d6275fcd1e19636c3fbb839c9d96d1a98c608e17b21796",
-                            image: "docker.io/atomist/demo-sdm:1.0.0-master.20191216211453",
-                            imageID: "docker.io/atomist/demo-sdm@sha256:e07fa46f05064e8a2961ded34f884ce4d773817c2b8393b52f4bc3ff8ad45c79",
-                            lastState: {},
-                            name: "demo-sdm",
-                            ready: true,
-                            restartCount: 0,
-                            state: {
-                                running: {
-                                    startedAt: "2019-12-16T21:21:32Z",
-                                },
-                            },
-                        },
-                    ],
-                    hostIP: "10.0.0.62",
-                    initContainerStatuses: [
-                        {
-                            containerID: "containerd://0afbe578e8044b14fabc84e9c985c0673d8d6baba6a2754fe19659c0b9713ef6",
-                            image: "docker.io/atomist/sdm-base:0.4.0-20191204153918",
-                            imageID: "docker.io/atomist/sdm-base@sha256:a2ba7f2d925c07f71da096b444e2b96168514e15af41505291a312e9a4d012d7",
-                            lastState: {},
-                            name: "atomist-home-git",
-                            ready: true,
-                            restartCount: 0,
-                            state: {
-                                terminated: {
-                                    containerID: "containerd://0afbe578e8044b14fabc84e9c985c0673d8d6baba6a2754fe19659c0b9713ef6",
-                                    exitCode: 0,
-                                    finishedAt: "2019-12-16T21:21:15Z",
-                                    reason: "Completed",
-                                    startedAt: "2019-12-16T21:21:15Z",
-                                },
-                            },
-                        },
-                    ],
-                    phase: "Running",
-                    podIP: "10.12.1.37",
-                    qosClass: "Burstable",
-                    startTime: "2019-12-16T21:21:14Z",
-                },
+                    },
+                ],
             };
             /* tslint:enable:no-null-keyword */
             const n = "sdm";
@@ -857,6 +748,278 @@ describe("pack/k8s/scheduler/KubernetesGoalScheduler", () => {
                 },
             };
             assert.deepStrictEqual(j, e);
+        });
+
+    });
+
+    describe("zombiePodFilter", () => {
+
+        it("should return false when no statuses", () => {
+            [
+                {},
+                { status: {} },
+                { status: { containerStatuses: [] } },
+            ].forEach((p: k8s.V1Pod) => {
+                assert(!zombiePodFilter(p));
+            });
+        });
+
+        it("should return false when only one status", () => {
+            [
+                {
+                    running: {
+                        startedAt: new Date(),
+                    },
+                },
+                {
+                    waiting: {},
+                },
+                {
+                    terminated: {
+                        containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f19743",
+                        exitCode: 0,
+                        finishedAt: new Date(),
+                        reason: "Completed",
+                        startedAt: new Date(),
+                    },
+                },
+            ].forEach(s => {
+                const p: k8s.V1Pod = {
+                    status: {
+                        containerStatuses: [{
+                            containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.1.0",
+                            imageID: "x/x@sha256:5aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "x",
+                            ready: false,
+                            restartCount: 0,
+                            state: s,
+                        }],
+                    },
+                };
+                assert(!zombiePodFilter(p));
+            });
+        });
+
+        it("should return false when first container running", () => {
+            const p: k8s.V1Pod = {
+                status: {
+                    containerStatuses: [
+                        {
+                            containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.1.0",
+                            imageID: "x/x@sha256:5aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "x",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                running: {
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                        {
+                            containerID: "containerd://adf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.2.0",
+                            imageID: "x/x@sha256:6aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "y",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                running: {
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                    ],
+                },
+            };
+            assert(!zombiePodFilter(p));
+        });
+
+        it("should return false when all containers terminated", () => {
+            const p: k8s.V1Pod = {
+                status: {
+                    containerStatuses: [
+                        {
+                            containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.1.0",
+                            imageID: "x/x@sha256:5aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "x",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                terminated: {
+                                    containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                                    exitCode: 0,
+                                    finishedAt: new Date(),
+                                    reason: "Completed",
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                        {
+                            containerID: "containerd://adf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.2.0",
+                            imageID: "x/x@sha256:6aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "y",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                terminated: {
+                                    containerID: "containerd://adf8c92f498ee8eb82135e4f25e8e2f1",
+                                    exitCode: 0,
+                                    finishedAt: new Date(),
+                                    reason: "Completed",
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                        {
+                            containerID: "containerd://cdf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.3.0",
+                            imageID: "x/x@sha256:7aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "y",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                terminated: {
+                                    containerID: "containerd://cdf8c92f498ee8eb82135e4f25e8e2f1",
+                                    exitCode: 0,
+                                    finishedAt: new Date(),
+                                    reason: "Completed",
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                    ],
+                },
+            };
+            assert(!zombiePodFilter(p));
+        });
+
+        it("should return true when first container terminated, others running", () => {
+            const p: k8s.V1Pod = {
+                status: {
+                    containerStatuses: [
+                        {
+                            containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.1.0",
+                            imageID: "x/x@sha256:5aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "x",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                terminated: {
+                                    containerID: "containerd://bdf8c92f498ee8eb82135e4f25e8e2f1",
+                                    exitCode: 0,
+                                    finishedAt: new Date(),
+                                    reason: "Completed",
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                        {
+                            containerID: "containerd://adf8c92f498ee8eb82135e4f25e8e2f1",
+                            image: "x/x:0.2.0",
+                            imageID: "x/x@sha256:6aa4b2f40d4f756826056b32bd3e2100",
+                            lastState: {},
+                            name: "y",
+                            ready: false,
+                            restartCount: 0,
+                            state: {
+                                running: {
+                                    startedAt: new Date(),
+                                },
+                            },
+                        },
+                    ],
+                },
+            };
+            assert(zombiePodFilter(p));
+        });
+
+    });
+
+    describe("killJobFilter", () => {
+
+        it("should return false for job that have not started", () => {
+            const ps: k8s.V1Pod[] = [];
+            [
+                {},
+                { status: {} },
+            ].forEach((j: k8s.V1Job) => {
+                assert(!killJobFilter(ps, 1000)(j));
+            });
+        });
+
+        it("should return false for job younger than TTL", () => {
+            const ps: k8s.V1Pod[] = [];
+            const j: k8s.V1Job = {
+                status: {
+                    startTime: new Date(),
+                },
+            };
+            assert(!killJobFilter(ps, 100000)(j));
+        });
+
+        it("should return true for job older than TTL", () => {
+            const ps: k8s.V1Pod[] = [];
+            const j: k8s.V1Job = {
+                status: {
+                    startTime: new Date(1),
+                },
+            };
+            assert(killJobFilter(ps, 10)(j));
+        });
+
+        it("should return false for job not in pod list", () => {
+            const ps: k8s.V1Pod[] = [
+                { metadata: { ownerReferences: [{ kind: "Job", name: "j" }] } } as any,
+                { metadata: { ownerReferences: [{ kind: "Job", name: "a" }] } } as any,
+                { metadata: { ownerReferences: [{ kind: "Job", name: "y" }] } } as any,
+                { metadata: {} },
+                { metadata: { ownerReferences: [{ kind: "Job", name: "z" }] } } as any,
+                {},
+            ];
+            const j: k8s.V1Job = {
+                metadata: {
+                    name: "b",
+                    namespace: "dc",
+                },
+                status: {
+                    startTime: new Date(),
+                },
+            };
+            assert(!killJobFilter(ps, 100000)(j));
+        });
+
+        it("should return true for job in pod list", () => {
+            const ps: k8s.V1Pod[] = [
+                { metadata: { ownerReferences: [{ kind: "Job", name: "j" }] } } as any,
+                { metadata: { ownerReferences: [{ kind: "Job", name: "a" }] } } as any,
+                { metadata: { ownerReferences: [{ kind: "Job", name: "y" }] } } as any,
+                { metadata: {} },
+                { metadata: { ownerReferences: [{ kind: "Job", name: "z" }] } } as any,
+                { metadata: { ownerReferences: [{ kind: "Job", name: "b" }] } } as any,
+            ];
+            const j: k8s.V1Job = {
+                metadata: {
+                    name: "b",
+                    namespace: "dc",
+                },
+                status: {
+                    startTime: new Date(),
+                },
+            };
+            assert(killJobFilter(ps, 100000)(j));
         });
 
     });
