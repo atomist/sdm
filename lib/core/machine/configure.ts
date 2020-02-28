@@ -35,12 +35,12 @@ import { notGoalOrOutputTest } from "../../api/mapping/goalTest";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { allSatisfied } from "../../api/mapping/support/pushTestUtils";
+import { toArray } from "../util/misc/array";
 import {
     ConfigureOptions,
     configureSdm,
 } from "./configureSdm";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./LocalSoftwareDeliveryMachineOptions";
-import { toArray } from "../util/misc/array";
 import { createSoftwareDeliveryMachine } from "./machineFactory";
 
 /**

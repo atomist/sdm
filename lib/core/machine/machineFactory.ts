@@ -18,9 +18,9 @@ import { MachineConfiguration } from "../../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { HandlerBasedSoftwareDeliveryMachine } from "./HandlerBasedSoftwareDeliveryMachine";
 import { infoSupport } from "../pack/info/exposeInfo";
 import { jobSupport } from "../pack/job/job";
+import { HandlerBasedSoftwareDeliveryMachine } from "./HandlerBasedSoftwareDeliveryMachine";
 
 /**
  * Create a **Software Delivery MachineConfiguration** with default predefined goals.

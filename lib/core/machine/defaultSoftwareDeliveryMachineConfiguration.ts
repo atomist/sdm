@@ -22,9 +22,9 @@ import { CachingProjectLoader } from "../../api-helper/project/CachingProjectLoa
 import { commandRequestParameterPromptFactory } from "../../api/context/parameterPrompt";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
-import { LocalSoftwareDeliveryMachineConfiguration } from "./LocalSoftwareDeliveryMachineOptions";
-import { TeamConfigurationPreferenceStoreFactory } from "../preferences/TeamConfigurationPreferenceStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
+import { TeamConfigurationPreferenceStoreFactory } from "../preferences/TeamConfigurationPreferenceStore";
+import { LocalSoftwareDeliveryMachineConfiguration } from "./LocalSoftwareDeliveryMachineOptions";
 
 export function defaultSoftwareDeliveryMachineConfiguration(configuration: Configuration): LocalSoftwareDeliveryMachineConfiguration {
     const repoRefResolver = new DefaultRepoRefResolver();

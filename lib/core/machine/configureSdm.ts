@@ -33,14 +33,14 @@ import {
     GoalExecutionRequestProcessor,
 } from "../handlers/events/delivery/goals/goalExecution";
 import { CacheCleanupAutomationEventListener } from "../handlers/events/delivery/goals/k8s/CacheCleanupAutomationEventListener";
-import { defaultSoftwareDeliveryMachineConfiguration } from "./defaultSoftwareDeliveryMachineConfiguration";
-import { toArray } from "../util/misc/array";
 import { GoalSigningAutomationEventListener } from "../signing/goalSigning";
+import { toArray } from "../util/misc/array";
 import { SdmGoalMetricReportingAutomationEventListener } from "../util/SdmGoalMetricReportingAutomationEventListener";
 import {
     sdmExtensionPackStartupMessage,
     sdmStartupMessage,
 } from "../util/startupMessage";
+import { defaultSoftwareDeliveryMachineConfiguration } from "./defaultSoftwareDeliveryMachineConfiguration";
 import { InvokeSdmStartupListenersAutomationEventListener } from "./InvokeSdmStartupListenersAutomationEventListener";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./LocalSoftwareDeliveryMachineOptions";
 import {

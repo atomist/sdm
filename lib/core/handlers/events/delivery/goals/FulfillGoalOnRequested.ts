@@ -60,6 +60,7 @@ import {
     OnAnyRequestedSdmGoal,
     SdmGoalState,
 } from "../../../../../typings/types";
+import { shouldFulfill } from "../../../../delivery/goals/support/validateGoal";
 import {
     CacheEntry,
     CacheInputGoalDataKey,
@@ -67,7 +68,6 @@ import {
     cachePut,
     cacheRestore,
 } from "../../../../goal/cache/goalCaching";
-import { shouldFulfill } from "../../../../delivery/goals/support/validateGoal";
 import { verifyGoal } from "../../../../signing/goalSigning";
 import { toArray } from "../../../../util/misc/array";
 import { formatDuration } from "../../../../util/misc/time";

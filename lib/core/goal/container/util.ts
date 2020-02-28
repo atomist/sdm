@@ -28,8 +28,8 @@ import {
     UpdateSdmVersionMutation,
     UpdateSdmVersionMutationVariables,
 } from "../../../typings/types";
-import { SdmVersion } from "../../ingesters/sdmVersionIngester";
 import { getGoalVersion } from "../../delivery/build/local/projectVersioner";
+import { SdmVersion } from "../../ingesters/sdmVersionIngester";
 import { K8sNamespaceFile } from "../../pack/k8s/support/namespace";
 import {
     postBuildWebhook,
