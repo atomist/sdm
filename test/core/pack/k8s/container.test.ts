@@ -51,7 +51,7 @@ import { containerTestImage } from "../../goal/container/util";
 
 /* tslint:disable:max-file-line-count */
 
-describe("goal/container/k8s", () => {
+describe("core/pack/k8s/container", () => {
 
     describe("k8sFulfillmentCallback", () => {
 
@@ -92,15 +92,13 @@ describe("goal/container/k8s", () => {
         } as any;
         const kgs = new KubernetesGoalScheduler();
         kgs.podSpec = {
-            spec: {
-                containers: [
-                    {
-                        image: "rod/argent:1945.6.14",
-                        name: "rod-argent",
-                    },
-                ],
-            },
-        } as any;
+            containers: [
+                {
+                    image: "rod/argent:1945.6.14",
+                    name: "rod-argent",
+                },
+            ],
+        };
         const rc: RepoContext = {
             configuration: {
                 apiKey: "AT0M15TAP1K3Y",
@@ -1045,34 +1043,32 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
         it("should add scheduler pod spec envs and volumeMounts to init container", async () => {
             const kgsx = new KubernetesGoalScheduler();
             kgsx.podSpec = {
-                spec: {
-                    containers: [
-                        {
-                            env: [
-                                {
-                                    name: "ATOMIST_CONFIG_PATH",
-                                    value: "/opt/atm/client.config.json",
-                                },
-                            ],
-                            image: "rod/argent:1945.6.14",
-                            livenessProbe: {
-                                httpGet: {
-                                    path: "/health",
-                                    port: "http",
-                                },
-                                initialDelaySeconds: 20,
+                containers: [
+                    {
+                        env: [
+                            {
+                                name: "ATOMIST_CONFIG_PATH",
+                                value: "/opt/atm/client.config.json",
                             },
-                            name: "rod-argent",
-                            volumeMounts: [
-                                {
-                                    mountPath: "/opt/atm",
-                                    name: "sdm-config",
-                                },
-                            ],
+                        ],
+                        image: "rod/argent:1945.6.14",
+                        livenessProbe: {
+                            httpGet: {
+                                path: "/health",
+                                port: "http" as unknown as object,
+                            },
+                            initialDelaySeconds: 20,
                         },
-                    ],
-                },
-            } as any;
+                        name: "rod-argent",
+                        volumeMounts: [
+                            {
+                                mountPath: "/opt/atm",
+                                name: "sdm-config",
+                            },
+                        ],
+                    },
+                ],
+            };
             const rcx: RepoContext = {
                 configuration: {
                     sdm: {

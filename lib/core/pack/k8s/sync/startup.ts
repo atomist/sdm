@@ -46,6 +46,9 @@ export const syncRepoStartupListener: StartupListener = async ctx => {
     if (!cluster.isMaster) {
         return;
     }
+    if (process.env.ATOMIST_ISOLATED_GOAL) {
+        return;
+    }
     await sdmRepoSync(sdm);
     const interval: number = _.get(sdm, "configuration.sdm.k8s.options.sync.intervalMinutes");
     if (interval && interval > 0) {

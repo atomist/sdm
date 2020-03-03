@@ -31,7 +31,10 @@ import {
     Merge,
 } from "ts-essentials";
 import { minimalClone } from "../../../api-helper/goal/minimalClone";
-import { goalData } from "../../../api-helper/goal/sdmGoal";
+import {
+    goalData,
+    sdmGoalTimeout,
+} from "../../../api-helper/goal/sdmGoal";
 import { RepoContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import {
@@ -251,7 +254,7 @@ export function k8sFulfillmentCallback(
             },
         ];
 
-        const copyContainer = _.cloneDeep(k8sScheduler.podSpec.spec.containers[0]);
+        const copyContainer = _.cloneDeep(k8sScheduler.podSpec.containers[0]);
         delete copyContainer.lifecycle;
         delete copyContainer.livenessProbe;
         delete copyContainer.readinessProbe;
@@ -510,7 +513,7 @@ export function executeK8sJob(): ExecuteGoal {
 
         const status = { code: 0, message: `Container '${containerName}' completed successfully` };
         try {
-            const timeout: number = configuration.sdm?.goal?.timeout || 10 * 60 * 1000;
+            const timeout = sdmGoalTimeout(configuration);
             const podStatus = await containerWatch(container, timeout);
             progressLog.write(`Container '${containerName}' exited: ${stringify(podStatus)}`);
         } catch (e) {
@@ -638,7 +641,7 @@ async function containerStarted(container: K8sContainer, attempts: number = 240)
 
     const sleepTime = 500; // ms
     for (let i = 0; i < attempts; i++) {
-        await sleep(500);
+        await sleep(sleepTime);
         let pod: k8s.V1Pod;
         try {
             pod = (await core.readNamespacedPod(container.pod, container.ns)).body;
