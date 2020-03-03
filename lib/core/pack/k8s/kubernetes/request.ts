@@ -140,6 +140,15 @@ export interface KubernetesApplication {
      * also provided.
      */
     roleBindingSpec?: DeepPartial<k8s.V1RoleBinding> | DeepPartial<k8s.V1ClusterRoleBinding>;
+    /**
+     * Strategy to use when patching resources for this application.
+     * Supported values are "application/merge-patch+json" and
+     * "application/strategic-merge-patch+json".  The default is
+     * "application/strategic-merge-patch+json".  See
+     * https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/
+     * for details.
+     */
+    patchStrategy?: "application/merge-patch+json" | "application/strategic-merge-patch+json";
 }
 
 /**

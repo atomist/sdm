@@ -63,7 +63,7 @@ export async function upsertSecrets(req: KubernetesResourceRequest): Promise<k8s
         }
         logger.info(`Secret ${secretName} exists, patching using '${logObject(spec)}'`);
         await logRetry(() => req.clients.core.patchNamespacedSecret(secret.metadata.name, spec.metadata.namespace, spec,
-            undefined, undefined, undefined, undefined, patchHeaders()), `patch secret ${secretName} for ${slug}`);
+            undefined, undefined, undefined, undefined, patchHeaders(req)), `patch secret ${secretName} for ${slug}`);
         return spec;
     }));
     return ss;

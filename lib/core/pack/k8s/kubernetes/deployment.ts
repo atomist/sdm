@@ -57,7 +57,7 @@ export async function upsertDeployment(req: KubernetesResourceRequest): Promise<
     }
     logger.info(`Updating deployment ${slug} using '${logObject(spec)}'`);
     await logRetry(() => req.clients.apps.patchNamespacedDeployment(spec.metadata.name, spec.metadata.namespace, spec,
-        undefined, undefined, undefined, undefined, patchHeaders()), `patch deployment ${slug}`);
+        undefined, undefined, undefined, undefined, patchHeaders(req)), `patch deployment ${slug}`);
     return spec;
 }
 

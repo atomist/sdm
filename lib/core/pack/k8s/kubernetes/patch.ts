@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { KubernetesApplication } from "./request";
+
 /** Return type from [[patchHeaders]]. */
 export interface K8sHeaders {
     headers: {
@@ -29,10 +31,11 @@ export interface K8sHeaders {
  * https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/
  * for details.
  */
-export function patchHeaders(): K8sHeaders {
+export function patchHeaders(app: Pick<KubernetesApplication, "patchStrategy">): K8sHeaders {
+    const contentType = (app?.patchStrategy) ? app.patchStrategy : "application/strategic-merge-patch+json";
     return {
         headers: {
-            "Content-Type": "application/strategic-merge-patch+json",
+            "Content-Type": contentType,
         },
     };
 }

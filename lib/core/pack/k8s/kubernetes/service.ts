@@ -58,7 +58,7 @@ export async function upsertService(req: KubernetesResourceRequest): Promise<k8s
     }
     logger.info(`Service ${slug} exists, patching using '${logObject(spec)}'`);
     await logRetry(() => req.clients.core.patchNamespacedService(spec.metadata.name, spec.metadata.namespace, spec,
-        undefined, undefined, undefined, undefined, patchHeaders()), `patch service ${slug}`);
+        undefined, undefined, undefined, undefined, patchHeaders(req)), `patch service ${slug}`);
     return spec;
 }
 
