@@ -15,18 +15,56 @@
  */
 
 import * as assert from "power-assert";
-import { SdmGoalEvent } from "../../../../../lib/api/goal/SdmGoalEvent";
 import {
     appExternalUrls,
     endpointBaseUrl,
+    kubeClusterHostScheme,
 } from "../../../../../lib/core/pack/k8s/deploy/externalUrls";
 import { KubernetesApplication } from "../../../../../lib/core/pack/k8s/kubernetes/request";
 
-describe("pack/k8s/deploy/externalUrls", () => {
+describe("core/pack/k8s/deploy/externalUrls", () => {
+
+    describe("kubeClusterHostScheme", () => {
+
+        it("should return undefined", () => {
+            [
+                undefined,
+                {},
+                { ingressSpec: undefined },
+                { ingressSpec: { spec: undefined } },
+                { ingressSpec: { spec: {} } },
+                { ingressSpec: { spec: { rules: undefined } } },
+                { ingressSpec: { spec: { rules: [] } } },
+                { ingressSpec: { spec: { rules: [{}, { http: undefined }] } } },
+                { ingressSpec: { spec: { rules: [{}, { http: {} }] } } },
+                { ingressSpec: { spec: { rules: [{}, { http: { paths: undefined } }] } } },
+                { ingressSpec: { spec: { rules: [{}, { http: { paths: [] } }] } } },
+            ].forEach((a: any) => {
+                const h = kubeClusterHostScheme(a);
+                assert.deepStrictEqual(h, undefined);
+            });
+        });
+
+        it("should find a host but no TLS secret", () => {
+            const a = {
+                ingressSpec: {
+                    spec: {
+                        rules: [
+                            {},
+                            { host: "emi.com" },
+                        ],
+                    },
+                },
+            };
+            const h = kubeClusterHostScheme(a);
+            assert.deepStrictEqual(h, "http://emi.com");
+        });
+
+    });
 
     describe("endpointBaseUrl", () => {
 
-        it("should return undefined", async () => {
+        it("should return undefined when no path", () => {
             const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
@@ -34,163 +72,133 @@ describe("pack/k8s/deploy/externalUrls", () => {
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
             };
-            const u = await endpointBaseUrl(r);
+            const u = endpointBaseUrl(r);
             assert(u === undefined);
         });
 
-        it("should return the host and path", async () => {
-            const r = {
+        it("should return the host and path", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"] }],
+                    },
+                },
             };
-            const u = await endpointBaseUrl(r);
+            const u = endpointBaseUrl(r);
             const e = `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
             assert(u === e);
         });
 
-        it("should return http protocol with no tlsSecret", async () => {
-            const r = {
+        it("should return http protocol with no tlsSecret", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                    },
+                },
             };
-            const u = await endpointBaseUrl(r);
+            const u = endpointBaseUrl(r);
             const e = `http://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
             assert(u === e);
         });
 
-        it("should return https protocol with tslSecret", async () => {
-            const r = {
+        it("should find host tls", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                tlsSecret: "wickham",
+                ingressSpec: {
+                    spec: {
+                        rules: [{}, { host: "emi.com" }],
+                        tls: [{}, { hosts: [] }, { hosts: ["ime.com", "emi.com"] }],
+                    },
+                },
             };
-            const u = await endpointBaseUrl(r);
+            const u = endpointBaseUrl(r);
             const e = `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
             assert(u === e);
         });
 
-        it("should not add / to path that already has it", async () => {
-            const r = {
+        it("should return http when host tls not found", () => {
+            const r: KubernetesApplication = {
+                workspaceId: "KAT3BU5H",
+                ns: "hounds-of-love",
+                name: "cloudbusting",
+                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
+                port: 5510,
+                path: "/bush/kate/hounds-of-love/cloudbusting",
+                ingressSpec: {
+                    spec: {
+                        rules: [{}, { host: "emi.com" }],
+                        tls: [{}, { hosts: [] }, { hosts: ["ime.com"] }],
+                    },
+                },
+            };
+            const u = endpointBaseUrl(r);
+            const e = `http://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
+            assert(u === e);
+        });
+
+        it("should not add / to path that already has it", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting/",
-                host: "emi.com",
-                protocol: "https" as "https",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"] }],
+                    },
+                },
             };
-            const u = await endpointBaseUrl(r);
+            const u = endpointBaseUrl(r);
             const e = `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
             assert(u === e);
         });
 
-        it("should prepend / to path that is missing it", async () => {
-            const r = {
+        it("should prepend / to path that is missing it", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                    },
+                },
             };
-            const u = await endpointBaseUrl(r);
-            const e = `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
+            const u = endpointBaseUrl(r);
+            const e = `http://emi.com/bush/kate/hounds-of-love/cloudbusting/`;
             assert(u === e);
         });
-
-        it("should return undefined in local mode", async () => {
-            let mode: string;
-            if (process.env.ATOMIST_MODE) {
-                mode = process.env.ATOMIST_MODE;
-            }
-            process.env.ATOMIST_MODE = "local";
-            const r: KubernetesApplication = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                port: 5510,
-            };
-            const u = await endpointBaseUrl(r);
-            if (mode) {
-                process.env.ATOMIST_MODE = mode;
-            } else {
-                delete process.env.ATOMIST_MODE;
-            }
-            assert(u === undefined);
-        }).timeout(5000);
-
-        it("should return default-like endpoint in local mode", async () => {
-            let mode: string;
-            if (process.env.ATOMIST_MODE) {
-                mode = process.env.ATOMIST_MODE;
-            }
-            process.env.ATOMIST_MODE = "local";
-            const r: KubernetesApplication = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                port: 5510,
-                path: "/",
-            };
-            const u = await endpointBaseUrl(r);
-            if (mode) {
-                process.env.ATOMIST_MODE = mode;
-            } else {
-                delete process.env.ATOMIST_MODE;
-            }
-            assert(/^http:\/\/\d+\.\d+\.\d+\.\d+\/$/.test(u));
-        }).timeout(5000);
-
-        it("should return endpoint in local mode", async () => {
-            let mode: string;
-            if (process.env.ATOMIST_MODE) {
-                mode = process.env.ATOMIST_MODE;
-            }
-            process.env.ATOMIST_MODE = "local";
-            const r: KubernetesApplication = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                port: 5510,
-                path: "/bush/kate/hounds-of-love/cloudbusting",
-                tlsSecret: "wickham",
-            };
-            const u = await endpointBaseUrl(r);
-            if (mode) {
-                process.env.ATOMIST_MODE = mode;
-            } else {
-                delete process.env.ATOMIST_MODE;
-            }
-            assert(/^https:\/\/\d+\.\d+\.\d+\.\d+\/bush\/kate\/hounds-of-love\/cloudbusting\/$/.test(u));
-        }).timeout(5000);
 
     });
 
     describe("appExternalUrls", () => {
 
-        it("should return undefined", async () => {
+        it("should return undefined", () => {
             const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
@@ -198,32 +206,26 @@ describe("pack/k8s/deploy/externalUrls", () => {
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
             };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
-                },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            const u = appExternalUrls(r);
             assert(u === undefined);
         });
 
-        it("should return the host and path", async () => {
-            const r = {
+        it("should return the host and path", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
-            };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"] }],
+                    },
                 },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            };
+            const u = appExternalUrls(r);
             const e = [{
                 label: "https",
                 url: `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`,
@@ -231,22 +233,21 @@ describe("pack/k8s/deploy/externalUrls", () => {
             assert.deepStrictEqual(u, e);
         });
 
-        it("should return http protocol with no tlsSecret", async () => {
-            const r = {
+        it("should return http protocol with no tlsSecret", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-            };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                    },
                 },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            };
+            const u = appExternalUrls(r);
             const e = [{
                 label: "http",
                 url: `http://emi.com/bush/kate/hounds-of-love/cloudbusting/`,
@@ -254,23 +255,22 @@ describe("pack/k8s/deploy/externalUrls", () => {
             assert.deepStrictEqual(u, e);
         });
 
-        it("should return https protocol with tslSecret", async () => {
-            const r = {
+        it("should return https protocol when TLS secret found", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                tlsSecret: "wickham",
-            };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
+                ingressSpec: {
+                    spec: {
+                        rules: [{}, { host: "emi.com" }],
+                        tls: [{}, { hosts: [] }, { hosts: ["emi.com"] }, { hosts: ["ime.com"] }],
+                    },
                 },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            };
+            const u = appExternalUrls(r);
             const e = [{
                 label: "https",
                 url: `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`,
@@ -278,23 +278,45 @@ describe("pack/k8s/deploy/externalUrls", () => {
             assert.deepStrictEqual(u, e);
         });
 
-        it("should not add / to path that already has it", async () => {
-            const r = {
+        it("should return http protocol when no matching TLS secret", () => {
+            const r: KubernetesApplication = {
+                workspaceId: "KAT3BU5H",
+                ns: "hounds-of-love",
+                name: "cloudbusting",
+                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
+                port: 5510,
+                path: "/bush/kate/hounds-of-love/cloudbusting",
+                ingressSpec: {
+                    spec: {
+                        rules: [{}, { host: "emi.com" }],
+                        tls: [{}, { hosts: [] }, { hosts: ["e.mi.com"] }, { hosts: ["ime.com"] }],
+                    },
+                },
+            };
+            const u = appExternalUrls(r);
+            const e = [{
+                label: "http",
+                url: `http://emi.com/bush/kate/hounds-of-love/cloudbusting/`,
+            }];
+            assert.deepStrictEqual(u, e);
+        });
+
+        it("should not add / to path that already has it", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting/",
-                host: "emi.com",
-                protocol: "https" as "https",
-            };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"] }],
+                    },
                 },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            };
+            const u = appExternalUrls(r);
             const e = [{
                 label: "https",
                 url: `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`,
@@ -302,23 +324,22 @@ describe("pack/k8s/deploy/externalUrls", () => {
             assert.deepStrictEqual(u, e);
         });
 
-        it("should prepend / to path that is missing it", async () => {
-            const r = {
+        it("should prepend / to path that is missing it", () => {
+            const r: KubernetesApplication = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
-            };
-            const g: SdmGoalEvent = {
-                fulfillment: {
-                    name: "emi",
+                ingressSpec: {
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"] }],
+                    },
                 },
-            } as any;
-            const u = await appExternalUrls(r, g);
+            };
+            const u = appExternalUrls(r);
             const e = [{
                 label: "https",
                 url: `https://emi.com/bush/kate/hounds-of-love/cloudbusting/`,

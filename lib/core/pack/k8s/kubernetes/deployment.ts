@@ -101,7 +101,6 @@ export async function deploymentTemplate(req: KubernetesApplication & Kubernetes
         kind,
         metadata,
         spec: {
-            replicas: (req.replicas || req.replicas === 0) ? req.replicas : 1,
             selector,
             strategy: {
                 type: "RollingUpdate",
@@ -149,9 +148,6 @@ export async function deploymentTemplate(req: KubernetesApplication & Kubernetes
         } as any;
         d.spec.template.spec.containers[0].readinessProbe = probe;
         d.spec.template.spec.containers[0].livenessProbe = probe;
-    }
-    if (req.imagePullSecret) {
-        d.spec.template.spec.imagePullSecrets = [{ name: req.imagePullSecret }];
     }
     if (req.roleSpec) {
         d.spec.template.spec.serviceAccountName = _.get(req, "serviceAccountSpec.metadata.name", req.name);
