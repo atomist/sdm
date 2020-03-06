@@ -49,7 +49,7 @@ export async function upsertNamespace(req: KubernetesResourceRequest): Promise<k
     logger.info(`Namespace ${slug} exists, patching using '${logObject(spec)}'`);
     try {
         await logRetry(() => req.clients.core.patchNamespace(spec.metadata.name, spec,
-            undefined, undefined, undefined, undefined, patchHeaders()), `patch namespace ${slug}`);
+            undefined, undefined, undefined, undefined, patchHeaders(req)), `patch namespace ${slug}`);
     } catch (e) {
         logger.warn(`Failed to patch existing namespace ${slug}, ignoring: ${k8sErrMsg(e)}`);
     }

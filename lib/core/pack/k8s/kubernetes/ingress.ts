@@ -59,7 +59,7 @@ export async function upsertIngress(req: KubernetesResourceRequest): Promise<k8s
     }
     logger.info(`Ingress ${slug} exists, patching using '${logObject(spec)}'`);
     await logRetry(() => req.clients.ext.patchNamespacedIngress(spec.metadata.name, spec.metadata.namespace, spec,
-        undefined, undefined, undefined, undefined, patchHeaders()), `patch ingress ${slug}`);
+        undefined, undefined, undefined, undefined, patchHeaders(req)), `patch ingress ${slug}`);
     return spec;
 }
 
@@ -105,9 +105,6 @@ export async function ingressTemplate(req: KubernetesApplication & KubernetesSdm
             paths: [httpPath],
         },
     } as any;
-    if (req.host) {
-        rule.host = req.host;
-    }
     const apiVersion = "extensions/v1beta1";
     const kind = "Ingress";
     const i: k8s.NetworkingV1beta1Ingress = {
@@ -118,16 +115,6 @@ export async function ingressTemplate(req: KubernetesApplication & KubernetesSdm
             rules: [rule],
         },
     };
-    if (req.tlsSecret) {
-        i.spec.tls = [
-            {
-                secretName: req.tlsSecret,
-            } as any,
-        ];
-        if (req.host) {
-            i.spec.tls[0].hosts = [req.host];
-        }
-    }
     if (req.ingressSpec) {
         _.merge(i, req.ingressSpec, { apiVersion, kind });
         i.metadata.namespace = req.ns;

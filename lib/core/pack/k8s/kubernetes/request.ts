@@ -50,18 +50,6 @@ export interface KubernetesApplication {
      */
     mode?: "full" | "sync";
     /**
-     * Name of image pull secret for container image, if not provided
-     * no image pull secret is provided in the pod spec.
-     * Prefer deploymentSpec.
-     */
-    imagePullSecret?: string;
-    /**
-     * Number of replicas in deployment.  May be overridden by
-     * deploymentSpec.
-     * Prefer deploymentSpec
-     */
-    replicas?: number;
-    /**
      * Port the service listens on, if not provided, no service
      * resource is created.
      */
@@ -72,24 +60,6 @@ export interface KubernetesApplication {
      * ("/") but do not end with one, unless the path is just "/".
      */
     path?: string;
-    /**
-     * Ingress rule hostname, if not provided none is used in the
-     * ingress rule, meaning it will apply to the wildcard host, and
-     * "localhost" is used when constructing the service endpoint URL.
-     * Prefer ingressSpec
-     */
-    host?: string;
-    /**
-     * Ingress protocol, "http" or "https".  If tslSecret is provided,
-     * the default is "https", otherwise "http".
-     * Prefer ingressSpec
-     */
-    protocol?: "http" | "https";
-    /**
-     * Name of TLS secret for host
-     * Prefer ingressSpec
-     */
-    tlsSecret?: string;
     /**
      * Partial deployment spec for this application that is overlaid
      * on top of the default deployment spec template.  It can be used
@@ -140,6 +110,15 @@ export interface KubernetesApplication {
      * also provided.
      */
     roleBindingSpec?: DeepPartial<k8s.V1RoleBinding> | DeepPartial<k8s.V1ClusterRoleBinding>;
+    /**
+     * Strategy to use when patching resources for this application.
+     * Supported values are "application/merge-patch+json" and
+     * "application/strategic-merge-patch+json".  The default is
+     * "application/strategic-merge-patch+json".  See
+     * https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/
+     * for details.
+     */
+    patchStrategy?: "application/merge-patch+json" | "application/strategic-merge-patch+json";
 }
 
 /**

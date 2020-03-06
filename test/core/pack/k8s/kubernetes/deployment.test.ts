@@ -16,20 +16,23 @@
 
 import * as assert from "power-assert";
 import { deploymentTemplate } from "../../../../../lib/core/pack/k8s/kubernetes/deployment";
+import {
+    KubernetesApplication,
+    KubernetesSdm,
+} from "../../../../../lib/core/pack/k8s/kubernetes/request";
 
 /* tslint:disable:max-file-line-count */
 
-describe("pack/k8s/kubernetes/deployment", () => {
+describe("core/pack/k8s/kubernetes/deployment", () => {
 
     describe("deploymentTemplate", () => {
 
         it("should create a deployment spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                imagePullSecret: "comfort",
                 port: 5510,
                 sdmFulfiller: "EMI",
             };
@@ -41,7 +44,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
             assert(d.metadata.labels["app.kubernetes.io/name"] === r.name);
             assert(d.metadata.labels["app.kubernetes.io/part-of"] === r.name);
             assert(d.metadata.labels["atomist.com/workspaceId"] === r.workspaceId);
-            assert(d.spec.replicas === 1);
             assert(d.spec.selector.matchLabels["app.kubernetes.io/name"] === r.name);
             assert(d.spec.selector.matchLabels["atomist.com/workspaceId"] === r.workspaceId);
             assert(d.spec.template.metadata.annotations["atomist.com/k8vent"] ===
@@ -63,22 +65,19 @@ describe("pack/k8s/kubernetes/deployment", () => {
             assert(d.spec.template.spec.containers[0].livenessProbe.httpGet.path === "/");
             assert(d.spec.template.spec.containers[0].livenessProbe.httpGet.port === "http" as any);
             assert(d.spec.template.spec.containers[0].livenessProbe.initialDelaySeconds === 30);
-            assert(d.spec.template.spec.imagePullSecrets[0].name === r.imagePullSecret);
         });
 
         it("should create a custom deployment spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                imagePullSecret: "comfort",
                 port: 5510,
                 sdmFulfiller: "EMI",
                 deploymentSpec: {
                     spec: {
                         replicas: 2,
-                        restartPolicy: "Never",
                         revisionHistoryLimit: 5,
                         template: {
                             spec: {
@@ -86,11 +85,14 @@ describe("pack/k8s/kubernetes/deployment", () => {
                                     { imagePullPolicy: "Always" },
                                 ],
                                 dnsPolicy: "ClusterFirstWithHostNet",
+                                imagePullSecrets: [
+                                    { name: "comfort" },
+                                ],
+                                restartPolicy: "Never",
                             },
                         },
                     },
                 },
-                replicas: 12,
             };
             const d = await deploymentTemplate(r);
             const e = {
@@ -108,7 +110,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                 },
                 spec: {
                     replicas: 2,
-                    restartPolicy: "Never",
                     revisionHistoryLimit: 5,
                     selector: {
                         matchLabels: {
@@ -170,9 +171,10 @@ describe("pack/k8s/kubernetes/deployment", () => {
                             dnsPolicy: "ClusterFirstWithHostNet",
                             imagePullSecrets: [
                                 {
-                                    name: r.imagePullSecret,
+                                    name: "comfort",
                                 },
                             ],
+                            restartPolicy: "Never",
                         },
                     },
                     strategy: {
@@ -188,19 +190,17 @@ describe("pack/k8s/kubernetes/deployment", () => {
         });
 
         it("should fix API version and kind in provided spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                imagePullSecret: "comfort",
                 port: 5510,
                 sdmFulfiller: "EMI",
                 deploymentSpec: {
                     apiVersion: "extensions/v1beta1",
                     kind: "Deploy",
                 },
-                replicas: 12,
             };
             const d = await deploymentTemplate(r);
             const e = {
@@ -217,7 +217,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                     },
                 },
                 spec: {
-                    replicas: 12,
                     selector: {
                         matchLabels: {
                             "app.kubernetes.io/name": r.name,
@@ -272,11 +271,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                                             containerPort: r.port,
                                         },
                                     ],
-                                },
-                            ],
-                            imagePullSecrets: [
-                                {
-                                    name: r.imagePullSecret,
                                 },
                             ],
                         },
@@ -294,12 +288,11 @@ describe("pack/k8s/kubernetes/deployment", () => {
         });
 
         it("should allow overriding name but not namespace", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                imagePullSecret: "comfort",
                 port: 5510,
                 sdmFulfiller: "EMI",
                 deploymentSpec: {
@@ -308,7 +301,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                         namespace: "the-kick-inside",
                     },
                 },
-                replicas: 12,
             };
             const d = await deploymentTemplate(r);
             const e = {
@@ -325,7 +317,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                     },
                 },
                 spec: {
-                    replicas: 12,
                     selector: {
                         matchLabels: {
                             "app.kubernetes.io/name": r.name,
@@ -380,188 +371,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                                             containerPort: r.port,
                                         },
                                     ],
-                                },
-                            ],
-                            imagePullSecrets: [
-                                {
-                                    name: r.imagePullSecret,
-                                },
-                            ],
-                        },
-                    },
-                    strategy: {
-                        type: "RollingUpdate",
-                        rollingUpdate: {
-                            maxUnavailable: 0,
-                            maxSurge: 1,
-                        },
-                    },
-                },
-            };
-            assert.deepStrictEqual(d, e);
-        });
-
-        it("should create a deployment spec with zero replicas", async () => {
-            const r = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                imagePullSecret: "comfort",
-                port: 5510,
-                replicas: 0,
-                sdmFulfiller: "EMI",
-            };
-            const d = await deploymentTemplate(r);
-            const e = {
-                apiVersion: "apps/v1",
-                kind: "Deployment",
-                metadata: {
-                    name: r.name,
-                    namespace: r.ns,
-                    labels: {
-                        "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                        "app.kubernetes.io/name": r.name,
-                        "app.kubernetes.io/part-of": r.name,
-                        "atomist.com/workspaceId": r.workspaceId,
-                    },
-                },
-                spec: {
-                    replicas: 0,
-                    selector: {
-                        matchLabels: {
-                            "app.kubernetes.io/name": r.name,
-                            "atomist.com/workspaceId": r.workspaceId,
-                        },
-                    },
-                    template: {
-                        metadata: {
-                            name: r.name,
-                            labels: {
-                                "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                                "app.kubernetes.io/name": r.name,
-                                "app.kubernetes.io/part-of": r.name,
-                                "atomist.com/workspaceId": r.workspaceId,
-                            },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
-                            },
-                        },
-                        spec: {
-                            containers: [
-                                {
-                                    name: r.name,
-                                    image: r.image,
-                                    resources: {
-                                        limits: {
-                                            cpu: "1000m",
-                                            memory: "384Mi",
-                                        },
-                                        requests: {
-                                            cpu: "100m",
-                                            memory: "320Mi",
-                                        },
-                                    },
-                                    readinessProbe: {
-                                        httpGet: {
-                                            path: "/",
-                                            port: "http",
-                                        },
-                                        initialDelaySeconds: 30,
-                                    },
-                                    livenessProbe: {
-                                        httpGet: {
-                                            path: "/",
-                                            port: "http",
-                                        },
-                                        initialDelaySeconds: 30,
-                                    },
-                                    ports: [
-                                        {
-                                            name: "http",
-                                            containerPort: r.port,
-                                        },
-                                    ],
-                                },
-                            ],
-                            imagePullSecrets: [
-                                {
-                                    name: r.imagePullSecret,
-                                },
-                            ],
-                        },
-                    },
-                    strategy: {
-                        type: "RollingUpdate",
-                        rollingUpdate: {
-                            maxUnavailable: 0,
-                            maxSurge: 1,
-                        },
-                    },
-                },
-            };
-            assert.deepStrictEqual(d, e);
-        });
-
-        it("should create a deployment spec with custom replicas", async () => {
-            const r = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                replicas: 12,
-                sdmFulfiller: "EMI",
-            };
-            const d = await deploymentTemplate(r);
-            const e = {
-                apiVersion: "apps/v1",
-                kind: "Deployment",
-                metadata: {
-                    name: r.name,
-                    namespace: r.ns,
-                    labels: {
-                        "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                        "app.kubernetes.io/name": r.name,
-                        "app.kubernetes.io/part-of": r.name,
-                        "atomist.com/workspaceId": r.workspaceId,
-                    },
-                },
-                spec: {
-                    replicas: 12,
-                    selector: {
-                        matchLabels: {
-                            "app.kubernetes.io/name": r.name,
-                            "atomist.com/workspaceId": r.workspaceId,
-                        },
-                    },
-                    template: {
-                        metadata: {
-                            name: r.name,
-                            labels: {
-                                "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                                "app.kubernetes.io/name": r.name,
-                                "app.kubernetes.io/part-of": r.name,
-                                "atomist.com/workspaceId": r.workspaceId,
-                            },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
-                            },
-                        },
-                        spec: {
-                            containers: [
-                                {
-                                    name: r.name,
-                                    image: r.image,
-                                    resources: {
-                                        limits: {
-                                            cpu: "1000m",
-                                            memory: "384Mi",
-                                        },
-                                        requests: {
-                                            cpu: "100m",
-                                            memory: "320Mi",
-                                        },
-                                    },
                                 },
                             ],
                         },
@@ -579,7 +388,7 @@ describe("pack/k8s/kubernetes/deployment", () => {
         });
 
         it("should create a deployment spec with service account", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
@@ -602,7 +411,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                     },
                 },
                 spec: {
-                    replicas: 1,
                     selector: {
                         matchLabels: {
                             "app.kubernetes.io/name": r.name,
@@ -655,7 +463,7 @@ describe("pack/k8s/kubernetes/deployment", () => {
         });
 
         it("should create a deployment spec using service account name", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
@@ -691,7 +499,6 @@ describe("pack/k8s/kubernetes/deployment", () => {
                     },
                 },
                 spec: {
-                    replicas: 1,
                     selector: {
                         matchLabels: {
                             "app.kubernetes.io/name": r.name,

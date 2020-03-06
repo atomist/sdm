@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-import { execPromise } from "@atomist/automation-client/lib/util/child_process";
-import { logger } from "@atomist/automation-client/lib/util/logger";
-import { SdmGoalEvent } from "../../../../api/goal/SdmGoalEvent";
-import { isInLocalMode } from "../../../machine/modes";
 import { KubernetesApplication } from "../kubernetes/request";
 
 export type ExternalUrls = Array<{ label?: string, url: string }>;
@@ -26,8 +22,8 @@ export type ExternalUrls = Array<{ label?: string, url: string }>;
  * Return proper SDM goal externalUrls structure or `undefined` if
  * there is no externally accessible endpoint.
  */
-export async function appExternalUrls(ka: KubernetesApplication, ge: SdmGoalEvent): Promise<ExternalUrls | undefined> {
-    const url = await endpointBaseUrl(ka);
+export function appExternalUrls(ka: KubernetesApplication): ExternalUrls | undefined {
+    const url = endpointBaseUrl(ka);
     if (!url) {
         return undefined;
     }
@@ -39,29 +35,24 @@ export async function appExternalUrls(ka: KubernetesApplication, ge: SdmGoalEven
  * Create the URL for a deployment using the protocol, host, and path
  * from the [[KubernetesApplication]] object.  If `ka.path` is not
  * truthy, no ingress was created so return `undefined`.  If the path
- * does not begin and end with a forward slash, /, add them.  If
- * protocol is not provided, use "https" if tlsSecret is provided,
- * otherwise "http".  If host is not provided and the SDM is running
- * in local mode, it attempts to find the IP address of any locally
- * running Kubernetes cluster and falls back to "127.0.0.1".  If the
- * host is not given and the SDM is _not_ in local mode, `undefined`
- * is returned.
+ * does not begin and end with a forward slash, /, add them.  If the
+ * ingress spec has a TLS secret the scheme is set to "https",
+ * otherwise it is set to "http".  If there is not enough information
+ * in the ingress spec to create an endpoint, `undefined` is returned.
  *
  * @param ka Kubernetes application
  * @return endpoint URL for deployment service
  */
-export async function endpointBaseUrl(ka: Pick<KubernetesApplication, "host" | "path" | "protocol" | "tlsSecret">): Promise<string | undefined> {
+export function endpointBaseUrl(ka: Pick<KubernetesApplication, "path" | "ingressSpec">): string | undefined {
     const path = endpointPath(ka);
     if (!path) {
         return undefined;
     }
-    const host = await kubeClusterHost(ka);
-    if (!host) {
+    const schemeHost = kubeClusterHostScheme(ka);
+    if (!schemeHost) {
         return undefined;
     }
-    const defaultProtocol = (ka.tlsSecret) ? "https" : "http";
-    const protocol = (ka.protocol) ? ka.protocol : defaultProtocol;
-    return `${protocol}://${host}${path}`;
+    return `${schemeHost}${path}`;
 }
 
 /**
@@ -83,32 +74,23 @@ function endpointPath(ka: Pick<KubernetesApplication, "path">): string | undefin
 }
 
 /**
- * Determine host for endpoint.  If `ka.host` is truthy, return it.
- * Otherwise if the SDM is running in local mode, try to find IP
- * address of locally running Kubernetes cluster.  Currently only
- * minikube is supported.  If it is unable to determine an IP address
- * of a local Kubernetes cluster, it returns "127.0.0.1".  If
- * `ka.host` is falsey and the SDM is _not_ running in local mode,
- * return `undefined`.
+ * Determine host and scheme for endpoint.  The host will be the
+ * `host` property of the first element of `ka.ingressSpec.spec.rules`
+ * that defines a host.  The scheme will be "https" if the host
+ * appears in the list of hostnames for any ingress TLS secret,
+ * otherwise "http".  If there is no ingress spec or no ingress spec
+ * rules contain a host, return `undefined`.
  *
  * @param ka Kubernetes application information
- * @return Hostname or, if local, IP address for application endpoint, or `undefined`
+ * @return "scheme://hostname" as determined from the ingress spec, or `undefined`
  */
-async function kubeClusterHost(ka: Pick<KubernetesApplication, "host">): Promise<string | undefined> {
-    if (ka.host) {
-        return ka.host;
-    }
-    if (!isInLocalMode()) {
+export function kubeClusterHostScheme(ka: Pick<KubernetesApplication, "ingressSpec">): string | undefined {
+    const hostRule = ka?.ingressSpec?.spec?.rules?.find(r => !!r.host);
+    if (!hostRule) {
         return undefined;
     }
-    try {
-        const minikubeIpResult = await execPromise("minikube", ["ip"]);
-        const host = minikubeIpResult.stdout.trim();
-        if (host) {
-            return host;
-        }
-    } catch (e) {
-        logger.debug(`Failed to run 'minikube ip': ${e.message}`);
-    }
-    return "127.0.0.1";
+    const host = hostRule.host;
+    const tlsSecret = ka.ingressSpec?.spec?.tls?.find(t => t.hosts?.some(h => h === host));
+    const scheme = (tlsSecret) ? "https" : "http";
+    return `${scheme}://${host}`;
 }

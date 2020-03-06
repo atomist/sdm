@@ -19,14 +19,18 @@ import {
     ingressTemplate,
     upsertIngress,
 } from "../../../../../lib/core/pack/k8s/kubernetes/ingress";
-import { KubernetesResourceRequest } from "../../../../../lib/core/pack/k8s/kubernetes/request";
+import {
+    KubernetesApplication,
+    KubernetesResourceRequest,
+    KubernetesSdm,
+} from "../../../../../lib/core/pack/k8s/kubernetes/request";
 
-describe("pack/k8s/kubernetes/ingress", () => {
+describe("core/pack/k8s/kubernetes/ingress", () => {
 
     describe("ingressTemplate", () => {
 
         it("should create a wildcard ingress spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
@@ -43,10 +47,10 @@ describe("pack/k8s/kubernetes/ingress", () => {
                     name: "cloudbusting",
                     namespace: "hounds-of-love",
                     labels: {
-                        "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                        "app.kubernetes.io/name": r.name,
-                        "app.kubernetes.io/part-of": r.name,
-                        "atomist.com/workspaceId": r.workspaceId,
+                        "app.kubernetes.io/managed-by": "EMI",
+                        "app.kubernetes.io/name": "cloudbusting",
+                        "app.kubernetes.io/part-of": "cloudbusting",
+                        "atomist.com/workspaceId": "KAT3BU5H",
                     },
                 },
                 spec: {
@@ -56,70 +60,13 @@ describe("pack/k8s/kubernetes/ingress", () => {
                                 paths: [
                                     {
                                         backend: {
-                                            serviceName: r.name,
+                                            serviceName: "cloudbusting",
                                             servicePort: "http",
                                         },
-                                        path: r.path,
+                                        path: "/bush/kate/hounds-of-love/cloudbusting",
                                     },
                                 ],
                             },
-                        },
-                    ],
-                },
-            };
-            assert.deepStrictEqual(i, e);
-        });
-
-        it("should create a host ingress spec", async () => {
-            const r = {
-                workspaceId: "KAT3BU5H",
-                ns: "hounds-of-love",
-                name: "cloudbusting",
-                image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
-                port: 5510,
-                path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
-                sdmFulfiller: "EMI",
-                tlsSecret: "emi-com",
-            };
-            const i = await ingressTemplate(r);
-            const e = {
-                apiVersion: "extensions/v1beta1",
-                kind: "Ingress",
-                metadata: {
-                    labels: {
-                        "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                        "app.kubernetes.io/name": r.name,
-                        "app.kubernetes.io/part-of": r.name,
-                        "atomist.com/workspaceId": r.workspaceId,
-                    },
-                    name: "cloudbusting",
-                    namespace: "hounds-of-love",
-                },
-                spec: {
-                    rules: [
-                        {
-                            host: r.host,
-                            http: {
-                                paths: [
-                                    {
-                                        backend: {
-                                            serviceName: r.name,
-                                            servicePort: "http",
-                                        },
-                                        path: r.path,
-                                    },
-                                ],
-                            },
-                        },
-                    ],
-                    tls: [
-                        {
-                            hosts: [
-                                "emi.com",
-                            ],
-                            secretName: "emi-com",
                         },
                     ],
                 },
@@ -128,17 +75,14 @@ describe("pack/k8s/kubernetes/ingress", () => {
         });
 
         it("should merge in provided ingress spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
                 sdmFulfiller: "EMI",
-                tlsSecret: "emi-com",
                 ingressSpec: {
                     metadata: {
                         annotations: {
@@ -148,6 +92,10 @@ describe("pack/k8s/kubernetes/ingress", () => {
                             "nginx.ingress.kubernetes.io/limit-rps": "25",
                             "nginx.ingress.kubernetes.io/rewrite-target": "/cb",
                         },
+                    },
+                    spec: {
+                        rules: [{ host: "emi.com" }],
+                        tls: [{ hosts: ["emi.com"], secretName: "emi-com" }],
                     },
                 } as any,
             };
@@ -164,10 +112,10 @@ describe("pack/k8s/kubernetes/ingress", () => {
                         "nginx.ingress.kubernetes.io/limit-rps": "25",
                     },
                     labels: {
-                        "app.kubernetes.io/managed-by": r.sdmFulfiller,
-                        "app.kubernetes.io/name": r.name,
-                        "app.kubernetes.io/part-of": r.name,
-                        "atomist.com/workspaceId": r.workspaceId,
+                        "app.kubernetes.io/managed-by": "EMI",
+                        "app.kubernetes.io/name": "cloudbusting",
+                        "app.kubernetes.io/part-of": "cloudbusting",
+                        "atomist.com/workspaceId": "KAT3BU5H",
                     },
                     name: "cloudbusting",
                     namespace: "hounds-of-love",
@@ -175,15 +123,15 @@ describe("pack/k8s/kubernetes/ingress", () => {
                 spec: {
                     rules: [
                         {
-                            host: r.host,
+                            host: "emi.com",
                             http: {
                                 paths: [
                                     {
                                         backend: {
-                                            serviceName: r.name,
+                                            serviceName: "cloudbusting",
                                             servicePort: "http",
                                         },
-                                        path: r.path,
+                                        path: "/bush/kate/hounds-of-love/cloudbusting",
                                     },
                                 ],
                             },
@@ -203,17 +151,14 @@ describe("pack/k8s/kubernetes/ingress", () => {
         });
 
         it("should correct API version and kind in provided spec", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
                 sdmFulfiller: "EMI",
-                tlsSecret: "emi-com",
                 ingressSpec: {
                     apiVersion: "v1",
                     kind: "Egress",
@@ -236,7 +181,6 @@ describe("pack/k8s/kubernetes/ingress", () => {
                 spec: {
                     rules: [
                         {
-                            host: r.host,
                             http: {
                                 paths: [
                                     {
@@ -250,31 +194,20 @@ describe("pack/k8s/kubernetes/ingress", () => {
                             },
                         },
                     ],
-                    tls: [
-                        {
-                            hosts: [
-                                "emi.com",
-                            ],
-                            secretName: "emi-com",
-                        },
-                    ],
                 },
             };
             assert.deepStrictEqual(s, e);
         });
 
         it("should allow overriding name but not namespace", async () => {
-            const r = {
+            const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
                 ns: "hounds-of-love",
                 name: "cloudbusting",
                 image: "gcr.io/kate-bush/hounds-of-love/cloudbusting:5.5.10",
                 port: 5510,
                 path: "/bush/kate/hounds-of-love/cloudbusting",
-                host: "emi.com",
-                protocol: "https" as "https",
                 sdmFulfiller: "EMI",
-                tlsSecret: "emi-com",
                 ingressSpec: {
                     metadata: {
                         name: "wuthering-heights",
@@ -299,7 +232,6 @@ describe("pack/k8s/kubernetes/ingress", () => {
                 spec: {
                     rules: [
                         {
-                            host: r.host,
                             http: {
                                 paths: [
                                     {
@@ -311,14 +243,6 @@ describe("pack/k8s/kubernetes/ingress", () => {
                                     },
                                 ],
                             },
-                        },
-                    ],
-                    tls: [
-                        {
-                            hosts: [
-                                "emi.com",
-                            ],
-                            secretName: "emi-com",
                         },
                     ],
                 },
