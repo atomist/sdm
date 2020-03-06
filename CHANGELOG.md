@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Push test for skill configuration. [#805](https://github.com/atomist/sdm/issues/805)
 -   Add support for skill output. [#808](https://github.com/atomist/sdm/issues/808)
 -   Move sdm-core into sdm. [#811](https://github.com/atomist/sdm/issues/811)
+-   K8s patch strategy and simplify KubernetesApplication. [#820](https://github.com/atomist/sdm/issues/820)
 
 ### Changed
 
