@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://images.atomist.com/sdm/SDM-Logo-Dark.png">
 </p>
-
+ 
 # Software Delivery Machine - `@atomist/sdm`
 
 [![atomist sdm goals](http://badge.atomist.com/T29E48P34/atomist/sdm/64ac86ca-3c46-4742-9e41-a42c14560af9)](https://app.atomist.com/workspace/T29E48P34)
