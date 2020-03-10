@@ -128,11 +128,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                  goal: Goal,
                                  goalExecutor: ExecuteGoal,
                                  options?: Partial<{
-                                     pushTest: PushTest,
-                                     logInterpreter: InterpretLog,
-                                     progressReporter: ReportProgress,
-                                     projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[],
-                                 }>): this {
+            pushTest: PushTest,
+            logInterpreter: InterpretLog,
+            progressReporter: ReportProgress,
+            projectListeners: GoalProjectListenerRegistration | GoalProjectListenerRegistration[],
+        }>): this {
         const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: _.get(options, "pushTest") || AnyPush,
@@ -206,7 +206,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      */
     public addGoalSideEffect(goal: Goal,
                              sideEffectName: string,
-                             registration: string,
+                             registration?: string,
                              pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,

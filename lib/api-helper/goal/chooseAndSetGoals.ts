@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client/lib/configuration";
+import {
+    Configuration,
+    configurationValue,
+} from "@atomist/automation-client/lib/configuration";
 import {
     ConfigurationAware,
     HandlerContext,
@@ -118,10 +121,10 @@ export interface ChooseAndSetGoalsRules {
  */
 export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                         parameters: {
-                                            context: HandlerContext,
-                                            credentials: ProjectOperationCredentials,
-                                            push: PushFields.Fragment,
-                                        }): Promise<Goals | undefined> {
+        context: HandlerContext,
+        credentials: ProjectOperationCredentials,
+        push: PushFields.Fragment,
+    }): Promise<Goals | undefined> {
     const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver, preferencesFactory } = rules;
     const { context, credentials, push } = parameters;
     const enrichGoal = !!rules.enrichGoal ? rules.enrichGoal : async g => g;
@@ -134,8 +137,8 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 
     const { determinedGoals, goalsToSave, tags } = await determineGoals(
         { projectLoader, repoRefResolver, goalSetter, implementationMapping, enrichGoal, tagGoalSet }, {
-            credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
-        });
+        credentials, id, context, push, addressChannels, preferences, goalSetId, configuration,
+    });
 
     if (goalsToSave.length > 0) {
         // First store the goals
@@ -165,36 +168,36 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 }
 
 export async function determineGoals(rules: {
-                                         projectLoader: ProjectLoader,
-                                         repoRefResolver: RepoRefResolver,
-                                         goalSetter: GoalSetter,
-                                         implementationMapping: GoalImplementationMapper,
-                                         enrichGoal: EnrichGoal,
-                                         tagGoalSet?: TagGoalSet,
-                                     },
+    projectLoader: ProjectLoader,
+    repoRefResolver: RepoRefResolver,
+    goalSetter: GoalSetter,
+    implementationMapping: GoalImplementationMapper,
+    enrichGoal: EnrichGoal,
+    tagGoalSet?: TagGoalSet,
+},
                                      circumstances: {
-                                         credentials: ProjectOperationCredentials,
-                                         id: RemoteRepoRef,
-                                         context: HandlerContext,
-                                         configuration: Configuration,
-                                         push: PushFields.Fragment,
-                                         addressChannels: AddressChannels,
-                                         preferences?: PreferenceStore,
-                                         goalSetId: string,
-                                     }): Promise<{
-    determinedGoals: Goals | undefined,
-    goalsToSave: SdmGoalMessage[],
-    tags: GoalSetTag[],
-}> {
+        credentials: ProjectOperationCredentials,
+        id: RemoteRepoRef,
+        context: HandlerContext,
+        configuration: Configuration,
+        push: PushFields.Fragment,
+        addressChannels: AddressChannels,
+        preferences?: PreferenceStore,
+        goalSetId: string,
+    }): Promise<{
+        determinedGoals: Goals | undefined,
+        goalsToSave: SdmGoalMessage[],
+        tags: GoalSetTag[],
+    }> {
     const { enrichGoal, projectLoader, repoRefResolver, goalSetter, implementationMapping, tagGoalSet } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId, preferences, configuration } = circumstances;
     return projectLoader.doWithProject({
-            credentials,
-            id,
-            context,
-            readOnly: true,
-            cloneOptions: minimalClone(push, { detachHead: true }),
-        },
+        credentials,
+        id,
+        context,
+        readOnly: true,
+        cloneOptions: minimalClone(push, { detachHead: true }),
+    },
         async project => {
             const pli: StatefulPushListenerInvocation = {
                 project,
@@ -271,8 +274,8 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
 }
 
 async function fulfillment(rules: {
-                               implementationMapping: GoalImplementationMapper,
-                           },
+    implementationMapping: GoalImplementationMapper,
+},
                            g: Goal,
                            inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
@@ -290,7 +293,7 @@ async function fulfillment(rules: {
         return {
             method: SdmGoalFulfillmentMethod.SideEffect,
             name: plan.sideEffectName,
-            registration: plan.registration,
+            registration: plan.registration || configurationValue("name"),
         };
     } else {
         return { method: SdmGoalFulfillmentMethod.Other, name: "unknown", registration: "unknown" };
