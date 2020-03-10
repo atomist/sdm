@@ -43,15 +43,26 @@ export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementatio
     return !!f && !!(f as GoalImplementation).implementationName && true;
 }
 
+/** Information needed to create a goal side effect. */
 export interface GoalSideEffect {
+    /** Name of goal side effect.  It should be unique. */
     sideEffectName: string;
-    registration: string;
+    /** Goal on which to associated the side effect. */
     goal: Goal;
-    pushTest: PushTest;
+    /**
+     * Push test that when true the side effect will be triggered.  If
+     * not provided, [[AnyPush]] is used.
+     */
+    pushTest?: PushTest;
+    /**
+     * Name of SDM executing side effect.  If not provided, the
+     * current SDM registration name will be used.
+     */
+    registration?: string;
 }
 
 export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
-    return !!f && (f as GoalSideEffect).sideEffectName &&  (f as GoalSideEffect).registration && true;
+    return !!f && (f as GoalSideEffect).sideEffectName && (f as GoalSideEffect).goal && true;
 }
 
 export function isGoalFulfillment(g: { fulfillment?: PlannedGoal["fulfillment"]}):

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
@@ -24,6 +25,7 @@ import {
     GoalSideEffect,
 } from "../../api/goal/support/GoalImplementationMapper";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 
 /**
  * Concrete implementation of GoalImplementationMapper
@@ -69,7 +71,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             i.goal.uniqueName === implementation.goal.uniqueName &&
             i.goal.environment === implementation.goal.environment)) {
             throw new Error(`Implementation with name '${implementation.implementationName
-            }' already registered for goal '${implementation.goal.name}'`);
+                }' already registered for goal '${implementation.goal.name}'`);
         }
         this.addGoal(implementation.goal);
         this.implementations.push(implementation);
@@ -77,6 +79,8 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     }
 
     public addSideEffect(sideEffect: GoalSideEffect): this {
+        sideEffect.pushTest = sideEffect.pushTest || AnyPush;
+        sideEffect.registration = sideEffect.registration || configurationValue("name");
         this.addGoal(sideEffect.goal);
         this.sideEffects.push(sideEffect);
         return this;
