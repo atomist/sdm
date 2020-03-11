@@ -150,7 +150,7 @@ describe("machine/yaml/mapGoals", () => {
                 configuration: { http: { client: { factory: defaultHttpClientFactory() } } },
             } as any, yaml, {}, {}, {}, {});
             assert(!!goals);
-        }).timeout(10000);
+        }).timeout(10000).skip();
 
         it("should map referenced goal", async () => {
             const yaml = { ref: "atomist/npm-goal/i-dont-exist@0.0.1" };
@@ -160,7 +160,7 @@ describe("machine/yaml/mapGoals", () => {
             } catch (e) {
                 assert.deepStrictEqual(e.message, "Unable to construct goal from '{\"ref\":\"atomist/npm-goal/i-dont-exist@0.0.1\"}'");
             }
-        }).timeout(10000);
+        }).timeout(10000).skip();
 
         it("should map skill with parameters", async () => {
             const yaml = [{ use: "atomist/npm-goal/publish", parameters: { command: "build" } }];
