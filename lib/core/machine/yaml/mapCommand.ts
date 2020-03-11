@@ -238,6 +238,9 @@ async function populateMappedParameters(parameters: any, metadata: CommandHandle
                 case MappedParameters.SlackChannelName:
                     _.update(parameters, mp.name, () => _.get(ci, "context.trigger.source.slack.channel.name"));
                     break;
+                case MappedParameters.SlackChannelType:
+                    _.update(parameters, mp.name, () => _.get(ci, "context.trigger.source.slack.channel.type"));
+                    break;
                 case MappedParameters.SlackUser:
                     _.update(parameters, mp.name, () => _.get(ci, "context.trigger.source.slack.user.id"));
                     break;
