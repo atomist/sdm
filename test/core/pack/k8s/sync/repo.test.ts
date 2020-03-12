@@ -32,9 +32,12 @@ import {
     scmCredentials,
 } from "../../../../../lib/core/pack/k8s/sync/repo";
 import {
+    ProviderType,
     RepoScmProvider,
     ScmProviders,
 } from "../../../../../lib/typings/types";
+
+const WorkspaceId = "A4USK34DU";
 
 describe("pack/k8s/sync/repo", () => {
 
@@ -68,9 +71,28 @@ describe("pack/k8s/sync/repo", () => {
 
     describe("scmCredentials", () => {
 
-        it("should return undefined if not provided enough information", () => {
+        it("should return undefined if not provided enough information", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
+                    graphql: {
+                        client: {
+                            factory: {
+                                create: (w: string) => {
+                                    assert(w === "A4USK34DU");
+                                    return {
+                                        query: async (o: any) => {
+                                            if (o.name === "GitHubAppInstallationByOwner") {
+                                                return {
+                                                    GitHubAppInstallation: undefined,
+                                                };
+                                            }
+                                            return undefined;
+                                        },
+                                    };
+                                },
+                            },
+                        },
+                    },
                     sdm: {
                         repoRefResolver: new DefaultRepoRefResolver(),
                         k8s: {
@@ -87,11 +109,11 @@ describe("pack/k8s/sync/repo", () => {
                 },
             } as any;
             const s: ScmProviders.ScmProvider = {} as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no apiUrl", () => {
+        it("should return undefined if no apiUrl", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -114,13 +136,32 @@ describe("pack/k8s/sync/repo", () => {
                     secret: "m@n-0n-th3-m00n",
                 },
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no credential", () => {
+        it("should return undefined if no credential", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
+                    graphql: {
+                        client: {
+                            factory: {
+                                create: (w: string) => {
+                                    assert(w === "A4USK34DU");
+                                    return {
+                                        query: async (o: any) => {
+                                            if (o.name === "GitHubAppInstallationByOwner") {
+                                                return {
+                                                    GitHubAppInstallation: undefined,
+                                                };
+                                            }
+                                            return undefined;
+                                        },
+                                    };
+                                },
+                            },
+                        },
+                    },
                     sdm: {
                         repoRefResolver: new DefaultRepoRefResolver(),
                         k8s: {
@@ -139,13 +180,32 @@ describe("pack/k8s/sync/repo", () => {
             const s: ScmProviders.ScmProvider = {
                 apiUrl: "https://api.github.com",
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no secret", () => {
+        it("should return undefined if no secret", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
+                    graphql: {
+                        client: {
+                            factory: {
+                                create: (w: string) => {
+                                    assert(w === "A4USK34DU");
+                                    return {
+                                        query: async (o: any) => {
+                                            if (o.name === "GitHubAppInstallationByOwner") {
+                                                return {
+                                                    GitHubAppInstallation: undefined,
+                                                };
+                                            }
+                                            return undefined;
+                                        },
+                                    };
+                                },
+                            },
+                        },
+                    },
                     sdm: {
                         repoRefResolver: new DefaultRepoRefResolver(),
                         k8s: {
@@ -165,11 +225,11 @@ describe("pack/k8s/sync/repo", () => {
                 apiUrl: "https://api.github.com",
                 credential: {} as any,
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no owner", () => {
+        it("should return undefined if no owner", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -193,11 +253,11 @@ describe("pack/k8s/sync/repo", () => {
                     secret: "m@n-0n-th3-m00n",
                 },
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no repo", () => {
+        it("should return undefined if no repo", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -221,11 +281,11 @@ describe("pack/k8s/sync/repo", () => {
                     secret: "m@n-0n-th3-m00n",
                 },
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return ghe repo ref", () => {
+        it("should return ghe repo ref", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -251,7 +311,7 @@ describe("pack/k8s/sync/repo", () => {
                 providerType: "ghe" as any,
                 url: "https://ghe.sugar.com/",
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc, "no RepoCredentials returned");
             assert((rc.credentials as TokenCredentials).token === "m@n-0n-th3-m00n");
             assert((rc.repo as GitHubRepoRef).apiBase === "ghe.sugar.com/api/v3");
@@ -264,7 +324,7 @@ describe("pack/k8s/sync/repo", () => {
             assert((rc.repo as GitHubRepoRef).scheme === "https://");
         });
 
-        it("should use branch and provided credentials", () => {
+        it("should use branch and provided credentials", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -290,7 +350,7 @@ describe("pack/k8s/sync/repo", () => {
                     secret: "m@n-0n-th3-m00n",
                 },
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc, "no RepoCredentials returned");
             assert((rc.credentials as TokenCredentials).token === "tilted");
             assert((rc.repo as GitHubRepoRef).apiBase === "api.github.com");
@@ -303,7 +363,7 @@ describe("pack/k8s/sync/repo", () => {
             assert((rc.repo as GitHubRepoRef).scheme === "https://");
         });
 
-        it("should create a bitbucket", () => {
+        it("should create a bitbucket", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -329,7 +389,7 @@ describe("pack/k8s/sync/repo", () => {
                 },
                 providerType: "bitbucket" as any,
             } as any;
-            const rc = scmCredentials(m, s);
+            const rc = await scmCredentials(m, s, WorkspaceId);
             assert(rc, "no RepoCredentials returned");
             assert((rc.credentials as TokenCredentials).token === "1w@nn@b3y0u4d0g");
             assert((rc.repo as BitBucketServerRepoRef).apiBase === "bitbucket.iggyandthestooges.com/rest/api/1.0");
@@ -341,11 +401,69 @@ describe("pack/k8s/sync/repo", () => {
             assert((rc.repo as BitBucketServerRepoRef).scheme === "https://");
         });
 
+        it("should return github with app installation token", async () => {
+            const m: SoftwareDeliveryMachine = {
+                configuration: {
+                    graphql: {
+                        client: {
+                            factory: {
+                                create: (w: string) => {
+                                    assert(w === "A4USK34DU");
+                                    return {
+                                        query: async (o: any) => {
+                                            if (o.name === "GitHubAppInstallationByOwner") {
+                                                return {
+                                                    GitHubAppInstallation: [{
+                                                        token: {
+                                                            secret: "m@n-0n-th3-m00n",
+                                                        },
+                                                    }],
+                                                };
+                                            }
+                                            return undefined;
+                                        },
+                                    };
+                                },
+                            },
+                        },
+                    },
+                    sdm: {
+                        repoRefResolver: new DefaultRepoRefResolver(),
+                        k8s: {
+                            options: {
+                                sync: {
+                                    repo: {
+                                        owner: "bob-mould",
+                                        repo: "sugar",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            } as any;
+            const s: ScmProviders.ScmProvider = {
+                apiUrl: "https://api.github.com",
+                providerType: ProviderType.github_com,
+                credential: {} as any,
+            } as any;
+            const rc = await scmCredentials(m, s, WorkspaceId);
+            assert(rc, "no RepoCredentials returned");
+            assert((rc.credentials as TokenCredentials).token === "m@n-0n-th3-m00n");
+            assert((rc.repo as GitHubRepoRef).apiBase === "api.github.com");
+            assert(rc.repo.owner === "bob-mould");
+            assert(rc.repo.path === undefined);
+            assert(rc.repo.providerType === ScmProviderType.github_com);
+            assert(rc.repo.remoteBase === "github.com");
+            assert(rc.repo.repo === "sugar");
+            assert((rc.repo as GitHubRepoRef).scheme === "https://");
+        });
+
     });
 
     describe("repoCredentials", () => {
 
-        it("should return undefined if not provided enough information", () => {
+        it("should return undefined if not provided enough information", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -364,11 +482,11 @@ describe("pack/k8s/sync/repo", () => {
                 },
             } as any;
             const s: RepoScmProvider.Repo = {};
-            const rc = repoCredentials(m, s);
+            const rc = await repoCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no scmProvider", () => {
+        it("should return undefined if no scmProvider", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -389,13 +507,32 @@ describe("pack/k8s/sync/repo", () => {
             const s: RepoScmProvider.Repo = {
                 org: {},
             };
-            const rc = repoCredentials(m, s);
+            const rc = await repoCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return undefined if no scmProvider properties", () => {
+        it("should return undefined if no scmProvider properties", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
+                    graphql: {
+                        client: {
+                            factory: {
+                                create: (w: string) => {
+                                    assert(w === "A4USK34DU");
+                                    return {
+                                        query: async (o: any) => {
+                                            if (o.name === "GitHubAppInstallationByOwner") {
+                                                return {
+                                                    GitHubAppInstallation: undefined,
+                                                };
+                                            }
+                                            return undefined;
+                                        },
+                                    };
+                                },
+                            },
+                        },
+                    },
                     sdm: {
                         repoRefResolver: new DefaultRepoRefResolver(),
                         k8s: {
@@ -416,11 +553,11 @@ describe("pack/k8s/sync/repo", () => {
                     scmProvider: {} as any,
                 },
             };
-            const rc = repoCredentials(m, s);
+            const rc = await repoCredentials(m, s, WorkspaceId);
             assert(rc === undefined);
         });
 
-        it("should return remote repo ref", () => {
+        it("should return remote repo ref", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -448,7 +585,7 @@ describe("pack/k8s/sync/repo", () => {
                     } as any,
                 },
             };
-            const rc = repoCredentials(m, s);
+            const rc = await repoCredentials(m, s, WorkspaceId);
             assert(rc, "no RepoCredentials returned");
             assert((rc.credentials as TokenCredentials).token === "m@n-0n-th3-m00n");
             assert((rc.repo as GitHubRepoRef).apiBase === "api.github.com");
@@ -461,7 +598,7 @@ describe("pack/k8s/sync/repo", () => {
             assert((rc.repo as GitHubRepoRef).scheme === "https://");
         });
 
-        it("should create a gitlab ref with provided credentials", () => {
+        it("should create a gitlab ref with provided credentials", async () => {
             const m: SoftwareDeliveryMachine = {
                 configuration: {
                     sdm: {
@@ -493,7 +630,7 @@ describe("pack/k8s/sync/repo", () => {
                     } as any,
                 },
             };
-            const rc = repoCredentials(m, s);
+            const rc = await repoCredentials(m, s, WorkspaceId);
             assert(rc, "no RepoCredentials returned");
             assert((rc.credentials as TokenCredentials).token === "Frankenstein");
             assert((rc.repo as GitlabRepoRef).apiBase === "gitlab.nydolls.com/api/v4");

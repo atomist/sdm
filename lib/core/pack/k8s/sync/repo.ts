@@ -26,6 +26,8 @@ import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliveryMachine";
 import {
+    GitHubAppInstallationByOwner,
+    ProviderType,
     RepoScmProvider,
     ScmProviders,
 } from "../../../../typings/types";
@@ -138,7 +140,7 @@ async function queryRepo(sdm: SoftwareDeliveryMachine): Promise<RepoCredentials 
             logger.warn(`More than one repo found in workspace ${workspaceId} with owner/repo ${slug}`);
         }
         for (const repo of searchRepos) {
-            const rc = repoCredentials(sdm, repo);
+            const rc = await repoCredentials(sdm, repo, workspaceId);
             if (rc) {
                 rc.repo.branch = rc.repo.branch || repo.defaultBranch || defaultDefaultBranch;
                 logger.info(`Returning first ${slug} repo with valid SCM provider`);
@@ -173,7 +175,7 @@ async function queryScm(sdm: SoftwareDeliveryMachine): Promise<RepoCredentials |
                 logger.debug(`SCM provider '${provider.providerId}' does not match '${repoProviderId}'`);
                 continue;
             }
-            const rc = scmCredentials(sdm, provider);
+            const rc = await scmCredentials(sdm, provider, workspaceId);
             if (rc) {
                 logger.debug(`Attempting to clone ${slug} using ${rc.repo.cloneUrl}`);
                 try {
@@ -197,9 +199,11 @@ async function queryScm(sdm: SoftwareDeliveryMachine): Promise<RepoCredentials |
  * provider, it returns `undefined`.  Otherwise it uses the SCM
  * provider to call [[scmCredentials]] and return its value.
  */
-export function repoCredentials(sdm: SoftwareDeliveryMachine, repo: RepoScmProvider.Repo): RepoCredentials | undefined {
+export async function repoCredentials(sdm: SoftwareDeliveryMachine,
+                                      repo: RepoScmProvider.Repo,
+                                      workspaceId: string): Promise<RepoCredentials | undefined> {
     if (repo.org && repo.org.scmProvider) {
-        return scmCredentials(sdm, repo.org.scmProvider);
+        return scmCredentials(sdm, repo.org.scmProvider, workspaceId);
     }
     return undefined;
 }
@@ -212,10 +216,22 @@ export function repoCredentials(sdm: SoftwareDeliveryMachine, repo: RepoScmProvi
  * there is not enough information to created the repo credential
  * object.
  */
-export function scmCredentials(sdm: SoftwareDeliveryMachine, scm: ScmProviders.ScmProvider): RepoCredentials | undefined {
+export async function scmCredentials(sdm: SoftwareDeliveryMachine,
+                                     scm: ScmProviders.ScmProvider,
+                                     workspaceId: string): Promise<RepoCredentials | undefined> {
     const repoRef = syncRepoRef(sdm);
     const credentials = _.get(sdm, "configuration.sdm.k8s.options.sync.credentials");
-    const secret = _.get(scm, "credential.secret");
+    let secret = _.get(scm, "credential.secret");
+    if (!credentials && !secret && scm.providerType === ProviderType.github_com) {
+        const graphClient = sdm.configuration.graphql.client.factory.create(workspaceId, sdm.configuration);
+        const app = await graphClient.query<GitHubAppInstallationByOwner.Query, GitHubAppInstallationByOwner.Variables>({
+            name: "GitHubAppInstallationByOwner",
+            variables: {
+                name: repoRef.owner,
+            },
+        });
+        secret = _.get(app, "GitHubAppInstallation[0].token.secret");
+    }
     if (repoRef && repoRef.owner && repoRef.repo && scm.apiUrl && (credentials || secret)) {
         const repoResolver = sdm.configuration.sdm.repoRefResolver;
         const repoFrag = {
