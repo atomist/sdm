@@ -9,30 +9,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
--   Drop WS socket requirement for k8s goal jobs. [#788](https://github.com/atomist/sdm/issues/788)
--   Support RegExp Intents and retrieving parameters from them. [#794](https://github.com/atomist/sdm/issues/794)
 -   Add registration to goal test. [db15c06](https://github.com/atomist/sdm/commit/db15c067e6574639d23d0d1361f3fd82c7895214)
 -   Support for configuration in command and event handlers. [#801](https://github.com/atomist/sdm/issues/801)
 -   Push test for skill configuration. [#805](https://github.com/atomist/sdm/issues/805)
 -   Add support for skill output. [#808](https://github.com/atomist/sdm/issues/808)
 -   Move sdm-core into sdm. [#811](https://github.com/atomist/sdm/issues/811)
 -   K8s patch strategy and simplify KubernetesApplication. [#820](https://github.com/atomist/sdm/issues/820)
+-   Add support for reading GitHub app tokens. [#823](https://github.com/atomist/sdm/issues/823)
+
+### Changed
+
+-   Goal caching/Skill output should only be stored for success goals. [#807](https://github.com/atomist/sdm/issues/807)
+-   K8s cleanup. [#817](https://github.com/atomist/sdm/issues/817)
+-   Default registration and push test for side effect. [#822](https://github.com/atomist/sdm/issues/822)
+
+### Fixed
+
+-   CachingProjectLoader should respect clone parameters. [#797](https://github.com/atomist/sdm/issues/797)
+-   Kill timed out container goals. [#818](https://github.com/atomist/sdm/issues/818)
+
+## [1.9.0](https://github.com/atomist/sdm/compare/1.8.0...1.9.0) - 2020-03-03
+
+### Added
+
+-   Dynamic goals. [#785](https://github.com/atomist/sdm/pull/785)
+-   Drop WS socket requirement for k8s goal jobs. [#788](https://github.com/atomist/sdm/issues/788)
+-   Support RegExp Intents and retrieving parameters from them. [#794](https://github.com/atomist/sdm/issues/794)
 
 ### Changed
 
 -   Move to using GraphQL mutations for SdmGoal and SdmGoalSet. [#792](https://github.com/atomist/sdm/issues/792)
 -   Clean up YAML definition schema. [#791](https://github.com/atomist/sdm/issues/791)
--   Goal caching/Skill output should only be stored for success goals. [#807](https://github.com/atomist/sdm/issues/807)
--   K8s cleanup. [#817](https://github.com/atomist/sdm/issues/817)
--   Default registration and push test for side effect. [#822](https://github.com/atomist/sdm/issues/822)
--   Add support for reading GitHub app tokens. [#823](https://github.com/atomist/sdm/issues/823)
 
 ### Fixed
 
 -   Old style push rules and goal test create goals on every goal. [#787](https://github.com/atomist/sdm/issues/787)
--   CachingProjectLoader should respect clone parameters. [#797](https://github.com/atomist/sdm/issues/797)
--   Kill timed out container goals. [#818](https://github.com/atomist/sdm/issues/818)
 
 ## [1.8.0](https://github.com/atomist/sdm/compare/1.7.0...1.8.0) - 2019-12-06
 
