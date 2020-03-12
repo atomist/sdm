@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Goal caching/Skill output should only be stored for success goals. [#807](https://github.com/atomist/sdm/issues/807)
 -   K8s cleanup. [#817](https://github.com/atomist/sdm/issues/817)
 -   Default registration and push test for side effect. [#822](https://github.com/atomist/sdm/issues/822)
+-   Add support for reading GitHub app tokens. [#823](https://github.com/atomist/sdm/issues/823)
 
 ### Fixed
 
