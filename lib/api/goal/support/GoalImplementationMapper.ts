@@ -54,8 +54,9 @@ export interface GoalSideEffect {
      */
     pushTest?: PushTest;
     /**
-     * Name of SDM executing side effect.  If not provided, the
-     * current SDM registration name will be used.
+     * Name of SDM executing side effect.  If not provided, then the
+     * goal is not fulfilled directly by an SDM but by some other
+     * mechanism, e.g., an event handler.
      */
     registration?: string;
 }

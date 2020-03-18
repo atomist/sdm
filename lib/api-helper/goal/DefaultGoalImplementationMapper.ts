@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
@@ -80,7 +79,6 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
 
     public addSideEffect(sideEffect: GoalSideEffect): this {
         sideEffect.pushTest = sideEffect.pushTest || AnyPush;
-        sideEffect.registration = sideEffect.registration || configurationValue("name");
         this.addGoal(sideEffect.goal);
         this.sideEffects.push(sideEffect);
         return this;
