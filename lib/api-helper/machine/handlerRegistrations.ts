@@ -428,8 +428,8 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
         const cli = toCommandListenerInvocation(c, context, parameters, toMachineOptions(sdm));
         cli.credentials = await resolveCredentialsPromise(cli.credentials);
         try {
-            await c.listener(cli);
-            return Success;
+            const result = await c.listener(cli);
+            return !!result ? result : Success;
         } catch (err) {
             if (err instanceof CommandListenerExecutionInterruptError) {
                 return {
