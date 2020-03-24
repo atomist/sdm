@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as cluster from "cluster";
+import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { createJob } from "../../../../api-helper/misc/job/createJob";
 import { fakeContext } from "../../../../api-helper/testsupport/fakeContext";
@@ -39,21 +40,33 @@ export const syncRepoStartupListener: StartupListener = async ctx => {
     if (isInLocalMode()) {
         return;
     }
-    const sdm = ctx.sdm;
-    if (!await queryForScmProvider(sdm)) {
-        return;
-    }
     if (!cluster.isMaster) {
         return;
     }
     if (process.env.ATOMIST_ISOLATED_GOAL) {
         return;
     }
+    const sdm = ctx.sdm;
+    if (!sdm.configuration.sdm.k8s?.options?.sync) {
+        return;
+    }
+    const repoRef = sdm.configuration.sdm.k8s.options.sync.repo;
+    if (!repoRef) {
+        logger.debug("No k8s sync repo configuration provided");
+        return;
+    }
+    if (!repoRef.owner || !repoRef.repo) {
+        logger.error(`Provided sync repo does not contain all required properties: ${stringify(repoRef)}`);
+        return;
+    }
+    if (!await queryForScmProvider(sdm)) {
+        return;
+    }
     await sdmRepoSync(sdm);
     const interval: number = _.get(sdm, "configuration.sdm.k8s.options.sync.intervalMinutes");
     if (interval && interval > 0) {
         logger.info(`Creating sync repo trigger every ${interval} minutes`);
-        setInterval(() => sdmRepoSync(sdm), interval * 60 * 1000);
+        setInterval(() => queryAndRepoSync(sdm), interval * 60 * 1000);
     }
     return;
 };
@@ -68,5 +81,21 @@ async function sdmRepoSync(sdm: SoftwareDeliveryMachine): Promise<void> {
     context.graphClient = sdm.configuration.graphql.client.factory.create(workspaceId, sdm.configuration);
     logger.info("Creating sync repo job");
     await createJob({ command: KubernetesSync, parameters: [{}] }, context);
+    return;
+}
+
+/**
+ * Remove credentials, call [[queryForScmProvider]], then call
+ * [[sdmRepoSync]].
+ */
+async function queryAndRepoSync(sdm: SoftwareDeliveryMachine): Promise<void> {
+    if (sdm.configuration.sdm.k8s?.options?.sync?.credentials) {
+        delete sdm.configuration.sdm.k8s.options.sync.credentials;
+    }
+    if (!await queryForScmProvider(sdm)) {
+        logger.warn(`Failed to get sync repo and credentials after initial success, skipping sync`);
+        return;
+    }
+    await sdmRepoSync(sdm);
     return;
 }

@@ -39,7 +39,7 @@ import {
 
 const WorkspaceId = "A4USK34DU";
 
-describe("pack/k8s/sync/repo", () => {
+describe("core/pack/k8s/sync/repo", () => {
 
     describe("isRemoteRepo", () => {
 
@@ -876,7 +876,7 @@ describe("pack/k8s/sync/repo", () => {
             assert(ss.repo.scheme === "https://");
         });
 
-        it("should find nothing and delete sync options", async () => {
+        it("should find nothing", async () => {
             let queried = false;
             const s: SoftwareDeliveryMachine = {
                 configuration: {
@@ -914,7 +914,6 @@ describe("pack/k8s/sync/repo", () => {
             } as any;
             assert(!await queryForScmProvider(s));
             assert(queried, "query method never called");
-            assert(s.configuration.sdm.k8s.options.sync === undefined);
         });
 
         it("should find the repo via the provider", async () => {

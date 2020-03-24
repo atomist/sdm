@@ -78,8 +78,7 @@ export async function queryForScmProvider(sdm: SoftwareDeliveryMachine): Promise
     }
     const repoRef = syncOptions.repo;
     if (!repoRef || !repoRef.owner || !repoRef.repo) {
-        logger.error(`Provided sync repo does not contain all required properties, deleting sync options: ${stringify(repoRef)}`);
-        delete sdm.configuration.sdm.k8s.options.sync;
+        logger.error(`Provided sync repo does not contain all required properties: ${stringify(repoRef)}`);
         return false;
     }
 
@@ -100,8 +99,7 @@ export async function queryForScmProvider(sdm: SoftwareDeliveryMachine): Promise
         }
         return true;
     }
-    logger.warn(`Failed to find sync repo, deleting sync options: ${stringify(repoRef)}`);
-    delete sdm.configuration.sdm.k8s.options.sync;
+    logger.warn(`Failed to find sync repo: ${stringify(repoRef)}`);
     return false;
 }
 
