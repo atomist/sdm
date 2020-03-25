@@ -17,7 +17,6 @@
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as cluster from "cluster";
 import * as stringify from "json-stringify-safe";
-import * as _ from "lodash";
 import { createJob } from "../../../../api-helper/misc/job/createJob";
 import { fakeContext } from "../../../../api-helper/testsupport/fakeContext";
 import { StartupListener } from "../../../../api/listener/StartupListener";
@@ -40,12 +39,6 @@ export const syncRepoStartupListener: StartupListener = async ctx => {
     if (isInLocalMode()) {
         return;
     }
-    if (!cluster.isMaster) {
-        return;
-    }
-    if (process.env.ATOMIST_ISOLATED_GOAL) {
-        return;
-    }
     const sdm = ctx.sdm;
     if (!sdm.configuration.sdm.k8s?.options?.sync) {
         return;
@@ -62,8 +55,14 @@ export const syncRepoStartupListener: StartupListener = async ctx => {
     if (!await queryForScmProvider(sdm.configuration)) {
         return;
     }
+    if (!cluster.isMaster) {
+        return;
+    }
+    if (process.env.ATOMIST_ISOLATED_GOAL) {
+        return;
+    }
     await sdmRepoSync(sdm);
-    const interval: number = _.get(sdm, "configuration.sdm.k8s.options.sync.intervalMinutes");
+    const interval: number = sdm.configuration.sdm.k8s.options.sync.intervalMinutes;
     if (interval && interval > 0) {
         logger.info(`Creating sync repo trigger every ${interval} minutes`);
         setInterval(() => sdmRepoSync(sdm), interval * 60 * 1000);
