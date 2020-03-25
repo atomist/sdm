@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   CachingProjectLoader should respect clone parameters. [#797](https://github.com/atomist/sdm/issues/797)
 -   Kill timed out container goals. [#818](https://github.com/atomist/sdm/issues/818)
+-   Query k8s sync repo creds in worker. [#830](https://github.com/atomist/sdm/issues/830)
 
 ## [1.9.0](https://github.com/atomist/sdm/compare/1.8.0...1.9.0) - 2020-03-03
 
