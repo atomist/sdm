@@ -16,6 +16,7 @@
 
 /* tslint:disable:max-file-line-count */
 
+import { Configuration } from "@atomist/automation-client/lib/configuration";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/lib/operations/common/BitBucketServerRepoRef";
 import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { GitlabRepoRef } from "@atomist/automation-client/lib/operations/common/GitlabRepoRef";
@@ -23,7 +24,6 @@ import { TokenCredentials } from "@atomist/automation-client/lib/operations/comm
 import { ProviderType as ScmProviderType } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
-import { SoftwareDeliveryMachine } from "../../../../../lib/api/machine/SoftwareDeliveryMachine";
 import { DefaultRepoRefResolver } from "../../../../../lib/core/handlers/common/DefaultRepoRefResolver";
 import {
     isRemoteRepo,
@@ -72,36 +72,34 @@ describe("core/pack/k8s/sync/repo", () => {
     describe("scmCredentials", () => {
 
         it("should return undefined if not provided enough information", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "GitHubAppInstallationByOwner") {
-                                                return {
-                                                    GitHubAppInstallation: undefined,
-                                                };
-                                            }
-                                            return undefined;
-                                        },
-                                    };
-                                },
+            const m: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "GitHubAppInstallationByOwner") {
+                                            return {
+                                                GitHubAppInstallation: undefined,
+                                            };
+                                        }
+                                        return undefined;
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+                },
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -114,17 +112,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no apiUrl", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -141,36 +137,34 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no credential", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "GitHubAppInstallationByOwner") {
-                                                return {
-                                                    GitHubAppInstallation: undefined,
-                                                };
-                                            }
-                                            return undefined;
-                                        },
-                                    };
-                                },
+            const m: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "GitHubAppInstallationByOwner") {
+                                            return {
+                                                GitHubAppInstallation: undefined,
+                                            };
+                                        }
+                                        return undefined;
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+                },
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -185,36 +179,34 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no secret", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "GitHubAppInstallationByOwner") {
-                                                return {
-                                                    GitHubAppInstallation: undefined,
-                                                };
-                                            }
-                                            return undefined;
-                                        },
-                                    };
-                                },
+            const m: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "GitHubAppInstallationByOwner") {
+                                            return {
+                                                GitHubAppInstallation: undefined,
+                                            };
+                                        }
+                                        return undefined;
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+                },
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -230,17 +222,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no owner", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -258,17 +248,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no repo", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "",
                                 },
                             },
                         },
@@ -286,17 +274,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return ghe repo ref", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -325,19 +311,17 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should use branch and provided credentials", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    credentials: { token: "tilted" },
-                                    repo: {
-                                        branch: "beaster",
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                credentials: { token: "tilted" },
+                                repo: {
+                                    branch: "beaster",
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -364,18 +348,16 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should create a bitbucket", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "FunHouse",
-                                        owner: "TheStooges",
-                                        repo: "iggy",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "FunHouse",
+                                    owner: "TheStooges",
+                                    repo: "iggy",
                                 },
                             },
                         },
@@ -402,40 +384,38 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return github with app installation token", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "GitHubAppInstallationByOwner") {
-                                                return {
-                                                    GitHubAppInstallation: [{
-                                                        token: {
-                                                            secret: "m@n-0n-th3-m00n",
-                                                        },
-                                                    }],
-                                                };
-                                            }
-                                            return undefined;
-                                        },
-                                    };
-                                },
+            const m: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "GitHubAppInstallationByOwner") {
+                                            return {
+                                                GitHubAppInstallation: [{
+                                                    token: {
+                                                        secret: "m@n-0n-th3-m00n",
+                                                    },
+                                                }],
+                                            };
+                                        }
+                                        return undefined;
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+                },
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -464,17 +444,15 @@ describe("core/pack/k8s/sync/repo", () => {
     describe("repoCredentials", () => {
 
         it("should return undefined if not provided enough information", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -487,17 +465,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no scmProvider", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -512,36 +488,34 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return undefined if no scmProvider properties", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "GitHubAppInstallationByOwner") {
-                                                return {
-                                                    GitHubAppInstallation: undefined,
-                                                };
-                                            }
-                                            return undefined;
-                                        },
-                                    };
-                                },
+            const m: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "GitHubAppInstallationByOwner") {
+                                            return {
+                                                GitHubAppInstallation: undefined,
+                                            };
+                                        }
+                                        return undefined;
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+                },
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -558,17 +532,15 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return remote repo ref", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
@@ -599,19 +571,17 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should create a gitlab ref with provided credentials", async () => {
-            const m: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                        k8s: {
-                            options: {
-                                sync: {
-                                    credentials: { token: "Frankenstein" },
-                                    repo: {
-                                        branch: "too-much-too-soon",
-                                        owner: "NewYorkDolls",
-                                        repo: "trash",
-                                    },
+            const m: Configuration = {
+                sdm: {
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                    k8s: {
+                        options: {
+                            sync: {
+                                credentials: { token: "Frankenstein" },
+                                repo: {
+                                    branch: "too-much-too-soon",
+                                    owner: "NewYorkDolls",
+                                    repo: "trash",
                                 },
                             },
                         },
@@ -649,64 +619,62 @@ describe("core/pack/k8s/sync/repo", () => {
 
         it("should find the repo", async () => {
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "RepoScmProvider") {
-                                                queried = true;
-                                                assert(o.variables.owner === "bob-mould");
-                                                assert(o.variables.repo === "sugar");
-                                                return {
-                                                    Repo: [
-                                                        {
-                                                            defaultBranch: "copper-blue",
-                                                            name: "sugar",
-                                                            org: {
-                                                                scmProvider: {
-                                                                    apiUrl: "https://api.github.com",
-                                                                    credential: {
-                                                                        secret: "m@n-0n-th3-m00n",
-                                                                    },
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "RepoScmProvider") {
+                                            queried = true;
+                                            assert(o.variables.owner === "bob-mould");
+                                            assert(o.variables.repo === "sugar");
+                                            return {
+                                                Repo: [
+                                                    {
+                                                        defaultBranch: "copper-blue",
+                                                        name: "sugar",
+                                                        org: {
+                                                            scmProvider: {
+                                                                apiUrl: "https://api.github.com",
+                                                                credential: {
+                                                                    secret: "m@n-0n-th3-m00n",
                                                                 },
                                                             },
-                                                            owner: "bob-mould",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            return { SCMProvider: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "beaster",
-                                        owner: "bob-mould",
-                                        repo: "sugar",
+                                                        owner: "bob-mould",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        return { SCMProvider: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "beaster",
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["A4USK34DU"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["A4USK34DU"],
             } as any;
             assert(await queryForScmProvider(s));
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "m@n-0n-th3-m00n");
             assert(ss.repo.apiBase === "api.github.com");
             assert(ss.repo.branch === "beaster");
@@ -720,64 +688,62 @@ describe("core/pack/k8s/sync/repo", () => {
 
         it("should use the default branch and configured credentials", async () => {
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "RepoScmProvider") {
-                                                queried = true;
-                                                assert(o.variables.owner === "bob-mould");
-                                                assert(o.variables.repo === "sugar");
-                                                return {
-                                                    Repo: [
-                                                        {
-                                                            defaultBranch: "copper-blue",
-                                                            name: "sugar",
-                                                            org: {
-                                                                scmProvider: {
-                                                                    apiUrl: "https://api.github.com",
-                                                                    credential: {
-                                                                        secret: "m@n-0n-th3-m00n",
-                                                                    },
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "RepoScmProvider") {
+                                            queried = true;
+                                            assert(o.variables.owner === "bob-mould");
+                                            assert(o.variables.repo === "sugar");
+                                            return {
+                                                Repo: [
+                                                    {
+                                                        defaultBranch: "copper-blue",
+                                                        name: "sugar",
+                                                        org: {
+                                                            scmProvider: {
+                                                                apiUrl: "https://api.github.com",
+                                                                credential: {
+                                                                    secret: "m@n-0n-th3-m00n",
                                                                 },
                                                             },
-                                                            owner: "bob-mould",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            return { SCMProvider: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    credentials: { token: "H00v34D@m" },
-                                    repo: {
-                                        owner: "bob-mould",
-                                        repo: "sugar",
+                                                        owner: "bob-mould",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        return { SCMProvider: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                credentials: { token: "H00v34D@m" },
+                                repo: {
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["A4USK34DU"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["A4USK34DU"],
             } as any;
             assert(await queryForScmProvider(s));
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "H00v34D@m");
             assert(ss.repo.apiBase === "api.github.com");
             assert(ss.repo.branch === "copper-blue");
@@ -791,80 +757,78 @@ describe("core/pack/k8s/sync/repo", () => {
 
         it("should find the repo with correct provider ID", async () => {
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "RepoScmProvider") {
-                                                queried = true;
-                                                assert(o.variables.owner === "bob-mould");
-                                                assert(o.variables.repo === "sugar");
-                                                return {
-                                                    Repo: [
-                                                        {
-                                                            defaultBranch: "copper-blue",
-                                                            name: "sugar",
-                                                            org: {
-                                                                scmProvider: {
-                                                                    apiUrl: "https://ghe.mould.com/v3",
-                                                                    credential: {
-                                                                        secret: "m@n-0n-th3-m00n",
-                                                                    },
-                                                                    providerId: "hoover-dam",
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "RepoScmProvider") {
+                                            queried = true;
+                                            assert(o.variables.owner === "bob-mould");
+                                            assert(o.variables.repo === "sugar");
+                                            return {
+                                                Repo: [
+                                                    {
+                                                        defaultBranch: "copper-blue",
+                                                        name: "sugar",
+                                                        org: {
+                                                            scmProvider: {
+                                                                apiUrl: "https://ghe.mould.com/v3",
+                                                                credential: {
+                                                                    secret: "m@n-0n-th3-m00n",
                                                                 },
+                                                                providerId: "hoover-dam",
                                                             },
-                                                            owner: "bob-mould",
                                                         },
-                                                        {
-                                                            defaultBranch: "copper-blue",
-                                                            name: "sugar",
-                                                            org: {
-                                                                scmProvider: {
-                                                                    apiUrl: "https://api.github.com",
-                                                                    credential: {
-                                                                        secret: "m@n-0n-th3-m00n",
-                                                                    },
-                                                                    providerId: "slim",
+                                                        owner: "bob-mould",
+                                                    },
+                                                    {
+                                                        defaultBranch: "copper-blue",
+                                                        name: "sugar",
+                                                        org: {
+                                                            scmProvider: {
+                                                                apiUrl: "https://api.github.com",
+                                                                credential: {
+                                                                    secret: "m@n-0n-th3-m00n",
                                                                 },
+                                                                providerId: "slim",
                                                             },
-                                                            owner: "bob-mould",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            return { SCMProvider: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "beaster",
-                                        owner: "bob-mould",
-                                        repo: "sugar",
-                                        providerId: "slim",
+                                                        owner: "bob-mould",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        return { SCMProvider: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "beaster",
+                                    owner: "bob-mould",
+                                    repo: "sugar",
+                                    providerId: "slim",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["A4USK34DU"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["A4USK34DU"],
             } as any;
             assert(await queryForScmProvider(s));
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "m@n-0n-th3-m00n");
             assert(ss.repo.apiBase === "api.github.com");
             assert(ss.repo.branch === "beaster");
@@ -878,39 +842,37 @@ describe("core/pack/k8s/sync/repo", () => {
 
         it("should find nothing", async () => {
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "A4USK34DU");
-                                    return {
-                                        query: async (o: any) => {
-                                            queried = true;
-                                            return (o.name === "RepoScmProvider") ? { Repo: [] as any[] } : { SCMProvider: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "beaster",
-                                        owner: "bob-mould",
-                                        repo: "sugar",
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "A4USK34DU");
+                                return {
+                                    query: async (o: any) => {
+                                        queried = true;
+                                        return (o.name === "RepoScmProvider") ? { Repo: [] as any[] } : { SCMProvider: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "beaster",
+                                    owner: "bob-mould",
+                                    repo: "sugar",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["A4USK34DU"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["A4USK34DU"],
             } as any;
             assert(!await queryForScmProvider(s));
             assert(queried, "query method never called");
@@ -920,59 +882,57 @@ describe("core/pack/k8s/sync/repo", () => {
             const clonedOrig = GitCommandGitProject.cloned;
             GitCommandGitProject.cloned = async (creds, id, opts) => ({} as any);
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "IGGYP0P");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "ScmProviders") {
-                                                queried = true;
-                                                return {
-                                                    SCMProvider: [
-                                                        {
-                                                            apiUrl: "https://bitbucket.iggyandthestooges.com/",
-                                                            credential: {
-                                                                secret: "1w@nn@b3y0u4d0g",
-                                                            },
-                                                            providerType: "bitbucket",
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "IGGYP0P");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "ScmProviders") {
+                                            queried = true;
+                                            return {
+                                                SCMProvider: [
+                                                    {
+                                                        apiUrl: "https://bitbucket.iggyandthestooges.com/",
+                                                        credential: {
+                                                            secret: "1w@nn@b3y0u4d0g",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            assert(o.variables.owner === "TheStooges");
-                                            assert(o.variables.repo === "iggy");
-                                            return { Repo: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "FunHouse",
-                                        owner: "TheStooges",
-                                        repo: "iggy",
+                                                        providerType: "bitbucket",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        assert(o.variables.owner === "TheStooges");
+                                        assert(o.variables.repo === "iggy");
+                                        return { Repo: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "FunHouse",
+                                    owner: "TheStooges",
+                                    repo: "iggy",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["IGGYP0P"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["IGGYP0P"],
             } as any;
             assert(await queryForScmProvider(s));
             GitCommandGitProject.cloned = clonedOrig;
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "1w@nn@b3y0u4d0g");
             assert(ss.repo.apiBase === "bitbucket.iggyandthestooges.com/rest/api/1.0");
             assert(ss.repo.branch === "FunHouse");
@@ -984,20 +944,18 @@ describe("core/pack/k8s/sync/repo", () => {
         });
 
         it("should return what was provided", async () => {
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    credentials: { token: "3.T.V.3y3" },
-                                    repo: GitHubRepoRef.from({
-                                        branch: "FunHouse",
-                                        owner: "TheStooges",
-                                        path: "cluster/specs",
-                                        repo: "iggy",
-                                    }),
-                                },
+            const s: Configuration = {
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                credentials: { token: "3.T.V.3y3" },
+                                repo: GitHubRepoRef.from({
+                                    branch: "FunHouse",
+                                    owner: "TheStooges",
+                                    path: "cluster/specs",
+                                    repo: "iggy",
+                                }),
                             },
                         },
                     },
@@ -1013,72 +971,70 @@ describe("core/pack/k8s/sync/repo", () => {
                     repo: "iggy",
                 }),
             };
-            assert.deepStrictEqual(s.configuration.sdm.k8s.options.sync, e);
+            assert.deepStrictEqual(s.sdm.k8s.options.sync, e);
         });
 
         it("should use the provided repo and queried credentials", async () => {
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "DB00N");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "RepoScmProvider") {
-                                                queried = true;
-                                                assert(o.variables.owner === "minutemen");
-                                                assert(o.variables.repo === "double-nickels-on-the-dime");
-                                                return {
-                                                    Repo: [
-                                                        {
-                                                            defaultBranch: "55-on-10",
-                                                            name: "double-nickels-on-the-dime",
-                                                            org: {
-                                                                scmProvider: {
-                                                                    apiUrl: "https://gitlab.minutemen.org/api/v4",
-                                                                    credential: {
-                                                                        secret: "21.T@k35,D",
-                                                                    },
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "DB00N");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "RepoScmProvider") {
+                                            queried = true;
+                                            assert(o.variables.owner === "minutemen");
+                                            assert(o.variables.repo === "double-nickels-on-the-dime");
+                                            return {
+                                                Repo: [
+                                                    {
+                                                        defaultBranch: "55-on-10",
+                                                        name: "double-nickels-on-the-dime",
+                                                        org: {
+                                                            scmProvider: {
+                                                                apiUrl: "https://gitlab.minutemen.org/api/v4",
+                                                                credential: {
+                                                                    secret: "21.T@k35,D",
                                                                 },
                                                             },
-                                                            owner: "minutemen",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            return { SCMProvider: [] as any[] };
-                                        },
-                                    };
-                                },
+                                                        owner: "minutemen",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        return { SCMProvider: [] as any[] };
+                                    },
+                                };
                             },
                         },
                     },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: GitlabRepoRef.from({
-                                        branch: "toadies",
-                                        gitlabRemoteUrl: "https://gitlab.minutemen.org/",
-                                        owner: "minutemen",
-                                        path: "04/cohesion",
-                                        rawApiBase: "https://gitlab.minutemen.org/api/v4",
-                                        repo: "double-nickels-on-the-dime",
-                                    }),
-                                },
-                            },
-                        },
-                        repoRefResolver: new DefaultRepoRefResolver(),
-                    },
-                    workspaceIds: ["DB00N"],
                 },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: GitlabRepoRef.from({
+                                    branch: "toadies",
+                                    gitlabRemoteUrl: "https://gitlab.minutemen.org/",
+                                    owner: "minutemen",
+                                    path: "04/cohesion",
+                                    rawApiBase: "https://gitlab.minutemen.org/api/v4",
+                                    repo: "double-nickels-on-the-dime",
+                                }),
+                            },
+                        },
+                    },
+                    repoRefResolver: new DefaultRepoRefResolver(),
+                },
+                workspaceIds: ["DB00N"],
             } as any;
             assert(await queryForScmProvider(s));
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "21.T@k35,D");
             const re = GitlabRepoRef.from({
                 branch: "toadies",
@@ -1103,69 +1059,67 @@ describe("core/pack/k8s/sync/repo", () => {
             const clonedOrig = GitCommandGitProject.cloned;
             GitCommandGitProject.cloned = async (creds, id, opts) => ({} as any);
             let queried = false;
-            const s: SoftwareDeliveryMachine = {
-                configuration: {
-                    graphql: {
-                        client: {
-                            factory: {
-                                create: (w: string) => {
-                                    assert(w === "IGGYP0P");
-                                    return {
-                                        query: async (o: any) => {
-                                            if (o.name === "ScmProviders") {
-                                                queried = true;
-                                                return {
-                                                    SCMProvider: [
-                                                        {
-                                                            apiUrl: "https://api.github.com/",
-                                                            credential: {
-                                                                secret: "R3@1C001T1m3",
-                                                            },
-                                                            providerId: "proto-punk",
-                                                            providerType: "github_com",
+            const s: Configuration = {
+                graphql: {
+                    client: {
+                        factory: {
+                            create: (w: string) => {
+                                assert(w === "IGGYP0P");
+                                return {
+                                    query: async (o: any) => {
+                                        if (o.name === "ScmProviders") {
+                                            queried = true;
+                                            return {
+                                                SCMProvider: [
+                                                    {
+                                                        apiUrl: "https://api.github.com/",
+                                                        credential: {
+                                                            secret: "R3@1C001T1m3",
                                                         },
-                                                        {
-                                                            apiUrl: "https://bitbucket.iggyandthestooges.com/",
-                                                            credential: {
-                                                                secret: "1w@nn@b3y0u4d0g",
-                                                            },
-                                                            providerId: "garage-rock",
-                                                            providerType: "bitbucket",
+                                                        providerId: "proto-punk",
+                                                        providerType: "github_com",
+                                                    },
+                                                    {
+                                                        apiUrl: "https://bitbucket.iggyandthestooges.com/",
+                                                        credential: {
+                                                            secret: "1w@nn@b3y0u4d0g",
                                                         },
-                                                    ],
-                                                };
-                                            }
-                                            assert(o.variables.owner === "TheStooges");
-                                            assert(o.variables.repo === "iggy");
-                                            return { Repo: [] as any[] };
-                                        },
-                                    };
-                                },
-                            },
-                        },
-                    },
-                    sdm: {
-                        k8s: {
-                            options: {
-                                sync: {
-                                    repo: {
-                                        branch: "FunHouse",
-                                        owner: "TheStooges",
-                                        repo: "iggy",
-                                        providerId: "garage-rock",
+                                                        providerId: "garage-rock",
+                                                        providerType: "bitbucket",
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        assert(o.variables.owner === "TheStooges");
+                                        assert(o.variables.repo === "iggy");
+                                        return { Repo: [] as any[] };
                                     },
+                                };
+                            },
+                        },
+                    },
+                },
+                sdm: {
+                    k8s: {
+                        options: {
+                            sync: {
+                                repo: {
+                                    branch: "FunHouse",
+                                    owner: "TheStooges",
+                                    repo: "iggy",
+                                    providerId: "garage-rock",
                                 },
                             },
                         },
-                        repoRefResolver: new DefaultRepoRefResolver(),
                     },
-                    workspaceIds: ["IGGYP0P"],
+                    repoRefResolver: new DefaultRepoRefResolver(),
                 },
+                workspaceIds: ["IGGYP0P"],
             } as any;
             assert(await queryForScmProvider(s));
             GitCommandGitProject.cloned = clonedOrig;
             assert(queried, "query method never called");
-            const ss = s.configuration.sdm.k8s.options.sync;
+            const ss = s.sdm.k8s.options.sync;
             assert(ss.credentials.token === "1w@nn@b3y0u4d0g");
             assert(ss.repo.apiBase === "bitbucket.iggyandthestooges.com/rest/api/1.0");
             assert(ss.repo.branch === "FunHouse");

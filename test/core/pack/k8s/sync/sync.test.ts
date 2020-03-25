@@ -22,13 +22,14 @@ import * as k8s from "@kubernetes/client-node";
 import * as assert from "power-assert";
 import { fakeContext } from "../../../../../lib/api-helper/testsupport/fakeContext";
 import * as apply from "../../../../../lib/core/pack/k8s/kubernetes/apply";
+import * as repo from "../../../../../lib/core/pack/k8s/sync/repo";
 import {
     kubernetesSync,
     repoSync,
     sortSpecs,
 } from "../../../../../lib/core/pack/k8s/sync/sync";
 
-describe("pack/k8s/sync/sync", () => {
+describe("core/pack/k8s/sync/sync", () => {
 
     describe("kubernetesSync", () => {
 
@@ -126,6 +127,7 @@ describe("pack/k8s/sync/sync", () => {
 
         let originalApplySpec: any;
         let originalAutomationClient: any;
+        let originalQueryForScmProvider: any;
         let specs: k8s.KubernetesObject[];
         before(() => {
             originalApplySpec = Object.getOwnPropertyDescriptor(apply, "applySpec");
@@ -139,10 +141,18 @@ describe("pack/k8s/sync/sync", () => {
                 },
             });
             originalAutomationClient = Object.getOwnPropertyDescriptor(acglobals, "automationClientInstance");
+            originalQueryForScmProvider = Object.getOwnPropertyDescriptor(repo, "queryForScmProvider");
+            Object.defineProperty(repo, "queryForScmProvider", {
+                value: async (c: any) => {
+                    c.sdm.k8s.options.sync.credentials = { token: "RichardPryorAddressesATearfulNation" };
+                    return true;
+                },
+            });
         });
         after(() => {
             Object.defineProperty(apply, "applySpec", originalApplySpec);
             Object.defineProperty(acglobals, "automationClientInstance", originalAutomationClient);
+            Object.defineProperty(repo, "queryForScmProvider", originalQueryForScmProvider);
         });
         beforeEach(() => {
             specs = [];
@@ -303,6 +313,7 @@ describe("pack/k8s/sync/sync", () => {
     describe("repoSync apply failure", () => {
 
         let originalApplySpec: any;
+        let originalQueryForScmProvider: any;
         let specs: k8s.KubernetesObject[];
         before(() => {
             originalApplySpec = Object.getOwnPropertyDescriptor(apply, "applySpec");
@@ -314,9 +325,17 @@ describe("pack/k8s/sync/sync", () => {
                     specs.push(s);
                 },
             });
+            originalQueryForScmProvider = Object.getOwnPropertyDescriptor(repo, "queryForScmProvider");
+            Object.defineProperty(repo, "queryForScmProvider", {
+                value: async (c: any) => {
+                    c.sdm.k8s.options.sync.credentials = { token: "RichardPryorAddressesATearfulNation" };
+                    return true;
+                },
+            });
         });
         after(() => {
             Object.defineProperty(apply, "applySpec", originalApplySpec);
+            Object.defineProperty(repo, "queryForScmProvider", originalQueryForScmProvider);
         });
         beforeEach(() => {
             specs = [];

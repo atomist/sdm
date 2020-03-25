@@ -18,7 +18,6 @@ import { HandlerResult } from "@atomist/automation-client/lib/HandlerResult";
 import { File as ProjectFile } from "@atomist/automation-client/lib/project/File";
 import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import * as _ from "lodash";
 import { slackSuccessMessage } from "../../../../api-helper/misc/slack/messages";
 import { CommandListenerInvocation } from "../../../../api/listener/CommandListener";
 import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliveryMachine";
@@ -35,7 +34,10 @@ import { k8sErrMsg } from "../support/error";
 import { cleanName } from "../support/name";
 import { defaultCloneOptions } from "./clone";
 import { k8sSpecGlob } from "./diff";
-import { isRemoteRepo } from "./repo";
+import {
+    isRemoteRepo,
+    queryForScmProvider,
+} from "./repo";
 
 export const KubernetesSync = "KubernetesSync";
 
@@ -58,7 +60,7 @@ export function kubernetesSync(sdm: SoftwareDeliveryMachine): CommandHandlerRegi
         name: KubernetesSync,
         listener: repoSync,
     };
-    if (_.get(sdm, "configuration.sdm.k8s.options.addCommands", false)) {
+    if (sdm.configuration.sdm.k8s?.options?.addCommands) {
         cmd.intent = `kube sync ${cleanName(sdm.configuration.name)}`;
     }
     return cmd;
@@ -68,9 +70,18 @@ export function kubernetesSync(sdm: SoftwareDeliveryMachine): CommandHandlerRegi
  * Clone the sync repo and apply the specs to the Kubernetes cluster.
  */
 export async function repoSync(cli: CommandListenerInvocation): Promise<HandlerResult> {
-    const opts: KubernetesSyncOptions = _.get(cli.configuration, "sdm.k8s.options.sync");
+    const opts: KubernetesSyncOptions = cli.configuration.sdm.k8s?.options?.sync;
     if (!opts) {
         const message = `SDM has no sync options defined`;
+        logger.error(message);
+        await cli.context.messageClient.respond(message);
+        return { code: 2, message };
+    }
+    if (cli.configuration.sdm.k8s?.options?.sync?.credentials) {
+        delete cli.configuration.sdm.k8s.options.sync.credentials;
+    }
+    if (!await queryForScmProvider(cli.configuration)) {
+        const message = `Failed to get sync repo and credentials, skipping sync`;
         logger.error(message);
         await cli.context.messageClient.respond(message);
         return { code: 2, message };
