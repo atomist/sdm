@@ -43,12 +43,11 @@ const ExpensiveSigns: Array<(pm: PredicateMapping<any>) => boolean> = [
  */
 export const DefaultPredicateMappingCostAnalyzer: PredicateMappingCostAnalyzer<any> =
     pm => {
-        const mappingCode = pm.mapping.toString();
         if (ExpensiveSigns.some(sign => sign(pm))) {
-            logger.debug("Expected cost of [%s] is expensive", mappingCode);
+            logger.debug(`Expected cost of ${pm.name} is expensive`);
             return ExpectedPredicateMappingCost.expensive;
         }
-        logger.debug("Expected cost of [%s] is unknown", mappingCode);
+        logger.debug(`Expected cost of ${pm.name} is unknown`);
         return ExpectedPredicateMappingCost.unknown;
     };
 
