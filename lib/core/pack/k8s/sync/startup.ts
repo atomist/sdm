@@ -59,7 +59,7 @@ export const syncRepoStartupListener: StartupListener = async ctx => {
         logger.error(`Provided sync repo does not contain all required properties: ${stringify(repoRef)}`);
         return;
     }
-    if (!await queryForScmProvider(sdm)) {
+    if (!await queryForScmProvider(sdm.configuration)) {
         return;
     }
     await sdmRepoSync(sdm);
