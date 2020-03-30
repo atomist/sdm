@@ -174,9 +174,9 @@ async function populateSecrets(parameters: any, metadata: CommandHandlerMetadata
                     const provider = await ci.context.graphClient.query<GitHubAppResourceProviderQuery, GitHubAppResourceProviderQueryVariables>({
                         name: "GitHubAppResourceProvider",
                     });
-                    if (!!provider?.GitHubAppResourceProvider[0]?.providerId) {
+                    if (!!provider?.GitHubAppResourceProvider[0]?.id) {
                         // Send message when there is a GitHubAppResourceProvider
-                        const orgUrl = `https://api.atomist.com/v2/auth/teams/${ci.context.workspaceId}/resource-providers/${provider.GitHubAppResourceProvider[0].providerId}/token?state=${guid()}&redirect-uri=https://www.atomist.com/success.html`;
+                        const orgUrl = `https://api.atomist.com/v2/auth/teams/${ci.context.workspaceId}/resource-providers/${provider.GitHubAppResourceProvider[0].id}/token?state=${guid()}&redirect-uri=https://www.atomist.com/success.html`;
                         await ci.addressChannels(
                             slackInfoMessage(
                                 "Link GitHub Account",
