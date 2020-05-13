@@ -28,7 +28,10 @@ import { CommandIncoming } from "@atomist/automation-client/lib/internal/transpo
 import { guid } from "@atomist/automation-client/lib/internal/util/string";
 import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import { toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
-import { url } from "@atomist/slack-messages";
+import {
+    italic,
+    url,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import {
     commandHandlerRegistrationToCommand,
@@ -143,10 +146,20 @@ export function mapCommand(chr: CommandHandlerRegistration): CommandMaker {
                 })));
                 populateValues(parametersInstance, metadata, ci.configuration);
                 await populateSecrets(parametersInstance, metadata, ci);
-                const missing = await populateMappedParameters(parametersInstance, metadata, ci);
-                if (missing.length > 0) {
-                    await ci.addressChannels(slackErrorMessage("Missing Mapped Parameters", missing.join("\n"), ci.context));
-                    return Failure;
+
+                try {
+                    const missing = await populateMappedParameters(parametersInstance, metadata, ci);
+                    if (missing.length > 0) {
+                        await ci.addressChannels(slackErrorMessage("Missing Mapped Parameters", missing.join("\n"), ci.context));
+                        return Failure;
+                    }
+                } catch (e) {
+                    if (e instanceof MappedParamterError) {
+                        await ci.addressChannels(slackErrorMessage(e.title, e.message, ci.context));
+                        return Failure;
+                    } else {
+                        throw e;
+                    }
                 }
                 return instance.handle(ci.context, parametersInstance);
             },
@@ -297,6 +310,7 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
             repo_slug: {
                 description: "Slug of repository",
                 displayName: "Repository (owner/repository)",
+                pattern: /^\S+\/\S+$/,
             },
         }, {});
         const repo = await ci.context.graphClient.query<RepositoryByOwnerAndNameQuery, RepositoryByOwnerAndNameQueryVariables>({
@@ -306,6 +320,9 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
                 name: parameters.repo_slug.split("/")[1],
             },
         });
+        if (!repo?.Repo[0]) {
+            throw new MappedParamterError("Repository not found", `Provided repository ${italic(parameters.repo_slug)} could not be found.`);
+        }
         return {
             name: repo?.Repo[0]?.name,
             owner: repo?.Repo[0]?.owner,
@@ -357,6 +374,7 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
                     repo_slug: {
                         displayName: "Repository (owner/repository)",
                         description: "Slug of repository",
+                        pattern: /^\S+\/\S+$/,
                     },
                 }, {});
                 const repo = await ci.context.graphClient.query<RepositoryByOwnerAndNameQuery, RepositoryByOwnerAndNameQueryVariables>({
@@ -366,6 +384,9 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
                         name: parameters.repo_slug.split("/")[1],
                     },
                 });
+                if (!repo?.Repo[0]) {
+                    throw new MappedParamterError("Repository not found", `Provided repository ${italic(parameters.repo_slug)} could not be found.`);
+                }
                 return {
                     name: repo?.Repo[0]?.name,
                     owner: repo?.Repo[0]?.owner,
@@ -378,4 +399,10 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
         }
     }
     return {};
+}
+
+class MappedParamterError extends Error {
+    constructor(public readonly title: string, msg: string) {
+        super(msg);
+    }
 }
