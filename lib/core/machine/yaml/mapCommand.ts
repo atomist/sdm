@@ -18,7 +18,10 @@ import {
     MappedParameters,
     Secrets,
 } from "@atomist/automation-client/lib/decorators";
-import { Failure } from "@atomist/automation-client/lib/HandlerResult";
+import {
+    Failure,
+    Success,
+} from "@atomist/automation-client/lib/HandlerResult";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import {
     populateParameters,
@@ -151,12 +154,12 @@ export function mapCommand(chr: CommandHandlerRegistration): CommandMaker {
                     const missing = await populateMappedParameters(parametersInstance, metadata, ci);
                     if (missing.length > 0) {
                         await ci.addressChannels(slackErrorMessage("Missing Mapped Parameters", missing.join("\n"), ci.context));
-                        return Failure;
+                        return Success;
                     }
                 } catch (e) {
                     if (e instanceof MappedParamterError) {
                         await ci.addressChannels(slackErrorMessage(e.title, e.message, ci.context));
-                        return Failure;
+                        return Success;
                     } else {
                         throw e;
                     }
@@ -321,7 +324,7 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
             },
         });
         if (!repo?.Repo[0]) {
-            throw new MappedParamterError("Repository not found", `Provided repository ${italic(parameters.repo_slug)} could not be found.`);
+            throw new MappedParamterError("Repository", `Repository ${italic(parameters.repo_slug)} could not be found.`);
         }
         return {
             name: repo?.Repo[0]?.name,
@@ -385,7 +388,7 @@ async function loadRepositoryDetailsFromChannel(ci: CommandListenerInvocation,
                     },
                 });
                 if (!repo?.Repo[0]) {
-                    throw new MappedParamterError("Repository not found", `Provided repository ${italic(parameters.repo_slug)} could not be found.`);
+                    throw new MappedParamterError("Repository", `Repository ${italic(parameters.repo_slug)} could not be found.`);
                 }
                 return {
                     name: repo?.Repo[0]?.name,
