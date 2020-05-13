@@ -18,10 +18,7 @@ import {
     MappedParameters,
     Secrets,
 } from "@atomist/automation-client/lib/decorators";
-import {
-    Failure,
-    Success,
-} from "@atomist/automation-client/lib/HandlerResult";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import {
     populateParameters,
