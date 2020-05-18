@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   K8s cleanup. [#817](https://github.com/atomist/sdm/issues/817)
 -   Default registration and push test for side effect. [#822](https://github.com/atomist/sdm/issues/822)
 
+### Removed
+
+-   Remove k8s cluster registration. [e43199e](https://github.com/atomist/sdm/commit/e43199e73defea41c0a6382e7e4fef26e9061fe1)
+
 ### Fixed
 
 -   CachingProjectLoader should respect clone parameters. [#797](https://github.com/atomist/sdm/issues/797)
