@@ -31,12 +31,6 @@ export interface SdmPackK8sOptions {
     addCommands?: boolean;
 
     /**
-     * Whether to register and converge a k8s cluster.  Typically this
-     * is used from k8s-sdm to manage k8s cluster it is running in.
-     */
-    registerCluster?: boolean;
-
-    /**
      * Synchronize resources in k8s cluster with a Git repo.
      */
     sync?: KubernetesSyncOptions;

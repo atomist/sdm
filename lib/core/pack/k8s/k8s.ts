@@ -23,8 +23,6 @@ import {
     SdmPackK8sOptions,
 } from "./config";
 import { kubernetesDeployHandler } from "./events/kubernetesDeploy";
-import { providerStartupListener } from "./provider/kubernetesCluster";
-import { minikubeStartupListener } from "./support/minikube";
 import { syncGoals } from "./sync/goals";
 import { syncRepoStartupListener } from "./sync/startup";
 import { kubernetesSync } from "./sync/sync";
@@ -65,13 +63,8 @@ export function k8sSupport(options: SdmPackK8sOptions = {}): ExtensionPack {
 
             sdm.addEvent(kubernetesDeployHandler(sdm.configuration.name));
 
-            sdm.addStartupListener(providerStartupListener);
-
             sdm.addStartupListener(syncRepoStartupListener);
             syncGoals(sdm);
-
-            sdm.addStartupListener(minikubeStartupListener);
-
         },
     };
 }
