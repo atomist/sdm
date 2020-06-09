@@ -96,6 +96,26 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
                         requiredMissing = true;
                     }
                 } else {
+                    // Do some validation against the rules
+                    const parameterDefinition = newParameters[parameter];
+                    const value = existingParameter.value;
+
+                    // Verify pattern
+                    if (parameterDefinition.pattern && !!value && !value.match(parameterDefinition.pattern)) {
+                        requiredMissing = true;
+                        continue;
+                    }
+                    // Verify minLength
+                    if (parameterDefinition.minLength !== undefined && !!value && value.length < parameterDefinition.minLength) {
+                        requiredMissing = true;
+                        continue;
+                    }
+                    // Verify maxLength
+                    if (parameterDefinition.maxLength !== undefined && !!value && value.length > parameterDefinition.maxLength) {
+                        requiredMissing = true;
+                        continue;
+                    }
+
                     params[parameter] = existingParameter.value;
                     delete newParameters[parameter];
                 }

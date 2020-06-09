@@ -115,13 +115,39 @@ describe("parameterPrompt", () => {
 
             try {
                 const params = await commandRequestParameterPromptFactory(ctx as any)({
-                    bar: { },
+                    bar: {},
                     test: { required: false },
                     foo: { required: false },
                     superfoo: { required: true },
                 }) as any;
                 assert.fail();
                 assert.strictEqual(params, {});
+            } catch (e) {
+                assert(e instanceof CommandListenerExecutionInterruptError);
+            }
+        });
+
+        it("should not ask for parameters if minLength isn't satisfied", async () => {
+            const wsMock: HandlerContext = {
+                respond: msg => {
+                    assert(msg.parameter_specs.length === 1);
+                    assert.strictEqual(msg.parameter_specs[0].name, "some");
+                },
+            } as any;
+
+            const ctx = {
+                trigger: {
+                    parameters: [
+                        { name: "some", value: "o" },
+                    ],
+                },
+                messageClient: wsMock,
+            };
+
+            try {
+                await commandRequestParameterPromptFactory(ctx as any)({
+                    some: { required: false, minLength: 10 },
+                }) as any;
             } catch (e) {
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
