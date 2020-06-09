@@ -106,12 +106,14 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
                         continue;
                     }
                     // Verify minLength
-                    if (parameterDefinition.minLength !== undefined && !!value && value.length < parameterDefinition.minLength) {
+                    const minLength = parameterDefinition.minLength || (parameterDefinition as any).min_length;
+                    if (minLength !== undefined && !!value && value.length < minLength) {
                         requiredMissing = true;
                         continue;
                     }
                     // Verify maxLength
-                    if (parameterDefinition.maxLength !== undefined && !!value && value.length > parameterDefinition.maxLength) {
+                    const maxLength = parameterDefinition.maxLength || (parameterDefinition as any).max_length;
+                    if (maxLength !== undefined && !!value && value.length > maxLength) {
                         requiredMissing = true;
                         continue;
                     }
