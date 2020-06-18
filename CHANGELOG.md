@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 -   Remove k8s cluster registration. [e43199e](https://github.com/atomist/sdm/commit/e43199e73defea41c0a6382e7e4fef26e9061fe1)
+-   Remove k8vent annotation, update k8s. [928ee8d](https://github.com/atomist/sdm/commit/928ee8deead0820c9a05e3d743042c35b6c9b809)
 
 ### Fixed
 
