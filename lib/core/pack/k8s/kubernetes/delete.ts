@@ -18,17 +18,10 @@ import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
 import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
-import {
-    K8sDeleteResponse,
-    K8sListResponse,
-    K8sObjectApi,
-} from "./api";
+import { K8sDeleteResponse, K8sListResponse, K8sObjectApi } from "./api";
 import { loadKubeConfig } from "./config";
 import { labelSelector } from "./labels";
-import {
-    appName,
-    KubernetesDeleteResourceRequest,
-} from "./request";
+import { appName, KubernetesDeleteResourceRequest } from "./request";
 import { logObject } from "./resource";
 import { specSlug } from "./spec";
 
@@ -122,7 +115,7 @@ export interface DeleteAppResourcesArgBase {
     /** Delete request object. */
     req: KubernetesDeleteResourceRequest;
     /** API object to use as `this` for lister and deleter. */
-    api: k8s.CoreV1Api | k8s.AppsV1Api | k8s.ExtensionsV1beta1Api | k8s.RbacAuthorizationV1Api;
+    api: k8s.CoreV1Api | k8s.AppsV1Api | k8s.NetworkingV1beta1Api | k8s.RbacAuthorizationV1Api;
     /** Resource collection deleting function. */
     lister: K8sNamespacedLister | K8sClusterLister;
     /** Resource collection deleting function. */
@@ -157,17 +150,25 @@ export async function deleteAppResources(arg: DeleteAppResourcesArg): Promise<k8
         let continu: string;
         do {
             let listResp: K8sListResponse;
-            const args: [string?, boolean?, string?, string?, string?, number?] =
-                [undefined, undefined, continu, undefined, selector, limit];
+            const args: [string?, boolean?, string?, string?, string?, number?] = [
+                undefined,
+                undefined,
+                continu,
+                undefined,
+                selector,
+                limit,
+            ];
             if (arg.namespaced) {
                 listResp = await arg.lister.call(arg.api, arg.req.ns, ...args);
             } else if (arg.namespaced === false) {
                 listResp = await arg.lister.apply(arg.api, args);
             }
-            toDelete.push(...listResp.body.items.map(r => {
-                r.kind = r.kind || arg.kind; // list response does not include kind
-                return r;
-            }));
+            toDelete.push(
+                ...listResp.body.items.map(r => {
+                    r.kind = r.kind || arg.kind; // list response does not include kind
+                    return r;
+                }),
+            );
             continu = listResp.body.metadata._continue;
         } while (!!continu);
     } catch (e) {
@@ -177,12 +178,18 @@ export async function deleteAppResources(arg: DeleteAppResourcesArg): Promise<k8
     const deleted: k8s.KubernetesObject[] = [];
     const errs: Error[] = [];
     for (const resource of toDelete) {
-        const resourceSlug = arg.namespaced ? `${arg.kind}/${resource.metadata.namespace}/${resource.metadata.name}` :
-            `${arg.kind}/${resource.metadata.name}`;
+        const resourceSlug = arg.namespaced
+            ? `${arg.kind}/${resource.metadata.namespace}/${resource.metadata.name}`
+            : `${arg.kind}/${resource.metadata.name}`;
         logger.info(`Deleting ${resourceSlug} for ${slug}`);
         try {
-            const args: [string?, string?, number?, boolean?, string?] =
-                [undefined, undefined, undefined, undefined, "Background"];
+            const args: [string?, string?, number?, boolean?, string?] = [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                "Background",
+            ];
             if (arg.namespaced) {
                 await arg.deleter.call(arg.api, resource.metadata.name, resource.metadata.namespace, ...args);
             } else if (arg.namespaced === false) {

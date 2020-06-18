@@ -25,8 +25,8 @@ export interface KubernetesClients {
     core: k8s.CoreV1Api;
     /** Kubernetes Apps client, GA in Kubernetes 1.9 */
     apps: k8s.AppsV1Api;
-    /** Kubernetes Extension client */
-    ext: k8s.ExtensionsV1beta1Api;
+    /** Kubernetes networking client */
+    net: k8s.NetworkingV1beta1Api;
     /** Kubernetes RBAC client, GA in Kubernetes 1.8 */
     rbac: k8s.RbacAuthorizationV1Api;
 }
@@ -38,8 +38,8 @@ export function makeApiClients(kc: k8s.KubeConfig): KubernetesClients {
     const core = kc.makeApiClient(k8s.CoreV1Api);
     const apps = kc.makeApiClient(k8s.AppsV1Api);
     const rbac = kc.makeApiClient(k8s.RbacAuthorizationV1Api);
-    const ext = kc.makeApiClient(k8s.ExtensionsV1beta1Api);
-    return { core, apps, rbac, ext };
+    const net = kc.makeApiClient(k8s.NetworkingV1beta1Api);
+    return { core, apps, net, rbac };
 }
 
 /**
@@ -47,7 +47,7 @@ export function makeApiClients(kc: k8s.KubeConfig): KubernetesClients {
  * sync repo.
  */
 export function makeNoOpApiClients(): KubernetesClients {
-    const noop = async () => { };
+    const noop = async () => {};
     const core: any = {
         createNamespace: noop,
         deleteNamespace: noop,
@@ -72,6 +72,12 @@ export function makeNoOpApiClients(): KubernetesClients {
         patchNamespacedDeployment: noop,
         readNamespacedDeployment: noop,
     };
+    const net: any = {
+        createNamespacedIngress: noop,
+        deleteNamespacedIngress: noop,
+        patchNamespacedIngress: noop,
+        readNamespacedIngress: noop,
+    };
     const rbac: any = {
         createClusterRole: noop,
         deleteClusterRole: noop,
@@ -90,11 +96,5 @@ export function makeNoOpApiClients(): KubernetesClients {
         patchNamespacedRoleBinding: noop,
         readNamespacedRoleBinding: noop,
     };
-    const ext: any = {
-        createNamespacedIngress: noop,
-        deleteNamespacedIngress: noop,
-        patchNamespacedIngress: noop,
-        readNamespacedIngress: noop,
-    };
-    return { core, apps, rbac, ext };
+    return { core, apps, net, rbac };
 }

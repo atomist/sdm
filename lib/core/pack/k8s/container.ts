@@ -26,15 +26,9 @@ import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import { Writable } from "stream";
-import {
-    DeepPartial,
-    Merge,
-} from "ts-essentials";
+import { DeepPartial, Merge } from "ts-essentials";
 import { minimalClone } from "../../../api-helper/goal/minimalClone";
-import {
-    goalData,
-    sdmGoalTimeout,
-} from "../../../api-helper/goal/sdmGoal";
+import { goalData, sdmGoalTimeout } from "../../../api-helper/goal/sdmGoal";
 import { RepoContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import {
@@ -42,21 +36,13 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../../api/goal/GoalInvocation";
-import {
-    GoalWithFulfillment,
-    ImplementationRegistration,
-} from "../../../api/goal/GoalWithFulfillment";
+import { GoalWithFulfillment, ImplementationRegistration } from "../../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
 import { GoalScheduler } from "../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../api/registration/ServiceRegistration";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../../typings/types";
-import {
-    CacheEntry,
-    CacheOutputGoalDataKey,
-    cachePut,
-    cacheRestore,
-} from "../../goal/cache/goalCaching";
+import { CacheEntry, CacheOutputGoalDataKey, cachePut, cacheRestore } from "../../goal/cache/goalCaching";
 import {
     Container,
     ContainerInput,
@@ -69,30 +55,18 @@ import {
     GoalContainerVolume,
 } from "../../goal/container/container";
 import { prepareSecrets } from "../../goal/container/provider";
-import {
-    containerEnvVars,
-    prepareInputAndOutput,
-    processResult,
-} from "../../goal/container/util";
+import { containerEnvVars, prepareInputAndOutput, processResult } from "../../goal/container/util";
 import { toArray } from "../../util/misc/array";
 import { loadKubeConfig } from "./kubernetes/config";
-import {
-    k8sJobEnv,
-    KubernetesGoalScheduler,
-    readNamespace,
-} from "./scheduler/KubernetesGoalScheduler";
-import {
-    K8sServiceRegistrationType,
-    K8sServiceSpec,
-} from "./scheduler/service";
+import { k8sJobEnv, KubernetesGoalScheduler, readNamespace } from "./scheduler/KubernetesGoalScheduler";
+import { K8sServiceRegistrationType, K8sServiceSpec } from "./scheduler/service";
 import { k8sErrMsg } from "./support/error";
 
 // tslint:disable:max-file-line-count
 
 /** Merge of base and Kubernetes goal container interfaces. */
-export type K8sGoalContainer =
-    Merge<GoalContainer, DeepPartial<k8s.V1Container>>
-    & Pick<GoalContainer, "name" | "image">;
+export type K8sGoalContainer = Merge<GoalContainer, DeepPartial<k8s.V1Container>> &
+    Pick<GoalContainer, "name" | "image">;
 /** Merge of base and Kubernetes goal container volume interfaces. */
 export type K8sGoalContainerVolume = Merge<k8s.V1Volume, GoalContainerVolume>;
 
@@ -103,9 +77,13 @@ export type K8sGoalContainerSpec = Omit<K8sContainerRegistration, "callback">;
  * Function signature for callback that can modify and return the
  * [[ContainerRegistration]] object.
  */
-export type K8sContainerSpecCallback =
-    (r: K8sContainerRegistration, p: GitProject, g: Container, e: SdmGoalEvent, ctx: RepoContext) =>
-        Promise<Omit<K8sContainerRegistration, "callback">>;
+export type K8sContainerSpecCallback = (
+    r: K8sContainerRegistration,
+    p: GitProject,
+    g: Container,
+    e: SdmGoalEvent,
+    ctx: RepoContext,
+) => Promise<Omit<K8sContainerRegistration, "callback">>;
 
 /**
  * Additional options for Kubernetes implementation of container goals.
@@ -152,7 +130,7 @@ export interface K8sContainerRegistration extends ContainerRegistration {
 export const k8sContainerScheduler: ContainerScheduler = (goal, registration: K8sContainerRegistration) => {
     goal.addFulfillment({
         goalExecutor: executeK8sJob(),
-        ...registration as ImplementationRegistration,
+        ...(registration as ImplementationRegistration),
     });
 
     goal.addFulfillmentCallback({
@@ -167,7 +145,7 @@ export const k8sContainerScheduler: ContainerScheduler = (goal, registration: K8
 export const k8sSkillContainerScheduler: ContainerScheduler = (goal, registration: K8sContainerRegistration) => {
     goal.addFulfillment({
         goalExecutor: executeK8sJob(),
-        ...registration as ImplementationRegistration,
+        ...(registration as ImplementationRegistration),
     });
 };
 
@@ -183,16 +161,20 @@ export function k8sFulfillmentCallback(
     return async (goalEvent, repoContext) => {
         let spec: K8sContainerRegistration = _.cloneDeep(registration);
         if (registration.callback) {
-            spec = await repoContext.configuration.sdm.projectLoader.doWithProject({
-                ...repoContext,
-                readOnly: true,
-                cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
-            }, async p => {
-                return {
-                    ...spec,
-                    ...(await registration.callback(_.cloneDeep(registration), p, goal, goalEvent, repoContext)) || {},
-                };
-            });
+            spec = await repoContext.configuration.sdm.projectLoader.doWithProject(
+                {
+                    ...repoContext,
+                    readOnly: true,
+                    cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
+                },
+                async p => {
+                    return {
+                        ...spec,
+                        ...((await registration.callback(_.cloneDeep(registration), p, goal, goalEvent, repoContext)) ||
+                            {}),
+                    };
+                },
+            );
         }
 
         if (!spec.containers || spec.containers.length < 1) {
@@ -213,7 +195,9 @@ export function k8sFulfillmentCallback(
         }
 
         const goalSchedulers: GoalScheduler[] = toArray(repoContext.configuration.sdm.goalScheduler) || [];
-        const k8sScheduler = goalSchedulers.find(gs => gs instanceof KubernetesGoalScheduler) as KubernetesGoalScheduler;
+        const k8sScheduler = goalSchedulers.find(
+            gs => gs instanceof KubernetesGoalScheduler,
+        ) as KubernetesGoalScheduler;
         if (!k8sScheduler) {
             throw new Error("Failed to find KubernetesGoalScheduler in goal schedulers");
         }
@@ -283,14 +267,12 @@ export function k8sFulfillmentCallback(
 
         const parameters = JSON.parse((goalEvent as any).parameters || "{}");
         const secrets = await prepareSecrets(
-            _.merge({}, registration.containers[0], (parameters["@atomist/sdm/secrets"] || {})), repoContext);
+            _.merge({}, registration.containers[0], parameters["@atomist/sdm/secrets"] || {}),
+            repoContext,
+        );
         delete spec.containers[0].secrets;
         [...spec.containers, ...spec.initContainers].forEach(c => {
-            c.env = [
-                ...(secrets.env || []),
-                ...containerEnvs,
-                ...(c.env || []),
-            ];
+            c.env = [...(secrets.env || []), ...containerEnvs, ...(c.env || [])];
         });
         if (!!secrets?.files) {
             for (const file of secrets.files) {
@@ -298,8 +280,7 @@ export function k8sFulfillmentCallback(
                 const dirname = path.dirname(file.mountPath);
                 let secretName = `secret-${guid().split("-")[0]}`;
 
-                const vm = (copyContainer.volumeMounts || [])
-                    .find(m => m.mountPath === dirname);
+                const vm = (copyContainer.volumeMounts || []).find(m => m.mountPath === dirname);
                 if (!!vm) {
                     secretName = vm.name;
                 } else {
@@ -330,20 +311,14 @@ export function k8sFulfillmentCallback(
                 });
             }
         }
-        spec.initContainers = [
-            copyContainer,
-            ...spec.initContainers,
-        ];
+        spec.initContainers = [copyContainer, ...spec.initContainers];
 
-        const serviceSpec: { type: string, spec: K8sServiceSpec } = {
+        const serviceSpec: { type: string; spec: K8sServiceSpec } = {
             type: K8sServiceRegistrationType.K8sService,
             spec: {
                 container: spec.containers,
                 initContainer: spec.initContainers,
-                volume: [
-                    ...ioVolumes,
-                    ...(spec.volumes || []),
-                ],
+                volume: [...ioVolumes, ...(spec.volumes || [])],
                 volumeMount: ioVolumeMounts,
             },
         };
@@ -432,36 +407,42 @@ export function executeK8sJob(): ExecuteGoal {
             throw new Error("Failed to read k8s ContainerRegistration from goal data");
         }
         if (!data[ContainerRegistrationGoalDataKey]) {
-            throw new Error(`Goal ${gi.goal.uniqueName} has no Kubernetes container registration: ${gi.goalEvent.data}`);
+            throw new Error(
+                `Goal ${gi.goal.uniqueName} has no Kubernetes container registration: ${gi.goalEvent.data}`,
+            );
         }
         const registration: K8sContainerRegistration = data[ContainerRegistrationGoalDataKey];
 
         if (process.env.ATOMIST_ISOLATED_GOAL_INIT === "true") {
-            return configuration.sdm.projectLoader.doWithProject({
-                ...gi,
-                readOnly: false,
-                cloneDir: projectDir,
-                cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
-            }, async project => {
-                try {
-                    await prepareInputAndOutput(inputDir, outputDir, gi);
-                } catch (e) {
-                    const message = `Failed to prepare input and output for goal ${goalEvent.name}: ${e.message}`;
-                    progressLog.write(message);
-                    return { code: 1, message };
-                }
-                const secrets = await prepareSecrets(
-                    _.merge({}, registration.containers[0], ((gi.parameters || {})["@atomist/sdm/secrets"] || {})), gi);
-                if (!!secrets?.files) {
-                    for (const file of secrets.files) {
-                        await fs.writeFile(file.mountPath, file.value);
+            return configuration.sdm.projectLoader.doWithProject(
+                {
+                    ...gi,
+                    readOnly: false,
+                    cloneDir: projectDir,
+                    cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
+                },
+                async project => {
+                    try {
+                        await prepareInputAndOutput(inputDir, outputDir, gi);
+                    } catch (e) {
+                        const message = `Failed to prepare input and output for goal ${goalEvent.name}: ${e.message}`;
+                        progressLog.write(message);
+                        return { code: 1, message };
                     }
-                }
+                    const secrets = await prepareSecrets(
+                        _.merge({}, registration.containers[0], (gi.parameters || {})["@atomist/sdm/secrets"] || {}),
+                        gi,
+                    );
+                    if (!!secrets?.files) {
+                        for (const file of secrets.files) {
+                            await fs.writeFile(file.mountPath, file.value);
+                        }
+                    }
 
-                goalEvent.state = SdmGoalState.in_process;
-                return goalEvent;
-
-            });
+                    goalEvent.state = SdmGoalState.in_process;
+                    return goalEvent;
+                },
+            );
         }
 
         let containerName: string = _.get(registration, "containers[0].name");
@@ -542,8 +523,7 @@ export function executeK8sJob(): ExecuteGoal {
         ];
         if (cacheEntriesToPut.length > 0) {
             try {
-                const project = GitCommandGitProject.fromBaseDir(id, projectDir, credentials, async () => {
-                });
+                const project = GitCommandGitProject.fromBaseDir(id, projectDir, credentials, async () => {});
                 const cp = cachePut({
                     entries: cacheEntriesToPut.map(e => {
                         // Prevent the type on the entry to get passed along when goal actually failed
@@ -575,7 +555,8 @@ export function executeK8sJob(): ExecuteGoal {
  * goal.  Otherwise, schedule the goal execution as a Kubernetes job
  * using [[scheduleK8sJob]].
  */
-const containerExecutor: ExecuteGoal = gi => (process.env.ATOMIST_ISOLATED_GOAL) ? executeK8sJob()(gi) : scheduleK8sJob(gi);
+const containerExecutor: ExecuteGoal = gi =>
+    process.env.ATOMIST_ISOLATED_GOAL ? executeK8sJob()(gi) : scheduleK8sJob(gi);
 
 /**
  * Restore cache input entries before fulfilling goal.
@@ -586,7 +567,9 @@ const containerFulfillerCacheRestore: GoalProjectListenerRegistration = {
     listener: async (project, gi) => {
         const data = goalData(gi.goalEvent);
         if (!data[ContainerRegistrationGoalDataKey]) {
-            throw new Error(`Goal ${gi.goal.uniqueName} has no Kubernetes container registration: ${gi.goalEvent.data}`);
+            throw new Error(
+                `Goal ${gi.goal.uniqueName} has no Kubernetes container registration: ${gi.goalEvent.data}`,
+            );
         }
         const registration: K8sContainerRegistration = data[ContainerRegistrationGoalDataKey];
         if (registration.input && registration.input.length > 0) {
@@ -649,7 +632,7 @@ async function containerStarted(container: K8sContainer, attempts: number = 240)
             container.log.write(`Reading pod ${container.ns}/${container.pod} failed: ${k8sErrMsg(e)}`);
             continue;
         }
-        const containerStatus = pod.status.containerStatuses.find(c => c.name === container.name);
+        const containerStatus = pod.status?.containerStatuses?.find(c => c.name === container.name);
         if (containerStatus && (!!containerStatus.state?.running?.startedAt || !!containerStatus.state?.terminated)) {
             const message = `Container '${container.name}' started`;
             container.log.write(message);
@@ -713,7 +696,14 @@ function containerWatch(container: K8sContainer, timeout: number): Promise<k8s.V
             }
         };
         const logOptions: k8s.LogOptions = { follow: true };
-        clean.logRequest = k8sLog.log(container.ns, container.pod, container.name, clean.logStream, doneCallback, logOptions);
+        clean.logRequest = k8sLog.log(
+            container.ns,
+            container.pod,
+            container.name,
+            clean.logStream,
+            doneCallback,
+            logOptions,
+        );
 
         let watch: k8s.Watch;
         try {
@@ -729,40 +719,49 @@ function containerWatch(container: K8sContainer, timeout: number): Promise<k8s.V
             reject(new Error(`Goal timeout '${timeout}' exceeded`));
         }, timeout);
         const watchPath = `/api/v1/watch/namespaces/${container.ns}/pods/${container.pod}`;
-        clean.watcher = await watch.watch(watchPath, {}, async (phase, obj) => {
-            const pod = obj as k8s.V1Pod;
-            if (pod?.status?.containerStatuses) {
-                const containerStatus = pod.status.containerStatuses.find(c => c.name === container.name);
-                if (containerStatus?.state?.terminated) {
-                    const exitCode: number = containerStatus.state.terminated.exitCode;
-                    if (exitCode === 0) {
-                        podStatus = pod.status;
-                        const msg = `Container '${container.name}' exited with status 0`;
-                        container.log.write(msg);
-                        if (logDone) {
-                            containerCleanup(clean);
-                            resolve(podStatus);
+        clean.watcher = await watch.watch(
+            watchPath,
+            {},
+            async (phase, obj) => {
+                const pod = obj as k8s.V1Pod;
+                if (pod?.status?.containerStatuses) {
+                    const containerStatus = pod.status.containerStatuses.find(c => c.name === container.name);
+                    if (containerStatus?.state?.terminated) {
+                        const exitCode: number = containerStatus.state.terminated.exitCode;
+                        if (exitCode === 0) {
+                            podStatus = pod.status;
+                            const msg = `Container '${container.name}' exited with status 0`;
+                            container.log.write(msg);
+                            if (logDone) {
+                                containerCleanup(clean);
+                                resolve(podStatus);
+                            }
+                        } else {
+                            const msg = `Container '${container.name}' exited with status ${exitCode}`;
+                            container.log.write(msg);
+                            podError = new Error(msg);
+                            (podError as any).podStatus = pod.status;
+                            if (logDone) {
+                                containerCleanup(clean);
+                                reject(podError);
+                            }
                         }
-                    } else {
-                        const msg = `Container '${container.name}' exited with status ${exitCode}`;
-                        container.log.write(msg);
-                        podError = new Error(msg);
-                        (podError as any).podStatus = pod.status;
-                        if (logDone) {
-                            containerCleanup(clean);
-                            reject(podError);
-                        }
+                        return;
                     }
-                    return;
                 }
-            }
-            container.log.write(`Container '${container.name}' phase: ${phase}`);
-        }, err => {
-            err.message = `Container watcher failed: ${err.message}`;
-            container.log.write(err.message);
-            containerCleanup(clean);
-            reject(err);
-        });
+                container.log.write(`Container '${container.name}' phase: ${phase}`);
+            },
+            err => {
+                if (err) {
+                    err.message = `Container watcher failed: ${err.message}`;
+                    container.log.write(err.message);
+                    containerCleanup(clean);
+                    reject(err);
+                } else {
+                    containerCleanup(clean);
+                }
+            },
+        );
     });
 }
 

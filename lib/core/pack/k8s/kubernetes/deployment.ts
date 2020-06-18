@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import { webhookBaseUrl } from "@atomist/automation-client/lib/atomistWebhook";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as k8s from "@kubernetes/client-node";
-import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { k8sErrMsg } from "../support/error";
 import { logRetry } from "../support/retry";
@@ -74,9 +72,6 @@ export async function upsertDeployment(req: KubernetesResourceRequest): Promise<
  * @return deployment resource specification
  */
 export async function deploymentTemplate(req: KubernetesApplication & KubernetesSdm): Promise<k8s.V1Deployment> {
-    const k8ventAnnot = stringify({
-        webhooks: [`${webhookBaseUrl()}/atomist/kube/teams/${req.workspaceId}`],
-    });
     const labels = applicationLabels(req);
     const matchers = matchLabels(req);
     const metadata = metadataTemplate({
@@ -87,9 +82,6 @@ export async function deploymentTemplate(req: KubernetesApplication & Kubernetes
     const podMetadata = metadataTemplate({
         name: req.name,
         labels,
-        annotations: {
-            "atomist.com/k8vent": k8ventAnnot,
-        },
     });
     const selector: k8s.V1LabelSelector = {
         matchLabels: matchers,

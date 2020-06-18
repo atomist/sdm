@@ -22,12 +22,7 @@ import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
 import { patchHeaders } from "./patch";
-import {
-    appName,
-    KubernetesApplication,
-    KubernetesResourceRequest,
-    KubernetesSdm,
-} from "./request";
+import { appName, KubernetesApplication, KubernetesResourceRequest, KubernetesSdm } from "./request";
 import { logObject } from "./resource";
 
 /**
@@ -50,16 +45,31 @@ export async function upsertIngress(req: KubernetesResourceRequest): Promise<k8s
     }
     const spec = await ingressTemplate(req);
     try {
-        await req.clients.ext.readNamespacedIngress(spec.metadata.name, spec.metadata.namespace);
+        await req.clients.net.readNamespacedIngress(spec.metadata.name, spec.metadata.namespace);
     } catch (e) {
         logger.debug(`Failed to read ingress ${slug}, creating: ${k8sErrMsg(e)}`);
         logger.info(`Creating ingress ${slug} using '${logObject(spec)}'`);
-        await logRetry(() => req.clients.ext.createNamespacedIngress(spec.metadata.namespace, spec), `create ingress ${slug}`);
+        await logRetry(
+            () => req.clients.net.createNamespacedIngress(spec.metadata.namespace, spec),
+            `create ingress ${slug}`,
+        );
         return spec;
     }
     logger.info(`Ingress ${slug} exists, patching using '${logObject(spec)}'`);
-    await logRetry(() => req.clients.ext.patchNamespacedIngress(spec.metadata.name, spec.metadata.namespace, spec,
-        undefined, undefined, undefined, undefined, patchHeaders(req)), `patch ingress ${slug}`);
+    await logRetry(
+        () =>
+            req.clients.net.patchNamespacedIngress(
+                spec.metadata.name,
+                spec.metadata.namespace,
+                spec,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                patchHeaders(req),
+            ),
+        `patch ingress ${slug}`,
+    );
     return spec;
 }
 
@@ -74,7 +84,7 @@ function httpIngressPath(req: KubernetesApplication): k8s.NetworkingV1beta1HTTPI
         path: req.path,
         backend: {
             serviceName: req.name,
-            servicePort: "http" as any as object,
+            servicePort: ("http" as any) as object,
         },
     };
     return httpPath;
@@ -92,7 +102,9 @@ function httpIngressPath(req: KubernetesApplication): k8s.NetworkingV1beta1HTTPI
  * @param req Kubernestes application
  * @return ingress spec with single rule
  */
-export async function ingressTemplate(req: KubernetesApplication & KubernetesSdm): Promise<k8s.NetworkingV1beta1Ingress> {
+export async function ingressTemplate(
+    req: KubernetesApplication & KubernetesSdm,
+): Promise<k8s.NetworkingV1beta1Ingress> {
     const labels = applicationLabels(req);
     const metadata = metadataTemplate({
         name: req.name,
@@ -105,7 +117,7 @@ export async function ingressTemplate(req: KubernetesApplication & KubernetesSdm
             paths: [httpPath],
         },
     } as any;
-    const apiVersion = "extensions/v1beta1";
+    const apiVersion = "networking.k8s.io/v1beta1";
     const kind = "Ingress";
     const i: k8s.NetworkingV1beta1Ingress = {
         apiVersion,

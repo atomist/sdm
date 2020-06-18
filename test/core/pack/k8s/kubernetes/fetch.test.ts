@@ -33,16 +33,11 @@ import {
     selectKubernetesResources,
     selectorMatch,
 } from "../../../../../lib/core/pack/k8s/kubernetes/fetch";
-import {
-    afterRetry,
-    beforeRetry,
-    k8sAvailable,
-} from "../k8s";
+import { afterRetry, beforeRetry, k8sAvailable } from "../k8s";
 
 /* tslint:disable:max-file-line-count */
 
 describe("pack/k8s/kubernetes/fetch", () => {
-
     const client: any = {
         resource: async (apiVersion: string, kind: string): Promise<k8s.V1APIResource | undefined> => {
             const clusterResources = [
@@ -83,7 +78,6 @@ describe("pack/k8s/kubernetes/fetch", () => {
     };
 
     describe("populateResourceSelectorDefaults", () => {
-
         it("should do nothing successfully", () => {
             const p = populateResourceSelectorDefaults([]);
             assert.deepStrictEqual(p, []);
@@ -108,7 +102,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
                         { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
                         { apiVersion: "batch/v1beta1", kind: "CronJob" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                         { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
                         { apiVersion: "policy/v1beta1", kind: "PodDisruptionBudget" },
                         { apiVersion: "policy/v1beta1", kind: "PodSecurityPolicy" },
@@ -138,9 +132,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
             const e = [
                 {
                     action: "include",
-                    kinds: [
-                        { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
-                    ],
+                    kinds: [{ apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" }],
                 },
             ];
             assert.deepStrictEqual(p, e);
@@ -202,7 +194,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
                         { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
                         { apiVersion: "batch/v1beta1", kind: "CronJob" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                         { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
                         { apiVersion: "policy/v1beta1", kind: "PodDisruptionBudget" },
                         { apiVersion: "policy/v1beta1", kind: "PodSecurityPolicy" },
@@ -273,11 +265,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             ];
             assert.deepStrictEqual(p, e);
         });
-
     });
 
     describe("includedResourceKinds", () => {
-
         it("should find nothing successfully", () => {
             const s = includedResourceKinds([]);
             assert.deepStrictEqual(s, []);
@@ -301,7 +291,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                 },
                 {
@@ -325,7 +315,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 { apiVersion: "apps/v1", kind: "DaemonSet" },
                 { apiVersion: "apps/v1", kind: "Deployment" },
                 { apiVersion: "apps/v1", kind: "StatefulSet" },
-                { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                 { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
                 { apiVersion: "batch/v1beta1", kind: "CronJob" },
                 { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
@@ -353,7 +343,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                 },
                 {
@@ -384,7 +374,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 { apiVersion: "apps/v1", kind: "DaemonSet" },
                 { apiVersion: "apps/v1", kind: "Deployment" },
                 { apiVersion: "apps/v1", kind: "StatefulSet" },
-                { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                 { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
                 { apiVersion: "batch/v1beta1", kind: "CronJob" },
                 { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
@@ -412,7 +402,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                 },
                 {
@@ -448,7 +438,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                 },
                 {
@@ -514,11 +504,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             ];
             assert.deepStrictEqual(c, e);
         });
-
     });
 
     describe("clusterResourceKinds", () => {
-
         it("should return empty array if no cluster resources", async () => {
             const s: KubernetesResourceSelector[] = [
                 {
@@ -537,7 +525,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                 },
                 {
@@ -563,7 +551,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
         });
 
         it("should return cluster resources from default", async () => {
-            const s: KubernetesResourceSelector[] = [{ action: "include", kinds: defaultKubernetesResourceSelectorKinds }];
+            const s: KubernetesResourceSelector[] = [
+                { action: "include", kinds: defaultKubernetesResourceSelectorKinds },
+            ];
             const c = await clusterResourceKinds(s, client);
             const e = [
                 { apiVersion: "v1", kind: "Namespace" },
@@ -595,15 +585,15 @@ describe("pack/k8s/kubernetes/fetch", () => {
         });
 
         it("should return nothing from exclude", async () => {
-            const s: KubernetesResourceSelector[] = [{ action: "exclude", kinds: defaultKubernetesResourceSelectorKinds }];
+            const s: KubernetesResourceSelector[] = [
+                { action: "exclude", kinds: defaultKubernetesResourceSelectorKinds },
+            ];
             const c = await clusterResourceKinds(s, client);
             assert.deepStrictEqual(c, []);
         });
-
     });
 
     describe("namespaceResourceKinds", async () => {
-
         it("should find nothing successfully", async () => {
             const n = "son-house";
             const s = await namespaceResourceKinds(n, [], client);
@@ -717,7 +707,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                         { apiVersion: "apps/v1", kind: "DaemonSet" },
                         { apiVersion: "apps/v1", kind: "Deployment" },
                         { apiVersion: "apps/v1", kind: "StatefulSet" },
-                        { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                        { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                     ],
                     namespace: "son-house",
                 },
@@ -751,7 +741,7 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 { apiVersion: "apps/v1", kind: "DaemonSet" },
                 { apiVersion: "apps/v1", kind: "Deployment" },
                 { apiVersion: "apps/v1", kind: "StatefulSet" },
-                { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+                { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
                 { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
                 { apiVersion: "batch/v1beta1", kind: "CronJob" },
                 { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
@@ -821,11 +811,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             const c = await namespaceResourceKinds(n, s, client);
             assert.deepStrictEqual(c, []);
         });
-
     });
 
     describe("cleanKubernetesSpec", () => {
-
         it("should do nothing safely", () => {
             const c = cleanKubernetesSpec(undefined, { apiVersion: "v1", kind: "Secret" });
             assert(c === undefined);
@@ -896,10 +884,12 @@ describe("pack/k8s/kubernetes/fetch", () => {
                             },
                         },
                         spec: {
-                            containers: [{
-                                image: "raphaelsaadiq/the-way-i-see-it:2008",
-                                name: "the-way-i-see-it",
-                            }],
+                            containers: [
+                                {
+                                    image: "raphaelsaadiq/the-way-i-see-it:2008",
+                                    name: "the-way-i-see-it",
+                                },
+                            ],
                         },
                     },
                 },
@@ -965,10 +955,12 @@ describe("pack/k8s/kubernetes/fetch", () => {
                             },
                         },
                         spec: {
-                            containers: [{
-                                image: "raphaelsaadiq/the-way-i-see-it:2008",
-                                name: "the-way-i-see-it",
-                            }],
+                            containers: [
+                                {
+                                    image: "raphaelsaadiq/the-way-i-see-it:2008",
+                                    name: "the-way-i-see-it",
+                                },
+                            ],
                         },
                     },
                 },
@@ -1039,11 +1031,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             };
             assert.deepStrictEqual(c, e);
         });
-
     });
 
     describe("selectKubernetesResources", () => {
-
         it("should do nothing successfully", () => {
             const r: k8s.KubernetesObject[] = [];
             const s: KubernetesResourceSelector[] = [];
@@ -1097,7 +1087,11 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 { kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face" } },
                 { kind: "DaemonSet", metadata: { name: "kube-proxy", namespace: "kube-system" } },
                 { kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face-to-face" } },
-                { kind: "Secret", metadata: { name: "default-token-12345", namespace: "default" }, type: "kubernetes.io/service-account-token" },
+                {
+                    kind: "Secret",
+                    metadata: { name: "default-token-12345", namespace: "default" },
+                    type: "kubernetes.io/service-account-token",
+                },
                 { kind: "Service", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks" } },
                 { kind: "Service", metadata: { name: "kubernetes", namespace: "default" } },
                 { kind: "Service", metadata: { name: "kubernetes", namespace: "nondefault" } },
@@ -1138,7 +1132,11 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 website: "https://thekinks.info/",
             };
             const r = [
-                { apiVersion: "v1", kind: "Secret", metadata: { name: "you-really-got-me", namespace: "kinks", labels } },
+                {
+                    apiVersion: "v1",
+                    kind: "Secret",
+                    metadata: { name: "you-really-got-me", namespace: "kinks", labels },
+                },
                 { kind: "Deployment", metadata: { name: "waterloo-sunset", namespace: "something-else", labels } },
                 { kind: "Deployment", metadata: { name: "waterloo-sunset-mono", namespace: "something-else", labels } },
                 { kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face", labels } },
@@ -1147,16 +1145,29 @@ describe("pack/k8s/kubernetes/fetch", () => {
                 { kind: "Service", metadata: { name: "waterloo-sunset", namespace: "something-else", labels } },
                 { kind: "Service", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels } },
                 { kind: "Service", metadata: { name: "kubernetes", namespace: "default" } },
-                { kind: "ServiceAccount", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels } },
-                { kind: "ServiceAccount", metadata: { name: "have-you-seen-her-face", namespace: "younger-than-yesterday" } },
-                { kind: "ClusterRole", metadata: { name: "the-kinks-are-the-village-green-preservation-society", labels } },
+                {
+                    kind: "ServiceAccount",
+                    metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels },
+                },
+                {
+                    kind: "ServiceAccount",
+                    metadata: { name: "have-you-seen-her-face", namespace: "younger-than-yesterday" },
+                },
+                {
+                    kind: "ClusterRole",
+                    metadata: { name: "the-kinks-are-the-village-green-preservation-society", labels },
+                },
             ];
             const labelSelector: k8s.V1LabelSelector = {
                 matchExpressions: [
                     { key: "rhythmGuitar", operator: "Exists" },
                     { key: "label", operator: "In", values: ["Pye", "Reprise", "RCA", "Arista"] },
                     { key: "bassoon", operator: "DoesNotExist" },
-                    { key: "leadVocals", operator: "NotIn", values: ["Mick Avory", "John 'Nobby' Dalton", "John Gosling"] },
+                    {
+                        key: "leadVocals",
+                        operator: "NotIn",
+                        values: ["Mick Avory", "John 'Nobby' Dalton", "John Gosling"],
+                    },
                 ],
                 matchLabels: {
                     artist: "The Kinks",
@@ -1172,21 +1183,29 @@ describe("pack/k8s/kubernetes/fetch", () => {
             ];
             const o = selectKubernetesResources(r, s);
             const e = [
-                { apiVersion: "v1", kind: "Secret", metadata: { name: "you-really-got-me", namespace: "kinks", labels } },
+                {
+                    apiVersion: "v1",
+                    kind: "Secret",
+                    metadata: { name: "you-really-got-me", namespace: "kinks", labels },
+                },
                 { kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face", labels } },
                 { kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face-to-face", labels } },
                 { kind: "Service", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels } },
                 { kind: "Service", metadata: { name: "kubernetes", namespace: "default" } },
-                { kind: "ServiceAccount", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels } },
-                { kind: "ClusterRole", metadata: { name: "the-kinks-are-the-village-green-preservation-society", labels } },
+                {
+                    kind: "ServiceAccount",
+                    metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks", labels },
+                },
+                {
+                    kind: "ClusterRole",
+                    metadata: { name: "the-kinks-are-the-village-green-preservation-society", labels },
+                },
             ];
             assert.deepStrictEqual(o, e);
         });
-
     });
 
     describe("kubernetesResourceIdentity", () => {
-
         it("should return all unique objects", () => {
             const o = [
                 { apiVersion: "v1", kind: "Secret", metadata: { name: "you-really-got-me", namespace: "kinks" } },
@@ -1215,10 +1234,26 @@ describe("pack/k8s/kubernetes/fetch", () => {
         it("should filter out duplicates", () => {
             const o = [
                 { kind: "Secret", metadata: { name: "you-really-got-me", namespace: "kinks" } },
-                { apiVersion: "apps/v1", kind: "Deployment", metadata: { name: "waterloo-sunset", namespace: "something-else" } },
-                { apiVersion: "extensions/v1beta1", kind: "Deployment", metadata: { name: "waterloo-sunset", namespace: "something-else" } },
-                { apiVersion: "extensions/v1beta1", kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face" } },
-                { apiVersion: "apps/v1", kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face" } },
+                {
+                    apiVersion: "apps/v1",
+                    kind: "Deployment",
+                    metadata: { name: "waterloo-sunset", namespace: "something-else" },
+                },
+                {
+                    apiVersion: "extensions/v1beta1",
+                    kind: "Deployment",
+                    metadata: { name: "waterloo-sunset", namespace: "something-else" },
+                },
+                {
+                    apiVersion: "extensions/v1beta1",
+                    kind: "DaemonSet",
+                    metadata: { name: "sunny-afternoon", namespace: "face2face" },
+                },
+                {
+                    apiVersion: "apps/v1",
+                    kind: "DaemonSet",
+                    metadata: { name: "sunny-afternoon", namespace: "face2face" },
+                },
                 { kind: "Service", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks" } },
                 { kind: "ServiceAccount", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks" } },
                 { kind: "ClusterRole", metadata: { name: "the-kinks-are-the-village-green-preservation-society" } },
@@ -1226,19 +1261,25 @@ describe("pack/k8s/kubernetes/fetch", () => {
             const u = _.uniqBy(o, kubernetesResourceIdentity);
             const e = [
                 { kind: "Secret", metadata: { name: "you-really-got-me", namespace: "kinks" } },
-                { apiVersion: "apps/v1", kind: "Deployment", metadata: { name: "waterloo-sunset", namespace: "something-else" } },
-                { apiVersion: "extensions/v1beta1", kind: "DaemonSet", metadata: { name: "sunny-afternoon", namespace: "face2face" } },
+                {
+                    apiVersion: "apps/v1",
+                    kind: "Deployment",
+                    metadata: { name: "waterloo-sunset", namespace: "something-else" },
+                },
+                {
+                    apiVersion: "extensions/v1beta1",
+                    kind: "DaemonSet",
+                    metadata: { name: "sunny-afternoon", namespace: "face2face" },
+                },
                 { kind: "Service", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks" } },
                 { kind: "ServiceAccount", metadata: { name: "tired-of-waiting-for-you", namespace: "kinda-kinks" } },
                 { kind: "ClusterRole", metadata: { name: "the-kinks-are-the-village-green-preservation-society" } },
             ];
             assert.deepStrictEqual(u, e);
         });
-
     });
 
     describe("selectorMatch", () => {
-
         it("should match when no name/label selectors", () => {
             const r = {
                 apiVersion: "v1",
@@ -1315,11 +1356,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             };
             assert(selectorMatch(r, s));
         });
-
     });
 
     describe("kindMatch", () => {
-
         it("should match when no kinds", () => {
             [[], undefined].forEach(k => {
                 const r = { kind: "Service" };
@@ -1356,11 +1395,9 @@ describe("pack/k8s/kubernetes/fetch", () => {
             ];
             assert(kindMatch(r, k));
         });
-
     });
 
     describe("filterMatch", () => {
-
         it("should match when no filter", () => {
             const r = { kind: "Service" };
             assert(filterMatch(r, undefined));
@@ -1389,15 +1426,13 @@ describe("pack/k8s/kubernetes/fetch", () => {
             const f = (s: any) => s.kind === "Secret" && s.type === "kubernetes.io/service-account-token";
             assert(filterMatch(r, f));
         });
-
     });
 
-    describe("kubernetesFetch", function(this: Mocha.Suite): void {
-
+    describe("kubernetesFetch", function (this: Mocha.Suite): void {
         this.timeout(15000);
 
-        before(async function(this: Mocha.Context): Promise<void> {
-            if (!await k8sAvailable()) {
+        before(async function (this: Mocha.Context): Promise<void> {
+            if (!(await k8sAvailable())) {
                 this.skip();
             }
             beforeRetry();
@@ -1410,7 +1445,5 @@ describe("pack/k8s/kubernetes/fetch", () => {
             const r = await kubernetesFetch();
             assert(r, "kubernetesFetch did not return anything");
         });
-
     });
-
 });

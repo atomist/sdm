@@ -17,16 +17,10 @@
 import * as k8s from "@kubernetes/client-node";
 import * as assert from "power-assert";
 import { KubernetesDelete } from "../../../../../lib/core/pack/k8s/kubernetes/request";
-import {
-    appObject,
-    k8sObject,
-    logObject,
-} from "../../../../../lib/core/pack/k8s/kubernetes/resource";
+import { appObject, k8sObject, logObject } from "../../../../../lib/core/pack/k8s/kubernetes/resource";
 
 describe("pack/k8s/kubernetes/resource", () => {
-
     describe("appObject", () => {
-
         it("should throw an exception if kind invalid", () => {
             [undefined, "", "Nothing"].forEach(k => {
                 const a: KubernetesDelete = {
@@ -83,7 +77,7 @@ describe("pack/k8s/kubernetes/resource", () => {
             });
         });
 
-        it("should return a v1beta1 namespaced object", () => {
+        it("should return a networking.k8s.io/v1beta1 namespaced object", () => {
             const a: KubernetesDelete = {
                 name: "good-girl-gone-bad",
                 ns: "rihanna",
@@ -91,7 +85,7 @@ describe("pack/k8s/kubernetes/resource", () => {
             };
             const o = appObject(a, "Ingress");
             const e = {
-                apiVersion: "extensions/v1beta1",
+                apiVersion: "networking.k8s.io/v1beta1",
                 kind: "Ingress",
                 metadata: {
                     labels: {
@@ -173,11 +167,9 @@ describe("pack/k8s/kubernetes/resource", () => {
                 assert.deepStrictEqual(o, e);
             });
         });
-
     });
 
     describe("k8sObject", () => {
-
         it("should return a minimal object from a service account", () => {
             const d: k8s.V1ServiceAccount = {
                 apiVersion: "v1",
@@ -236,11 +228,9 @@ describe("pack/k8s/kubernetes/resource", () => {
             };
             assert.deepStrictEqual(o, e);
         });
-
     });
 
     describe("stringifyObject", () => {
-
         it("should stringify a service", () => {
             const d: k8s.V1Service = {
                 apiVersion: "v1",
@@ -314,7 +304,5 @@ describe("pack/k8s/kubernetes/resource", () => {
             const e = `{"apiVersion":"v1","data":{"One":"V******************************=","Two":"U******************=","Seven":"********"},"kind":"Secret","metadata":{"labels":{"app.kubernetes.io/name":"good-girl-gone-...}`;
             assert(s === e);
         });
-
     });
-
 });

@@ -18,10 +18,7 @@ import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
 import { k8sErrMsg } from "../support/error";
 import { K8sObjectApi } from "./api";
-import {
-    KubernetesClients,
-    makeApiClients,
-} from "./clients";
+import { KubernetesClients, makeApiClients } from "./clients";
 import { loadKubeConfig } from "./config";
 import { labelMatch } from "./labels";
 import { nameMatch } from "./name";
@@ -96,7 +93,7 @@ export const defaultKubernetesResourceSelectorKinds: KubernetesResourceKind[] = 
     { apiVersion: "apps/v1", kind: "StatefulSet" },
     { apiVersion: "autoscaling/v1", kind: "HorizontalPodAutoscaler" },
     { apiVersion: "batch/v1beta1", kind: "CronJob" },
-    { apiVersion: "extensions/v1beta1", kind: "Ingress" },
+    { apiVersion: "networking.k8s.io/v1beta1", kind: "Ingress" },
     { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy" },
     { apiVersion: "policy/v1beta1", kind: "PodDisruptionBudget" },
     { apiVersion: "policy/v1beta1", kind: "PodSecurityPolicy" },
@@ -147,7 +144,10 @@ export const defaultKubernetesFetchOptions: KubernetesFetchOptions = {
             name: /^(?:cluster-admin(?:-binding)?|cloud-provider|kubernetes-dashboard)$/,
         },
         { action: "exclude", kinds: [{ apiVersion: "storage.k8s.io/v1", kind: "StorageClass" }], name: "standard" },
-        { action: "exclude", filter: (r: any) => r.kind === "Secret" && r.type === "kubernetes.io/service-account-token" },
+        {
+            action: "exclude",
+            filter: (r: any) => r.kind === "Secret" && r.type === "kubernetes.io/service-account-token",
+        },
         { action: "exclude", filter: r => /^ClusterRole/.test(r.kind) && /(?:kubelet|:)/.test(r.metadata.name) },
         { action: "include", kinds: defaultKubernetesResourceSelectorKinds },
     ],
@@ -164,7 +164,9 @@ export const defaultKubernetesFetchOptions: KubernetesFetchOptions = {
  * @param options Kubernetes fetch options
  * @return Kubernetes resources matching the fetch options
  */
-export async function kubernetesFetch(options: KubernetesFetchOptions = defaultKubernetesFetchOptions): Promise<k8s.KubernetesObject[]> {
+export async function kubernetesFetch(
+    options: KubernetesFetchOptions = defaultKubernetesFetchOptions,
+): Promise<k8s.KubernetesObject[]> {
     let client: K8sObjectApi;
     let clients: KubernetesClients;
     try {
@@ -229,14 +231,18 @@ export async function kubernetesFetch(options: KubernetesFetchOptions = defaultK
  * @param selectors Kubernetes resource selectors to ensure have default values
  * @return Properly defaulted Kubernetes resource selectors
  */
-export function populateResourceSelectorDefaults(selectors: KubernetesResourceSelector[]): KubernetesResourceSelector[] {
-    return selectors.map(s => {
-        const k: KubernetesResourceSelector = { action: "include", ...s };
-        if (!k.kinds && k.action === "include") {
-            k.kinds = defaultKubernetesResourceSelectorKinds;
-        }
-        return k;
-    }).filter(s => s.action === "include" || s.filter || s.kinds || s.labelSelector || s.name || s.namespace);
+export function populateResourceSelectorDefaults(
+    selectors: KubernetesResourceSelector[],
+): KubernetesResourceSelector[] {
+    return selectors
+        .map(s => {
+            const k: KubernetesResourceSelector = { action: "include", ...s };
+            if (!k.kinds && k.action === "include") {
+                k.kinds = defaultKubernetesResourceSelectorKinds;
+            }
+            return k;
+        })
+        .filter(s => s.action === "include" || s.filter || s.kinds || s.labelSelector || s.name || s.namespace);
 }
 
 /**
@@ -269,7 +275,10 @@ export function includedResourceKinds(selectors: KubernetesResourceSelector[]): 
  * @param selectors All the resource selectors
  * @return A deduplicated array of Kubernetes cluster resource kinds among the inclusion rules
  */
-export async function clusterResourceKinds(selectors: KubernetesResourceSelector[], client: K8sObjectApi): Promise<KubernetesResourceKind[]> {
+export async function clusterResourceKinds(
+    selectors: KubernetesResourceSelector[],
+    client: K8sObjectApi,
+): Promise<KubernetesResourceKind[]> {
     const included = includedResourceKinds(selectors);
     const apiKinds: KubernetesResourceKind[] = [];
     for (const apiKind of included) {
@@ -298,7 +307,6 @@ export async function namespaceResourceKinds(
     selectors: KubernetesResourceSelector[],
     client: K8sObjectApi,
 ): Promise<KubernetesResourceKind[]> {
-
     const apiKinds: KubernetesResourceKind[] = [];
     for (const selector of selectors.filter(s => s.action === "include")) {
         if (nameMatch(ns, selector.namespace)) {
@@ -381,7 +389,10 @@ export function cleanKubernetesSpec(obj: k8s.KubernetesObject, apiKind: Kubernet
  * @param selectors Filtering rules
  * @return Filtered array of Kubernetes resources
  */
-export function selectKubernetesResources(specs: k8s.KubernetesObject[], selectors: KubernetesResourceSelector[]): k8s.KubernetesObject[] {
+export function selectKubernetesResources(
+    specs: k8s.KubernetesObject[],
+    selectors: KubernetesResourceSelector[],
+): k8s.KubernetesObject[] {
     const uniqueSpecs = _.uniqBy(specs, kubernetesResourceIdentity);
     if (!selectors || selectors.length < 1) {
         return uniqueSpecs;
@@ -423,7 +434,10 @@ export function kubernetesResourceIdentity(obj: k8s.KubernetesObject): string {
  * @param selector Selector to use for checking
  * @return Selector action if there is a match, `undefined` otherwise
  */
-export function selectorMatch(spec: k8s.KubernetesObject, selector: KubernetesResourceSelector): "include" | "exclude" | undefined {
+export function selectorMatch(
+    spec: k8s.KubernetesObject,
+    selector: KubernetesResourceSelector,
+): "include" | "exclude" | undefined {
     if (!nameMatch(spec.metadata.name, selector.name)) {
         return undefined;
     }

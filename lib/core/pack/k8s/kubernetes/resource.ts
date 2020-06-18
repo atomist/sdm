@@ -50,7 +50,7 @@ export function appObject(app: KubernetesDelete, kind: string): k8s.KubernetesOb
             ko.apiVersion = "apps/v1";
             break;
         case "Ingress":
-            ko.apiVersion = "extensions/v1beta1";
+            ko.apiVersion = "networking.k8s.io/v1beta1";
             break;
         case "ClusterRole":
         case "ClusterRoleBinding":

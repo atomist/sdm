@@ -16,26 +16,14 @@
 
 import * as k8s from "@kubernetes/client-node";
 import { k8sErrMsg } from "../support/error";
-import {
-    KubernetesClients,
-    makeApiClients,
-    makeNoOpApiClients,
-} from "./clients";
+import { KubernetesClients, makeApiClients, makeNoOpApiClients } from "./clients";
 import { loadKubeConfig } from "./config";
-import {
-    deleteAppResources,
-    DeleteAppResourcesArgCluster,
-    DeleteAppResourcesArgNamespaced,
-} from "./delete";
+import { deleteAppResources, DeleteAppResourcesArgCluster, DeleteAppResourcesArgNamespaced } from "./delete";
 import { upsertDeployment } from "./deployment";
 import { upsertIngress } from "./ingress";
 import { upsertNamespace } from "./namespace";
 import { upsertRbac } from "./rbac";
-import {
-    KubernetesApplication,
-    KubernetesDelete,
-    reqString,
-} from "./request";
+import { KubernetesApplication, KubernetesDelete, reqString } from "./request";
 import { upsertSecrets } from "./secret";
 import { upsertService } from "./service";
 
@@ -47,7 +35,10 @@ import { upsertService } from "./service";
  * @param sdmFulfiller Registered name of the SDM fulfilling the deployment goal.
  * @return Array of resource specs upserted
  */
-export async function upsertApplication(app: KubernetesApplication, sdmFulfiller: string): Promise<k8s.KubernetesObject[]> {
+export async function upsertApplication(
+    app: KubernetesApplication,
+    sdmFulfiller: string,
+): Promise<k8s.KubernetesObject[]> {
     let clients: KubernetesClients;
     if (app.mode === "sync") {
         clients = makeNoOpApiClients();
@@ -66,7 +57,7 @@ export async function upsertApplication(app: KubernetesApplication, sdmFulfiller
     try {
         const k8sResources: k8s.KubernetesObject[] = [];
         k8sResources.push(await upsertNamespace(req));
-        k8sResources.push(...Object.values<k8s.KubernetesObject>(await upsertRbac(req) as any));
+        k8sResources.push(...Object.values<k8s.KubernetesObject>((await upsertRbac(req)) as any));
         k8sResources.push(await upsertService(req));
         k8sResources.push(...(await upsertSecrets(req)));
         k8sResources.push(await upsertDeployment(req));
@@ -100,13 +91,15 @@ export async function deleteApplication(del: KubernetesDelete): Promise<k8s.Kube
 
     const deleted: k8s.KubernetesObject[] = [];
     const errs: Error[] = [];
-    const resourceDeleters: Array<Omit<DeleteAppResourcesArgCluster, "req"> | Omit<DeleteAppResourcesArgNamespaced, "req">> = [
+    const resourceDeleters: Array<
+        Omit<DeleteAppResourcesArgCluster, "req"> | Omit<DeleteAppResourcesArgNamespaced, "req">
+    > = [
         {
             kind: "Ingress",
             namespaced: true,
-            api: req.clients.ext,
-            lister: req.clients.ext.listNamespacedIngress,
-            deleter: req.clients.ext.deleteNamespacedIngress,
+            api: req.clients.net,
+            lister: req.clients.net.listNamespacedIngress,
+            deleter: req.clients.net.deleteNamespacedIngress,
         },
         {
             kind: "Deployment",

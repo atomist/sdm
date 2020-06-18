@@ -31,9 +31,7 @@ import {
 import { k8sSpecGlob } from "../../../../../lib/core/pack/k8s/sync/diff";
 
 describe("pack/k8s/sync/application", () => {
-
     describe("sameObject", () => {
-
         it("should return true for equivalent objects", () => {
             [
                 [
@@ -80,14 +78,8 @@ describe("pack/k8s/sync/application", () => {
 
         it("should return false for invalid objects", () => {
             [
-                [
-                    { kind: "Service", metadata: { name: "emmylou", namespace: "harris" } },
-                    undefined,
-                ],
-                [
-                    { kind: "ClusterRole", metadata: { name: "emmylou" } },
-                    { kind: "ClusterRole" },
-                ],
+                [{ kind: "Service", metadata: { name: "emmylou", namespace: "harris" } }, undefined],
+                [{ kind: "ClusterRole", metadata: { name: "emmylou" } }, { kind: "ClusterRole" }],
                 [
                     { kind: "Service", metadata: { name: "emmylou", namespace: "harris" } },
                     { metadata: { name: "emmylou", namespace: "harris" } },
@@ -101,11 +93,9 @@ describe("pack/k8s/sync/application", () => {
                 assert(!sameObject(oo[1], oo[0]));
             });
         });
-
     });
 
     describe("matchSpec", () => {
-
         it("should find nothing", () => {
             const sss = [
                 [],
@@ -269,18 +259,22 @@ describe("pack/k8s/sync/application", () => {
             const m = matchSpec(s, ss);
             assert.deepStrictEqual(m, ss[2]);
         });
-
     });
 
     describe("syncResources", () => {
-
         it("should create spec files", async () => {
             const p: GitProject = InMemoryProject.of() as any;
             p.isClean = async () => false;
             let commitMessage: string;
-            p.commit = async msg => { commitMessage = msg; return p; };
+            p.commit = async msg => {
+                commitMessage = msg;
+                return p;
+            };
             let pushed = false;
-            p.push = async msg => { pushed = true; return p; };
+            p.push = async msg => {
+                pushed = true;
+                return p;
+            };
             const a = {
                 image: "hub.tonina.com/black-angel/como-yo:3.58",
                 name: "tonina",
@@ -341,7 +335,7 @@ describe("pack/k8s/sync/application", () => {
 `;
             assert(commitMessage === eCommitMessage);
             assert(pushed, "commit was not pushed");
-            assert(await p.totalFileCount() === 4);
+            assert((await p.totalFileCount()) === 4);
             assert(p.fileExistsSync("70_black-angel_tonina_deployment.json"));
             assert(p.fileExistsSync("50_black-angel_tonina_service.json"));
             assert(p.fileExistsSync("20_black-angel_tonina_service-account.json"));
@@ -379,9 +373,15 @@ describe("pack/k8s/sync/application", () => {
             const p: GitProject = InMemoryProject.of() as any;
             p.isClean = async () => false;
             let commitMessage: string;
-            p.commit = async msg => { commitMessage = msg; return p; };
+            p.commit = async msg => {
+                commitMessage = msg;
+                return p;
+            };
             let pushed = false;
-            p.push = async msg => { pushed = true; return p; };
+            p.push = async msg => {
+                pushed = true;
+                return p;
+            };
             const a = {
                 image: "hub.tonina.com/black-angel/como-yo:3.58",
                 name: "tonina",
@@ -420,7 +420,7 @@ describe("pack/k8s/sync/application", () => {
 `;
             assert(commitMessage === eCommitMessage);
             assert(pushed, "commit was not pushed");
-            assert(await p.totalFileCount() === 2);
+            assert((await p.totalFileCount()) === 2);
             assert(p.fileExistsSync("70_black-angel_tonina_deployment.yaml"));
             assert(p.fileExistsSync("50_black-angel_tonina_service.yaml"));
             const d = await (await p.getFile("70_black-angel_tonina_deployment.yaml")).getContent();
@@ -463,9 +463,15 @@ metadata:
             ) as any;
             p.isClean = async () => false;
             let commitMessage: string;
-            p.commit = async msg => { commitMessage = msg; return p; };
+            p.commit = async msg => {
+                commitMessage = msg;
+                return p;
+            };
             let pushed = false;
-            p.push = async msg => { pushed = true; return p; };
+            p.push = async msg => {
+                pushed = true;
+                return p;
+            };
             const a = {
                 image: "hub.tonina.com/black-angel/como-yo:3.5.8-20180406",
                 name: "tonina",
@@ -493,7 +499,7 @@ metadata:
                     },
                 },
                 {
-                    apiVersion: "extensions/v1beta1",
+                    apiVersion: "networking.k8s.io/v1beta1",
                     kind: "Ingress",
                     metadata: {
                         name: "tonina",
@@ -541,7 +547,7 @@ metadata:
 `;
             assert(commitMessage === eCommitMessage);
             assert(pushed, "commit was not pushed");
-            assert(await p.totalFileCount() === 6);
+            assert((await p.totalFileCount()) === 6);
             assert(p.fileExistsSync("70_black-angel_tonina_deployment.json"));
             assert(p.fileExistsSync("50_black-angel_tonina_service.json"));
             assert(p.fileExistsSync("80_black-angel_tonina_ingress.json"));
@@ -618,9 +624,15 @@ metadata:
             ) as any;
             p.isClean = async () => false;
             let commitMessage: string;
-            p.commit = async msg => { commitMessage = msg; return p; };
+            p.commit = async msg => {
+                commitMessage = msg;
+                return p;
+            };
             let pushed = false;
-            p.push = async msg => { pushed = true; return p; };
+            p.push = async msg => {
+                pushed = true;
+                return p;
+            };
             const a = {
                 name: "tonina",
                 ns: "black-angel",
@@ -647,7 +659,7 @@ metadata:
                     },
                 },
                 {
-                    apiVersion: "extensions/v1beta1",
+                    apiVersion: "networking.k8s.io/v1beta1",
                     kind: "Ingress",
                     metadata: {
                         name: "tonina",
@@ -680,7 +692,7 @@ metadata:
 `;
             assert(commitMessage === eCommitMessage);
             assert(pushed, "commit was not pushed");
-            assert(await p.totalFileCount() === 1);
+            assert((await p.totalFileCount()) === 1);
             assert(!p.fileExistsSync("black-angel~tonina~deployment.json"));
             assert(p.fileExistsSync("black-angel-tonina-service.json"));
             assert(!p.fileExistsSync("black-angel-tonina-ingress.json"));
@@ -689,7 +701,5 @@ metadata:
             const svc = await p.getFile("black-angel-tonina-service.json").then(f => f.getContent());
             assert(svc === "{}\n");
         });
-
     });
-
 });

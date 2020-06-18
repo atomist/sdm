@@ -18,18 +18,14 @@ import * as assert from "power-assert";
 import { makeNoOpApiClients } from "../../../../../lib/core/pack/k8s/kubernetes/clients";
 
 describe("pack/k8s/kubernetes/clients", () => {
-
     describe("makeNoOpApiClients", () => {
-
         it("should make the no-op clients", () => {
             const c = makeNoOpApiClients();
             assert(c);
             assert(c.core);
             assert(c.apps);
+            assert(c.net);
             assert(c.rbac);
-            assert(c.ext);
         });
-
     });
-
 });

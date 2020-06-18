@@ -17,27 +17,16 @@
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as k8s from "@kubernetes/client-node";
 import * as assert from "power-assert";
-import {
-    appendName,
-    K8sObjectApi,
-    namespaceRequired,
-} from "../../../../../lib/core/pack/k8s/kubernetes/api";
+import { appendName, K8sObjectApi, namespaceRequired } from "../../../../../lib/core/pack/k8s/kubernetes/api";
 import { applySpec } from "../../../../../lib/core/pack/k8s/kubernetes/apply";
 import { loadKubeConfig } from "../../../../../lib/core/pack/k8s/kubernetes/config";
 import { deleteSpec } from "../../../../../lib/core/pack/k8s/kubernetes/delete";
-import {
-    afterRetry,
-    beforeRetry,
-    k8sAvailable,
-    rng,
-} from "../k8s";
+import { afterRetry, beforeRetry, k8sAvailable, rng } from "../k8s";
 
 /* tslint:disable:max-file-line-count */
 
 describe("pack/k8s/kubernetes/api", () => {
-
     describe("appendName", () => {
-
         it("should return append name", () => {
             ["delete", "patch", "read", "replace"].forEach((a: any) => {
                 assert(appendName(a));
@@ -49,11 +38,9 @@ describe("pack/k8s/kubernetes/api", () => {
                 assert(!appendName(a));
             });
         });
-
     });
 
     describe("namespaceRequired", () => {
-
         it("should return namespace required", () => {
             const r: any = { namespaced: true };
             ["create", "delete", "patch", "read", "replace"].forEach((a: any) => {
@@ -72,15 +59,13 @@ describe("pack/k8s/kubernetes/api", () => {
                 assert(!namespaceRequired(r, a));
             });
         });
-
     });
 
-    describe("integration", function(this: Mocha.Suite): void {
-
+    describe("integration", function (this: Mocha.Suite): void {
         this.timeout(5000);
 
-        before(async function(this: Mocha.Context): Promise<void> {
-            if (!await k8sAvailable()) {
+        before(async function (this: Mocha.Context): Promise<void> {
+            if (!(await k8sAvailable())) {
                 this.skip();
             }
             beforeRetry();
@@ -90,9 +75,8 @@ describe("pack/k8s/kubernetes/api", () => {
         });
 
         describe("K8sObjectApi.specUriPath", () => {
-
             let client: K8sObjectApi;
-            before(function(this: Mocha.Context): void {
+            before(function (this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
@@ -189,7 +173,7 @@ describe("pack/k8s/kubernetes/api", () => {
 
             it("should return properly pluralize", async () => {
                 const o = {
-                    apiVersion: "extensions/v1beta1",
+                    apiVersion: "networking.k8s.io/v1beta1",
                     kind: "Ingress",
                     metadata: {
                         name: "repeater",
@@ -197,25 +181,85 @@ describe("pack/k8s/kubernetes/api", () => {
                     },
                 };
                 const r = await client.specUriPath(o, "delete");
-                assert(r === "apis/extensions/v1beta1/namespaces/fugazi/ingresses/repeater");
+                assert(r === "apis/networking.k8s.io/v1beta1/namespaces/fugazi/ingresses/repeater");
             });
 
             it("should handle a variety of resources", async () => {
                 /* tslint:disable:max-line-length */
                 const a = [
                     { apiVersion: "v1", kind: "Service", ns: true, e: "api/v1/namespaces/fugazi/services/repeater" },
-                    { apiVersion: "v1", kind: "ServiceAccount", ns: true, e: "api/v1/namespaces/fugazi/serviceaccounts/repeater" },
-                    { apiVersion: "rbac.authorization.k8s.io/v1", kind: "Role", ns: true, e: "apis/rbac.authorization.k8s.io/v1/namespaces/fugazi/roles/repeater" },
-                    { apiVersion: "rbac.authorization.k8s.io/v1", kind: "ClusterRole", ns: false, e: "apis/rbac.authorization.k8s.io/v1/clusterroles/repeater" },
-                    { apiVersion: "extensions/v1beta1", kind: "NetworkPolicy", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/networkpolicies/repeater" },
-                    { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy", ns: true, e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies/repeater" },
-                    { apiVersion: "extensions/v1beta1", kind: "Ingress", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/ingresses/repeater" },
-                    { apiVersion: "extensions/v1beta1", kind: "DaemonSet", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/daemonsets/repeater" },
-                    { apiVersion: "extensions/v1beta1", kind: "DaemonSet", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/daemonsets/repeater" },
-                    { apiVersion: "apps/v1", kind: "DaemonSet", ns: true, e: "apis/apps/v1/namespaces/fugazi/daemonsets/repeater" },
-                    { apiVersion: "extensions/v1beta1", kind: "Deployment", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/deployments/repeater" },
-                    { apiVersion: "apps/v1", kind: "Deployment", ns: true, e: "apis/apps/v1/namespaces/fugazi/deployments/repeater" },
-                    { apiVersion: "storage.k8s.io/v1", kind: "StorageClass", ns: false, e: "apis/storage.k8s.io/v1/storageclasses/repeater" },
+                    {
+                        apiVersion: "v1",
+                        kind: "ServiceAccount",
+                        ns: true,
+                        e: "api/v1/namespaces/fugazi/serviceaccounts/repeater",
+                    },
+                    {
+                        apiVersion: "rbac.authorization.k8s.io/v1",
+                        kind: "Role",
+                        ns: true,
+                        e: "apis/rbac.authorization.k8s.io/v1/namespaces/fugazi/roles/repeater",
+                    },
+                    {
+                        apiVersion: "rbac.authorization.k8s.io/v1",
+                        kind: "ClusterRole",
+                        ns: false,
+                        e: "apis/rbac.authorization.k8s.io/v1/clusterroles/repeater",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1",
+                        kind: "NetworkPolicy",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies/repeater",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1",
+                        kind: "NetworkPolicy",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies/repeater",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1beta1",
+                        kind: "Ingress",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1beta1/namespaces/fugazi/ingresses/repeater",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets/repeater",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets/repeater",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets/repeater",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "Deployment",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/deployments/repeater",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "Deployment",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/deployments/repeater",
+                    },
+                    {
+                        apiVersion: "storage.k8s.io/v1",
+                        kind: "StorageClass",
+                        ns: false,
+                        e: "apis/storage.k8s.io/v1/storageclasses/repeater",
+                    },
                 ];
                 /* tslint:enable:max-line-length */
                 for (const k of a) {
@@ -238,18 +282,78 @@ describe("pack/k8s/kubernetes/api", () => {
                 /* tslint:disable:max-line-length */
                 const a = [
                     { apiVersion: "v1", kind: "Service", ns: true, e: "api/v1/namespaces/fugazi/services" },
-                    { apiVersion: "v1", kind: "ServiceAccount", ns: true, e: "api/v1/namespaces/fugazi/serviceaccounts" },
-                    { apiVersion: "rbac.authorization.k8s.io/v1", kind: "Role", ns: true, e: "apis/rbac.authorization.k8s.io/v1/namespaces/fugazi/roles" },
-                    { apiVersion: "rbac.authorization.k8s.io/v1", kind: "ClusterRole", ns: false, e: "apis/rbac.authorization.k8s.io/v1/clusterroles" },
-                    { apiVersion: "extensions/v1beta1", kind: "NetworkPolicy", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/networkpolicies" },
-                    { apiVersion: "networking.k8s.io/v1", kind: "NetworkPolicy", ns: true, e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies" },
-                    { apiVersion: "extensions/v1beta1", kind: "Ingress", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/ingresses" },
-                    { apiVersion: "extensions/v1beta1", kind: "DaemonSet", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/daemonsets" },
-                    { apiVersion: "extensions/v1beta1", kind: "DaemonSet", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/daemonsets" },
-                    { apiVersion: "apps/v1", kind: "DaemonSet", ns: true, e: "apis/apps/v1/namespaces/fugazi/daemonsets" },
-                    { apiVersion: "extensions/v1beta1", kind: "Deployment", ns: true, e: "apis/extensions/v1beta1/namespaces/fugazi/deployments" },
-                    { apiVersion: "apps/v1", kind: "Deployment", ns: true, e: "apis/apps/v1/namespaces/fugazi/deployments" },
-                    { apiVersion: "storage.k8s.io/v1", kind: "StorageClass", ns: false, e: "apis/storage.k8s.io/v1/storageclasses" },
+                    {
+                        apiVersion: "v1",
+                        kind: "ServiceAccount",
+                        ns: true,
+                        e: "api/v1/namespaces/fugazi/serviceaccounts",
+                    },
+                    {
+                        apiVersion: "rbac.authorization.k8s.io/v1",
+                        kind: "Role",
+                        ns: true,
+                        e: "apis/rbac.authorization.k8s.io/v1/namespaces/fugazi/roles",
+                    },
+                    {
+                        apiVersion: "rbac.authorization.k8s.io/v1",
+                        kind: "ClusterRole",
+                        ns: false,
+                        e: "apis/rbac.authorization.k8s.io/v1/clusterroles",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1",
+                        kind: "NetworkPolicy",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1",
+                        kind: "NetworkPolicy",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1/namespaces/fugazi/networkpolicies",
+                    },
+                    {
+                        apiVersion: "networking.k8s.io/v1beta1",
+                        kind: "Ingress",
+                        ns: true,
+                        e: "apis/networking.k8s.io/v1beta1/namespaces/fugazi/ingresses",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "DaemonSet",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/daemonsets",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "Deployment",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/deployments",
+                    },
+                    {
+                        apiVersion: "apps/v1",
+                        kind: "Deployment",
+                        ns: true,
+                        e: "apis/apps/v1/namespaces/fugazi/deployments",
+                    },
+                    {
+                        apiVersion: "storage.k8s.io/v1",
+                        kind: "StorageClass",
+                        ns: false,
+                        e: "apis/storage.k8s.io/v1/storageclasses",
+                    },
                 ];
                 /* tslint:enable:max-line-length */
                 for (const k of a) {
@@ -322,13 +426,11 @@ describe("pack/k8s/kubernetes/api", () => {
                 }
                 assert(thrown, "no error thrown");
             });
-
         });
 
         describe("baseRequestOptions", () => {
-
             let client: K8sObjectApi;
-            before(function(this: Mocha.Context): void {
+            before(function (this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
@@ -366,16 +468,16 @@ describe("pack/k8s/kubernetes/api", () => {
             });
 
             it("should override patch content-type header", async () => {
-                const o = client.baseRequestOptions("PATCH", { headers: { "Content-Type": "application/merge-patch+json" } });
+                const o = client.baseRequestOptions("PATCH", {
+                    headers: { "Content-Type": "application/merge-patch+json" },
+                });
                 assert(o.method === "PATCH");
                 assert((o.uri as string).endsWith("/"));
                 assert(o.headers["Content-Type"] === "application/merge-patch+json");
             });
-
         });
 
         describe("apply & delete", () => {
-
             it("should apply and delete resources", async () => {
                 const s = {
                     apiVersion: "v1",
@@ -476,7 +578,11 @@ describe("pack/k8s/kubernetes/api", () => {
                     await applySpec(s);
                 } catch (e) {
                     thrown = true;
-                    assert(/Service "_not_a_valid_name_" is invalid: metadata.name: Invalid value: "_not_a_valid_name_":/.test(e.message));
+                    assert(
+                        /Service "_not_a_valid_name_" is invalid: metadata.name: Invalid value: "_not_a_valid_name_":/.test(
+                            e.message,
+                        ),
+                    );
                 }
                 assert(thrown, "error not thrown");
                 const d = {
@@ -517,13 +623,14 @@ describe("pack/k8s/kubernetes/api", () => {
                     await applySpec(d);
                 } catch (e) {
                     thrown = true;
-                    assert((e.message as string).startsWith("Failed to fetch resource metadata for applications/v1/Deployment: "));
+                    assert(
+                        (e.message as string).startsWith(
+                            "Failed to fetch resource metadata for applications/v1/Deployment: ",
+                        ),
+                    );
                 }
                 assert(thrown, "error not thrown");
             });
-
         });
-
     });
-
 });

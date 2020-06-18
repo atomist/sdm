@@ -46,8 +46,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
             assert(d.metadata.labels["atomist.com/workspaceId"] === r.workspaceId);
             assert(d.spec.selector.matchLabels["app.kubernetes.io/name"] === r.name);
             assert(d.spec.selector.matchLabels["atomist.com/workspaceId"] === r.workspaceId);
-            assert(d.spec.template.metadata.annotations["atomist.com/k8vent"] ===
-                `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/KAT3BU5H"]}`);
             assert(d.spec.template.metadata.labels["app.kubernetes.io/name"] === r.name);
             assert(d.spec.template.metadata.labels["app.kubernetes.io/part-of"] === r.name);
             assert(d.spec.template.metadata.labels["app.kubernetes.io/managed-by"] === r.sdmFulfiller);
@@ -125,9 +123,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
                                 "app.kubernetes.io/name": r.name,
                                 "app.kubernetes.io/part-of": r.name,
                                 "atomist.com/workspaceId": r.workspaceId,
-                            },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
                             },
                         },
                         spec: {
@@ -232,9 +227,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
                                 "app.kubernetes.io/part-of": r.name,
                                 "atomist.com/workspaceId": r.workspaceId,
                             },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
-                            },
                         },
                         spec: {
                             containers: [
@@ -332,9 +324,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
                                 "app.kubernetes.io/part-of": r.name,
                                 "atomist.com/workspaceId": r.workspaceId,
                             },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
-                            },
                         },
                         spec: {
                             containers: [
@@ -426,9 +415,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
                                 "app.kubernetes.io/part-of": r.name,
                                 "atomist.com/workspaceId": r.workspaceId,
                             },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
-                            },
                         },
                         spec: {
                             containers: [
@@ -513,9 +499,6 @@ describe("core/pack/k8s/kubernetes/deployment", () => {
                                 "app.kubernetes.io/name": r.name,
                                 "app.kubernetes.io/part-of": r.name,
                                 "atomist.com/workspaceId": r.workspaceId,
-                            },
-                            annotations: {
-                                "atomist.com/k8vent": `{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/${r.workspaceId}"]}`,
                             },
                         },
                         spec: {

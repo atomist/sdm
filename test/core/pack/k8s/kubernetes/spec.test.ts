@@ -27,9 +27,7 @@ import {
 /* tslint:disable:max-file-line-count */
 
 describe("pack/k8s/kubernetes/spec", () => {
-
     describe("kubernetesSpecFileBasename", () => {
-
         it("should create a namespace file name", () => {
             const o = {
                 apiVersion: "v1",
@@ -45,7 +43,7 @@ describe("pack/k8s/kubernetes/spec", () => {
         it("should create a simple namespaced file name", () => {
             [
                 { a: "apps/v1", k: "Deployment", p: "70" },
-                { a: "extensions/v1beta1", k: "Ingress", p: "80" },
+                { a: "networking.k8s.io/v1beta1", k: "Ingress", p: "80" },
                 { a: "rbac.authorization.k8s.io/v1", k: "Role", p: "25" },
                 { a: "v1", k: "Secret", p: "60" },
                 { a: "v1", k: "Service", p: "50" },
@@ -108,11 +106,9 @@ describe("pack/k8s/kubernetes/spec", () => {
                 assert(s === e);
             });
         });
-
     });
 
     describe("kubernetesSpecStringify", () => {
-
         it("should stringify a spec", async () => {
             const r = {
                 apiVersion: "v1",
@@ -251,11 +247,9 @@ spec:
 `;
             assert(s === e);
         });
-
     });
 
     describe("parseKubernetesSpecs", () => {
-
         it("should parse JSON", async () => {
             const c = `{
   "apiVersion": "v1",
@@ -277,24 +271,26 @@ spec:
 }
 `;
             const s = parseKubernetesSpecs(c);
-            const e = [{
-                apiVersion: "v1",
-                kind: "Service",
-                metadata: {
-                    name: "satisfied-mind",
-                    namespace: "the-byrds",
-                },
-                spec: {
-                    ports: [
-                        {
-                            port: 80,
+            const e = [
+                {
+                    apiVersion: "v1",
+                    kind: "Service",
+                    metadata: {
+                        name: "satisfied-mind",
+                        namespace: "the-byrds",
+                    },
+                    spec: {
+                        ports: [
+                            {
+                                port: 80,
+                            },
+                        ],
+                        selector: {
+                            "app.kubernetes.io/name": "satisfied-mind",
                         },
-                    ],
-                    selector: {
-                        "app.kubernetes.io/name": "satisfied-mind",
                     },
                 },
-            }];
+            ];
             assert.deepStrictEqual(s, e);
         });
 
@@ -311,22 +307,24 @@ spec:
       terminationGracePeriodSeconds: 180
 `;
             const s = parseKubernetesSpecs(c);
-            const e = [{
-                apiVersion: "apps/v1",
-                kind: "Deployment",
-                metadata: {
-                    name: "turn-turn-turn",
-                    namespace: "the-byrds",
-                },
-                spec: {
-                    template: {
-                        spec: {
-                            serviceAccountName: "sdm-serviceaccount",
-                            terminationGracePeriodSeconds: 180,
+            const e = [
+                {
+                    apiVersion: "apps/v1",
+                    kind: "Deployment",
+                    metadata: {
+                        name: "turn-turn-turn",
+                        namespace: "the-byrds",
+                    },
+                    spec: {
+                        template: {
+                            spec: {
+                                serviceAccountName: "sdm-serviceaccount",
+                                terminationGracePeriodSeconds: 180,
+                            },
                         },
                     },
                 },
-            }];
+            ];
             assert.deepStrictEqual(s, e);
         });
 
@@ -426,7 +424,7 @@ metadata:
                         name: "cert-manager-cainjector",
                         namespace: "cert-manager",
                         labels: {
-                            "app": "cainjector",
+                            app: "cainjector",
                             "app.kubernetes.io/name": "cainjector",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",
@@ -441,7 +439,7 @@ metadata:
                         name: "cert-manager-webhook",
                         namespace: "cert-manager",
                         labels: {
-                            "app": "webhook",
+                            app: "webhook",
                             "app.kubernetes.io/name": "webhook",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",
@@ -456,7 +454,7 @@ metadata:
                         name: "cert-manager",
                         namespace: "cert-manager",
                         labels: {
-                            "app": "cert-manager",
+                            app: "cert-manager",
                             "app.kubernetes.io/name": "cert-manager",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",
@@ -467,11 +465,9 @@ metadata:
             ];
             assert.deepStrictEqual(s, e);
         });
-
     });
 
     describe("specSlug", () => {
-
         it("should return a namespaced slug", () => {
             const s = {
                 apiVersion: "v1",
@@ -512,11 +508,9 @@ metadata:
             const e = "policy/v1beta1/podsecuritypolicies/mermaid";
             assert(l === e);
         });
-
     });
 
     describe("specSnippet", () => {
-
         it("should return the full string", () => {
             const s = {
                 apiVersion: "v1",
@@ -568,11 +562,9 @@ metadata:
             const e = `{"apiVersion":"v1","kind":"Service","metadata":{"labels":{"component":"apiserver","provider":"kubernetes"},"name":"kubernetes","namespace":"default","resourceVersion":"37","selfLink":"/api/v1/name...}`;
             assert(l === e);
         });
-
     });
 
     describe("specSnippet", () => {
-
         it("should return the full string", () => {
             const s = `{"apiVersion":"v1","kind":"Service","metadata":{"name":"mermaid","namespace":"avenue"}}`;
             const l = specStringSnippet(s);
@@ -587,7 +579,5 @@ metadata:
             /* tslint:enable:max-line-length */
             assert(l === e);
         });
-
     });
-
 });

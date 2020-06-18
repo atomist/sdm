@@ -15,10 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import {
-    ingressTemplate,
-    upsertIngress,
-} from "../../../../../lib/core/pack/k8s/kubernetes/ingress";
+import { ingressTemplate, upsertIngress } from "../../../../../lib/core/pack/k8s/kubernetes/ingress";
 import {
     KubernetesApplication,
     KubernetesResourceRequest,
@@ -26,9 +23,7 @@ import {
 } from "../../../../../lib/core/pack/k8s/kubernetes/request";
 
 describe("core/pack/k8s/kubernetes/ingress", () => {
-
     describe("ingressTemplate", () => {
-
         it("should create a wildcard ingress spec", async () => {
             const r: KubernetesApplication & KubernetesSdm = {
                 workspaceId: "KAT3BU5H",
@@ -41,7 +36,7 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             };
             const i = await ingressTemplate(r);
             const e = {
-                apiVersion: "extensions/v1beta1",
+                apiVersion: "networking.k8s.io/v1beta1",
                 kind: "Ingress",
                 metadata: {
                     name: "cloudbusting",
@@ -101,7 +96,7 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             };
             const s = await ingressTemplate(r);
             const e = {
-                apiVersion: "extensions/v1beta1",
+                apiVersion: "networking.k8s.io/v1beta1",
                 kind: "Ingress",
                 metadata: {
                     annotations: {
@@ -139,9 +134,7 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
                     ],
                     tls: [
                         {
-                            hosts: [
-                                "emi.com",
-                            ],
+                            hosts: ["emi.com"],
                             secretName: "emi-com",
                         },
                     ],
@@ -166,7 +159,7 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             };
             const s = await ingressTemplate(r);
             const e = {
-                apiVersion: "extensions/v1beta1",
+                apiVersion: "networking.k8s.io/v1beta1",
                 kind: "Ingress",
                 metadata: {
                     labels: {
@@ -217,7 +210,7 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             };
             const s = await ingressTemplate(r);
             const e = {
-                apiVersion: "extensions/v1beta1",
+                apiVersion: "networking.k8s.io/v1beta1",
                 kind: "Ingress",
                 metadata: {
                     labels: {
@@ -249,11 +242,9 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             };
             assert.deepStrictEqual(s, e);
         });
-
     });
 
     describe("upsertIngress", () => {
-
         it("should not do anything if port is not defined", async () => {
             const a: KubernetesResourceRequest = {
                 name: "brotherhood",
@@ -273,7 +264,5 @@ describe("core/pack/k8s/kubernetes/ingress", () => {
             const i = await upsertIngress(a);
             assert(i === undefined);
         });
-
     });
-
 });
