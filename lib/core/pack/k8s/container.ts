@@ -26,9 +26,15 @@ import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import { Writable } from "stream";
-import { DeepPartial, Merge } from "ts-essentials";
+import {
+    DeepPartial,
+    Merge,
+} from "ts-essentials";
 import { minimalClone } from "../../../api-helper/goal/minimalClone";
-import { goalData, sdmGoalTimeout } from "../../../api-helper/goal/sdmGoal";
+import {
+    goalData,
+    sdmGoalTimeout,
+} from "../../../api-helper/goal/sdmGoal";
 import { RepoContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import {
@@ -36,13 +42,21 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../../api/goal/GoalInvocation";
-import { GoalWithFulfillment, ImplementationRegistration } from "../../../api/goal/GoalWithFulfillment";
+import {
+    GoalWithFulfillment,
+    ImplementationRegistration,
+} from "../../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
 import { GoalScheduler } from "../../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../../api/registration/ServiceRegistration";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../../typings/types";
-import { CacheEntry, CacheOutputGoalDataKey, cachePut, cacheRestore } from "../../goal/cache/goalCaching";
+import {
+    CacheEntry,
+    CacheOutputGoalDataKey,
+    cachePut,
+    cacheRestore,
+} from "../../goal/cache/goalCaching";
 import {
     Container,
     ContainerInput,
@@ -55,7 +69,11 @@ import {
     GoalContainerVolume,
 } from "../../goal/container/container";
 import { prepareSecrets } from "../../goal/container/provider";
-import { containerEnvVars, prepareInputAndOutput, processResult } from "../../goal/container/util";
+import {
+    containerEnvVars,
+    prepareInputAndOutput,
+    processResult,
+} from "../../goal/container/util";
 import { toArray } from "../../util/misc/array";
 import { loadKubeConfig } from "./kubernetes/config";
 import { k8sJobEnv, KubernetesGoalScheduler, readNamespace } from "./scheduler/KubernetesGoalScheduler";

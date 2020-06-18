@@ -21,7 +21,10 @@ import { logRetry } from "../support/retry";
 import { K8sDeleteResponse, K8sListResponse, K8sObjectApi } from "./api";
 import { loadKubeConfig } from "./config";
 import { labelSelector } from "./labels";
-import { appName, KubernetesDeleteResourceRequest } from "./request";
+import {
+    appName,
+    KubernetesDeleteResourceRequest,
+} from "./request";
 import { logObject } from "./resource";
 import { specSlug } from "./spec";
 

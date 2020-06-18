@@ -18,7 +18,10 @@ import * as k8s from "@kubernetes/client-node";
 import * as _ from "lodash";
 import { k8sErrMsg } from "../support/error";
 import { K8sObjectApi } from "./api";
-import { KubernetesClients, makeApiClients } from "./clients";
+import {
+    KubernetesClients,
+    makeApiClients,
+} from "./clients";
 import { loadKubeConfig } from "./config";
 import { labelMatch } from "./labels";
 import { nameMatch } from "./name";

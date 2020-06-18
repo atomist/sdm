@@ -15,7 +15,10 @@
  */
 
 import * as assert from "power-assert";
-import { ingressTemplate, upsertIngress } from "../../../../../lib/core/pack/k8s/kubernetes/ingress";
+import {
+    ingressTemplate,
+    upsertIngress,
+} from "../../../../../lib/core/pack/k8s/kubernetes/ingress";
 import {
     KubernetesApplication,
     KubernetesResourceRequest,

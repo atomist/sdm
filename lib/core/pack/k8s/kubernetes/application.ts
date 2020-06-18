@@ -16,14 +16,26 @@
 
 import * as k8s from "@kubernetes/client-node";
 import { k8sErrMsg } from "../support/error";
-import { KubernetesClients, makeApiClients, makeNoOpApiClients } from "./clients";
+import {
+    KubernetesClients,
+    makeApiClients,
+    makeNoOpApiClients,
+} from "./clients";
 import { loadKubeConfig } from "./config";
-import { deleteAppResources, DeleteAppResourcesArgCluster, DeleteAppResourcesArgNamespaced } from "./delete";
+import {
+    deleteAppResources,
+    DeleteAppResourcesArgCluster,
+    DeleteAppResourcesArgNamespaced,
+} from "./delete";
 import { upsertDeployment } from "./deployment";
 import { upsertIngress } from "./ingress";
 import { upsertNamespace } from "./namespace";
 import { upsertRbac } from "./rbac";
-import { KubernetesApplication, KubernetesDelete, reqString } from "./request";
+import {
+    KubernetesApplication,
+    KubernetesDelete,
+    reqString,
+} from "./request";
 import { upsertSecrets } from "./secret";
 import { upsertService } from "./service";
 

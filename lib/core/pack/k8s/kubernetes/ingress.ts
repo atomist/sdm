@@ -22,7 +22,12 @@ import { logRetry } from "../support/retry";
 import { applicationLabels } from "./labels";
 import { metadataTemplate } from "./metadata";
 import { patchHeaders } from "./patch";
-import { appName, KubernetesApplication, KubernetesResourceRequest, KubernetesSdm } from "./request";
+import {
+    appName,
+    KubernetesApplication,
+    KubernetesResourceRequest,
+    KubernetesSdm,
+} from "./request";
 import { logObject } from "./resource";
 
 /**
