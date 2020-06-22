@@ -26,6 +26,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
+    "@atomist/automation-client": "2.0.0-master.20200429110358",
     "@google-cloud/storage": "^4.3.1",
     "@kubernetes/client-node": "^0.11.1",
     "@types/cron": "^1.7.1",
@@ -77,15 +78,14 @@
     "yargs-parser": "^17.0.0"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "^2.0.0",
     "@atomist/slack-messages": "^1.1.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "2.0.0-master.20200311165330",
     "@atomist/slack-messages": "^1.1.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
     "axios-mock-adapter": "^1.17.0",
+    "barrelsby": "^2.2.0",
     "espower-typescript": "^9.0.2",
     "handlebars": "^4.7.6",
     "mocha": "^6.2.2",
@@ -108,13 +108,16 @@
     "build": "run-s clean compile test lint doc",
     "build:fast": "run-p compile-test lint doc",
     "clean": "run-p clean:compile clean:test clean:doc clean:run",
-    "clean:compile": "rimraf git-info.json build \"index.{d.ts,js}{,.map}\" \"{bin,lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
+    "clean:barrels": "rimraf index.ts",
+    "clean:compile": "rimraf git-info.json build \"index.*\" \"{bin,lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
     "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
     "clean:test": "rimraf .nyc_output coverage",
-    "compile": "run-s gql:gen compile:ts",
+    "compile": "run-s gql:gen compile:barrels compile:ts",
+    "compile:barrels": "run-s clean:barrels compile:barrels:create",
+    "compile:barrels:create": "barrelsby --directory . --location top --include \"/lib/(?:api(?:-helper)?|spi|typings)/\" --exclude \"/node_modules/\" --exclude \"\\.d\\.ts\\$\" --exclude \"Projects?OperationRegistration\" --exclude \"Deployment\" --exclude \"SdmGoalMessage\"",
     "compile:ts": "tsc --project .",
     "compile-test": "run-s compile test:js",
     "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc lib",
