@@ -21,9 +21,7 @@ import { CommandListenerExecutionInterruptError } from "../../../lib/api-helper/
 import { commandRequestParameterPromptFactory } from "../../../lib/api/context/parameterPrompt";
 
 describe("parameterPrompt", () => {
-
     describe("commandRequestParameterPromptFactory", () => {
-
         it("should correctly find already existing parameters", async () => {
             const ctx = {
                 trigger: {
@@ -34,7 +32,7 @@ describe("parameterPrompt", () => {
                 },
             };
 
-            const params = await commandRequestParameterPromptFactory(ctx as any)({ foo: { required: true } }) as any;
+            const params = (await commandRequestParameterPromptFactory(ctx as any)({ foo: { required: true } })) as any;
             assert.strictEqual(params.foo, ctx.trigger.parameters[0].value);
         });
 
@@ -57,17 +55,19 @@ describe("parameterPrompt", () => {
                 messageClient: wsMock,
             };
 
+            let thrown = false;
             try {
-                const params = await commandRequestParameterPromptFactory(ctx as any)({
+                await commandRequestParameterPromptFactory(ctx as any)({
                     bar: { required: true },
                     test: { required: true },
                     foo: { required: true },
-                }) as any;
-                assert.fail();
-                assert.strictEqual(params, {});
+                });
+                assert.fail("should not have gotten here");
             } catch (e) {
+                thrown = true;
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
+            assert(thrown, "expected error not thrown");
         });
 
         it("should not ask for missing optional parameters if there no required missing", async () => {
@@ -79,17 +79,15 @@ describe("parameterPrompt", () => {
 
             const ctx = {
                 trigger: {
-                    parameters: [
-                        { name: "some", value: "other" },
-                    ],
+                    parameters: [{ name: "some", value: "other" }],
                 },
                 messageClient: wsMock,
             };
 
-            const params = await commandRequestParameterPromptFactory(ctx as any)({
+            const params = (await commandRequestParameterPromptFactory(ctx as any)({
                 test: { required: false },
                 foo: { required: false },
-            }) as any;
+            })) as any;
             assert.deepStrictEqual(params, {});
         });
 
@@ -113,23 +111,27 @@ describe("parameterPrompt", () => {
                 messageClient: wsMock,
             };
 
+            let thrown = false;
             try {
-                const params = await commandRequestParameterPromptFactory(ctx as any)({
+                await commandRequestParameterPromptFactory(ctx as any)({
                     bar: {},
                     test: { required: false },
                     foo: { required: false },
                     superfoo: { required: true },
-                }) as any;
+                });
                 assert.fail();
-                assert.strictEqual(params, {});
             } catch (e) {
+                thrown = true;
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
+            assert(thrown, "expected error not thrown");
         });
 
-        it("should not ask for parameters if minLength isn't satisfied", async () => {
+        it("should ask for parameters if minLength isn't satisfied", async () => {
+            let responded = false;
             const wsMock: HandlerContext = {
                 respond: msg => {
+                    responded = true;
                     assert(msg.parameter_specs.length === 1);
                     assert.strictEqual(msg.parameter_specs[0].name, "some");
                 },
@@ -137,22 +139,23 @@ describe("parameterPrompt", () => {
 
             const ctx = {
                 trigger: {
-                    parameters: [
-                        { name: "some", value: "o" },
-                    ],
+                    parameters: [{ name: "some", value: "o" }],
                 },
                 messageClient: wsMock,
             };
 
+            let thrown = false;
             try {
                 await commandRequestParameterPromptFactory(ctx as any)({
                     some: { required: false, minLength: 10 },
-                }) as any;
+                });
+                assert.fail("should not have reached here");
             } catch (e) {
+                thrown = true;
                 assert(e instanceof CommandListenerExecutionInterruptError);
             }
+            assert(responded, "respond not called");
+            assert(thrown, "expected error not thrown");
         });
-
     });
-
 });

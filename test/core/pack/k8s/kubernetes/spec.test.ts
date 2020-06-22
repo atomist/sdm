@@ -424,7 +424,7 @@ metadata:
                         name: "cert-manager-cainjector",
                         namespace: "cert-manager",
                         labels: {
-                            app: "cainjector",
+                            "app": "cainjector",
                             "app.kubernetes.io/name": "cainjector",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",
@@ -439,7 +439,7 @@ metadata:
                         name: "cert-manager-webhook",
                         namespace: "cert-manager",
                         labels: {
-                            app: "webhook",
+                            "app": "webhook",
                             "app.kubernetes.io/name": "webhook",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",
@@ -454,7 +454,7 @@ metadata:
                         name: "cert-manager",
                         namespace: "cert-manager",
                         labels: {
-                            app: "cert-manager",
+                            "app": "cert-manager",
                             "app.kubernetes.io/name": "cert-manager",
                             "app.kubernetes.io/instance": "cert-manager",
                             "app.kubernetes.io/managed-by": "Tiller",

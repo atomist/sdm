@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    AutomationContextAware,
-    HandlerContext,
-} from "@atomist/automation-client/lib/HandlerContext";
-import {
-    Arg,
-    CommandIncoming,
-} from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
+import { AutomationContextAware, HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { Arg, CommandIncoming } from "@atomist/automation-client/lib/internal/transport/RequestProcessor";
 import { HandlerResponse } from "@atomist/automation-client/lib/internal/transport/websocket/WebSocketMessageClient";
 import { Parameter } from "@atomist/automation-client/lib/metadata/automationMetadata";
 import * as _ from "lodash";
@@ -43,7 +37,6 @@ export type ParameterPromptFactory<PARAMS> = (ctx: HandlerContext) => ParameterP
  * Options to configure the parameter prompt
  */
 export interface ParameterPromptOptions {
-
     /** Optional thread identifier to send this message to or true to send
      * this to the message that triggered this command.
      */
@@ -63,7 +56,10 @@ export interface ParameterPromptOptions {
 /**
  * ParameterPrompts let the caller prompt for the provided parameters
  */
-export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>, options?: ParameterPromptOptions) => Promise<PARAMS>;
+export type ParameterPrompt<PARAMS> = (
+    parameters: ParametersPromptObject<PARAMS>,
+    options?: ParameterPromptOptions,
+) => Promise<PARAMS>;
 
 /**
  * No-op NoParameterPrompt implementation that never prompts for new parameters
@@ -73,13 +69,14 @@ export const NoParameterPrompt: ParameterPrompt<any> = async () => ({});
 
 export const AtomistContinuationMimeType = "application/x-atomist-continuation+json";
 
+/* tslint:disable:cyclomatic-complexity */
 /**
  * Default ParameterPromptFactory that uses the WebSocket connection to send parameter prompts to the backend.
  * @param ctx
  */
 export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): ParameterPrompt<T> {
     return async (parameters, options = {}) => {
-        const trigger = (ctx as any as AutomationContextAware).trigger as CommandIncoming;
+        const trigger = ((ctx as any) as AutomationContextAware).trigger as CommandIncoming;
 
         const existingParameters = trigger.parameters;
         const newParameters = _.cloneDeep(parameters);
@@ -130,7 +127,7 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
         }
 
         // Set up the thread_ts for this response message
-        let threadTs;
+        let threadTs: string;
         if (options.thread === true && !!trigger.source) {
             threadTs = _.get(trigger.source, "slack.message.ts");
         } else if (typeof options.thread === "string") {
@@ -142,8 +139,12 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
 
         // Create a continuation message using the existing HandlerResponse and mixing in parameters
         // and parameter_specs
-        const response: HandlerResponse
-            & { parameters: Arg[], parameter_specs: Parameter[], question: any, auto_submit: boolean } = {
+        const response: HandlerResponse & {
+            parameters: Arg[];
+            parameter_specs: Parameter[];
+            question: any;
+            auto_submit: boolean;
+        } = {
             api_version: "1",
             correlation_id: trigger.correlation_id,
             team: trigger.team,
@@ -164,6 +165,8 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
 
         await ctx.messageClient.respond(response);
         throw new CommandListenerExecutionInterruptError(
-            `Prompting for new parameters: ${_.map(newParameters, (v, k) => k).join(", ")}`);
+            `Prompting for new parameters: ${_.map(newParameters, (v, k) => k).join(", ")}`,
+        );
     };
 }
+/* tslint:enable:cyclomatic-complexity */

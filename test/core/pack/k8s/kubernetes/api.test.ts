@@ -61,10 +61,10 @@ describe("pack/k8s/kubernetes/api", () => {
         });
     });
 
-    describe("integration", function (this: Mocha.Suite): void {
+    describe("integration", function(this: Mocha.Suite): void {
         this.timeout(5000);
 
-        before(async function (this: Mocha.Context): Promise<void> {
+        before(async function(this: Mocha.Context): Promise<void> {
             if (!(await k8sAvailable())) {
                 this.skip();
             }
@@ -76,7 +76,7 @@ describe("pack/k8s/kubernetes/api", () => {
 
         describe("K8sObjectApi.specUriPath", () => {
             let client: K8sObjectApi;
-            before(function (this: Mocha.Context): void {
+            before(function(this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
@@ -430,7 +430,7 @@ describe("pack/k8s/kubernetes/api", () => {
 
         describe("baseRequestOptions", () => {
             let client: K8sObjectApi;
-            before(function (this: Mocha.Context): void {
+            before(function(this: Mocha.Context): void {
                 try {
                     const kc = loadKubeConfig();
                     client = kc.makeApiClient(K8sObjectApi);
