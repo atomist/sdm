@@ -22,6 +22,7 @@ import { SdmContext } from "../../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { GoalInvocation } from "../../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
+import { K8sNamespaceFile } from "../../../pack/k8s/support/namespace";
 import {
     OnBuildCompleteForDryRun,
     PushFields,
@@ -30,16 +31,8 @@ import {
 } from "../../../typings/types";
 import { getGoalVersion } from "../../delivery/build/local/projectVersioner";
 import { SdmVersion } from "../../ingesters/sdmVersionIngester";
-import { K8sNamespaceFile } from "../../pack/k8s/support/namespace";
-import {
-    postBuildWebhook,
-    postLinkImageWebhook,
-} from "../../util/webhook/ImageLink";
-import {
-    ContainerInput,
-    ContainerOutput,
-    ContainerProjectHome,
-} from "./container";
+import { postBuildWebhook, postLinkImageWebhook } from "../../util/webhook/ImageLink";
+import { ContainerInput, ContainerOutput, ContainerProjectHome } from "./container";
 import Images = PushFields.Images;
 import Build = OnBuildCompleteForDryRun.Build;
 
@@ -71,11 +64,13 @@ export function runningAsGoogleCloudFunction(): boolean {
  * @param ctx SDM context for goal execution
  * @return SDM goal environment variables
  */
-export async function containerEnvVars(goalEvent: SdmGoalEvent,
-                                       ctx: SdmContext,
-                                       projectDir: string = ContainerProjectHome,
-                                       inputDir: string = ContainerInput,
-                                       outputDir: string = ContainerOutput): Promise<Array<{ name: string, value: string }>> {
+export async function containerEnvVars(
+    goalEvent: SdmGoalEvent,
+    ctx: SdmContext,
+    projectDir: string = ContainerProjectHome,
+    inputDir: string = ContainerInput,
+    outputDir: string = ContainerOutput,
+): Promise<Array<{ name: string; value: string }>> {
     const version = await getGoalVersion({
         owner: goalEvent.repo.owner,
         repo: goalEvent.repo.name,
@@ -88,43 +83,56 @@ export async function containerEnvVars(goalEvent: SdmGoalEvent,
     if (!!version) {
         _.set(goalEvent, "push.after.version", version);
     }
-    return [{
-        name: "ATOMIST_WORKSPACE_ID",
-        value: ctx.context.workspaceId,
-    }, {
-        name: "ATOMIST_SLUG",
-        value: `${goalEvent.repo.owner}/${goalEvent.repo.name}`,
-    }, {
-        name: "ATOMIST_OWNER",
-        value: goalEvent.repo.owner,
-    }, {
-        name: "ATOMIST_REPO",
-        value: goalEvent.repo.name,
-    }, {
-        name: "ATOMIST_SHA",
-        value: goalEvent.sha,
-    }, {
-        name: "ATOMIST_BRANCH",
-        value: goalEvent.branch,
-    }, {
-        name: "ATOMIST_VERSION",
-        value: version,
-    }, {
-        name: "ATOMIST_GOAL",
-        value: `${inputDir}/goal.json`,
-    }, {
-        name: "ATOMIST_RESULT",
-        value: `${outputDir}/result.json`,
-    }, {
-        name: "ATOMIST_INPUT_DIR",
-        value: inputDir,
-    }, {
-        name: "ATOMIST_OUTPUT_DIR",
-        value: outputDir,
-    }, {
-        name: "ATOMIST_PROJECT_DIR",
-        value: projectDir,
-    }].filter(e => !!e.value);
+    return [
+        {
+            name: "ATOMIST_WORKSPACE_ID",
+            value: ctx.context.workspaceId,
+        },
+        {
+            name: "ATOMIST_SLUG",
+            value: `${goalEvent.repo.owner}/${goalEvent.repo.name}`,
+        },
+        {
+            name: "ATOMIST_OWNER",
+            value: goalEvent.repo.owner,
+        },
+        {
+            name: "ATOMIST_REPO",
+            value: goalEvent.repo.name,
+        },
+        {
+            name: "ATOMIST_SHA",
+            value: goalEvent.sha,
+        },
+        {
+            name: "ATOMIST_BRANCH",
+            value: goalEvent.branch,
+        },
+        {
+            name: "ATOMIST_VERSION",
+            value: version,
+        },
+        {
+            name: "ATOMIST_GOAL",
+            value: `${inputDir}/goal.json`,
+        },
+        {
+            name: "ATOMIST_RESULT",
+            value: `${outputDir}/result.json`,
+        },
+        {
+            name: "ATOMIST_INPUT_DIR",
+            value: inputDir,
+        },
+        {
+            name: "ATOMIST_OUTPUT_DIR",
+            value: outputDir,
+        },
+        {
+            name: "ATOMIST_PROJECT_DIR",
+            value: projectDir,
+        },
+    ].filter(e => !!e.value);
 }
 
 export async function prepareInputAndOutput(input: string, output: string, gi: GoalInvocation): Promise<void> {
@@ -175,7 +183,8 @@ export async function processResult(result: any, gi: GoalInvocation): Promise<Ex
                         goalEvent.branch,
                         goalEvent.sha,
                         build.status as any,
-                        context.workspaceId);
+                        context.workspaceId,
+                    );
                 }
             }
 

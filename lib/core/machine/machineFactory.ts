@@ -18,8 +18,8 @@ import { MachineConfiguration } from "../../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { infoSupport } from "../pack/info/exposeInfo";
-import { jobSupport } from "../pack/job/job";
+import { infoSupport } from "../../pack/info/exposeInfo";
+import { jobSupport } from "../../pack/job/job";
 import { HandlerBasedSoftwareDeliveryMachine } from "./HandlerBasedSoftwareDeliveryMachine";
 
 /**
@@ -60,11 +60,11 @@ import { HandlerBasedSoftwareDeliveryMachine } from "./HandlerBasedSoftwareDeliv
  *    .add...;
  * ```
  */
-export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineConfiguration>,
-                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>)
-    : SoftwareDeliveryMachine<SoftwareDeliveryMachineConfiguration> {
-    const machine = new HandlerBasedSoftwareDeliveryMachine(config.name, config.configuration,
-        goalSetters);
+export function createSoftwareDeliveryMachine(
+    config: MachineConfiguration<SoftwareDeliveryMachineConfiguration>,
+    ...goalSetters: Array<GoalSetter | GoalSetter[]>
+): SoftwareDeliveryMachine<SoftwareDeliveryMachineConfiguration> {
+    const machine = new HandlerBasedSoftwareDeliveryMachine(config.name, config.configuration, goalSetters);
     machine.addExtensionPacks(infoSupport(), jobSupport());
 
     return machine;

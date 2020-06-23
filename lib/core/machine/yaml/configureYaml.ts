@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    Configuration,
-    deepMergeConfigs,
-} from "@atomist/automation-client/lib/configuration";
+import { Configuration, deepMergeConfigs } from "@atomist/automation-client/lib/configuration";
 import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
 import * as changeCase from "change-case";
 import * as fg from "fast-glob";
@@ -33,8 +30,8 @@ import { SoftwareDeliveryMachineConfiguration } from "../../../api/machine/Softw
 import { PushTest } from "../../../api/mapping/PushTest";
 import { CommandHandlerRegistration } from "../../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../../api/registration/EventHandlerRegistration";
-import { githubGoalStatusSupport } from "../../pack/github-goal-status/github";
-import { goalStateSupport } from "../../pack/goal-state/goalState";
+import { githubGoalStatusSupport } from "../../../pack/github-goal-status/github";
+import { goalStateSupport } from "../../../pack/goal-state/goalState";
 import { toArray } from "../../util/misc/array";
 import {
     configure,
@@ -46,33 +43,29 @@ import {
     GoalData,
 } from "../configure";
 import { decorateSoftwareDeliveryMachine } from "./mapCommand";
-import {
-    GoalMaker,
-    mapGoals,
-} from "./mapGoals";
+import { GoalMaker, mapGoals } from "./mapGoals";
 import { PushTestMaker } from "./mapPushTests";
 import { mapRules } from "./mapRules";
-import {
-    camelCase,
-    watchPaths,
-} from "./util";
+import { camelCase, watchPaths } from "./util";
 
 export interface YamlSoftwareDeliveryMachineConfiguration {
     extensionPacks?: ExtensionPack[];
 }
 
-export type YamlCommandHandlerRegistration =
-    Omit<CommandHandlerRegistration, "name" | "paramsMaker" | "parameters">;
-export type CommandMaker<PARAMS = NoParameters> =
-    (sdm: SoftwareDeliveryMachine) => Promise<YamlCommandHandlerRegistration> | YamlCommandHandlerRegistration;
-export type YamlEventHandler<PARAMS = NoParameters> =
-    Omit<EventHandlerRegistration<PARAMS>, "name">;
-export type EventMaker<PARAMS = NoParameters> =
-    (sdm: SoftwareDeliveryMachine) => Promise<YamlEventHandler<PARAMS>> | YamlEventHandler<PARAMS>;
+export type YamlCommandHandlerRegistration = Omit<CommandHandlerRegistration, "name" | "paramsMaker" | "parameters">;
+export type CommandMaker<PARAMS = NoParameters> = (
+    sdm: SoftwareDeliveryMachine,
+) => Promise<YamlCommandHandlerRegistration> | YamlCommandHandlerRegistration;
+export type YamlEventHandler<PARAMS = NoParameters> = Omit<EventHandlerRegistration<PARAMS>, "name">;
+export type EventMaker<PARAMS = NoParameters> = (
+    sdm: SoftwareDeliveryMachine,
+) => Promise<YamlEventHandler<PARAMS>> | YamlEventHandler<PARAMS>;
 
-export type ConfigurationMaker = (cfg: Configuration) =>
-    Promise<SoftwareDeliveryMachineConfiguration<YamlSoftwareDeliveryMachineConfiguration>> |
-    SoftwareDeliveryMachineConfiguration<YamlSoftwareDeliveryMachineConfiguration>;
+export type ConfigurationMaker = (
+    cfg: Configuration,
+) =>
+    | Promise<SoftwareDeliveryMachineConfiguration<YamlSoftwareDeliveryMachineConfiguration>>
+    | SoftwareDeliveryMachineConfiguration<YamlSoftwareDeliveryMachineConfiguration>;
 
 export enum Target {
     SDM = "sdm",
@@ -93,11 +86,11 @@ export interface ConfigureYamlOptions<G extends DeliveryGoals> {
     cwd?: string;
 
     makers?: {
-        commands: Record<string, CommandMaker>,
-        events: Record<string, EventMaker>,
-        goals: Record<string, GoalMaker>,
-        tests: Record<string, PushTestMaker>,
-        configurations: Record<string, ConfigurationMaker>,
+        commands: Record<string, CommandMaker>;
+        events: Record<string, EventMaker>;
+        goals: Record<string, GoalMaker>;
+        tests: Record<string, PushTestMaker>;
+        configurations: Record<string, ConfigurationMaker>;
     };
 
     patterns?: {
@@ -113,10 +106,12 @@ export interface ConfigureYamlOptions<G extends DeliveryGoals> {
     target?: Target;
 }
 
-async function createExtensions(cwd: string,
-                                options: ConfigureYamlOptions<any>,
-                                cfg: YamlSoftwareDeliveryMachineConfiguration,
-                                sdm: SoftwareDeliveryMachine): Promise<void> {
+async function createExtensions(
+    cwd: string,
+    options: ConfigureYamlOptions<any>,
+    cfg: YamlSoftwareDeliveryMachineConfiguration,
+    sdm: SoftwareDeliveryMachine,
+): Promise<void> {
     const commandCallback = async (c, k) => {
         let registration: CommandHandlerRegistration;
         try {
@@ -163,14 +158,16 @@ async function createExtensions(cwd: string,
 
     await requireIngesters(cwd, options?.patterns?.ingesters);
 
-    sdm.addExtensionPacks(...(sdm.configuration.sdm?.extensionPacks || [
-        goalStateSupport({
-            cancellation: {
-                enabled: true,
-            },
-        }),
-        githubGoalStatusSupport(),
-    ]));
+    sdm.addExtensionPacks(
+        ...(sdm.configuration.sdm?.extensionPacks || [
+            goalStateSupport({
+                cancellation: {
+                    enabled: true,
+                },
+            }),
+            githubGoalStatusSupport(),
+        ]),
+    );
 }
 
 /**
@@ -179,10 +176,14 @@ async function createExtensions(cwd: string,
  * When providing more than one yaml file, files are being loaded
  * in provided order with later files overwriting earlier ones.
  */
-export async function configureYaml<G extends DeliveryGoals>(patterns: string | string[],
-                                                             options: ConfigureYamlOptions<G> = {}): Promise<Configuration> {
+export async function configureYaml<G extends DeliveryGoals>(
+    patterns: string | string[],
+    options: ConfigureYamlOptions<G> = {},
+): Promise<Configuration> {
     // Get the caller of this function to determine the cwd for resolving glob patterns
-    const callerCallSite = trace.get().filter(t => t.getFileName() !== __filename)
+    const callerCallSite = trace
+        .get()
+        .filter(t => t.getFileName() !== __filename)
         .filter(t => !!t.getFileName())[0];
     const cwd = options.cwd || path.dirname(callerCallSite.getFileName());
 
@@ -198,8 +199,10 @@ export async function configureYaml<G extends DeliveryGoals>(patterns: string | 
     }, options.options || {});
 }
 
-async function createConfiguration(cwd: string, options: ConfigureYamlOptions<any>)
-    : Promise<YamlSoftwareDeliveryMachineConfiguration> {
+async function createConfiguration(
+    cwd: string,
+    options: ConfigureYamlOptions<any>,
+): Promise<YamlSoftwareDeliveryMachineConfiguration> {
     const cfg: any = {};
     if (!options?.makers?.configurations) {
         await awaitIterable(await requireConfiguration(cwd, options?.patterns?.configurations), async v => {
@@ -212,8 +215,7 @@ async function createConfiguration(cwd: string, options: ConfigureYamlOptions<an
             deepMergeConfigs(cfg, c);
         });
     }
-    _.update(options, "options.preProcessors",
-        old => !!old ? old : []);
+    _.update(options, "options.preProcessors", old => (!!old ? old : []));
     options.options.preProcessors = [
         async c => deepMergeConfigs(c, cfg) as any,
         ...toArray(options.options.preProcessors),
@@ -222,32 +224,29 @@ async function createConfiguration(cwd: string, options: ConfigureYamlOptions<an
 }
 
 // tslint:disable-next-line:cyclomatic-complexity
-async function createGoalData<G extends DeliveryGoals>(patterns: string | string[],
-                                                       cwd: string,
-                                                       options: ConfigureYamlOptions<G>,
-                                                       cfg: YamlSoftwareDeliveryMachineConfiguration,
-                                                       sdm: SoftwareDeliveryMachine & { createGoals: CreateGoals<G> })
-    : Promise<GoalData> {
+async function createGoalData<G extends DeliveryGoals>(
+    patterns: string | string[],
+    cwd: string,
+    options: ConfigureYamlOptions<G>,
+    cfg: YamlSoftwareDeliveryMachineConfiguration,
+    sdm: SoftwareDeliveryMachine & { createGoals: CreateGoals<G> },
+): Promise<GoalData> {
     const additionalGoals = options.goals ? await sdm.createGoals(options.goals, options.configurers) : {};
-    const goalMakers = !!options.makers?.goals ? options.makers.goals :
-        await requireGoals(cwd, _.get(cfg, "extensions.goals"));
-    const testMakers = !!options.makers?.tests ? options.makers.tests :
-        await requireTests(cwd, _.get(cfg, "extensions.tests"));
+    const goalMakers = !!options.makers?.goals
+        ? options.makers.goals
+        : await requireGoals(cwd, _.get(cfg, "extensions.goals"));
+    const testMakers = !!options.makers?.tests
+        ? options.makers.tests
+        : await requireTests(cwd, _.get(cfg, "extensions.tests"));
 
     const files = await resolvePaths(cwd, patterns, true);
 
     const goalData: GoalData = {};
 
     for (const file of files) {
-
-        const configs = yaml.safeLoadAll(
-            await fs.readFile(
-                path.join(cwd, file),
-                { encoding: "UTF-8" },
-            ));
+        const configs = yaml.safeLoadAll(await fs.readFile(path.join(cwd, file), { encoding: "UTF-8" }));
 
         for (const config of configs) {
-
             if (!!config.configuration) {
                 _.merge(sdm.configuration, camelCase(config.configuration));
             }
@@ -276,7 +275,8 @@ async function createGoalData<G extends DeliveryGoals>(patterns: string | string
                             additionalGoals,
                             goalMakers,
                             options.tests || {},
-                            testMakers);
+                            testMakers,
+                        );
                     }
 
                     if (k === "rules") {
@@ -290,10 +290,10 @@ async function createGoalData<G extends DeliveryGoals>(patterns: string | string
     return goalData;
 }
 
-async function requireExtensions<EXT>(cwd: string,
-                                      pattern: string[],
-                                      cb: (v: EXT, k: string, e: Record<string, EXT>) => void = () => {
-                                      },
+async function requireExtensions<EXT>(
+    cwd: string,
+    pattern: string[],
+    cb: (v: EXT, k: string, e: Record<string, EXT>) => void = () => {},
 ): Promise<Record<string, EXT>> {
     if (pattern.length === 0) {
         return {};
@@ -312,33 +312,45 @@ async function requireExtensions<EXT>(cwd: string,
     return extensions;
 }
 
-async function requireTests(cwd: string, pattern: string[] = ["tests/**.js", "lib/tests/**.js"])
-    : Promise<Record<string, PushTestMaker>> {
-    return requireExtensions<PushTestMaker>(cwd, pattern, (v, k, e) => e[changeCase.snake(k)] = v);
+async function requireTests(
+    cwd: string,
+    pattern: string[] = ["tests/**.js", "lib/tests/**.js"],
+): Promise<Record<string, PushTestMaker>> {
+    return requireExtensions<PushTestMaker>(cwd, pattern, (v, k, e) => (e[changeCase.snake(k)] = v));
 }
 
-async function requireGoals(cwd: string, pattern: string[] = ["goals/**.js", "lib/goals/**.js"])
-    : Promise<Record<string, GoalMaker>> {
-    return requireExtensions<GoalMaker>(cwd, pattern, (v, k, e) => e[changeCase.snake(k)] = v);
+async function requireGoals(
+    cwd: string,
+    pattern: string[] = ["goals/**.js", "lib/goals/**.js"],
+): Promise<Record<string, GoalMaker>> {
+    return requireExtensions<GoalMaker>(cwd, pattern, (v, k, e) => (e[changeCase.snake(k)] = v));
 }
 
-async function requireCommands(cwd: string, pattern: string[] = ["commands/**.js", "lib/commands/**.js"])
-    : Promise<Record<string, CommandMaker>> {
+async function requireCommands(
+    cwd: string,
+    pattern: string[] = ["commands/**.js", "lib/commands/**.js"],
+): Promise<Record<string, CommandMaker>> {
     return requireExtensions<CommandMaker>(cwd, pattern);
 }
 
-async function requireEvents(cwd: string, pattern: string[] = ["events/**.js", "lib/events/**.js"])
-    : Promise<Record<string, EventMaker>> {
+async function requireEvents(
+    cwd: string,
+    pattern: string[] = ["events/**.js", "lib/events/**.js"],
+): Promise<Record<string, EventMaker>> {
     return requireExtensions<EventMaker>(cwd, pattern);
 }
 
-async function requireConfiguration(cwd: string, pattern: string[] = ["config.js", "lib/config.js"])
-    : Promise<Record<string, ConfigurationMaker>> {
+async function requireConfiguration(
+    cwd: string,
+    pattern: string[] = ["config.js", "lib/config.js"],
+): Promise<Record<string, ConfigurationMaker>> {
     return requireExtensions<ConfigurationMaker>(cwd, pattern);
 }
 
-async function requireIngesters(cwd: string, pattern: string[] = ["ingesters/**.graphql", "lib/graphql/ingester/**.graphql"])
-    : Promise<string[]> {
+async function requireIngesters(
+    cwd: string,
+    pattern: string[] = ["ingesters/**.graphql", "lib/graphql/ingester/**.graphql"],
+): Promise<string[]> {
     const ingesters: string[] = [];
     const files = await resolvePaths(cwd, pattern);
     for (const file of files) {

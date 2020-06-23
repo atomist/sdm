@@ -31,7 +31,6 @@ export {
     GoalContainerVolume,
 } from "./goal/container/container";
 export { DockerContainerRegistration } from "./goal/container/docker";
-export { K8sContainerRegistration, K8sContainerSpecCallback, K8sGoalContainerSpec } from "./pack/k8s/container";
 export { hasRepositoryGoals, repositoryDrivenContainer } from "./goal/container/repositoryDrivenContainer";
 export { DisplayDeployEnablement } from "./handlers/commands/DisplayDeployEnablement";
 export {
@@ -76,11 +75,6 @@ export {
 } from "../typings/types";
 import * as github from "./util/github/ghub";
 
-export { gitHubGoalStatus, githubGoalStatusSupport } from "./pack/github-goal-status/github";
-export { goalState, goalStateSupport } from "./pack/goal-state/goalState";
-export { exposeInfo, infoSupport } from "./pack/info/exposeInfo";
-export { jobSupport } from "./pack/job/job";
-export { invokeCommand } from "./pack/job/invokeCommand";
 export { github };
 export { tagRepo } from "./util/github/tagRepo";
 export { fetchBranchTips, tipOfBranch } from "./util/graph/queryCommits";
@@ -92,13 +86,9 @@ export { Preference, AbstractPreferenceStore } from "./preferences/AbstractPrefe
 export { FilePreferenceStoreFactory } from "./preferences/FilePreferenceStore";
 export { GraphQLPreferenceStoreFactory } from "./preferences/GraphQLPreferenceStore";
 export { TeamConfigurationPreferenceStoreFactory } from "./preferences/TeamConfigurationPreferenceStore";
-export { KubernetesGoalScheduler, sanitizeName, isConfiguredInEnv } from "./pack/k8s/scheduler/KubernetesGoalScheduler";
-export { k8sGoalSchedulingSupport } from "./pack/k8s/scheduler/goalScheduling";
-export { K8sServiceSpec, K8sServiceRegistration } from "./pack/k8s/scheduler/service";
 export { FileSystemGoalCacheArchiveStore } from "./goal/cache/FileSystemGoalCacheArchiveStore";
 export { CompressingGoalCache, GoalCacheArchiveStore } from "./goal/cache/CompressingGoalCache";
 export { NoOpGoalCache } from "./goal/cache/NoOpGoalCache";
-export { notificationSupport } from "./pack/notification/notification";
 export { cachePut, cacheRemove, cacheRestore, GoalCache, GoalCacheOptions } from "./goal/cache/goalCaching";
 export {
     configure,
@@ -122,10 +112,3 @@ export {
 } from "./machine/yaml/configureYaml";
 export { GoalMaker } from "./machine/yaml/mapGoals";
 export { PushTestMaker } from "./machine/yaml/mapPushTests";
-export {
-    UniversalTransform,
-    universalGeneratorSupport,
-    UniversalGeneratorSupportOptions,
-} from "./pack/universal-generator/generatorSupport";
-export { universalGenerator } from "./pack/universal-generator/generator";
-export { assertUniversalGenerator } from "./pack/universal-generator/test/assertGenerator";
