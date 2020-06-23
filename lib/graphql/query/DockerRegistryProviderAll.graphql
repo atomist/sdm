@@ -1,0 +1,9 @@
+query DockerRegistryProviderAll {
+  DockerRegistryProvider {
+    url
+    name
+    credential {
+      id
+    }
+  }
+}
