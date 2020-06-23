@@ -27,6 +27,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@atomist/automation-client": "2.0.0-master.20200429110358",
+    "@atomist/tree-path": "^1.0.3",
     "@google-cloud/storage": "^4.3.1",
     "@kubernetes/client-node": "^0.11.1",
     "@types/cron": "^1.7.1",
@@ -54,6 +55,7 @@
     "cron": "^1.7.1",
     "dateformat": "^3.0.3",
     "docker-file-parser": "^1.0.4",
+    "dockerfile-ast": "0.0.27",
     "fast-glob": "3.1.1",
     "find-up": "^4.0.0",
     "flat": "^4.1.0",
@@ -75,6 +77,8 @@
     "stack-trace": "^0.0.10",
     "strip-ansi": "^5.2.0",
     "ts-essentials": "^6.0.1",
+    "vscode-languageserver-textdocument": "^1.0.1",
+    "vscode-languageserver-types": "^3.15.1",
     "yargs-parser": "^17.0.0"
   },
   "peerDependencies": {
