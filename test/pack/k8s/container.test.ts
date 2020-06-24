@@ -39,11 +39,7 @@ import {
     ContainerOutput,
     ContainerResult,
 } from "../../../lib/core/goal/container/container";
-import {
-    executeK8sJob,
-    K8sContainerRegistration,
-    k8sFulfillmentCallback,
-} from "../../../lib/pack/k8s/container";
+import { executeK8sJob, K8sContainerRegistration, k8sFulfillmentCallback } from "../../../lib/pack/k8s/container";
 import { loadKubeConfig } from "../../../lib/pack/k8s/kubernetes/config";
 import { KubernetesGoalScheduler } from "../../../lib/pack/k8s/scheduler/KubernetesGoalScheduler";
 import { SdmGoalState } from "../../../lib/typings/types";
@@ -52,9 +48,7 @@ import { containerTestImage } from "../../core/goal/container/util";
 /* tslint:disable:max-file-line-count */
 
 describe("core/pack/k8s/container", () => {
-
     describe("k8sFulfillmentCallback", () => {
-
         let rac: any;
         let gcgpc: any;
         before(() => {
@@ -85,9 +79,11 @@ describe("core/pack/k8s/container", () => {
             sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
             uniqueName: "BeechwoodPark.ts#L243",
             push: {
-                commits: [{
-                    sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                }],
+                commits: [
+                    {
+                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                    },
+                ],
             },
         } as any;
         const kgs = new KubernetesGoalScheduler();
@@ -278,7 +274,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                         },
                                         {
                                             name: "ATOMIST_CONFIG",
-                                            value: "{\"cluster\":{\"enabled\":false},\"ws\":{\"enabled\":false}}",
+                                            value: '{"cluster":{"enabled":false},"ws":{"enabled":false}}',
                                         },
                                     ],
                                     image: "rod/argent:1945.6.14",
@@ -393,9 +389,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     after: {
                         version: "1968.4.19",
                     },
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             assert.deepStrictEqual(ge, e);
@@ -539,7 +537,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                         },
                                         {
                                             name: "ATOMIST_CONFIG",
-                                            value: "{\"cluster\":{\"enabled\":false},\"ws\":{\"enabled\":false}}",
+                                            value: '{"cluster":{"enabled":false},"ws":{"enabled":false}}',
                                         },
                                     ],
                                     name: i,
@@ -653,9 +651,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     after: {
                         version: "1968.4.19",
                     },
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             assert.deepStrictEqual(ge, e);
@@ -832,7 +832,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                         },
                                         {
                                             name: "ATOMIST_CONFIG",
-                                            value: "{\"cluster\":{\"enabled\":false},\"ws\":{\"enabled\":false}}",
+                                            value: '{"cluster":{"enabled":false},"ws":{"enabled":false}}',
                                         },
                                     ],
                                     image: "rod/argent:1945.6.14",
@@ -1032,9 +1032,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     after: {
                         version: "1968.4.19",
                     },
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             assert.deepStrictEqual(ge, e);
@@ -1055,7 +1057,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                         livenessProbe: {
                             httpGet: {
                                 path: "/health",
-                                port: "http" as unknown as object,
+                                port: ("http" as unknown) as object,
                             },
                             initialDelaySeconds: 20,
                         },
@@ -1220,7 +1222,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                         },
                                         {
                                             name: "ATOMIST_CONFIG",
-                                            value: "{\"cluster\":{\"enabled\":false},\"ws\":{\"enabled\":false}}",
+                                            value: '{"cluster":{"enabled":false},"ws":{"enabled":false}}',
                                         },
                                     ],
                                     name: i,
@@ -1396,9 +1398,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     after: {
                         version: "1968.4.19",
                     },
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             assert.deepStrictEqual(ge, e);
@@ -1418,7 +1422,10 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                 // tslint:disable-next-line:max-line-length
                                 {
                                     mountPath: "/opt/secret/something",
-                                    value: { encrypted: "WJ6PcPgZUaDpZWn/J8asXS677ZOLgHGWcMqWtK16oi8UD6HuyGxUV1Vv24mZluReeklHLspDhacfRWNzmOVxGpEOupgJcuTaLMNfDT5F8drl4SIr2ENj2gvuBO2LfwDGAzAG+0ShyeY92SZK4UhBMdTgcrC+aUn980KlclnAeiUvGDQmGDyZ95eMTvxkHlQ9rakxW9A5aZoj/mVxdXjxq5ioTHu6LLKNBFG7nowFnrneNt+hHH97Gs+LdCnYtqvC8zkzyqlIjjQS3Mmqja9fhL9ToxFZyZy2ZCM0gwcnTHKKJ8GhYfLxAq2ZrDsyvAWOpEyXUuNuxJ5N0pUDUBufAQ==" },
+                                    value: {
+                                        encrypted:
+                                            "WJ6PcPgZUaDpZWn/J8asXS677ZOLgHGWcMqWtK16oi8UD6HuyGxUV1Vv24mZluReeklHLspDhacfRWNzmOVxGpEOupgJcuTaLMNfDT5F8drl4SIr2ENj2gvuBO2LfwDGAzAG+0ShyeY92SZK4UhBMdTgcrC+aUn980KlclnAeiUvGDQmGDyZ95eMTvxkHlQ9rakxW9A5aZoj/mVxdXjxq5ioTHu6LLKNBFG7nowFnrneNt+hHH97Gs+LdCnYtqvC8zkzyqlIjjQS3Mmqja9fhL9ToxFZyZy2ZCM0gwcnTHKKJ8GhYfLxAq2ZrDsyvAWOpEyXUuNuxJ5N0pUDUBufAQ==",
+                                    },
                                 },
                             ],
                         },
@@ -1433,15 +1440,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                         args: ["/bin/sh", "-c", "echo 'hello'"],
                         image: "rod/argent:latest",
                         name: "init-rod-argent",
-                        volumeMounts: [
-                            { mountPath: "/bill/s", name: "tempest" },
-                        ],
+                        volumeMounts: [{ mountPath: "/bill/s", name: "tempest" }],
                     },
                 ],
                 name: "MaybeAfterHesGone",
-                volumes: [
-                    { hostPath: { path: "/william/shakespeare" }, name: "tempest" },
-                ],
+                volumes: [{ hostPath: { path: "/william/shakespeare" }, name: "tempest" }],
             };
             const c = k8sFulfillmentCallback(g, r);
             const ge = await c(sge, rc);
@@ -1499,14 +1502,12 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                                         { name: "ATOMIST_ISOLATED_GOAL_INIT", value: "true" },
                                         {
                                             name: "ATOMIST_CONFIG",
-                                            value: "{\"cluster\":{\"enabled\":false},\"ws\":{\"enabled\":false}}",
+                                            value: '{"cluster":{"enabled":false},"ws":{"enabled":false}}',
                                         },
                                     ],
                                     image: "rod/argent:1945.6.14",
                                     name: i,
-                                    volumeMounts: [
-                                        { name: sv, mountPath: "/opt/secret" },
-                                    ],
+                                    volumeMounts: [{ name: sv, mountPath: "/opt/secret" }],
                                 },
                                 {
                                     args: ["/bin/sh", "-c", "echo 'hello'"],
@@ -1618,18 +1619,18 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                     after: {
                         version: "1968.4.19",
                     },
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             assert.deepStrictEqual(ge, e);
         });
-
     });
 
     describe("executeK8sJob", () => {
-
         const fakeId = fakePush().id;
         const goal = new Container();
         const tmpDirPrefix = path.join(os.tmpdir(), "atomist-sdm-k8s-test");
@@ -1664,9 +1665,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                 sha: fakeId.sha,
                 uniqueName: goal.definition.uniqueName,
                 push: {
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
                 data: JSON.stringify({
                     "@atomist/sdm/container": {
@@ -1698,7 +1701,7 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
             const projectDir = `${tmpDirPrefix}-${guid()}`;
             await fs.ensureDir(projectDir);
             tmpDirs.push(projectDir);
-            project = await NodeFsLocalProject.fromExistingDirectory(fakeId, projectDir) as any;
+            project = (await NodeFsLocalProject.fromExistingDirectory(fakeId, projectDir)) as any;
             const workingDir = `${tmpDirPrefix}-${guid()}`;
             await fs.ensureDir(workingDir);
             tmpDirs.push(workingDir);
@@ -1749,9 +1752,11 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                 state: SdmGoalState.in_process,
                 uniqueName: goal.definition.uniqueName,
                 push: {
-                    commits: [{
-                        sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
-                    }],
+                    commits: [
+                        {
+                            sha: "7ee1af8ee2f80ad1e718dbb2028120b3a2984892",
+                        },
+                    ],
                 },
             };
             delete x.data;
@@ -1761,7 +1766,6 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
         }).timeout(10000);
 
         describe("minikube", () => {
-
             const ns = "default"; // readNamespace() is going to default to "default"
             const partialPodSpec: DeepPartial<k8s.V1Pod> = {
                 apiVersion: "v1",
@@ -1811,15 +1815,26 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
             });
 
             async function execK8sJobTest(r: K8sContainerRegistration): Promise<ExecuteGoalResult | void> {
-                const p: k8s.V1Pod = _.merge({}, partialPodSpec, { spec: r });
+                const p: k8s.V1Pod = _.merge({}, partialPodSpec, { spec: r }) as unknown;
                 await k8sCore.createNamespacedPod(ns, p);
                 goalInvocation.goalEvent.data = JSON.stringify({ "@atomist/sdm/container": r });
                 const e = executeK8sJob();
                 const egr = await e(goalInvocation);
                 try {
                     const body: k8s.V1DeleteOptions = { gracePeriodSeconds: 0, propagationPolicy: "Background" };
-                    await k8sCore.deleteNamespacedPod(p.metadata.name, ns, undefined, undefined, undefined, undefined, undefined, body);
-                } catch (e) { /* ignore */ }
+                    await k8sCore.deleteNamespacedPod(
+                        p.metadata.name,
+                        ns,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        body,
+                    );
+                } catch (e) {
+                    /* ignore */
+                }
                 return egr;
             }
 
@@ -1990,9 +2005,6 @@ dGe21S9sMOqyEp9D8geeXkg3VAItxuXbLIBfKL45kwSvB6fEFtQnJEOrT4YXSRDY
                 assert(x.message === "Container 'alpine0' completed successfully");
                 assert(logData.includes(`Wouldn't it be nice\nIf we were older?\n`));
             }).timeout(10000);
-
         });
-
     });
-
 });

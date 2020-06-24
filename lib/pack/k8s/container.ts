@@ -26,35 +26,17 @@ import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import { Writable } from "stream";
-import {
-    DeepPartial,
-    Merge,
-} from "ts-essentials";
+import { Merge } from "ts-essentials";
 import { minimalClone } from "../../api-helper/goal/minimalClone";
-import {
-    goalData,
-    sdmGoalTimeout,
-} from "../../api-helper/goal/sdmGoal";
+import { goalData, sdmGoalTimeout } from "../../api-helper/goal/sdmGoal";
 import { RepoContext } from "../../api/context/SdmContext";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import {
-    ExecuteGoal,
-    GoalProjectListenerEvent,
-    GoalProjectListenerRegistration,
-} from "../../api/goal/GoalInvocation";
-import {
-    GoalWithFulfillment,
-    ImplementationRegistration,
-} from "../../api/goal/GoalWithFulfillment";
+import { ExecuteGoal, GoalProjectListenerEvent, GoalProjectListenerRegistration } from "../../api/goal/GoalInvocation";
+import { GoalWithFulfillment, ImplementationRegistration } from "../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { GoalScheduler } from "../../api/goal/support/GoalScheduler";
 import { ServiceRegistrationGoalDataKey } from "../../api/registration/ServiceRegistration";
-import {
-    CacheEntry,
-    CacheOutputGoalDataKey,
-    cachePut,
-    cacheRestore,
-} from "../../core/goal/cache/goalCaching";
+import { CacheEntry, CacheOutputGoalDataKey, cachePut, cacheRestore } from "../../core/goal/cache/goalCaching";
 import {
     Container,
     ContainerInput,
@@ -67,11 +49,7 @@ import {
     GoalContainerVolume,
 } from "../../core/goal/container/container";
 import { prepareSecrets } from "../../core/goal/container/provider";
-import {
-    containerEnvVars,
-    prepareInputAndOutput,
-    processResult,
-} from "../../core/goal/container/util";
+import { containerEnvVars, prepareInputAndOutput, processResult } from "../../core/goal/container/util";
 import { toArray } from "../../core/util/misc/array";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { SdmGoalState } from "../../typings/types";
@@ -83,8 +61,7 @@ import { k8sErrMsg } from "./support/error";
 // tslint:disable:max-file-line-count
 
 /** Merge of base and Kubernetes goal container interfaces. */
-export type K8sGoalContainer = Merge<GoalContainer, DeepPartial<k8s.V1Container>> &
-    Pick<GoalContainer, "name" | "image">;
+export type K8sGoalContainer = Merge<GoalContainer, k8s.V1Container> & Pick<GoalContainer, "name" | "image">;
 /** Merge of base and Kubernetes goal container volume interfaces. */
 export type K8sGoalContainerVolume = Merge<k8s.V1Volume, GoalContainerVolume>;
 
@@ -714,7 +691,7 @@ function containerWatch(container: K8sContainer, timeout: number): Promise<k8s.V
             }
         };
         const logOptions: k8s.LogOptions = { follow: true };
-        clean.logRequest = k8sLog.log(
+        clean.logRequest = await k8sLog.log(
             container.ns,
             container.pod,
             container.name,

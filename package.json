@@ -29,7 +29,7 @@
     "@atomist/automation-client": "2.0.0-master.20200429110358",
     "@atomist/tree-path": "^1.0.3",
     "@google-cloud/storage": "^4.3.1",
-    "@kubernetes/client-node": "^0.11.1",
+    "@kubernetes/client-node": "^0.12.0",
     "@types/cron": "^1.7.1",
     "@types/dateformat": "^3.0.0",
     "@types/find-up": "^2.1.1",
@@ -95,14 +95,14 @@
     "mocha": "^6.2.2",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
     "supervisor": "^0.12.0",
     "tmp-promise": "^2.0.2",
-    "ts-node": "^8.5.4",
+    "ts-node": "^8.10.2",
     "tslint": "^5.20.1",
-    "typedoc": "^0.15.6",
-    "typescript": "^3.7.4"
+    "typedoc": "^0.17.7",
+    "typescript": "^3.9.5"
   },
   "directories": {
     "test": "test"

@@ -119,7 +119,7 @@ export interface GoalContainer {
     /**
      * Environment variables to set in Docker container.
      */
-    env?: Array<{ name: string; value: string }>;
+    env?: Array<{ name: string; value?: string }>;
     /**
      * Ports to expose from container.
      */
