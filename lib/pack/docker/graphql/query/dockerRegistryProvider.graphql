@@ -1,9 +1,0 @@
-query DockerRegistryProvider {
-  DockerRegistryProvider {
-    url
-    name
-    credential {
-      id
-    }
-  }
-}

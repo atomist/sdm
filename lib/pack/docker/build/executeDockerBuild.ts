@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
+import { Success } from "@atomist/automation-client/lib/HandlerResult";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
+import { executeAll } from "@atomist/automation-client/lib/util/pool";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import * as os from "os";
@@ -27,7 +32,6 @@ import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoal } from "../../../api/goal/GoalInvocation";
 import { mergeOptions } from "../../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
-import { executeAll, GitProject, HandlerContext, QueryNoCacheOptions, Success } from "../../../client";
 import { readSdmVersion } from "../../../core/delivery/build/local/projectVersioner";
 import { toArray } from "../../../core/util/misc/array";
 import { postLinkImageWebhook } from "../../../core/util/webhook/ImageLink";

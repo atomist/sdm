@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import { File as ProjectFile } from "@atomist/automation-client/lib/project/File";
+import { FileParser } from "@atomist/automation-client/lib/tree/ast/FileParser";
+import { logger } from "@atomist/automation-client/lib/util/logger";
 import { TreeNode } from "@atomist/tree-path";
 import { DockerfileParser, From, Instruction, Label } from "dockerfile-ast";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { Position } from "vscode-languageserver-types/lib/umd/main";
-import { FileParser, logger, ProjectFile } from "../../../client";
 
 class DockerFileParserClass implements FileParser {
     public readonly rootName: "docker";
@@ -26,7 +28,6 @@ class DockerFileParserClass implements FileParser {
     public async toAst(f: ProjectFile): Promise<TreeNode> {
         try {
             const dockerfile = DockerfileParser.parse(await f.getContent());
-            // console.log(stringify(dockerfile));
             const doc = (dockerfile as any).document;
             const $children = dockerfile.getInstructions().map(i => instructionToTreeNode(i, doc));
             return {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { Goal, GoalDefinition } from "../../../api/goal/Goal";
 import { DefaultGoalNameGenerator } from "../../../api/goal/GoalNameGenerator";
 import {
@@ -24,7 +25,6 @@ import {
     mergeOptions,
 } from "../../../api/goal/GoalWithFulfillment";
 import { IndependentOfEnvironment } from "../../../api/goal/support/environment";
-import { GitProject } from "../../../client";
 import { DockerProgressReporter } from "./DockerProgressReporter";
 import { DefaultDockerImageNameCreator, DockerImageNameCreator, executeDockerBuild } from "./executeDockerBuild";
 

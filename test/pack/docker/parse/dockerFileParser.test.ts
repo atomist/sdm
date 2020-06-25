@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { InMemoryFile as InMemoryProjectFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
+import { doWithAllMatches, findValues } from "@atomist/automation-client/lib/tree/ast/astUtils";
 import * as assert from "power-assert";
-import { astUtils, InMemoryProject, InMemoryProjectFile } from "../../../../lib/client";
 import { DockerFileParser } from "../../../../lib/pack/docker/parse/DockerFileParser";
 
 describe("Docker file parser", () => {
@@ -38,37 +40,32 @@ COPY resources/public /usr/share/nginx/html
 
 EXPOSE 8080`;
         const p = InMemoryProject.of({ path: "docker/Dockerfile", content: image });
-        const imageName: string[] = await astUtils.findValues(
-            p,
-            DockerFileParser,
-            "docker/Dockerfile",
-            "//FROM/image/name",
-        );
+        const imageName: string[] = await findValues(p, DockerFileParser, "docker/Dockerfile", "//FROM/image/name");
         assert.deepStrictEqual(imageName, ["nginx"]);
     });
 
     it("should query for image", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const images = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
+        const images = await findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
         assert.strictEqual(images[0], "debian:jessie");
     });
 
     it("should query for image with /", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: dashedImage });
-        const images = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
+        const images = await findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
         assert.strictEqual(images[0], "adoptopenjdk/openjdk8-openj9");
     });
 
     it("should find single EXPOSE", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: expose1 });
-        const exposes = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE");
+        const exposes = await findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE");
         assert.strictEqual(exposes.length, 1);
         assert.strictEqual(exposes[0], "EXPOSE 8080");
     });
 
     it("should find multiple EXPOSE", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: dashedImage });
-        const exposes = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE");
+        const exposes = await findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE");
         assert.strictEqual(exposes.length, 2);
         assert.strictEqual(exposes[0], "EXPOSE 8080");
         assert.strictEqual(exposes[1], "EXPOSE 8081");
@@ -76,7 +73,7 @@ EXPOSE 8080`;
 
     it("should find multiple EXPOSE and show ports", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: dashedImage });
-        const exposes = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE/port");
+        const exposes = await findValues(p, DockerFileParser, "Dockerfile", "//EXPOSE/port");
         assert.strictEqual(exposes.length, 2);
         assert.strictEqual(exposes[0], "8080");
         assert.strictEqual(exposes[1], "8081");
@@ -84,19 +81,19 @@ EXPOSE 8080`;
 
     it("should query for image name", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const images = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//FROM/image/name");
+        const images = await findValues(p, DockerFileParser, "Dockerfile", "//FROM/image/name");
         assert.strictEqual(images[0], "debian");
     });
 
     it("should find RUNs", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const runs = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//RUN");
+        const runs = await findValues(p, DockerFileParser, "Dockerfile", "//RUN");
         assert.strictEqual(runs.length, 2);
     });
 
     it("should find RUNs invoking rm", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const runs = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//RUN[?removes]", {
+        const runs = await findValues(p, DockerFileParser, "Dockerfile", "//RUN[?removes]", {
             removes: n => n.$value.includes("rm "),
         });
         assert.strictEqual(runs.length, 1);
@@ -104,36 +101,36 @@ EXPOSE 8080`;
 
     it("should find MAINTAINER", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const authors = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//MAINTAINER");
+        const authors = await findValues(p, DockerFileParser, "Dockerfile", "//MAINTAINER");
         assert.strictEqual(authors.length, 1);
         assert.strictEqual(authors[0], `MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"`);
     });
 
     it("should unpack MAINTAINER", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nginxDockerFile });
-        const authors = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//MAINTAINER/maintainer");
+        const authors = await findValues(p, DockerFileParser, "Dockerfile", "//MAINTAINER/maintainer");
         assert.strictEqual(authors.length, 1);
         assert.strictEqual(authors[0], `NGINX Docker Maintainers "docker-maint@nginx.com"`);
     });
 
     it("should return LABELs", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nodeDockerfile });
-        const labels = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//LABEL");
+        const labels = await findValues(p, DockerFileParser, "Dockerfile", "//LABEL");
         assert.strictEqual(labels.length, 4);
     });
 
     it("should unpack LABELs", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nodeDockerfile });
-        const labelPairs = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair");
+        const labelPairs = await findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair");
         assert.strictEqual(labelPairs.length, 4);
         assert.strictEqual(labelPairs[0], `"com.example.vendor"="ACME Incorporated"`);
-        const labelKeys = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair/key");
+        const labelKeys = await findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair/key");
         assert.strictEqual(labelKeys.length, 4);
         assert.strictEqual(labelKeys[0], `com.example.vendor`);
-        const labelValues = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair/value");
+        const labelValues = await findValues(p, DockerFileParser, "Dockerfile", "//LABEL/pair/value");
         assert.strictEqual(labelValues.length, 4);
         assert.strictEqual(labelValues[0], `ACME Incorporated`);
-        const knownKeys = await astUtils.findValues(
+        const knownKeys = await findValues(
             p,
             DockerFileParser,
             "Dockerfile",
@@ -145,7 +142,7 @@ EXPOSE 8080`;
 
     it("should update LABEL", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nodeDockerfile });
-        await astUtils.doWithAllMatches(
+        await doWithAllMatches(
             p,
             DockerFileParser,
             "Dockerfile",
@@ -158,26 +155,19 @@ EXPOSE 8080`;
 
     it("should allow path expression and modify", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: nodeDockerfile });
-        await astUtils.doWithAllMatches(
-            p,
-            DockerFileParser,
-            "Dockerfile",
-            "//FROM/image/tag",
-            n => (n.$value = "xenon"),
-        );
+        await doWithAllMatches(p, DockerFileParser, "Dockerfile", "//FROM/image/tag", n => (n.$value = "xenon"));
         const contentNow = p.findFileSync("Dockerfile").getContentSync();
         assert.strictEqual(contentNow, nodeDockerfile.replace("argon", "xenon"));
     });
 
     it("should parse problematic file", async () => {
         const p = InMemoryProject.of({ path: "Dockerfile", content: weave1 });
-        const images = await astUtils.findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
+        const images = await findValues(p, DockerFileParser, "Dockerfile", "//FROM/image");
         assert.strictEqual(images.length, 1);
         assert.strictEqual(images[0], "weaveworksdemos/msd-java:jre-latest");
     });
-});
 
-const nodeDockerfile = `FROM node:argon
+    const nodeDockerfile = `FROM node:argon
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -194,7 +184,7 @@ COPY . /usr/src/app
 EXPOSE 8080
 CMD [ "npm", "start" ]`;
 
-const nginxDockerFile = `FROM debian:jessie
+    const nginxDockerFile = `FROM debian:jessie
 MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
 ENV NGINX_VERSION 1.11.7-1~jessie
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 \\
@@ -216,19 +206,19 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \\
 EXPOSE 80 443
 CMD [ "nginx", "-g", "daemon off;" ]`;
 
-const dashedImage = `
+    const dashedImage = `
 FROM adoptopenjdk/openjdk8-openj9
 
 EXPOSE 8080
 EXPOSE 8081`;
 
-const expose1 = `
+    const expose1 = `
 FROM thing
 
 EXPOSE 8080
 `;
 
-const weave1 = `FROM weaveworksdemos/msd-java:jre-latest
+    const weave1 = `FROM weaveworksdemos/msd-java:jre-latest
 
 WORKDIR /usr/src/app
 COPY *.jar ./app.jar
@@ -252,3 +242,4 @@ LABEL org.label-schema.vendor="Weaveworks" \\
   org.label-schema.schema-version="1.0"
 
 ENTRYPOINT ["/usr/local/bin/java.sh","-jar","./app.jar", "--port=80"]`;
+});
