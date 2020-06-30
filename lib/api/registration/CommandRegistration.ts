@@ -24,7 +24,6 @@ import { ParametersDefinition } from "./ParametersDefinition";
  * Different strategies to ask for parameters in chat or web
  */
 export enum ParameterStyle {
-
     /** Parameter questions will be prompted in a dialog */
     Dialog = "dialog",
 
@@ -99,5 +98,4 @@ export interface CommandRegistration<PARAMS> {
      * @return {boolean}
      */
     registerWhen?: (sdmConfiguration: SoftwareDeliveryMachineConfiguration) => boolean;
-
 }

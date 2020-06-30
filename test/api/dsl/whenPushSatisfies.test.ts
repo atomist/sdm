@@ -20,46 +20,52 @@ import { StatefulPushListenerInvocation } from "../../../lib/api/dsl/goalContrib
 import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
-import {
-    PredicateMappingCompositionStyle,
-} from "../../../lib/api/mapping/PredicateMapping";
+import { PredicateMappingCompositionStyle } from "../../../lib/api/mapping/PredicateMapping";
 import { allSatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
-import {
-    FalsePushTest,
-    TruePushTest,
-} from "../mapping/support/pushTestUtils.test";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
 
-const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
-    uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred",
-}));
+const SomeGoalSet = new Goals(
+    "SomeGoalSet",
+    new Goal({
+        uniqueName: "Fred",
+        environment: "0-code/",
+    }),
+);
 
 describe("whenPushSatisfies", () => {
-
     describe("basic operation", () => {
-
         it("should satisfy function returning true", async () => {
-            const test = whenPushSatisfies(() => true).itMeans("war").setGoals(SomeGoalSet);
+            const test = whenPushSatisfies(() => true)
+                .itMeans("war")
+                .setGoals(SomeGoalSet);
             assert.equal(await test.mapping(fakePush()), SomeGoalSet);
         });
 
         it("should not satisfy function returning false", async () => {
-            const test = whenPushSatisfies(() => false).itMeans("war").setGoals(SomeGoalSet);
+            const test = whenPushSatisfies(() => false)
+                .itMeans("war")
+                .setGoals(SomeGoalSet);
             assert.equal(await test.mapping(fakePush()), undefined);
         });
 
         it("should satisfy function returning promise true", async () => {
-            const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet);
+            const test = whenPushSatisfies(async () => true)
+                .itMeans("war")
+                .setGoals(SomeGoalSet);
             assert.equal(await test.mapping(fakePush()), SomeGoalSet);
         });
 
         it("should allow setting array of goals", async () => {
-            const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(SomeGoalSet.goals);
+            const test = whenPushSatisfies(async () => true)
+                .itMeans("war")
+                .setGoals(SomeGoalSet.goals);
             assert.deepEqual((await test.mapping(fakePush())).goals, SomeGoalSet.goals);
         });
 
         it("should not satisfy function returning promise false", async () => {
-            const test = whenPushSatisfies(async () => false).itMeans("war").setGoals(SomeGoalSet);
+            const test = whenPushSatisfies(async () => false)
+                .itMeans("war")
+                .setGoals(SomeGoalSet);
             assert.equal(await test.mapping(fakePush()), undefined);
         });
 
@@ -89,14 +95,15 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should allow use of push in constructing goal", async () => {
-            interface Named { name: string; }
-            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true)
-                .setGoalsWhen(pu => {
-                    if (pu.facts.name === "fred") {
-                        return SomeGoalSet;
-                    }
-                    throw new Error("bad");
-                });
+            interface Named {
+                name: string;
+            }
+            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true).setGoalsWhen(pu => {
+                if (pu.facts.name === "fred") {
+                    return SomeGoalSet;
+                }
+                throw new Error("bad");
+            });
             const invocation: StatefulPushListenerInvocation<Named> = fakePush();
             invocation.facts = {} as any;
             invocation.facts.name = "fred";
@@ -104,24 +111,25 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should allow use of push in constructing goal with promise", async () => {
-            interface Named { name: string; }
-            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true)
-                .setGoalsWhen(async pu => {
+            interface Named {
+                name: string;
+            }
+            const test = whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async () => true).setGoalsWhen(
+                async pu => {
                     if (pu.facts.name === "fred") {
                         return SomeGoalSet;
                     }
                     throw new Error("bad");
-                });
+                },
+            );
             const invocation: StatefulPushListenerInvocation<Named> = fakePush();
             invocation.facts = {} as any;
             invocation.facts.name = "fred";
             assert.equal(await test.mapping(invocation), SomeGoalSet);
         });
-
     });
 
     describe("internal structure", () => {
-
         it("should expose structure", async () => {
             const wps = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(SomeGoalSet);
             const structure = wps.pushTest.structure;
@@ -131,12 +139,13 @@ describe("whenPushSatisfies", () => {
         });
 
         it("should expose nested structure", async () => {
-            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(SomeGoalSet);
+            const wps = whenPushSatisfies(allSatisfied(TruePushTest, FalsePushTest), FalsePushTest).setGoals(
+                SomeGoalSet,
+            );
             const structure = wps.pushTest.structure;
             assert(!!structure);
             assert.equal(structure.compositionStyle, PredicateMappingCompositionStyle.And);
             assert.equal(structure.components.length, 2);
         });
-
     });
 });

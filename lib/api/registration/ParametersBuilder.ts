@@ -26,7 +26,6 @@ import {
  * Fluent builder for command parameters. Similar to inquirer.js API.
  */
 export class ParametersBuilder implements ParametersListing {
-
     public parameters: NamedParameter[] = [];
     public mappedParameters: NamedMappedParameter[] = [];
     public secrets: NamedSecret[] = [];
@@ -53,7 +52,7 @@ export class ParametersBuilder implements ParametersListing {
     }
 
     /**
-     * Declare a new secret for a command
+     * Declare a new secret parameter for a command
      * @return {this}
      */
     public addSecrets(s: NamedSecret, ...more: NamedSecret[]): this {
@@ -63,7 +62,7 @@ export class ParametersBuilder implements ParametersListing {
     }
 
     /**
-     * Declare a new value for a command
+     * Declare a new configuration value parameter for a command
      * @return {this}
      */
     public addValues(s: NamedValue, ...more: NamedValue[]): this {
@@ -94,7 +93,7 @@ export function addMappedParameters(p: NamedMappedParameter, ...more: NamedMappe
 }
 
 /**
- * Declare a new secret for the given command
+ * Declare a new secret parameter for the given command
  * @return {ParametersBuilder}
  */
 export function addSecrets(s: NamedSecret, ...more: NamedSecret[]): ParametersBuilder {
@@ -104,7 +103,7 @@ export function addSecrets(s: NamedSecret, ...more: NamedSecret[]): ParametersBu
 }
 
 /**
- * Declare a new secret for the given command
+ * Declare a new configuration value parameter for the given command
  * @return {ParametersBuilder}
  */
 export function addValues(s: NamedValue, ...more: NamedValue[]): ParametersBuilder {

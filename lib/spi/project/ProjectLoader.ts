@@ -26,7 +26,6 @@ import { CloneOptions } from "@atomist/automation-client/lib/spi/clone/Directory
 export type WithLoadedProject<T = any> = (p: GitProject) => Promise<T>;
 
 export interface ProjectLoadingParameters {
-
     credentials: ProjectOperationCredentials;
     id: RemoteRepoRef;
     cloneOptions?: CloneOptions;
@@ -34,11 +33,6 @@ export interface ProjectLoadingParameters {
 
     /** Return true to get optimized behavior for read only */
     readOnly: boolean;
-
-    /**
-     * @deprecated use cloneOptions.depth
-     */
-    depth?: number;
 
     /**
      * Explicitly configured target clone dir
@@ -50,12 +44,10 @@ export interface ProjectLoadingParameters {
  * Common interface for project loading that allows caching etc.
  */
 export interface ProjectLoader {
-
     /**
      * Perform an action with the given project
      * @param {ProjectLoadingParameters} params
      * @param {WithLoadedProject<T>} action
      */
     doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T>;
-
 }

@@ -29,10 +29,3 @@ export function infoSupport(): ExtensionPack {
         },
     };
 }
-
-/**
- * @deprecated use infoSupport
- */
-export function exposeInfo(): ExtensionPack {
-    return infoSupport();
-}

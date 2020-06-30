@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    Parameter,
-    Parameters,
-} from "@atomist/automation-client/lib/decorators";
+import { Parameter, Parameters } from "@atomist/automation-client/lib/decorators";
 import { SelfDescribingHandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { metadataFromInstance } from "@atomist/automation-client/lib/internal/metadata/metadataReading";
 import { CommandHandlerMetadata } from "@atomist/automation-client/lib/metadata/automationMetadata";
@@ -39,20 +36,14 @@ import { CommandHandlerRegistration } from "../../../lib/api/registration/Comman
 import { ParameterStyle } from "../../../lib/api/registration/CommandRegistration";
 import { GeneratorRegistration } from "../../../lib/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../lib/api/registration/ParametersBuilder";
-import {
-    DeclarationType,
-    ParametersObject,
-} from "../../../lib/api/registration/ParametersDefinition";
+import { DeclarationType, ParametersObject } from "../../../lib/api/registration/ParametersDefinition";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 describe("command registrations", () => {
-
     it("parameter builder should set parameters", () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            parameters:
-                addParameters({ name: "foo" },
-                    { name: "bar", required: true }),
+            parameters: addParameters({ name: "foo" }, { name: "bar", required: true }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -68,10 +59,9 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set parameters via indexed property", () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 bar: { required: true },
             },
@@ -96,8 +86,7 @@ describe("command registrations", () => {
         }
         const reg: CommandHandlerRegistration<FooBar> = {
             name: "test",
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 bar: { required: true, defaultValue: "carrot" },
             },
@@ -115,12 +104,12 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameters", () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            parameters:
-                addParameters({ name: "foo" },
-                    { name: "bar", required: true })
-                    .addMappedParameters({ name: "x", uri: "http://thing" }),
+            parameters: addParameters({ name: "foo" }, { name: "bar", required: true }).addMappedParameters({
+                name: "x",
+                uri: "http://thing",
+            }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -135,12 +124,11 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set secret", () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            parameters:
-                addParameters({ name: "foo" })
-                    .addParameters({ name: "bar", required: true })
-                    .addSecrets({ name: "x", uri: "http://thing" }),
+            parameters: addParameters({ name: "foo" })
+                .addParameters({ name: "bar", required: true })
+                .addSecrets({ name: "x", uri: "http://thing" }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -157,8 +145,7 @@ describe("command registrations", () => {
     it("parameter builder should set mapped parameter and secret via indexed property", () => {
         const reg: CommandHandlerRegistration<any> = {
             name: "test",
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 bar: { required: true },
                 x: { declarationType: DeclarationType.Secret, uri: "http://thing1" },
@@ -186,16 +173,14 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameter and secret via indexed property, with spread", () => {
-        const halfOfParameters: ParametersObject<{bar: string, x1: string, y1: string}> = {
+        const halfOfParameters: ParametersObject<{ bar: string; x1: string; y1: string }> = {
             bar: { required: true },
             x1: { declarationType: DeclarationType.Secret, uri: "http://thing1" },
             y1: { declarationType: DeclarationType.Mapped, uri: "http://thing2", required: false },
-
         };
         const reg: CommandHandlerRegistration<any> = {
             name: "test",
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 x2: { declarationType: DeclarationType.Secret, uri: "http://thing1" },
                 y2: { declarationType: DeclarationType.Mapped, uri: "http://thing2", required: false },
@@ -231,9 +216,7 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<any> = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
-            parameters:
-                addParameters({ name: "foo" })
-                    .addParameters({ name: "bar", required: true }),
+            parameters: addParameters({ name: "foo" }).addParameters({ name: "bar", required: true }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -250,9 +233,7 @@ describe("command registrations", () => {
     it("should build on code transform", () => {
         const reg: CodeTransformRegistration = {
             name: "test",
-            parameters:
-                addParameters({ name: "foo" })
-                    .addParameters({ name: "bar", required: true }),
+            parameters: addParameters({ name: "foo" }).addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
         const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
@@ -269,9 +250,7 @@ describe("command registrations", () => {
         const reg: GeneratorRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
-            parameters:
-                addParameters({ name: "foo" })
-                    .addParameters({ name: "bar", required: true }),
+            parameters: addParameters({ name: "foo" }).addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
@@ -291,8 +270,7 @@ describe("command registrations", () => {
         const reg: GeneratorRegistration<FooBar> = {
             name: "test",
             startingPoint: new GitHubRepoRef("a", "b"),
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 bar: { required: true, defaultValue: "carrot" },
             },
@@ -301,17 +279,21 @@ describe("command registrations", () => {
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand<FooBar>;
         const paramsInstance = instance.freshParametersInstance();
-        assert(isSeedDrivenGeneratorParameters(paramsInstance),
-            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
+        assert(
+            isSeedDrivenGeneratorParameters(paramsInstance),
+            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance),
+        );
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
-        assert(!instance.mapped_parameters.some(p => p.name === "screenName"), "screenName parameter should not appear by magic");
+        assert(
+            !instance.mapped_parameters.some(p => p.name === "screenName"),
+            "screenName parameter should not appear by magic",
+        );
         const pi = instance.freshParametersInstance() as FooBar & SeedDrivenGeneratorParameters;
         assert.equal(pi.bar, "carrot");
     });
 
     it("should build on generator using own parameters maker", () => {
-
         @Parameters()
         class FooParams {
             @Parameter()
@@ -322,8 +304,7 @@ describe("command registrations", () => {
             name: "test",
             paramsMaker: FooParams,
             startingPoint: new GitHubRepoRef("a", "b"),
-            parameters:
-            {
+            parameters: {
                 foo: {},
                 bar: { required: true, defaultValue: "carrot" },
             },
@@ -332,8 +313,10 @@ describe("command registrations", () => {
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         const paramsInstance = instance.freshParametersInstance();
-        assert(isSeedDrivenGeneratorParameters(paramsInstance),
-            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
+        assert(
+            isSeedDrivenGeneratorParameters(paramsInstance),
+            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance),
+        );
         assert(instance.parameters.some(p => p.name === "something"));
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
@@ -347,9 +330,7 @@ describe("command registrations", () => {
         const reg: CodeTransformRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
-            parameters:
-                addParameters({ name: "foo" })
-                    .addParameters({ name: "bar", required: true }),
+            parameters: addParameters({ name: "foo" }).addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
         const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
@@ -388,9 +369,11 @@ describe("command registrations", () => {
     });
 
     it("should create command handler with autoSubmit", async () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            listener: async ci => { return; },
+            listener: async ci => {
+                return;
+            },
             autoSubmit: true,
         };
         const maker = commandHandlerRegistrationToCommand(undefined, reg);
@@ -401,13 +384,15 @@ describe("command registrations", () => {
     });
 
     it("should match parameters for command handler", async () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
             parameters: {
                 foo: {},
                 bar: {},
             },
-            listener: async ci => { return; },
+            listener: async ci => {
+                return;
+            },
             autoSubmit: true,
         };
         const maker = commandHandlerRegistrationToCommand(undefined, reg);
@@ -418,13 +403,12 @@ describe("command registrations", () => {
     });
 
     it("should register values besides parameters and secrets", () => {
-        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+        const reg: CommandHandlerRegistration<{ foo: string; bar: string }> = {
             name: "test",
-            parameters:
-                {
-                    foo: { path: "name" },
-                    bar: { required: true },
-                },
+            parameters: {
+                foo: { path: "name" },
+                bar: { required: true },
+            },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -446,12 +430,10 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             parameterStyle: ParameterStyle.Dialog,
-            listener: async () => {
-            },
+            listener: async () => {},
         };
         const maker = commandHandlerRegistrationToCommand(undefined, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.strictEqual(instance.question, "dialog");
     });
-
 });
