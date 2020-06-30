@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Move sdm-core into sdm. [#811](https://github.com/atomist/sdm/issues/811)
 -   K8s patch strategy and simplify KubernetesApplication. [#820](https://github.com/atomist/sdm/issues/820)
 -   Add support for reading GitHub app tokens. [#823](https://github.com/atomist/sdm/issues/823)
+-   Add index.ts files for sdm, client and core. [3ba857f](https://github.com/atomist/sdm/commit/3ba857fc962e27e2a9b693f1061ef77de66e125e)
 
 ### Changed
 
