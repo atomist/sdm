@@ -157,7 +157,6 @@ export { TypeScriptES6FileParser } from "@atomist/automation-client/lib/tree/ast
 export { MicrogrammarBasedFileParser } from "@atomist/automation-client/lib/tree/ast/microgrammar/MicrogrammarBasedFileParser";
 export { RegexFileParser } from "@atomist/automation-client/lib/tree/ast/regex/RegexFileParser";
 export { WritableLog } from "@atomist/automation-client/lib/util/child_process";
-export * from "@atomist/automation-client/lib/util/exec";
 export { deepLink, Issue, raiseIssue } from "@atomist/automation-client/lib/util/gitHub";
 export {
     LoggingFormat,
@@ -174,10 +173,9 @@ export {
     LogCallback,
     logger,
 } from "@atomist/automation-client/lib/util/logger";
-export { addRedaction, addLogRedaction } from "@atomist/automation-client/lib/util/redact";
+export { addRedaction } from "@atomist/automation-client/lib/util/redact";
 export { doWithRetry, RetryOptions } from "@atomist/automation-client/lib/util/retry";
 export { executeAll } from "@atomist/automation-client/lib/util/pool";
-export * from "@atomist/automation-client/lib/util/spawn";
 export { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 export * from "@atomist/automation-client/lib/operations/common/gitlabRepoLoader";
 export * from "@atomist/automation-client/lib/operations/common/GitlabPrivateTokenCredentials";
