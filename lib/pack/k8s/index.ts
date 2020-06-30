@@ -22,7 +22,7 @@ export {
     KubernetesDeployRegistration,
 } from "./deploy/goal";
 export { SdmPackK8sOptions } from "./config";
-export { K8sContainerRegistration, K8sContainerSpecCallback, K8sGoalContainerSpec } from "./container";
+export { K8sContainerRegistration, K8sContainerSpecCallback } from "./container";
 export { k8sSupport } from "./k8s";
 export {
     kubernetesFetch,

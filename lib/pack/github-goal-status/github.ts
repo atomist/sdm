@@ -16,14 +16,8 @@
 
 import { metadata } from "../../api-helper/misc/extensionPack";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import {
-    isGitHubAction,
-    isInLocalMode,
-} from "../../core/machine/modes";
-import {
-    createPendingGitHubStatusOnGoalSet,
-    setGitHubStatusOnGoalCompletion,
-} from "./statusSetters";
+import { isGitHubAction, isInLocalMode } from "../../core/machine/modes";
+import { createPendingGitHubStatusOnGoalSet, setGitHubStatusOnGoalCompletion } from "./statusSetters";
 
 /**
  * Manage a GitHub status per SDM
@@ -38,11 +32,4 @@ export function githubGoalStatusSupport(): ExtensionPack {
             }
         },
     };
-}
-
-/**
- * @deprecated use githubGoalStatusSupport
- */
-export function gitHubGoalStatus(): ExtensionPack {
-    return githubGoalStatusSupport();
 }

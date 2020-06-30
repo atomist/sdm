@@ -15,68 +15,14 @@
  */
 
 import { Success } from "@atomist/automation-client/lib/HandlerResult";
-import { Project } from "@atomist/automation-client/lib/project/Project";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
-import { logger } from "@atomist/automation-client/lib/util/logger";
-import {
-    GoalProjectListenerEvent,
-    GoalProjectListenerRegistration,
-} from "../goal/GoalInvocation";
+import { GoalProjectListenerEvent, GoalProjectListenerRegistration } from "../goal/GoalInvocation";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
-import {
-    CodeTransform,
-    TransformResult,
-    TransformReturnable,
-} from "./CodeTransform";
-
-/**
- * Combine these transforms into a single transform,
- * where they execute it in order
- * @deprecated use array of CodeTransforms instead when constructing a ProjectOperationRegistration
- */
-export function chainTransforms<P = NoParameters>(...transforms: Array<CodeTransform<any>>): CodeTransform<P> {
-    return async (p, sdmc, params) => {
-        let cumulativeResult: TransformResult = {
-            target: p,
-            success: true,
-            edited: false,
-        };
-        try {
-            for (const t of transforms) {
-                const lastResult = await t(p, sdmc, params);
-                cumulativeResult = combineResults(toTransformResult(p, lastResult), cumulativeResult);
-            }
-            return cumulativeResult;
-        } catch (error) {
-            logger.warn("Failure in transform chain: %s", error);
-            return { target: p, edited: cumulativeResult.edited, success: false, error };
-        }
-    };
-}
+import { CodeTransform, TransformResult, TransformReturnable } from "./CodeTransform";
 
 function isTransformResult(tr: TransformReturnable): tr is TransformResult {
     const maybe = tr as TransformResult;
     return maybe && maybe.success !== undefined;
-}
-
-function toTransformResult(p: Project, tr: TransformReturnable): TransformResult {
-    if (isTransformResult(tr)) {
-        return tr;
-    } else {
-        return { target: p, success: true, edited: undefined };
-    }
-}
-
-/* tslint:disable */ // Disable tslint from incorrectly breaking checks for false vs undefined
-function combineResults(r1: TransformResult, r2: TransformResult): TransformResult {
-    return {
-        ...r1,
-        ...r2,
-        edited: (r1.edited || r2.edited) ? true :
-            (r1.edited === false && r2.edited === false) ? false : undefined,
-        success: r1.success && r2.success,
-    };
 }
 
 /**
@@ -85,9 +31,11 @@ function combineResults(r1: TransformResult, r2: TransformResult): TransformResu
  * @param name
  * @param pushTest
  */
-export function transformToProjectListener(transform: CodeTransform,
-                                           name: string,
-                                           pushTest: PushTest = AnyPush): GoalProjectListenerRegistration {
+export function transformToProjectListener(
+    transform: CodeTransform,
+    name: string,
+    pushTest: PushTest = AnyPush,
+): GoalProjectListenerRegistration {
     return {
         name,
         pushTest,
@@ -99,7 +47,8 @@ export function transformToProjectListener(transform: CodeTransform,
                     {
                         ...gi,
                     },
-                    {});
+                    {},
+                );
                 if (isTransformResult(result)) {
                     return {
                         code: result.success === true ? 0 : 1,
@@ -115,4 +64,3 @@ export function transformToProjectListener(transform: CodeTransform,
         },
     };
 }
-

@@ -65,9 +65,6 @@ export type K8sGoalContainer = Merge<GoalContainer, k8s.V1Container> & Pick<Goal
 /** Merge of base and Kubernetes goal container volume interfaces. */
 export type K8sGoalContainerVolume = Merge<k8s.V1Volume, GoalContainerVolume>;
 
-/** @deprecated use K8sContainerSpecCallback */
-export type K8sGoalContainerSpec = Omit<K8sContainerRegistration, "callback">;
-
 /**
  * Function signature for callback that can modify and return the
  * [[ContainerRegistration]] object.

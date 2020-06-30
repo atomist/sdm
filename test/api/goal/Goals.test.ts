@@ -17,14 +17,10 @@
 import * as assert from "power-assert";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
-// tslint:disable-next-line:deprecation
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { GoalWithPrecondition } from "../../../lib/api/goal/Goal";
 import { goals } from "../../../lib/api/goal/Goals";
-import {
-    goal,
-    GoalWithFulfillment,
-} from "../../../lib/api/goal/GoalWithFulfillment";
+import { goal, GoalWithFulfillment } from "../../../lib/api/goal/GoalWithFulfillment";
 
 const ArtifactGoal = new GoalWithFulfillment({
     uniqueName: "artifact",
@@ -33,17 +29,13 @@ const AutofixGoal = new Autofix();
 const BuildGoal = new GoalWithFulfillment({
     uniqueName: "build",
 });
-// tslint:disable-next-line:deprecation
 const FingerprintGoal = new Autofix();
 const PushImpactGoal = new PushImpact();
 const CodeInspectionGoal = new AutoCodeInspection();
 
 describe("GoalBuilder", () => {
-
     it("should construct simple goal set", () => {
-        const simpleGoals = goals("Simple Goals")
-            .plan(BuildGoal, AutofixGoal)
-            .plan(FingerprintGoal);
+        const simpleGoals = goals("Simple Goals").plan(BuildGoal, AutofixGoal).plan(FingerprintGoal);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
@@ -52,12 +44,13 @@ describe("GoalBuilder", () => {
     it("should construct simple goal set with one pre condition", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(BuildGoal.definition, AutofixGoal)
-            .plan(FingerprintGoal).after(BuildGoal);
+            .plan(FingerprintGoal)
+            .after(BuildGoal);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
 
-        const g = (simpleGoals.goals[2] as GoalWithPrecondition);
+        const g = simpleGoals.goals[2] as GoalWithPrecondition;
 
         assert.strictEqual(g.name, FingerprintGoal.name);
         assert.strictEqual(g.dependsOn.length, 1);
@@ -67,9 +60,12 @@ describe("GoalBuilder", () => {
     it("should construct goal set with pre conditions", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(CodeInspectionGoal)
-            .plan(BuildGoal, AutofixGoal.definition).after(CodeInspectionGoal)
-            .plan(FingerprintGoal).after(BuildGoal)
-            .plan(PushImpactGoal).after(BuildGoal, FingerprintGoal.definition);
+            .plan(BuildGoal, AutofixGoal.definition)
+            .after(CodeInspectionGoal)
+            .plan(FingerprintGoal)
+            .after(BuildGoal)
+            .plan(PushImpactGoal)
+            .after(BuildGoal, FingerprintGoal.definition);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 5);
@@ -98,12 +94,16 @@ describe("GoalBuilder", () => {
     it("should construct goal sets with pre conditions", () => {
         const baseGoals = goals("Base Goals")
             .plan(CodeInspectionGoal)
-            .plan(AutofixGoal.definition).after(CodeInspectionGoal);
+            .plan(AutofixGoal.definition)
+            .after(CodeInspectionGoal);
 
         const simpleGoals = goals("Simple Goals")
-            .plan(BuildGoal).after(baseGoals)
-            .plan(FingerprintGoal).after(BuildGoal)
-            .plan(CodeInspectionGoal).after(BuildGoal, FingerprintGoal.definition);
+            .plan(BuildGoal)
+            .after(baseGoals)
+            .plan(FingerprintGoal)
+            .after(BuildGoal)
+            .plan(CodeInspectionGoal)
+            .after(BuildGoal, FingerprintGoal.definition);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 3);
@@ -128,13 +128,9 @@ describe("GoalBuilder", () => {
     it("should not mutate pre conditions across goals instances", () => {
         const autofix = new Autofix();
 
-        const goals1 = goals("goals #1")
-            .plan(CodeInspectionGoal)
-            .plan(autofix).after(CodeInspectionGoal);
+        const goals1 = goals("goals #1").plan(CodeInspectionGoal).plan(autofix).after(CodeInspectionGoal);
 
-        const goals2 = goals("goals #2")
-            .plan(ArtifactGoal)
-            .plan(autofix).after(ArtifactGoal);
+        const goals2 = goals("goals #2").plan(ArtifactGoal).plan(autofix).after(ArtifactGoal);
 
         assert(autofix.dependsOn.length === 0);
 
@@ -145,27 +141,25 @@ describe("GoalBuilder", () => {
     it("should correctly register pre conditions for other goals instance", () => {
         const autofix = new Autofix();
 
-        const goals1 = goals("goals #1")
-            .plan(CodeInspectionGoal)
-            .plan(ArtifactGoal).after(CodeInspectionGoal);
+        const goals1 = goals("goals #1").plan(CodeInspectionGoal).plan(ArtifactGoal).after(CodeInspectionGoal);
 
-        const goals2 = goals("goals #2")
-            .plan(autofix).after(goals1);
+        const goals2 = goals("goals #2").plan(autofix).after(goals1);
 
         assert(autofix.dependsOn.length === 0);
 
-        assert.deepStrictEqual((goals2.goals[0] as GoalWithPrecondition).dependsOn.map(g => g.definition.uniqueName),
-            [CodeInspectionGoal, ArtifactGoal].map(g => g.definition.uniqueName));
+        assert.deepStrictEqual(
+            (goals2.goals[0] as GoalWithPrecondition).dependsOn.map(g => g.definition.uniqueName),
+            [CodeInspectionGoal, ArtifactGoal].map(g => g.definition.uniqueName),
+        );
     });
 
     it("should correctly maintain changed goal defintion", () => {
-        const g1 = goal({ });
-        const g2 = goal({ });
+        const g1 = goal({});
+        const g2 = goal({});
         const gs = goals("test").plan(g1).plan(g2).after(g1);
         g2.definition.displayName = "some test";
 
         const gc2 = gs.goals.find(g => g.uniqueName === g2.uniqueName);
         assert.strictEqual(gc2.definition.displayName, g2.definition.displayName);
     });
-
 });

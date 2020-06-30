@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    BaseContext,
-    GitHubStatusContext,
-} from "./GitHubContext";
-import {
-    GoalEnvironment,
-    IndependentOfEnvironment,
-} from "./support/environment";
+import { BaseContext, GitHubStatusContext } from "./GitHubContext";
+import { GoalEnvironment, IndependentOfEnvironment } from "./support/environment";
 
 /**
  * Core data for a goal
  */
 export interface GoalDefinition {
-
     /**
      * Must be unique among goals
      * Should be camel case
@@ -40,11 +33,6 @@ export interface GoalDefinition {
      */
     environment?: GoalEnvironment;
 
-    /**
-     * Not used any more
-     * @deprecated
-     */
-    orderedName?: string;
     displayName?: string;
 
     plannedDescription?: string;
@@ -75,7 +63,6 @@ export interface GoalDefinition {
  * Represents a delivery action, such as Build or Deploy.
  */
 export class Goal {
-
     public readonly context: GitHubStatusContext;
     public readonly definition: GoalDefinition;
 
@@ -142,21 +129,12 @@ export class Goal {
 }
 
 export class GoalWithPrecondition extends Goal {
-
     public readonly dependsOn: Goal[];
 
     constructor(definition: GoalDefinition, ...dependsOn: Goal[]) {
         super(definition);
         this.dependsOn = dependsOn;
     }
-
-}
-
-/**
- * @deprecated use isGoalDefinition
- */
-export function isGoalDefiniton(f: Goal | GoalDefinition): f is GoalDefinition {
-    return !!(f as GoalDefinition).uniqueName;
 }
 
 export function isGoalDefinition(f: Goal | GoalDefinition): f is GoalDefinition {
@@ -174,8 +152,10 @@ function validateGoalDefinition(gd: GoalDefinition): GoalDefinition {
     const uniqueName = gd.uniqueName.replace(/ /g, "-").replace(/_/g, "-");
     // Now validate the part in front of # against regexp
     if (!UniqueNameRegExp.test(uniqueName.split("#")[0])) {
-        throw new Error(`Goal uniqueName '${gd.uniqueName}' must consist of lower case alphanumeric characters or '-', and must start and ` +
-            `end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '${UniqueNameRegExp}')`);
+        throw new Error(
+            `Goal uniqueName '${gd.uniqueName}' must consist of lower case alphanumeric characters or '-', and must start and ` +
+                `end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '${UniqueNameRegExp}')`,
+        );
     }
 
     gd.uniqueName = uniqueName;

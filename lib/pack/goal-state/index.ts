@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export { goalState, goalStateSupport } from "./goalState";
+export { goalStateSupport } from "./goalState";
