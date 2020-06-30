@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-/* tslint:disable:deprecation */
-
-import { SpawnCommand } from "@atomist/automation-client/lib/util/spawn";
 import { CodeTransform } from "../../../api/registration/CodeTransform";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { SpawnLogInvocation } from "../../misc/child_process";
 import { spawnCodeTransform } from "./spawnCodeTransform";
 
 /**
@@ -29,6 +27,6 @@ import { spawnCodeTransform } from "./spawnCodeTransform";
  * @return code transform function
  * @deprecated use spawnCodeTransform
  */
-export function localCommandsCodeTransform(commands: SpawnCommand[], log?: ProgressLog): CodeTransform {
+export function localCommandsCodeTransform(commands: SpawnLogInvocation[], log?: ProgressLog): CodeTransform {
     return spawnCodeTransform(commands, log);
 }
