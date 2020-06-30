@@ -4,9 +4,6 @@
  
 # Software Delivery Machine - `@atomist/sdm`
 
-[![atomist sdm goals](http://badge.atomist.com/T29E48P34/atomist/sdm/64ac86ca-3c46-4742-9e41-a42c14560af9)](https://app.atomist.com/workspace/T29E48P34)
-[![npm version](https://img.shields.io/npm/v/@atomist/sdm.svg)](https://www.npmjs.com/package/@atomist/sdm)
-
 This is the home of the Software Delivery Machine (SDM) framework and
 related projects.
 
@@ -24,6 +21,42 @@ See the [Developer Quick Start][atomist-quick] to jump straight to
 creating an SDM.
 
 [atomist-quick]: https://docs.atomist.com/quick-start/ (Atomist - Developer Quick Start)
+
+## Migrating to SDM 2.0
+
+SDM version 2.0 aims to make it easier to use the SDM framework.  We
+have consolidated the most useful NPM packages under
+[@atomist/sdm][sdm-npm] to simplify dependency management.  Rather
+than separately installing @atomist/automation-client,
+@atomist/sdm-core, and various @atomist/sdm-pack-*, you now just
+install @atomist/sdm.  @atomist/sdm-local is deprecated.
+
+To update to the new single package in your SDM, follow these steps:
+
+1.  Remove Atomist SDM and automation-client dependencies
+
+        $ npm uninstall @atomist/automation-client @atomist/sdm @atomist/sdm-core @atomist/sdm-local
+
+2.  Remove any extension SDM packs
+
+        $ npm uninstall @atomist/sdm-pack-ABC @atomist/sdm-pack-DEF @atomist/sdm-pack-GHI
+
+3.  Reinstall Atomist SDM
+
+        $ npm install @atomist/sdm
+
+4.  The consolidation of packages introduces a breaking change: you must
+    update your import statements.  Specifically:
+
+    -   Change `import … "@atomist/automation-client"` to `import … "@atomist/sdm/lib/client"`
+    -   Change `import … "@atomist/sdm-core"` to `import … "@atomist/sdm/lib/core"`
+    -   Change `import … "@atomist/sdm-pack-XYZ"` to `import … "@atomist/sdm/lib/pack/XYZ"`
+
+Please also note that deprecated exports have been removed from SDM
+2.0.  If you need help moving away from capabilities that have been
+removed, please [contact us](#support).
+
+[sdm-npm]: https://www.npmjs.com/package/@atomist/sdm
 
 ## Contributing
 
@@ -102,5 +135,5 @@ the 'Approve' button in the Atomist dashboard or Slack.
 Created by [Atomist][atomist].
 Need Help?  [Join our Slack workspace][slack].
 
-[atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
+[atomist]: https://atomist.com/ (Atomist - Automate All the Software Things)
 [slack]: https://join.atomist.com/ (Atomist Community Slack)

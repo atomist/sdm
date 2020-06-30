@@ -33,18 +33,11 @@ import { SoftwareDeliveryMachine } from "../../../api/machine/SoftwareDeliveryMa
 import {
     KubernetesFulfillmentGoalScheduler,
     KubernetesFulfillmentOptions,
-} from "../../pack/k8s/scheduler/KubernetesFulfillmentGoalScheduler";
+} from "../../../pack/k8s/scheduler/KubernetesFulfillmentGoalScheduler";
 import { toArray } from "../../util/misc/array";
-import {
-    CacheEntry,
-    cachePut,
-    cacheRestore,
-} from "../cache/goalCaching";
+import { CacheEntry, cachePut, cacheRestore } from "../cache/goalCaching";
 import { dockerContainerScheduler } from "./docker";
-import {
-    runningAsGoogleCloudFunction,
-    runningInK8s,
-} from "./util";
+import { runningAsGoogleCloudFunction, runningInK8s } from "./util";
 
 export const ContainerRegistrationGoalDataKey = "@atomist/sdm/container";
 
@@ -60,19 +53,24 @@ export function container<T extends ContainerRegistration>(displayName: string, 
     return new Container({ displayName }).with(registration);
 }
 
-export const ContainerProgressReporter = testProgressReporter({
-    test: /docker 'network' 'create'/i,
-    phase: "starting up",
-}, {
-    test: /docker 'network' 'rm'/i,
-    phase: "shutting down",
-}, {
-    test: /docker 'run' .* '--workdir=[a-zA-Z\/]*' .* '--network-alias=([a-zA-Z \-_]*)'/i,
-    phase: "running $1",
-}, {
-    test: /atm:phase=(.*)/i,
-    phase: "$1",
-});
+export const ContainerProgressReporter = testProgressReporter(
+    {
+        test: /docker 'network' 'create'/i,
+        phase: "starting up",
+    },
+    {
+        test: /docker 'network' 'rm'/i,
+        phase: "shutting down",
+    },
+    {
+        test: /docker 'run' .* '--workdir=[a-zA-Z\/]*' .* '--network-alias=([a-zA-Z \-_]*)'/i,
+        phase: "running $1",
+    },
+    {
+        test: /atm:phase=(.*)/i,
+        phase: "$1",
+    },
+);
 
 /**
  * Ports to expose from container.
@@ -121,7 +119,7 @@ export interface GoalContainer {
     /**
      * Environment variables to set in Docker container.
      */
-    env?: Array<{ name: string, value: string }>;
+    env?: Array<{ name: string; value?: string }>;
     /**
      * Ports to expose from container.
      */
@@ -208,8 +206,13 @@ export interface GoalContainerSpec {
  * Function signature for callback that can modify and return the
  * [[ContainerRegistration]] object.
  */
-export type ContainerSpecCallback =
-    (r: ContainerRegistration, p: GitProject, g: Container, e: SdmGoalEvent, c: RepoContext) => Promise<GoalContainerSpec>;
+export type ContainerSpecCallback = (
+    r: ContainerRegistration,
+    p: GitProject,
+    g: Container,
+    e: SdmGoalEvent,
+    c: RepoContext,
+) => Promise<GoalContainerSpec>;
 
 /**
  * Container goal artifacts and implementations information.
@@ -253,7 +256,6 @@ export interface ContainerGoalDetails extends FulfillableGoalDetails {
  * Goal run as a container, as seen on TV.
  */
 export class Container extends FulfillableGoalWithRegistrations<ContainerRegistration> {
-
     public readonly details: ContainerGoalDetails;
 
     constructor(details: ContainerGoalDetails = {}, ...dependsOn: Goal[]) {
@@ -269,7 +271,7 @@ export class Container extends FulfillableGoalWithRegistrations<ContainerRegistr
         const goalSchedulers = toArray(sdm.configuration.sdm.goalScheduler) || [];
         if (runningInK8s()) {
             // load lazily to prevent early and unwanted initialization of expensive K8s api
-            const kgs = require("../../pack/k8s/scheduler/KubernetesGoalScheduler");
+            const kgs = require("../../../pack/k8s/scheduler/KubernetesGoalScheduler");
             // Make sure that the KubernetesGoalScheduler gets added if needed
             if (!goalSchedulers.some(gs => gs instanceof kgs.KubernetesGoalScheduler)) {
                 if (!process.env.ATOMIST_ISOLATED_GOAL && kgs.isConfiguredInEnv("kubernetes", "kubernetes-all")) {
@@ -293,10 +295,10 @@ export class Container extends FulfillableGoalWithRegistrations<ContainerRegistr
         registration.name = (registration.name || `container-${this.definition.displayName}`).replace(/\.+/g, "-");
         if (!this.details.scheduler) {
             if (runningInK8s()) {
-                const k8sContainerScheduler = require("../../pack/k8s/container").k8sContainerScheduler;
+                const k8sContainerScheduler = require("../../../pack/k8s/container").k8sContainerScheduler;
                 this.details.scheduler = k8sContainerScheduler;
             } else if (runningAsGoogleCloudFunction()) {
-                const k8sSkillContainerScheduler = require("../../pack/k8s/container").k8sSkillContainerScheduler;
+                const k8sSkillContainerScheduler = require("../../../pack/k8s/container").k8sSkillContainerScheduler;
                 this.details.scheduler = k8sSkillContainerScheduler;
             } else {
                 this.details.scheduler = dockerContainerScheduler;

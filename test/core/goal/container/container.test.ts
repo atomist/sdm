@@ -19,8 +19,8 @@ import {
     Container,
 } from "../../../../lib/core/goal/container/container";
 import * as util from "../../../../lib/core/goal/container/util";
-import { KubernetesFulfillmentGoalScheduler } from "../../../../lib/core/pack/k8s/scheduler/KubernetesFulfillmentGoalScheduler";
-import { KubernetesGoalScheduler } from "../../../../lib/core/pack/k8s/scheduler/KubernetesGoalScheduler";
+import { KubernetesFulfillmentGoalScheduler } from "../../../../lib/pack/k8s/scheduler/KubernetesFulfillmentGoalScheduler";
+import { KubernetesGoalScheduler } from "../../../../lib/pack/k8s/scheduler/KubernetesGoalScheduler";
 
 describe("core/goal/container/container", () => {
 
