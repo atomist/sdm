@@ -40,13 +40,7 @@ export {
     SetDeployEnablementParameters,
 } from "./handlers/commands/SetDeployEnablement";
 export { DefaultRepoRefResolver } from "./handlers/common/DefaultRepoRefResolver";
-export {
-    createGitTag,
-    CreateGitTagOptions,
-    createTagForStatus,
-    executeTag,
-    ExecuteTagOptions,
-} from "./delivery/build/executeTag";
+export { createGitTag, CreateGitTagOptions, executeTag, ExecuteTagOptions } from "./delivery/build/executeTag";
 export { ProjectIdentifier } from "./delivery/build/local/projectIdentifier";
 export {
     executeVersioner,
@@ -84,7 +78,6 @@ export { renderCommitMessage } from "./util/slack/diffRendering";
 export * from "./util/webhook/ImageLink";
 export { Preference, AbstractPreferenceStore } from "./preferences/AbstractPreferenceStore";
 export { FilePreferenceStoreFactory } from "./preferences/FilePreferenceStore";
-export { GraphQLPreferenceStoreFactory } from "./preferences/GraphQLPreferenceStore";
 export { TeamConfigurationPreferenceStoreFactory } from "./preferences/TeamConfigurationPreferenceStore";
 export { FileSystemGoalCacheArchiveStore } from "./goal/cache/FileSystemGoalCacheArchiveStore";
 export { CompressingGoalCache, GoalCacheArchiveStore } from "./goal/cache/CompressingGoalCache";
@@ -100,7 +93,6 @@ export {
     GoalCreator,
     ConfigurationPreProcessor,
     ConfigureMachineOptions,
-    AllGoals,
     DeliveryGoals,
 } from "./machine/configure";
 export {

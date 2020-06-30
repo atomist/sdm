@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,20 @@ import { SdmGoalEvent } from "./SdmGoalEvent";
  * Type of all goal invocation functions. This is a key extension
  * point for SDMs.
  */
-export type ExecuteGoal =
-    (r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
+export type ExecuteGoal = (r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
-export type PrepareForGoalExecution =
-    (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
+export type PrepareForGoalExecution = (p: GitProject, r: GoalInvocation) => Promise<void | ExecuteGoalResult>;
 
 export enum GoalProjectListenerEvent {
     before = "before",
     after = "after",
 }
 
-export type GoalProjectListener =
-    (p: GitProject, r: GoalInvocation, event: GoalProjectListenerEvent) => Promise<void | ExecuteGoalResult>;
+export type GoalProjectListener = (
+    p: GitProject,
+    r: GoalInvocation,
+    event: GoalProjectListenerEvent,
+) => Promise<void | ExecuteGoalResult>;
 
 export interface GoalProjectListenerRegistration {
     name: string;
@@ -50,7 +51,6 @@ export interface GoalProjectListenerRegistration {
 }
 
 export interface GoalInvocation extends RepoContext, Parameterized {
-
     /**
      * This SDM's current configuration
      */
@@ -63,12 +63,6 @@ export interface GoalInvocation extends RepoContext, Parameterized {
 
     /**
      * The goal event that triggered this execution
-     * @deprecated use goalEvent
-     */
-    sdmGoal: SdmGoalEvent;
-
-    /**
-     * The goal event that triggered this execution
      */
     goalEvent: SdmGoalEvent;
 
@@ -78,7 +72,6 @@ export interface GoalInvocation extends RepoContext, Parameterized {
      * Use this to write user-level log messages that you want to see in the log stream
      */
     progressLog: ProgressLog;
-
 }
 
 /**

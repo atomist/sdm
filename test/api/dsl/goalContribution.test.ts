@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    GitHubRepoRef,
-    isGitHubRepoRef,
-} from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
+import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
@@ -28,13 +25,9 @@ import {
     goalContributors,
     StatefulPushListenerInvocation,
 } from "../../../lib/api/dsl/goalContribution";
-import {
-    onAnyPush,
-    whenPushSatisfies,
-} from "../../../lib/api/dsl/goalDsl";
+import { onAnyPush, whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { AutoCodeInspection } from "../../../lib/api/goal/common/AutoCodeInspection";
 import { Autofix } from "../../../lib/api/goal/common/Autofix";
-// tslint:disable-next-line:deprecation
 import { Locking } from "../../../lib/api/goal/common/Locking";
 import { PushImpact } from "../../../lib/api/goal/common/PushImpact";
 import { suggestAction } from "../../../lib/api/goal/common/suggestAction";
@@ -46,17 +39,19 @@ import { predicatePushTest } from "../../../lib/api/mapping/PushTest";
 import { anySatisfied } from "../../../lib/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
-const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
-    uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred",
-}));
+const SomeGoalSet = new Goals(
+    "SomeGoalSet",
+    new Goal({
+        uniqueName: "Fred",
+        environment: "0-code/",
+    }),
+);
 
 const AutofixGoal = new Autofix();
 const BuildGoal = new GoalWithFulfillment({
     uniqueName: "build",
 });
 const CodeInspectionGoal = new AutoCodeInspection();
-// tslint:disable-next-line:deprecation
 const FingerprintGoal = new Autofix();
 const LockingGoal = Locking;
 const JustBuildGoal = new GoalWithFulfillment({
@@ -65,18 +60,24 @@ const JustBuildGoal = new GoalWithFulfillment({
 const PushReactionGoal = new PushImpact();
 
 describe("goalContribution", () => {
-
     describe("goalContributors", () => {
-
         it("should set no goals", async () => {
-            const gs = goalContributors(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet));
+            const gs = goalContributors(
+                whenPushSatisfies(() => false)
+                    .itMeans("thing")
+                    .setGoals(SomeGoalSet),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals, undefined);
         });
 
         it("should set goals from one goal", async () => {
-            const gs = goalContributors(whenPushSatisfies(() => true).itMeans("thing").setGoals(BuildGoal));
+            const gs = goalContributors(
+                whenPushSatisfies(() => true)
+                    .itMeans("thing")
+                    .setGoals(BuildGoal),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, [BuildGoal]);
@@ -92,22 +93,28 @@ describe("goalContribution", () => {
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
             assert.equal(goals.name, "SomeGoalSet");
         });
-
     });
 
     describe("enrichGoalSetters", () => {
-
         it("should set no goals", async () => {
-            const gs = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
-                whenPushSatisfies(() => false).setGoals(SomeGoalSet));
+            const gs = enrichGoalSetters(
+                whenPushSatisfies(() => false)
+                    .itMeans("thing")
+                    .setGoals(SomeGoalSet),
+                whenPushSatisfies(() => false).setGoals(SomeGoalSet),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals, undefined);
         });
 
         it("should add goal to none", async () => {
-            const gs = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
-                whenPushSatisfies(() => true).setGoals(SomeGoalSet));
+            const gs = enrichGoalSetters(
+                whenPushSatisfies(() => false)
+                    .itMeans("thing")
+                    .setGoals(SomeGoalSet),
+                whenPushSatisfies(() => true).setGoals(SomeGoalSet),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
@@ -116,9 +123,10 @@ describe("goalContribution", () => {
 
         it("should add goal to some", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
-            const gs = enrichGoalSetters(old,
-                onAnyPush().setGoals(mg));
+            const old = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet);
+            const gs = enrichGoalSetters(old, onAnyPush().setGoals(mg));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat(mg));
@@ -127,11 +135,11 @@ describe("goalContribution", () => {
 
         it("should add two goals to some", async () => {
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
-            const old = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
-            let gs = enrichGoalSetters(old,
-                onAnyPush().setGoals(mg));
-            gs = enrichGoalSetters(gs,
-                onAnyPush().setGoals(FingerprintGoal));
+            const old = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet);
+            let gs = enrichGoalSetters(old, onAnyPush().setGoals(mg));
+            gs = enrichGoalSetters(gs, onAnyPush().setGoals(FingerprintGoal));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 3);
@@ -144,8 +152,7 @@ describe("goalContribution", () => {
             const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet.andLock());
-            const gs = enrichGoalSetters(old,
-                onAnyPush().setGoals(mg));
+            const gs = enrichGoalSetters(old, onAnyPush().setGoals(mg));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
@@ -156,10 +163,12 @@ describe("goalContribution", () => {
             const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet.andLock());
-            const gs = enrichGoalSetters(old,
+            const gs = enrichGoalSetters(
+                old,
                 onAnyPush().setGoalsWhen(() => {
                     throw new Error("Should not get here");
-                }));
+                }),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
@@ -170,11 +179,13 @@ describe("goalContribution", () => {
             const old = whenPushSatisfies(() => true)
                 .itMeans("thing")
                 .setGoals(SomeGoalSet);
-            const gs = enrichGoalSetters(old,
+            const gs = enrichGoalSetters(
+                old,
                 // This should never be invoked
                 whenPushSatisfies(() => false).setGoalsWhen(() => {
                     throw new Error("Should not get here");
-                }));
+                }),
+            );
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
@@ -191,16 +202,17 @@ describe("goalContribution", () => {
             const mg1 = suggestAction({ message: "sendSomeMessage1", displayName: "Sending message1" });
             const mg2 = suggestAction({ message: "sendSomeMessage2", displayName: "Sending message2" });
 
-            const gs = enrichGoalSetters(old,
-                onAnyPush().setGoals([mg1, LockingGoal]));
-            const gs1 = enrichGoalSetters(gs,
-                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
+            const gs = enrichGoalSetters(old, onAnyPush().setGoals([mg1, LockingGoal]));
+            const gs1 = enrichGoalSetters(gs, whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
 
             const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
             const goals: Goals = await gs1.mapping(p); // we match it against the second value of `gs`
 
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg1] as any),
-                "Goals found were " + goals.goals.map(g => g.name)); // and now it has accepted the addition of the MessageGoal
+            assert.deepEqual(
+                goals.goals,
+                SomeGoalSet.goals.concat([mg1] as any),
+                "Goals found were " + goals.goals.map(g => g.name),
+            ); // and now it has accepted the addition of the MessageGoal
 
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
             const barGoals: Goals = await gs1.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
@@ -208,55 +220,67 @@ describe("goalContribution", () => {
         });
 
         it("should uniquely name attachFacts", async () => {
-            const af = attachFacts<{ name: string}>(async pu => ({ name: pu.push.id }));
+            const af = attachFacts<{ name: string }>(async pu => ({ name: pu.push.id }));
             assert(af.name.startsWith("attachFacts-"));
             assert(af.name.length > "attachFacts-".length);
         });
 
         it("should attach facts", async () => {
-            interface Named { name: string; }
+            interface Named {
+                name: string;
+            }
             const mg = suggestAction({ message: "sendSomeMessage", displayName: "Sending message" });
             let gs = goalContributors(
                 attachFacts<Named>(async pu => ({ name: "tony" })),
-                whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async pu => pu.facts.name === "tony").setGoals(mg));
-            gs = enrichGoalSetters(gs,
-                onAnyPush().setGoals(FingerprintGoal));
+                whenPushSatisfies<StatefulPushListenerInvocation<Named>>(async pu => pu.facts.name === "tony").setGoals(
+                    mg,
+                ),
+            );
+            gs = enrichGoalSetters(gs, onAnyPush().setGoals(FingerprintGoal));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 2);
             assert.deepEqual(goals.goals, [mg, FingerprintGoal]);
         });
-
     });
 
     describe("using SDM", () => {
-
         beforeEach(() => {
             resetRegistrableManager();
         });
 
         it("should accept and add with () => true", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
-            sdm.addGoalContributions(goalContributors(
-                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal))));
+            sdm.addGoalContributions(
+                goalContributors(
+                    onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal)),
+                ),
+            );
             const p = fakePush();
             const goals: Goals = await sdm.pushMapping.mapping(p);
             assert.deepEqual(goals.goals.sort(), [CodeInspectionGoal, PushReactionGoal, AutofixGoal].sort());
             sdm.addGoalContributions(whenPushSatisfies(() => true).setGoals(FingerprintGoal));
             const goals2: Goals = await sdm.pushMapping.mapping(p);
-            assert.deepEqual(goals2.goals.sort(), [CodeInspectionGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort());
+            assert.deepEqual(
+                goals2.goals.sort(),
+                [CodeInspectionGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort(),
+            );
         });
 
         it("should accept and add with onAnyPush", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
             sdm.withPushRules(
-                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal)));
+                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal, AutofixGoal)),
+            );
             const p = fakePush();
             const goals: Goals = await sdm.pushMapping.mapping(p);
             assert.deepEqual(goals.goals.sort(), [CodeInspectionGoal, PushReactionGoal, AutofixGoal].sort());
             sdm.addGoalContributions(onAnyPush().setGoals(FingerprintGoal));
             const goals2: Goals = await sdm.pushMapping.mapping(p);
-            assert.deepEqual(goals2.goals.sort(), [CodeInspectionGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort());
+            assert.deepEqual(
+                goals2.goals.sort(),
+                [CodeInspectionGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort(),
+            );
         });
 
         it("should respect sealed goals after adding additional goal", async () => {
@@ -272,62 +296,82 @@ describe("goalContribution", () => {
             const mg1 = suggestAction({ message: "sendSomeMessage1", displayName: "Sending message1" });
             const mg2 = suggestAction({ message: "sendSomeMessage2", displayName: "Sending message2" });
 
-            sdm.addGoalContributions(
-                onAnyPush().setGoals([mg1, LockingGoal]));
-            sdm.addGoalContributions(
-                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
+            sdm.addGoalContributions(onAnyPush().setGoals([mg1, LockingGoal]));
+            sdm.addGoalContributions(whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
 
             const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
             const goals: Goals = await sdm.pushMapping.mapping(p); // we match it against the second value of `gs`
 
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg1] as any),
-                "Goals found were " + goals.goals.map(g => g.name)); // and now it has accepted the addition of the MessageGoal
+            assert.deepEqual(
+                goals.goals,
+                SomeGoalSet.goals.concat([mg1] as any),
+                "Goals found were " + goals.goals.map(g => g.name),
+            ); // and now it has accepted the addition of the MessageGoal
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
             const barGoals: Goals = await sdm.pushMapping.mapping(barPush);
-            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1),
-                "Goals found were " + goals.goals.map(g => g.name));
+            assert.deepEqual(
+                barGoals.goals,
+                SomeGoalSet.goals.concat(mg1),
+                "Goals found were " + goals.goals.map(g => g.name),
+            );
         });
 
-        const IsSdm = predicatePushTest("IsSDM",
-            async p => !!(await p.getFile("src/atomist.config.ts")));
+        const IsSdm = predicatePushTest("IsSDM", async p => !!(await p.getFile("src/atomist.config.ts")));
 
         const SdmDeliveryGoal = new Goal({ uniqueName: "sdmDelivery" });
 
         it("should handle real-world example", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
-            sdm.addGoalContributions(
-                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal)));
+            sdm.addGoalContributions(onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal)));
             sdm.addGoalContributions(
                 whenPushSatisfies(IsSdm, async pu => isGitHubRepoRef(pu.id)).setGoals(
-                    new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock()));
-            sdm.addGoalContributions(goalContributors(
-                whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm))
-                    .setGoals(FingerprintGoal),
-                whenPushSatisfies(async () => true)
-                    .setGoals(JustBuildGoal)));
-            const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryFile("src/atomist.config.ts", "content")));
+                    new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock(),
+                ),
+            );
+            sdm.addGoalContributions(
+                goalContributors(
+                    whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm)).setGoals(FingerprintGoal),
+                    whenPushSatisfies(async () => true).setGoals(JustBuildGoal),
+                ),
+            );
+            const push = fakePush(
+                InMemoryProject.from(
+                    new GitHubRepoRef("bar", "what"),
+                    new InMemoryFile("src/atomist.config.ts", "content"),
+                ),
+            );
             const goals: Goals = await sdm.pushMapping.mapping(push);
-            assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
-                "Goals found were " + goals.goals.map(g => g.name));
+            assert.deepEqual(
+                goals.goals,
+                [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
+                "Goals found were " + goals.goals.map(g => g.name),
+            );
         });
 
         it("should handle real-world example: single block", async () => {
             const sdm = new TestSoftwareDeliveryMachine("test");
-            sdm.addGoalContributions(goalContributors(
-                onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal)),
-                whenPushSatisfies(IsSdm, async pu => isGitHubRepoRef(pu.id))
-                    .setGoals(new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock()),
-                whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm))
-                    .setGoals(FingerprintGoal),
-                whenPushSatisfies(async () => true)
-                    .setGoals(JustBuildGoal),
-            ));
-            const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
-                new InMemoryFile("src/atomist.config.ts", "content")));
+            sdm.addGoalContributions(
+                goalContributors(
+                    onAnyPush().setGoals(new Goals("Checks", CodeInspectionGoal, PushReactionGoal)),
+                    whenPushSatisfies(IsSdm, async pu => isGitHubRepoRef(pu.id)).setGoals(
+                        new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock(),
+                    ),
+                    whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm)).setGoals(FingerprintGoal),
+                    whenPushSatisfies(async () => true).setGoals(JustBuildGoal),
+                ),
+            );
+            const push = fakePush(
+                InMemoryProject.from(
+                    new GitHubRepoRef("bar", "what"),
+                    new InMemoryFile("src/atomist.config.ts", "content"),
+                ),
+            );
             const goals: Goals = await sdm.pushMapping.mapping(push);
-            assert.deepEqual(goals.goals, [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
-                "Goals found were " + goals.goals.map(g => g.name));
+            assert.deepEqual(
+                goals.goals,
+                [CodeInspectionGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
+                "Goals found were " + goals.goals.map(g => g.name),
+            );
         });
     });
 });

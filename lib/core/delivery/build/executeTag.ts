@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { LoggingProgressLog } from "../../../api-helper/log/LoggingProgressLog";
 import { spawnLog } from "../../../api-helper/misc/child_process";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
-import {
-    ExecuteGoal,
-    GoalInvocation,
-} from "../../../api/goal/GoalInvocation";
+import { ExecuteGoal, GoalInvocation } from "../../../api/goal/GoalInvocation";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import {
-    createTag,
-    createTagReference,
-    Tag,
-} from "../../util/github/ghub";
 import { goalInvocationVersion } from "./local/projectVersioner";
 
 /**
@@ -70,40 +59,46 @@ export function executeTag(opts: ExecuteTagOptions = {}): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { configuration, goalEvent, credentials, id, context, progressLog } = goalInvocation;
 
-        return configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async project => {
-            try {
-                let tag: string;
-                let message: string;
-                if (opts.message) {
-                    message = opts.message;
-                } else if (goalEvent.push.after && goalEvent.push.after.message) {
-                    message = goalEvent.push.after.message.split("\n")[0];
-                }
-                if (opts.name) {
-                    tag = opts.name;
-                    message = message || `Tag ${opts.name}`;
-                } else {
-                    const version = await goalInvocationVersion(goalInvocation);
-                    if (opts.release) {
-                        tag = version.replace(/[-+].*/, "");
-                        message = message || `Release ${tag}`;
-                    } else {
-                        tag = version;
-                        message = message || `Prerelease ${tag}`;
+        return configuration.sdm.projectLoader.doWithProject(
+            { credentials, id, context, readOnly: false },
+            async project => {
+                try {
+                    let tag: string;
+                    let message: string;
+                    if (opts.message) {
+                        message = opts.message;
+                    } else if (goalEvent.push.after && goalEvent.push.after.message) {
+                        message = goalEvent.push.after.message.split("\n")[0];
                     }
+                    if (opts.name) {
+                        tag = opts.name;
+                        message = message || `Tag ${opts.name}`;
+                    } else {
+                        const version = await goalInvocationVersion(goalInvocation);
+                        if (opts.release) {
+                            tag = version.replace(/[-+].*/, "");
+                            message = message || `Release ${tag}`;
+                        } else {
+                            tag = version;
+                            message = message || `Prerelease ${tag}`;
+                        }
+                    }
+                    if (opts.build) {
+                        tag += "+" + opts.build;
+                    }
+                    await createGitTag({ project, tag, message, log: progressLog });
+                    return {
+                        code: 0,
+                        message: `Created tag '${tag}' for ${goalEvent.repo.owner}/${goalEvent.repo.name}`,
+                    };
+                } catch (e) {
+                    const message = `Failed to create tag for ${goalEvent.repo.owner}/${goalEvent.repo.name}: ${e.message}`;
+                    logger.error(message);
+                    progressLog.write(message);
+                    return { code: 1, message };
                 }
-                if (opts.build) {
-                    tag += "+" + opts.build;
-                }
-                await createGitTag({ project, tag, message, log: progressLog });
-                return { code: 0, message: `Created tag '${tag}' for ${goalEvent.repo.owner}/${goalEvent.repo.name}` };
-            } catch (e) {
-                const message = `Failed to create tag for ${goalEvent.repo.owner}/${goalEvent.repo.name}: ${e.message}`;
-                logger.error(message);
-                progressLog.write(message);
-                return { code: 1, message };
-            }
-        });
+            },
+        );
     };
 }
 
@@ -153,35 +148,4 @@ export async function createGitTag(opts: CreateGitTagOptions): Promise<void> {
         e.message = `Failed to create and push git tag '${opts.tag}': ${e.message}`;
         throw e;
     }
-}
-
-/**
- * Create a GitHub tag using the GitHub API.
- *
- * @param id GitHub remote repository reference
- * @param sha Commit SHA to tag
- * @param message Tag message
- * @param version Name of tag
- * @param credentials GitHub token object
- * @deprecated use createGitTag
- */
-export async function createTagForStatus(id: RemoteRepoRef,
-                                         sha: string,
-                                         message: string,
-                                         version: string,
-                                         credentials: ProjectOperationCredentials): Promise<void> {
-    const tag: Tag = {
-        tag: version,
-        message,
-        object: sha,
-        type: "commit",
-        tagger: {
-            name: "Atomist",
-            email: "info@atomist.com",
-            date: new Date().toISOString(),
-        },
-    };
-
-    await createTag(credentials, id as GitHubRepoRef, tag);
-    await createTagReference(credentials, id as GitHubRepoRef, tag);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import { SdmGoalState } from "../../typings/types";
  * persisted on the currently executing goal.
  */
 export interface GoalDetails {
-
     /**
      * Optional description to be set on the goal
      */
@@ -38,27 +37,9 @@ export interface GoalDetails {
     phase?: string;
 
     /**
-     * Optional targetUrl to be set on the goal as externalUrl
-     * @deprecated use externalsUrls
-     */
-    targetUrl?: string;
-
-    /**
-     * Optional targetUrls to be set on the goal as externalUrls
-     * @deprecated use externalsUrls
-     */
-    targetUrls?: Array<{ label?: string, url: string}>;
-
-    /**
      * Optional externalUrls to be set on the goal
      */
-    externalUrls?: Array<{ label?: string, url: string}>;
-
-    /**
-     * Optional flag to indicate if this goal requires approval now
-     * @deprecated use state = SdmGoalState.waiting_for_approval instead
-     */
-    requireApproval?: boolean;
+    externalUrls?: Array<{ label?: string; url: string }>;
 
     /**
      * Update the goals data field
@@ -73,7 +54,6 @@ export interface GoalDetails {
  * to signal errors during goal execution.
  */
 export interface ExecuteGoalResult extends GoalDetails {
-
     /**
      * 0, undefined or null is success; non-zero exit codes will mark the goal as failed,
      * if state is not defined

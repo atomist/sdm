@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export { gitHubGoalStatus, githubGoalStatusSupport } from "./github";
+export { githubGoalStatusSupport } from "./github";

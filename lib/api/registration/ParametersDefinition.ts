@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    BaseParameter,
-    BaseValue,
-} from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
+import { BaseParameter, BaseValue } from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
 
 export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersObject<PARAMS>;
 
@@ -26,9 +23,11 @@ export type ParametersDefinition<PARAMS = any> = ParametersListing | ParametersO
  * When the class-style decorated approach is used, this is unnecessary as any field
  * value will be used as a default.
  */
-export interface HasDefaultValue { defaultValue?: any; }
+export interface HasDefaultValue {
+    defaultValue?: any;
+}
 
-export type ParametersObjectValue = (BaseParameter & HasDefaultValue);
+export type ParametersObjectValue = BaseParameter & HasDefaultValue;
 
 export type MappedParameterOrSecretObjectValue = MappedParameterOrSecretDeclaration;
 
@@ -38,25 +37,17 @@ export type ValueParameterObjectValue = ValueDeclaration;
  * Object with properties defining parameters, secrets, mapped parameters and values.
  * Useful for combination via spreads.
  */
-export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS>
-    = Record<K, ParametersObjectValue | MappedParameterOrSecretObjectValue | ValueParameterObjectValue>;
+export type ParametersObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<
+    K,
+    ParametersObjectValue | MappedParameterOrSecretObjectValue | ValueParameterObjectValue
+>;
 
 export enum DeclarationType {
-    /**
-     * @deprecated use Mapped
-     */
-    mapped = "mapped",
-    /**
-     * @deprecated use Secret
-     */
-    secret = "secret",
-
     Mapped = "mapped",
     Secret = "secret",
 }
 
 export interface MappedParameterOrSecretDeclaration {
-
     declarationType: DeclarationType;
 
     uri: string;
@@ -75,7 +66,6 @@ export type ValueDeclaration = BaseValue;
  * Define parameters used in a command
  */
 export interface ParametersListing {
-
     readonly parameters: NamedParameter[];
 
     readonly mappedParameters: NamedMappedParameter[];
