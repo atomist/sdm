@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Kill timed out container goals. [#818](https://github.com/atomist/sdm/issues/818)
 -   Query k8s sync repo creds in worker. [#830](https://github.com/atomist/sdm/issues/830)
 -   Speed up slow YAML mapPushTests test. [91b5f0b](https://github.com/atomist/sdm/commit/91b5f0bc555a4c446466b65beec0cc3546e5fd4b)
+-   Fix mocha exiting with no test issue. [0bb2317](https://github.com/atomist/sdm/commit/0bb23171a48fcec13b48a8533dceab5ea56c8014)
 
 ## [1.9.0](https://github.com/atomist/sdm/compare/1.8.0...1.9.0) - 2020-03-03
 
