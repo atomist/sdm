@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   K8s cleanup. [#817](https://github.com/atomist/sdm/issues/817)
 -   Default registration and push test for side effect. [#822](https://github.com/atomist/sdm/issues/822)
 -   Move packs to lib directory. [d4114bf](https://github.com/atomist/sdm/commit/d4114bf1a0fddaffd321a8c4ffae55ad54b991a8)
+-   Update TypeScript, fix compilation. [8890691](https://github.com/atomist/sdm/commit/88906919f6b739812e221ee4080780bfce515a9d)
 
 ### Removed
 
