@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-// tslint:disable:deprecation
-
-import {
-    AnyOptions,
-    Configuration,
-} from "@atomist/automation-client/lib/configuration";
+import { AnyOptions, Configuration } from "@atomist/automation-client/lib/configuration";
 import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
 import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
@@ -34,9 +29,7 @@ import { EnrichGoal } from "../goal/enrichGoal";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { TagGoalSet } from "../goal/tagGoalSet";
 import { RepoTargets } from "./RepoTargets";
-import {
-    GoalSigningConfiguration,
-} from "./SigningKeys";
+import { GoalSigningConfiguration } from "./SigningKeys";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -44,7 +37,6 @@ import {
  * also to facilitate testing.
  */
 export interface SoftwareDeliveryMachineOptions {
-
     /**
      * Object used to load projects
      */

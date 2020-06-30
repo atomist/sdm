@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-import {
-    EventHandler,
-    Value,
-} from "@atomist/automation-client/lib/decorators";
+import { EventHandler, Value } from "@atomist/automation-client/lib/decorators";
 import { automationClientInstance } from "@atomist/automation-client/lib/globals";
 import { subscription } from "@atomist/automation-client/lib/graph/graphQL";
-import {
-    EventFired,
-    HandleEvent,
-} from "@atomist/automation-client/lib/HandleEvent";
+import { EventFired, HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
 import { HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
-import {
-    HandlerResult,
-    Success,
-} from "@atomist/automation-client/lib/HandlerResult";
+import { HandlerResult, Success } from "@atomist/automation-client/lib/HandlerResult";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as os from "os";
 import { executeGoal } from "../../../../../api-helper/goal/executeGoal";
-import {
-    descriptionFromState,
-    updateGoal,
-} from "../../../../../api-helper/goal/storeGoals";
-import {
-    cancelableGoal,
-    isGoalCanceled,
-} from "../../../../../api-helper/listener/cancelGoals";
+import { descriptionFromState, updateGoal } from "../../../../../api-helper/goal/storeGoals";
+import { cancelableGoal, isGoalCanceled } from "../../../../../api-helper/listener/cancelGoals";
 import { LoggingProgressLog } from "../../../../../api-helper/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../../api-helper/log/WriteToAllProgressLog";
 import { resolveCredentialsPromise } from "../../../../../api-helper/machine/handlerRegistrations";
@@ -56,10 +41,7 @@ import { GoalScheduler } from "../../../../../api/goal/support/GoalScheduler";
 import { GoalExecutionListener } from "../../../../../api/listener/GoalStatusListener";
 import { SoftwareDeliveryMachineConfiguration } from "../../../../../api/machine/SoftwareDeliveryMachineOptions";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
-import {
-    OnAnyRequestedSdmGoal,
-    SdmGoalState,
-} from "../../../../../typings/types";
+import { OnAnyRequestedSdmGoal, SdmGoalState } from "../../../../../typings/types";
 import { shouldFulfill } from "../../../../delivery/goals/support/validateGoal";
 import {
     CacheEntry,
@@ -75,20 +57,21 @@ import { formatDuration } from "../../../../util/misc/time";
 /**
  * Handle an SDM request goal. Used for many implementation types.
  */
-@EventHandler("Fulfill a goal when it reaches 'requested' state",
-    subscription("OnAnyRequestedSdmGoal"))
+@EventHandler("Fulfill a goal when it reaches 'requested' state", subscription("OnAnyRequestedSdmGoal"))
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription> {
-
     @Value("") // empty path returns the entire configuration
     public configuration: SoftwareDeliveryMachineConfiguration;
 
-    constructor(private readonly implementationMapper: GoalImplementationMapper,
-                private readonly goalExecutionListeners: GoalExecutionListener[]) {
-    }
+    constructor(
+        private readonly implementationMapper: GoalImplementationMapper,
+        private readonly goalExecutionListeners: GoalExecutionListener[],
+    ) {}
 
     /* tslint:disable:cyclomatic-complexity */
-    public async handle(event: EventFired<OnAnyRequestedSdmGoal.Subscription>,
-                        ctx: HandlerContext): Promise<HandlerResult> {
+    public async handle(
+        event: EventFired<OnAnyRequestedSdmGoal.Subscription>,
+        ctx: HandlerContext,
+    ): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoalEvent;
 
         if (!shouldFulfill(sdmGoal)) {
@@ -103,25 +86,30 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
             return Success;
         }
 
-        if (sdmGoal.fulfillment.method === SdmGoalFulfillmentMethod.SideEffect &&
-            sdmGoal.fulfillment.registration !== this.configuration.name) {
-            logger.debug("Not fulfilling side-effected goal '%s' with method '%s/%s'",
-                sdmGoal.uniqueName, sdmGoal.fulfillment.method, sdmGoal.fulfillment.name);
+        if (
+            sdmGoal.fulfillment.method === SdmGoalFulfillmentMethod.SideEffect &&
+            sdmGoal.fulfillment.registration !== this.configuration.name
+        ) {
+            logger.debug(
+                "Not fulfilling side-effected goal '%s' with method '%s/%s'",
+                sdmGoal.uniqueName,
+                sdmGoal.fulfillment.method,
+                sdmGoal.fulfillment.name,
+            );
             return Success;
         } else if (sdmGoal.fulfillment.method === SdmGoalFulfillmentMethod.Other) {
             // fail goal with neither Sdm nor SideEffect fulfillment
-            await updateGoal(
-                ctx,
-                sdmGoal,
-                {
-                    state: SdmGoalState.failure,
-                    description: `No fulfillment for ${sdmGoal.uniqueName}`,
-                });
+            await updateGoal(ctx, sdmGoal, {
+                state: SdmGoalState.failure,
+                description: `No fulfillment for ${sdmGoal.uniqueName}`,
+            });
             return Success;
         }
 
         const id = this.configuration.sdm.repoRefResolver.repoRefFromSdmGoal(sdmGoal);
-        const credentials = await resolveCredentialsPromise(this.configuration.sdm.credentialsResolver.eventHandlerCredentials(ctx, id));
+        const credentials = await resolveCredentialsPromise(
+            this.configuration.sdm.credentialsResolver.eventHandlerCredentials(ctx, id),
+        );
         const addressChannels = addressChannelsFor(sdmGoal.push.repo, ctx);
         const preferences = this.configuration.sdm.preferenceStoreFactory(ctx);
 
@@ -131,11 +119,11 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const progressLog = new WriteToAllProgressLog(
             sdmGoal.name,
             new LoggingProgressLog(sdmGoal.name, "debug"),
-            await this.configuration.sdm.logFactory(ctx, sdmGoal));
+            await this.configuration.sdm.logFactory(ctx, sdmGoal),
+        );
 
         const goalInvocation: GoalInvocation = {
             configuration: this.configuration,
-            sdmGoal,
             goalEvent: sdmGoal,
             goal,
             progressLog,
@@ -163,13 +151,16 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
                 await updateGoal(ctx, sdmGoal, {
                     state: !!result && !!result.state ? result.state : SdmGoalState.in_process,
                     phase: !!result && !!result.phase ? result.phase : "scheduled",
-                    description: !!result && !!result.description ? result.description : descriptionFromState(goal, SdmGoalState.in_process, sdmGoal),
+                    description:
+                        !!result && !!result.description
+                            ? result.description
+                            : descriptionFromState(goal, SdmGoalState.in_process, sdmGoal),
                     url: progressLog.url,
                     externalUrls: !!result ? result.externalUrls : undefined,
                 });
             }
             return {
-                ...result as any,
+                ...(result as any),
                 // successfully handled event even if goal failed
                 code: 0,
             };
@@ -207,7 +198,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
                         ...implementation,
                         projectListeners: [...toArray(implementation.projectListeners || []), ...listeners],
                     },
-                    goalInvocation);
+                    goalInvocation,
+                );
                 const terminatingStates = [
                     SdmGoalState.canceled,
                     SdmGoalState.failure,
@@ -239,7 +231,10 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     /* tslint:enable:cyclomatic-complexity */
 }
 
-async function findGoalScheduler(gi: GoalInvocation, configuration: SoftwareDeliveryMachineConfiguration): Promise<GoalScheduler | undefined> {
+async function findGoalScheduler(
+    gi: GoalInvocation,
+    configuration: SoftwareDeliveryMachineConfiguration,
+): Promise<GoalScheduler | undefined> {
     let goalSchedulers: GoalScheduler[];
     if (!configuration.sdm.goalScheduler) {
         return undefined;
@@ -266,12 +261,17 @@ export async function reportStart(sdmGoal: SdmGoalEvent, progressLog: ProgressLo
     progressLog.write(`GoalSet: ${sdmGoal.goalSet} - ${sdmGoal.goalSetId}`);
     progressLog.write(`Host: ${os.hostname()}`);
     progressLog.write(
-        `SDM: ${automationClientInstance().configuration.name}:${automationClientInstance().configuration.version}`);
+        `SDM: ${automationClientInstance().configuration.name}:${automationClientInstance().configuration.version}`,
+    );
     progressLog.write("\\--");
     await progressLog.flush();
 }
 
-export async function reportEndAndClose(result: ExecuteGoalResult, start: number, progressLog: ProgressLog): Promise<void> {
+export async function reportEndAndClose(
+    result: ExecuteGoalResult,
+    start: number,
+    progressLog: ProgressLog,
+): Promise<void> {
     progressLog.write(`/--`);
     progressLog.write(`Result: ${serializeResult(result)}`);
     progressLog.write(`Duration: ${formatDuration(Date.now() - start)}`);

@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-// tslint:disable:deprecation
 // tslint:disable:max-file-line-count
 
 import { HandleCommand } from "@atomist/automation-client/lib/HandleCommand";
 import { HandleEvent } from "@atomist/automation-client/lib/HandleEvent";
-import {
-    ConfigurationAware,
-    HandlerContext,
-} from "@atomist/automation-client/lib/HandlerContext";
+import { ConfigurationAware, HandlerContext } from "@atomist/automation-client/lib/HandlerContext";
 import { Success } from "@atomist/automation-client/lib/HandlerResult";
 import {
     declareMappedParameter,
@@ -51,20 +47,11 @@ import {
 import { chainEditors } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
 import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
-import {
-    isProject,
-    Project,
-} from "@atomist/automation-client/lib/project/Project";
+import { isProject, Project } from "@atomist/automation-client/lib/project/Project";
 import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
-import {
-    Maker,
-    toFactory,
-} from "@atomist/automation-client/lib/util/constructionUtils";
+import { Maker, toFactory } from "@atomist/automation-client/lib/util/constructionUtils";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import {
-    codeBlock,
-    italic,
-} from "@atomist/slack-messages";
+import { codeBlock, italic } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
@@ -73,20 +60,11 @@ import { NoPreferenceStore } from "../../api/context/preferenceStore";
 import { SdmContext } from "../../api/context/SdmContext";
 import { createSkillContext } from "../../api/context/skillContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import {
-    isValidationError,
-    RepoTargets,
-} from "../../api/machine/RepoTargets";
+import { isValidationError, RepoTargets } from "../../api/machine/RepoTargets";
 import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { ProjectPredicate } from "../../api/mapping/PushTest";
-import {
-    CodeInspectionRegistration,
-    CodeInspectionResult,
-} from "../../api/registration/CodeInspectionRegistration";
-import {
-    CodeTransform,
-    CodeTransformOrTransforms,
-} from "../../api/registration/CodeTransform";
+import { CodeInspectionRegistration, CodeInspectionResult } from "../../api/registration/CodeInspectionRegistration";
+import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CommandRegistration } from "../../api/registration/CommandRegistration";
@@ -102,30 +80,24 @@ import {
     ValueDeclaration,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
-import {
-    generatorCommand,
-    isSeedDrivenGeneratorParameters,
-} from "../command/generator/generatorCommand";
+import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { chattyDryRunAwareEditor } from "../command/transform/chattyDryRunAwareEditor";
 import { LoggingProgressLog } from "../log/LoggingProgressLog";
 import { formatDate } from "../misc/dateFormat";
 import { createJob } from "../misc/job/createJob";
 import { slackErrorMessage } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
-import {
-    isRepoTargetingParameters,
-    RepoTargetingParameters,
-} from "./RepoTargetingParameters";
-import {
-    MachineOrMachineOptions,
-    toMachineOptions,
-} from "./toMachineOptions";
+import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
+import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
 export const TransformTag = "transform";
 
-export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
+export function codeTransformRegistrationToCommand(
+    sdm: MachineOrMachineOptions,
+    ctr: CodeTransformRegistration<any>,
+): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
     const mo = toMachineOptions(sdm);
     addDryRunParameters(ctr);
@@ -133,11 +105,12 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
-        ctr.targets || mo.targets || GitHubRepoTargets);
+        ctr.targets || mo.targets || GitHubRepoTargets,
+    );
     const description = ctr.description || ctr.name;
     const asCommand: CommandHandlerRegistration = {
         description,
-        ...ctr as CommandRegistration<any>,
+        ...(ctr as CommandRegistration<any>),
         listener: async ci => {
             ci.credentials = await resolveCredentialsPromise(ci.credentials);
             const targets = (ci.parameters as RepoTargetingParameters).targets;
@@ -149,18 +122,16 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                         `Invalid parameters to code transform ${italic(ci.commandName)}:
 
 ${codeBlock(vr.message)}`,
-                        ci.context));
+                        ci.context,
+                    ),
+                );
             }
-            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
-                () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
-                ctr.repoFinder || toMachineOptions(sdm).repoFinder;
-            const repoLoader: RepoLoader = !!ctr.repoLoader ?
-                ctr.repoLoader(ci.parameters) :
-                projectLoaderRepoLoader(
-                    mo.projectLoader,
-                    ci.credentials,
-                    false,
-                    ci.context);
+            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef
+                ? () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef])
+                : ctr.repoFinder || toMachineOptions(sdm).repoFinder;
+            const repoLoader: RepoLoader = !!ctr.repoLoader
+                ? ctr.repoLoader(ci.parameters)
+                : projectLoaderRepoLoader(mo.projectLoader, ci.credentials, false, ci.context);
 
             const concurrency = {
                 maxConcurrent: 2, // TODO make maxConcurrent globally configurable
@@ -173,7 +144,6 @@ ${codeBlock(vr.message)}`,
                 const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
 
                 if (ids.length > 1 || !!requiresJob) {
-
                     const params: any = {
                         ...ci.parameters,
                     };
@@ -197,34 +167,42 @@ ${codeBlock(vr.message)}`,
                                 },
                                 "job.required": false,
                             })),
-                            description: _.get(ci.parameters, "job.description")
-                                || `Running code transform ${italic(ci.commandName)} on ${ids.length} ${
-                                ids.length === 1 ? "repository" : "repositories"}`,
+                            description:
+                                _.get(ci.parameters, "job.description") ||
+                                `Running code transform ${italic(ci.commandName)} on ${ids.length} ${
+                                    ids.length === 1 ? "repository" : "repositories"
+                                }`,
                             concurrentTasks: concurrency.maxConcurrent,
                         },
-                        ci.context);
-
+                        ci.context,
+                    );
                 } else {
                     const editMode = toEditModeOrFactory(ctr, ci);
                     const result = await editOne<any>(
                         ci.context,
                         ci.credentials,
-                        chattyDryRunAwareEditor(ctr, toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest)),
+                        chattyDryRunAwareEditor(
+                            ctr,
+                            toScalarProjectEditor(ctr.transform, toMachineOptions(sdm), ctr.projectTest),
+                        ),
                         editMode,
                         ids[0],
                         ci.parameters,
-                        repoLoader);
+                        repoLoader,
+                    );
                     if (!!ctr.onTransformResults) {
-                        await ctr.onTransformResults(
-                            [result],
-                            { ...ci, progressLog: new LoggingProgressLog(ctr.name, "debug") },
-                        );
+                        await ctr.onTransformResults([result], {
+                            ...ci,
+                            progressLog: new LoggingProgressLog(ctr.name, "debug"),
+                        });
                     } else if (!!result && !!result.error) {
                         const error = result.error;
                         return ci.addressChannels(
                             slackErrorMessage(
                                 `Code Transform`,
-                                `Code transform ${italic(ci.commandName)} failed${!!error.message ? ":\n\n" + codeBlock(error.message) : "."}`,
+                                `Code transform ${italic(ci.commandName)} failed${
+                                    !!error.message ? ":\n\n" + codeBlock(error.message) : "."
+                                }`,
                                 ci.context,
                             ),
                         );
@@ -236,7 +214,9 @@ ${codeBlock(vr.message)}`,
                 return ci.addressChannels(
                     slackErrorMessage(
                         `Code Transform`,
-                        `Code transform ${italic(ci.commandName)} failed${!!e.message ? ":\n\n" + codeBlock(e.message) : "."}`,
+                        `Code transform ${italic(ci.commandName)} failed${
+                            !!e.message ? ":\n\n" + codeBlock(e.message) : "."
+                        }`,
                         ci.context,
                     ),
                 );
@@ -246,18 +226,22 @@ ${codeBlock(vr.message)}`,
     return commandHandlerRegistrationToCommand(sdm, asCommand);
 }
 
-export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
+export function codeInspectionRegistrationToCommand<R>(
+    sdm: MachineOrMachineOptions,
+    cir: CodeInspectionRegistration<R, any>,
+): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     const mo = toMachineOptions(sdm);
     addJobParameters(cir);
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || mo.targets || GitHubRepoTargets);
+        cir.targets || mo.targets || GitHubRepoTargets,
+    );
     const description = cir.description || cir.name;
     const asCommand: CommandHandlerRegistration = {
         description,
-        ...cir as CommandRegistration<any>,
+        ...(cir as CommandRegistration<any>),
         listener: async ci => {
             ci.credentials = await resolveCredentialsPromise(ci.credentials);
             const targets = (ci.parameters as RepoTargetingParameters).targets;
@@ -269,7 +253,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                         `Invalid parameters to code inspection ${italic(ci.commandName)}:
 
 ${codeBlock(vr.message)}`,
-                        ci.context));
+                        ci.context,
+                    ),
+                );
             }
             const action: (p: Project, params: any) => Promise<CodeInspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
@@ -280,16 +266,17 @@ ${codeBlock(vr.message)}`,
                     result: await cir.inspection(p, { ...ci, progressLog: new LoggingProgressLog(cir.name, "debug") }),
                 };
             };
-            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
-                () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
-                cir.repoFinder || toMachineOptions(sdm).repoFinder;
-            const repoLoader: RepoLoader = !!cir.repoLoader ?
-                cir.repoLoader(ci.parameters) :
-                projectLoaderRepoLoader(
-                    mo.projectLoader,
-                    (ci.parameters as RepoTargetingParameters).targets.credentials,
-                    true,
-                    ci.context);
+            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef
+                ? () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef])
+                : cir.repoFinder || toMachineOptions(sdm).repoFinder;
+            const repoLoader: RepoLoader = !!cir.repoLoader
+                ? cir.repoLoader(ci.parameters)
+                : projectLoaderRepoLoader(
+                      mo.projectLoader,
+                      (ci.parameters as RepoTargetingParameters).targets.credentials,
+                      true,
+                      ci.context,
+                  );
 
             const concurrency = {
                 maxConcurrent: 2, // TODO make maxConcurrent globally configurable
@@ -301,7 +288,6 @@ ${codeBlock(vr.message)}`,
                 const ids = await relevantRepos(ci.context, repoFinder, andFilter(targets.test, cir.repoFilter));
                 const requiresJob = _.get(ci.parameters, "job.required", concurrency.requiresJob);
                 if (ids.length > 1 || !!requiresJob) {
-
                     const params: any = {
                         ...ci.parameters,
                     };
@@ -325,10 +311,12 @@ ${codeBlock(vr.message)}`,
                                 },
                                 "job.required": false,
                             })),
-                            description: `Running code inspection ${italic(ci.commandName)} on ${ids.length} repositories`,
+                            description: `Running code inspection ${italic(ci.commandName)} on ${
+                                ids.length
+                            } repositories`,
                         },
-                        ci.context);
-
+                        ci.context,
+                    );
                 } else {
                     const project = await repoLoader(ids[0]);
                     const result = await action(project, ci.parameters);
@@ -371,49 +359,46 @@ function tagWith(e: Partial<CommandDetails>, tag: string): void {
     }
 }
 
-export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOptions, e: GeneratorRegistration<P>): Maker<HandleCommand<P>> {
+export function generatorRegistrationToCommand<P = any>(
+    sdm: MachineOrMachineOptions,
+    e: GeneratorRegistration<P>,
+): Maker<HandleCommand<P>> {
     tagWith(e, GeneratorTag);
     if (!e.paramsMaker) {
-        e.paramsMaker = NoParameters as any as Maker<P>;
+        e.paramsMaker = (NoParameters as any) as Maker<P>;
     }
     if (e.startingPoint && isProject(e.startingPoint) && !e.startingPoint.id) {
         // TODO should probably be handled in automation-client
         e.startingPoint.id = new GitHubRepoRef("ignore", "this");
     }
     addParametersDefinedInBuilder(e);
-    return () => generatorCommand(
-        sdm,
-        () => toScalarProjectEditor(e.transform, toMachineOptions(sdm)),
-        e.name,
-        e.paramsMaker,
-        e.fallbackTarget || GitHubRepoCreationParameters,
-        e.startingPoint,
-        e as any, // required because we redefine the afterAction
-        e,
-    );
+    return () =>
+        generatorCommand(
+            sdm,
+            () => toScalarProjectEditor(e.transform, toMachineOptions(sdm)),
+            e.name,
+            e.paramsMaker,
+            e.fallbackTarget || GitHubRepoCreationParameters,
+            e.startingPoint,
+            e as any, // required because we redefine the afterAction
+            e,
+        );
 }
 
-export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: MachineOrMachineOptions,
-                                                                      c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
-    return () => createCommand(
-        sdm,
-        toOnCommand(c),
-        c.name,
-        c.paramsMaker,
-        c,
-    );
+export function commandHandlerRegistrationToCommand<P = NoParameters>(
+    sdm: MachineOrMachineOptions,
+    c: CommandHandlerRegistration<P>,
+): Maker<HandleCommand<P>> {
+    return () => createCommand(sdm, toOnCommand(c), c.name, c.paramsMaker, c);
 }
 
-export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e: EventHandlerRegistration<any, any>): Maker<HandleEvent> {
+export function eventHandlerRegistrationToEvent(
+    sdm: MachineOrMachineOptions,
+    e: EventHandlerRegistration<any, any>,
+): Maker<HandleEvent> {
     addParametersDefinedInBuilder(e);
-    return () => eventHandlerFrom(
-        e.listener,
-        e.paramsMaker || NoParameters,
-        e.subscription,
-        e.name,
-        e.description,
-        e.tags,
-    );
+    return () =>
+        eventHandlerFrom(e.listener, e.paramsMaker || NoParameters, e.subscription, e.name, e.description, e.tags);
 }
 
 export class CommandListenerExecutionInterruptError extends Error {
@@ -447,12 +432,14 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
     };
 }
 
-export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
-                                               context: HandlerContext,
-                                               parameters: P,
-                                               sdm: SoftwareDeliveryMachineOptions): CommandListenerInvocation {
+export function toCommandListenerInvocation<P>(
+    c: CommandRegistration<P>,
+    context: HandlerContext,
+    parameters: P,
+    sdm: SoftwareDeliveryMachineOptions,
+): CommandListenerInvocation {
     // It may already be there
-    let credentials = !!context ? (context as any as SdmContext).credentials : undefined;
+    let credentials = !!context ? ((context as any) as SdmContext).credentials : undefined;
     let ids: RemoteRepoRef[];
     if (isSeedDrivenGeneratorParameters(parameters)) {
         credentials = parameters.target.credentials;
@@ -478,7 +465,7 @@ export function toCommandListenerInvocation<P>(c: CommandRegistration<P>,
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
     const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt;
     const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
-    const configuration = ((context || {}) as any as ConfigurationAware).configuration;
+    const configuration = (((context || {}) as any) as ConfigurationAware).configuration;
     return {
         commandName: c.name,
         context,
@@ -513,7 +500,7 @@ export const MsgIdParameter: NamedParameter = {
  * Add the dryRun parameter into the list of parameters
  */
 function addDryRunParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
-    const params = toParametersListing(c.parameters || {} as any);
+    const params = toParametersListing(c.parameters || ({} as any));
     params.parameters.push(DryRunParameter, MsgIdParameter);
     c.parameters = params;
 }
@@ -543,7 +530,7 @@ export const JobRequiredParameter: NamedParameter = {
  * Add the job parameter into the list of parameters
  */
 function addJobParameters<PARAMS>(c: CommandRegistration<PARAMS>): void {
-    const params = toParametersListing(c.parameters || {} as any);
+    const params = toParametersListing(c.parameters || ({} as any));
     params.parameters.push(JobNameParameter, JobDescriptionParameter, JobRequiredParameter);
     c.parameters = params;
 }
@@ -564,11 +551,12 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>): 
                 declareParameter(paramsInstance, p.name, p);
             });
             paramListing.mappedParameters.forEach(mp =>
-                declareMappedParameter(paramsInstance, mp.name, mp.uri, mp.required));
-            paramListing.secrets.forEach(s =>
-                declareSecret(paramsInstance, s.name, s.uri));
+                declareMappedParameter(paramsInstance, mp.name, mp.uri, mp.required),
+            );
+            paramListing.secrets.forEach(s => declareSecret(paramsInstance, s.name, s.uri));
             paramListing.values.forEach(v =>
-                declareValue(paramsInstance, v.name, { path: v.path, required: v.required, type: v.type }));
+                declareValue(paramsInstance, v.name, { path: v.path, required: v.required, type: v.type }),
+            );
 
             return paramsInstance;
         };
@@ -599,13 +587,9 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
         const value = p[name];
         if (isMappedParameterOrSecretDeclaration(value)) {
             switch (value.declarationType) {
-                // tslint:disable-next-line:deprecation
-                case DeclarationType.mapped:
                 case DeclarationType.Mapped:
                     builder.addMappedParameters({ name, uri: value.uri, required: value.required });
                     break;
-                // tslint:disable-next-line:deprecation
-                case DeclarationType.secret:
                 case DeclarationType.Secret:
                     builder.addSecrets({ name, uri: value.uri });
                     break;
@@ -613,7 +597,7 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
         } else if (isValueDeclaration(value)) {
             builder.addValues({ name, path: value.path, required: value.required, type: value.type });
         } else {
-            builder.addParameters({ name, ...(value) });
+            builder.addParameters({ name, ...value });
         }
     }
     return builder;
@@ -625,18 +609,20 @@ export function toParametersListing(p: ParametersDefinition<any>): ParametersLis
  * @param {ProjectPredicate} projectPredicate
  * @return {ProjectEditor<PARAMS>}
  */
-export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>,
-                                              sdm: SoftwareDeliveryMachineOptions,
-                                              projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
-    const unguarded = Array.isArray(ctot) ?
-        chainEditors(...ctot.map(c => toProjectEditor(c, sdm))) :
-        toProjectEditor(ctot, sdm);
+export function toScalarProjectEditor<PARAMS>(
+    ctot: CodeTransformOrTransforms<PARAMS>,
+    sdm: SoftwareDeliveryMachineOptions,
+    projectPredicate?: ProjectPredicate,
+): ProjectEditor<PARAMS> {
+    const unguarded = Array.isArray(ctot)
+        ? chainEditors(...ctot.map(c => toProjectEditor(c, sdm)))
+        : toProjectEditor(ctot, sdm);
     if (!!projectPredicate) {
         // Filter out this project if it doesn't match the predicate
         return async (p, context, params) => {
-            return (await projectPredicate(p)) ?
-                unguarded(p, context, params) :
-                Promise.resolve({ success: true, edited: false, target: p });
+            return (await projectPredicate(p))
+                ? unguarded(p, context, params)
+                : Promise.resolve({ success: true, edited: false, target: p });
         };
     }
     return unguarded;
@@ -644,17 +630,19 @@ export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PA
 
 // Convert to an old style, automation-client, ProjectEditor to allow
 // underlying code to work for now
-function toProjectEditor<P>(ct: CodeTransform<P>,
-                            sdm: SoftwareDeliveryMachineOptions): ProjectEditor<P> {
+function toProjectEditor<P>(ct: CodeTransform<P>, sdm: SoftwareDeliveryMachineOptions): ProjectEditor<P> {
     return async (p, ctx, params) => {
         const ci = toCommandListenerInvocation(p, ctx, params, toMachineOptions(sdm));
         ci.credentials = await resolveCredentialsPromise(ci.credentials);
         // Mix in handler context for old style callers
-        const n = await ct(p, {
+        const n = await ct(
+            p,
+            {
                 ...ctx,
                 ...ci,
             } as any,
-            params);
+            params,
+        );
         if (n === undefined) {
             // The transform returned void
             return { target: p, edited: await isDirty(p), success: true };
@@ -691,40 +679,41 @@ function isGitProject(p: Project): p is GitProject {
  * @param targets targets parameters to set if necessary
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
-export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
+export function toRepoTargetingParametersMaker<PARAMS>(
+    paramsMaker: Maker<PARAMS>,
+    targets: Maker<RepoTargets>,
+): Maker<RepoTargetingParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
-    return isRepoTargetingParameters(sampleParams) ?
-        paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
-        () => {
-            const rawParms: PARAMS = toFactory(paramsMaker)();
-            const allParms = rawParms as RepoTargetingParameters & PARAMS;
-            const targetsInstance: RepoTargets = toFactory(targets)();
-            allParms.targets = targetsInstance;
-            return allParms;
-        };
+    return isRepoTargetingParameters(sampleParams)
+        ? (paramsMaker as Maker<RepoTargetingParameters & PARAMS>)
+        : () => {
+              const rawParms: PARAMS = toFactory(paramsMaker)();
+              const allParms = rawParms as RepoTargetingParameters & PARAMS;
+              const targetsInstance: RepoTargets = toFactory(targets)();
+              allParms.targets = targetsInstance;
+              return allParms;
+          };
 }
 
-function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>,
-                                ci: CommandListenerInvocation<P>): any {
+function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandListenerInvocation<P>): any {
     const description = ctr.description || ctr.name;
     if (!!ctr.transformPresentation) {
-        return (p: Project) => ctr.transformPresentation({
-            ...ci,
-            progressLog: new LoggingProgressLog(ctr.name, "debug"),
-        }, p);
+        return (p: Project) =>
+            ctr.transformPresentation(
+                {
+                    ...ci,
+                    progressLog: new LoggingProgressLog(ctr.name, "debug"),
+                },
+                p,
+            );
     }
     // Get EditMode from parameters if possible
     if (isTransformModeSuggestion(ci.parameters)) {
         const tms = ci.parameters;
-        return new PullRequest(
-            tms.desiredBranchName,
-            tms.desiredPullRequestTitle || description);
+        return new PullRequest(tms.desiredBranchName, tms.desiredPullRequestTitle || description);
     }
     // Default it if not supplied
-    return new PullRequest(
-        `transform-${gitBranchCompatible(ctr.name)}-${formatDate()}`,
-        description);
+    return new PullRequest(`transform-${gitBranchCompatible(ctr.name)}-${formatDate()}`, description);
 }
 
 /**
@@ -765,8 +754,9 @@ export function gitBranchCompatible(name: string): string {
     return branchName;
 }
 
-export async function resolveCredentialsPromise(creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials)
-    : Promise<ProjectOperationCredentials> {
+export async function resolveCredentialsPromise(
+    creds: Promise<ProjectOperationCredentials> | ProjectOperationCredentials,
+): Promise<ProjectOperationCredentials> {
     if (creds instanceof Promise) {
         try {
             return await creds;

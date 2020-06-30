@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,18 @@ import {
 } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as fs from "fs-extra";
-import {
-    ProjectLoader,
-    ProjectLoadingParameters,
-    WithLoadedProject,
-} from "../../spi/project/ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
  * Non caching ProjectLoader that uses a separate clone for each project accessed
  */
 export const CloningProjectLoader: ProjectLoader = {
     async doWithProject(coords: ProjectLoadingParameters, action: WithLoadedProject<any>): Promise<any> {
-        // coords.depth is deprecated; populate it for backwards compatibility
-        // tslint:disable-next-line:deprecation
-        const cloneOptions = coords.cloneOptions ? coords.cloneOptions : { depth: coords.depth };
+        const cloneOptions = coords.cloneOptions ? coords.cloneOptions : {};
         // If we get a cloneDir we need to wrap the DirectoryManager to return the directory
-        const directoryManager = !!coords.cloneDir ? new ExplicitDirectoryManager(coords.cloneDir) : DefaultDirectoryManager;
+        const directoryManager = !!coords.cloneDir
+            ? new ExplicitDirectoryManager(coords.cloneDir)
+            : DefaultDirectoryManager;
         const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, cloneOptions, directoryManager);
         if (p.id.sha === "HEAD") {
             const gs = await p.gitStatus();
@@ -56,11 +52,14 @@ export const CloningProjectLoader: ProjectLoader = {
 };
 
 class ExplicitDirectoryManager implements DirectoryManager {
+    constructor(private readonly cloneDir: string) {}
 
-    constructor(private readonly cloneDir: string) {
-    }
-
-    public async directoryFor(owner: string, repo: string, branch: string, opts: CloneOptions): Promise<CloneDirectoryInfo> {
+    public async directoryFor(
+        owner: string,
+        repo: string,
+        branch: string,
+        opts: CloneOptions,
+    ): Promise<CloneDirectoryInfo> {
         await fs.emptyDir(this.cloneDir);
         return {
             path: this.cloneDir,

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,37 +21,32 @@ import { whenPushSatisfies } from "../../../lib/api/dsl/goalDsl";
 import { Goal } from "../../../lib/api/goal/Goal";
 import { Goals } from "../../../lib/api/goal/Goals";
 import { PushMapping } from "../../../lib/api/mapping/PushMapping";
-import {
-    FalsePushTest,
-    TruePushTest,
-} from "../mapping/support/pushTestUtils.test";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
     mapping: async () => "frog",
 };
 
-const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
-    uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred",
-}));
+const SomeGoalSet = new Goals(
+    "SomeGoalSet",
+    new Goal({
+        uniqueName: "Fred",
+        environment: "0-code/",
+    }),
+);
 
 const NoGoals = new Goals("No goals");
 
 describe("given", () => {
-
     it("should combine true with one", async () => {
-        const pm: PushMapping<any> = given(TruePushTest)
-            .itMeans("frogs coming")
-            .then(FrogPushMapping);
+        const pm: PushMapping<any> = given(TruePushTest).itMeans("frogs coming").then(FrogPushMapping);
         const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, "frog");
     });
 
     it("should combine false with one", async () => {
-        const pm: PushMapping<any> = given(FalsePushTest)
-            .itMeans("no frogs coming")
-            .then(FrogPushMapping);
+        const pm: PushMapping<any> = given(FalsePushTest).itMeans("no frogs coming").then(FrogPushMapping);
         const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, undefined);
     });
@@ -65,9 +60,7 @@ describe("given", () => {
     });
 
     it("should allow literal", async () => {
-        const pm: PushMapping<string> = given<string>(TruePushTest)
-            .itMeans("frogs coming")
-            .set("frogs");
+        const pm: PushMapping<string> = given<string>(TruePushTest).itMeans("frogs coming").set("frogs");
         const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, "frogs");
     });
@@ -75,9 +68,7 @@ describe("given", () => {
     it("nest with when", async () => {
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
             .itMeans("no frogs coming")
-            .then(
-                whenPushSatisfies(TruePushTest).itMeans("http").setGoals(SomeGoalSet),
-            );
+            .then(whenPushSatisfies(TruePushTest).itMeans("http").setGoals(SomeGoalSet));
         const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, SomeGoalSet);
     });
@@ -97,10 +88,12 @@ describe("given", () => {
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
             .itMeans("no frogs coming")
             .then(
-                given<Goals>(TruePushTest).itMeans("case1").then(
-                    whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
-                    whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
-                ),
+                given<Goals>(TruePushTest)
+                    .itMeans("case1")
+                    .then(
+                        whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
+                        whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
+                    ),
             );
         const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, SomeGoalSet);
@@ -109,13 +102,16 @@ describe("given", () => {
     it("nested given with variable", async () => {
         let count = 0;
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
-            .init(() => count = 0)
+            .init(() => (count = 0))
             .itMeans("no frogs coming")
             .then(
-                given<Goals>(TruePushTest).itMeans("case1")
+                given<Goals>(TruePushTest)
+                    .itMeans("case1")
                     .compute(() => count++)
                     .then(
-                        whenPushSatisfies(() => count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
+                        whenPushSatisfies(() => count > 0, FalsePushTest)
+                            .itMeans("nope")
+                            .setGoals(NoGoals),
                         whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
                     ),
             );

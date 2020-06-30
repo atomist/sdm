@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    Parameter,
-    Parameters,
-} from "@atomist/automation-client/lib/decorators";
+import { Parameter, Parameters } from "@atomist/automation-client/lib/decorators";
 import { HandlerResult } from "@atomist/automation-client/lib/HandlerResult";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
@@ -32,12 +29,12 @@ import { syncApplication } from "../sync/application";
 
 @Parameters()
 export class KubernetesUndeployParameters {
-
     @Parameter({
         displayName: "Name",
         description: "name of resources to remove",
         pattern: /^[a-z](?:[-a-z0-9]*[a-z0-9])?$/,
-        validInput: "a valid Kubernetes resource name, beginning with a lowercase letter, ending with a lowercase" +
+        validInput:
+            "a valid Kubernetes resource name, beginning with a lowercase letter, ending with a lowercase" +
             "letter or number, and containing only lowercase letters, numbers, and dashes (-)",
         minLength: 1,
         maxLength: 63,
@@ -49,14 +46,14 @@ export class KubernetesUndeployParameters {
         displayName: "Namespace",
         description: "namespace of resources to remove",
         pattern: /^[a-z](?:[-a-z0-9]*[a-z0-9])?$/,
-        validInput: "a valid Kubernetes namespace, beginning with a lowercase letter, ending with a lowercase" +
+        validInput:
+            "a valid Kubernetes namespace, beginning with a lowercase letter, ending with a lowercase" +
             "letter or number, and containing only lowercase letters, numbers, and dashes (-)",
         minLength: 1,
         maxLength: 63,
         required: false,
     })
     public ns: string = K8sDefaultNamespace;
-
 }
 
 /**

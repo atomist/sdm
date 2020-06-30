@@ -21,10 +21,7 @@ import { metadata } from "../../api-helper/misc/extensionPack";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { isInLocalMode } from "../../core/machine/modes";
 import { SdmGoalState } from "../../typings/types";
-import {
-    cancelGoalSetsCommand,
-    listPendingGoalSetsCommand,
-} from "./cancelGoals";
+import { cancelGoalSetsCommand, listPendingGoalSetsCommand } from "./cancelGoals";
 import { manageGoalSetsTrigger } from "./manageGoalSets";
 import { resetGoalsCommand } from "./resetGoals";
 import { setGoalStateCommand } from "./setGoalState";
@@ -66,9 +63,13 @@ export function goalStateSupport(options?: GoalStateOptions): ExtensionPack {
                 sdm.addCommand(cancelGoalSetsCommand(sdm));
                 sdm.addCommand(listPendingGoalSetsCommand(sdm));
 
-                if ((cluster.isMaster || !_.get(sdm.configuration, "cluster.enabled")) &&
+                if (
+                    (cluster.isMaster || !_.get(sdm.configuration, "cluster.enabled")) &&
                     !process.env.ATOMIST_ISOLATED_GOAL &&
-                    !!options && !!options.cancellation && !!options.cancellation.enabled) {
+                    !!options &&
+                    !!options.cancellation &&
+                    !!options.cancellation.enabled
+                ) {
                     logger.debug(`Timeout based goal cancellation enabled for this SDM`);
                     sdm.addTriggeredListener({
                         trigger: { interval: 1000 * 30 },
@@ -78,11 +79,4 @@ export function goalStateSupport(options?: GoalStateOptions): ExtensionPack {
             }
         },
     };
-}
-
-/**
- * @deprecated use goalStateSupport
- */
-export function goalState(): ExtensionPack {
-    return goalStateSupport();
 }

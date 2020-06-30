@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,13 @@
 import { Success } from "@atomist/automation-client/lib/HandlerResult";
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import {
-    executeGoal,
-    prepareGoalInvocation,
-} from "../../../lib/api-helper/goal/executeGoal";
+import { executeGoal, prepareGoalInvocation } from "../../../lib/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../lib/api-helper/log/EphemeralProgressLog";
 import { lastLinesLogInterpreter } from "../../../lib/api-helper/log/logInterpreters";
 import { fakeContext } from "../../../lib/api-helper/testsupport/fakeContext";
 import { SingleProjectLoader } from "../../../lib/api-helper/testsupport/SingleProjectLoader";
 import { Goal } from "../../../lib/api/goal/Goal";
-import {
-    GoalInvocation,
-    GoalProjectListenerRegistration,
-} from "../../../lib/api/goal/GoalInvocation";
+import { GoalInvocation, GoalProjectListenerRegistration } from "../../../lib/api/goal/GoalInvocation";
 import { NoProgressReport } from "../../../lib/api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../../lib/api/goal/SdmGoalEvent";
 import { IndependentOfEnvironment } from "../../../lib/api/goal/support/environment";
@@ -44,7 +38,6 @@ const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
 const fakeGoal = new Goal({
     uniqueName: "HelloWorld",
     environment: IndependentOfEnvironment,
-    orderedName: "0-yo",
 });
 
 const fakePush = {
@@ -59,7 +52,7 @@ const fakePush = {
     },
 };
 
-const fakeSdmGoal = {
+const fakeSdmGoal = ({
     name: "test",
     fulfillment: { name: "HelloWorld" },
     environment: "0-code",
@@ -69,12 +62,11 @@ const fakeSdmGoal = {
         providerId: fakePush.repo.org.provider.providerId,
     },
     push: fakePush,
-} as any as SdmGoalEvent;
+} as any) as SdmGoalEvent;
 
 const fakeCredentials = { token: "NOT-A-TOKEN" };
 
 describe("executeGoal", () => {
-
     before(() => {
         (global as any).__runningAutomationClient = {
             configuration: {
@@ -92,52 +84,54 @@ describe("executeGoal", () => {
     it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
-        createEphemeralProgressLog(fakeContext(),
-            { name: "test" } as any).then(progressLog => {
-            const fakeRWLC = {
-                context: fakeContext(),
-                progressLog,
-                credentials: fakeCredentials,
-                goal: fakeGoal,
-                goalEvent: fakeSdmGoal,
-                configuration: {
-                    sdm: {
-                        projectLoader,
-                    },
-                },
-            } as any as GoalInvocation;
-
-            return executeGoal({ projectLoader, goalExecutionListeners: [] },
-                {
-                    implementationName: "test",
-                    goalExecutor: helloWorldGoalExecutor,
-                    logInterpreter: lastLinesLogInterpreter("hi"),
-                    pushTest: AnyPush,
-                    projectListeners: [],
-                    progressReporter: NoProgressReport,
+        createEphemeralProgressLog(fakeContext(), { name: "test" } as any)
+            .then(progressLog => {
+                const fakeRWLC = ({
+                    context: fakeContext(),
+                    progressLog,
+                    credentials: fakeCredentials,
                     goal: fakeGoal,
-                },
-                fakeRWLC)
-                .then(async result => {
+                    goalEvent: fakeSdmGoal,
+                    configuration: {
+                        sdm: {
+                            projectLoader,
+                        },
+                    },
+                } as any) as GoalInvocation;
+
+                return executeGoal(
+                    { projectLoader, goalExecutionListeners: [] },
+                    {
+                        implementationName: "test",
+                        goalExecutor: helloWorldGoalExecutor,
+                        logInterpreter: lastLinesLogInterpreter("hi"),
+                        pushTest: AnyPush,
+                        projectListeners: [],
+                        progressReporter: NoProgressReport,
+                        goal: fakeGoal,
+                    },
+                    fakeRWLC,
+                ).then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
                     assert.equal(result.code, 0, result.message);
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 });
-        }).then(done, done);
+            })
+            .then(done, done);
     }).timeout(40000);
 
     describe("prepareGoalInvocation", () => {
-
         it("should wrap projectLoader and in invoke pre and post hooks", async () => {
             const projectLoader = new SingleProjectLoader(InMemoryProject.of());
-            const fakeRWLC = {
+            const fakeRWLC = ({
                 context: fakeContext(),
                 credentials: fakeCredentials,
                 goal: fakeGoal,
                 goalEvent: fakeSdmGoal,
                 progressLog: {
-                    write: () => { /** empty */
+                    write: () => {
+                        /** empty */
                     },
                 },
                 configuration: {
@@ -145,7 +139,7 @@ describe("executeGoal", () => {
                         projectLoader,
                     },
                 },
-            } as any as GoalInvocation;
+            } as any) as GoalInvocation;
 
             let count = 0;
             const listener: GoalProjectListenerRegistration = {
@@ -169,7 +163,5 @@ describe("executeGoal", () => {
             assert.equal(count, 4);
             assert(invoked);
         });
-
     });
-
 });

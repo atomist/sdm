@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    Configuration,
-    ConfigurationPostProcessor,
-} from "@atomist/automation-client/lib/configuration";
+import { Configuration, ConfigurationPostProcessor } from "@atomist/automation-client/lib/configuration";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import * as _ from "lodash";
 import { SdmContext } from "../../api/context/SdmContext";
 import { GoalContribution } from "../../api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../api/dsl/goalDsl";
 import { Goal } from "../../api/goal/Goal";
-import {
-    goals,
-    Goals,
-} from "../../api/goal/Goals";
+import { goals, Goals } from "../../api/goal/Goals";
 import { GoalWithFulfillment } from "../../api/goal/GoalWithFulfillment";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
@@ -36,10 +30,7 @@ import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { allSatisfied } from "../../api/mapping/support/pushTestUtils";
 import { toArray } from "../util/misc/array";
-import {
-    ConfigureOptions,
-    configureSdm,
-} from "./configureSdm";
+import { ConfigureOptions, configureSdm } from "./configureSdm";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./LocalSoftwareDeliveryMachineOptions";
 import { createSoftwareDeliveryMachine } from "./machineFactory";
 
@@ -47,7 +38,6 @@ import { createSoftwareDeliveryMachine } from "./machineFactory";
  * Data structure to configure goal contributions
  */
 export interface GoalStructure {
-
     /**
      * Optional push tests to determine when to schedule provided goals
      *
@@ -99,11 +89,6 @@ export type GoalData = Record<string, GoalStructure>;
 export type DeliveryGoals = Record<string, Goal | GoalWithFulfillment>;
 
 /**
- * @deprecated use DeliveryGoals
- */
-export type AllGoals = DeliveryGoals;
-
-/**
  * Type to create goal instances for this SDM
  */
 export type GoalCreator<G extends DeliveryGoals> = (sdm: SoftwareDeliveryMachine) => Promise<G>;
@@ -116,21 +101,25 @@ export type GoalConfigurer<G extends DeliveryGoals> = (sdm: SoftwareDeliveryMach
 /**
  * Type to orchestrate the creation and configuration of goal instances for this SDM
  */
-export type CreateGoals<G extends DeliveryGoals> = (creator: GoalCreator<G>,
-                                                    configurers?: GoalConfigurer<G> | Array<GoalConfigurer<G>>) => Promise<G>;
+export type CreateGoals<G extends DeliveryGoals> = (
+    creator: GoalCreator<G>,
+    configurers?: GoalConfigurer<G> | Array<GoalConfigurer<G>>,
+) => Promise<G>;
 
 /**
  * Configure a SoftwareDeliveryMachine instance by adding command, events etc and optionally returning
  * GoalData, an array of GoalContributions or void when no goals should be added to this SDM.
  */
-export type Configurer<G extends DeliveryGoals, F extends SdmContext = PushListenerInvocation> =
-    (sdm: SoftwareDeliveryMachine & { createGoals: CreateGoals<G> }) => Promise<void | GoalData | Array<GoalContribution<F>>>;
+export type Configurer<G extends DeliveryGoals, F extends SdmContext = PushListenerInvocation> = (
+    sdm: SoftwareDeliveryMachine & { createGoals: CreateGoals<G> },
+) => Promise<void | GoalData | Array<GoalContribution<F>>>;
 
 /**
  *  Process the configuration before creating the SDM instance
  */
-export type ConfigurationPreProcessor = (cfg: LocalSoftwareDeliveryMachineConfiguration) =>
-    Promise<LocalSoftwareDeliveryMachineConfiguration>;
+export type ConfigurationPreProcessor = (
+    cfg: LocalSoftwareDeliveryMachineConfiguration,
+) => Promise<LocalSoftwareDeliveryMachineConfiguration>;
 
 export interface ConfigureMachineOptions extends ConfigureOptions {
     /**
@@ -157,7 +146,8 @@ export interface ConfigureMachineOptions extends ConfigureOptions {
  */
 export function configure<G extends DeliveryGoals, T extends SdmContext = PushListenerInvocation>(
     configurer: Configurer<G, T>,
-    options: ConfigureMachineOptions = {}): Configuration {
+    options: ConfigureMachineOptions = {},
+): Configuration {
     return {
         postProcessors: [
             configureSdm(async cfg => {
@@ -170,11 +160,10 @@ export function configure<G extends DeliveryGoals, T extends SdmContext = PushLi
                     }
                 }
 
-                const sdm = createSoftwareDeliveryMachine(
-                    {
-                        name: options.name || cfgToUse.name,
-                        configuration: cfgToUse,
-                    });
+                const sdm = createSoftwareDeliveryMachine({
+                    name: options.name || cfgToUse.name,
+                    configuration: cfgToUse,
+                });
 
                 const configured = await invokeConfigurer(sdm, configurer);
 
@@ -189,7 +178,7 @@ export function configure<G extends DeliveryGoals, T extends SdmContext = PushLi
 
                 return sdm;
             }, options),
-            ...(toArray(options.postProcessors || [])),
+            ...toArray(options.postProcessors || []),
         ],
     };
 }
@@ -214,7 +203,8 @@ export function convertGoalData(goalData: GoalData): Array<GoalContribution<any>
                         lg.push(...(goalData[d] as any).__goals);
                     } else {
                         throw new Error(
-                            `Provided dependsOn goals with name '${d}' do not exist or is after current goals named '${k}'`);
+                            `Provided dependsOn goals with name '${d}' do not exist or is after current goals named '${k}'`,
+                        );
                     }
                 } else {
                     lg.push(...toArray(d));
@@ -223,7 +213,7 @@ export function convertGoalData(goalData: GoalData): Array<GoalContribution<any>
         }
 
         toArray(v.goals || []).forEach(g => {
-            (v as any).__goals.push(...(Array.isArray(g) ? (g) : [g]));
+            (v as any).__goals.push(...(Array.isArray(g) ? g : [g]));
             if (!!lg) {
                 gs.plan(...convertGoals(g)).after(...convertGoals(lg));
             } else {
@@ -241,14 +231,16 @@ export function convertGoalData(goalData: GoalData): Array<GoalContribution<any>
 /**
  * Invoke the given configurer
  */
-export async function invokeConfigurer(sdm: SoftwareDeliveryMachine,
-                                       configurer: Configurer<any, any>): Promise<void | GoalData | Array<GoalContribution<any>>> {
-
+export async function invokeConfigurer(
+    sdm: SoftwareDeliveryMachine,
+    configurer: Configurer<any, any>,
+): Promise<void | GoalData | Array<GoalContribution<any>>> {
     try {
         // Decorate the createGoals method onto the SDM
-        (sdm as any).createGoals = async (creator: GoalCreator<any>,
-                                          configurers: GoalConfigurer<any> | Array<GoalConfigurer<any>>) => {
-
+        (sdm as any).createGoals = async (
+            creator: GoalCreator<any>,
+            configurers: GoalConfigurer<any> | Array<GoalConfigurer<any>>,
+        ) => {
             let gc;
             try {
                 gc = await creator(sdm);
