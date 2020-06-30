@@ -48,7 +48,6 @@ export enum ParameterStyle {
  * Common supertype for all command registrations.
  */
 export interface CommandRegistration<PARAMS> {
-
     /** Name of the command */
     name: string;
 
@@ -58,13 +57,11 @@ export interface CommandRegistration<PARAMS> {
     /**
      * Function to create a parameters object used by this command.
      * Empty parameters will be returned by default.
-     * @deprecated use parameters
      */
     paramsMaker?: Maker<PARAMS>;
 
     /**
-     * Define parameters used by this command. Alternative to using
-     * paramsMaker: Do not supply both.
+     * Define parameters used by this command.
      */
     parameters?: ParametersDefinition<PARAMS>;
 

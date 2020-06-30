@@ -23,7 +23,6 @@ import { ParametersDefinition } from "./ParametersDefinition";
  * Type for registering event handlers.
  */
 export interface EventHandlerRegistration<EVENT = any, PARAMS = NoParameters> {
-
     /**
      * Name of the event handler.
      */
@@ -46,15 +45,13 @@ export interface EventHandlerRegistration<EVENT = any, PARAMS = NoParameters> {
     subscription: string;
 
     /**
-     * Create the parameters required by this command.
+     * Create the parameters required by this event.
      * Empty parameters will be returned by default.
-     * @deprecated use parameters
      */
     paramsMaker?: Maker<PARAMS>;
 
     /**
-     * Define parameters used by this command. Alternative to using
-     * paramsMaker: Do not supply both.
+     * Define parameters used by this event.
      */
     parameters?: ParametersDefinition<PARAMS>;
 
