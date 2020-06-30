@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add support for reading GitHub app tokens. [#823](https://github.com/atomist/sdm/issues/823)
 -   Add index.ts files for sdm, client and core. [3ba857f](https://github.com/atomist/sdm/commit/3ba857fc962e27e2a9b693f1061ef77de66e125e)
 -   Add index for k8s pack. [697144b](https://github.com/atomist/sdm/commit/697144b3cfec1e1040386f6075b8fcdf6a9be99d)
+-   Add docker pack. [79906fc](https://github.com/atomist/sdm/commit/79906fced411fd7e146e204664ee2e2a93cc37dd)
 
 ### Changed
 
