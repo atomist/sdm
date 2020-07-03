@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Move packs to lib directory. [d4114bf](https://github.com/atomist/sdm/commit/d4114bf1a0fddaffd321a8c4ffae55ad54b991a8)
 -   Update TypeScript, fix compilation. [8890691](https://github.com/atomist/sdm/commit/88906919f6b739812e221ee4080780bfce515a9d)
 -   Un-deprecate paramsMaker. [047b86b](https://github.com/atomist/sdm/commit/047b86b627751164a5fdb3507f4fc1239bc15301)
+-   Remove parameter from k8s deploy event handler. [e4766a9](https://github.com/atomist/sdm/commit/e4766a91600fbd2088fa3b2b44f21d404ec46da4)
 
 ### Removed
 
