@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export { exposeInfo, infoSupport } from "./exposeInfo";
+export { infoSupport } from "./exposeInfo";

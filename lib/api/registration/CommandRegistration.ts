@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import { ParametersDefinition } from "./ParametersDefinition";
  * Different strategies to ask for parameters in chat or web
  */
 export enum ParameterStyle {
-
     /** Parameter questions will be prompted in a dialog */
     Dialog = "dialog",
 
@@ -48,7 +47,6 @@ export enum ParameterStyle {
  * Common supertype for all command registrations.
  */
 export interface CommandRegistration<PARAMS> {
-
     /** Name of the command */
     name: string;
 
@@ -58,13 +56,11 @@ export interface CommandRegistration<PARAMS> {
     /**
      * Function to create a parameters object used by this command.
      * Empty parameters will be returned by default.
-     * @deprecated use parameters
      */
     paramsMaker?: Maker<PARAMS>;
 
     /**
-     * Define parameters used by this command. Alternative to using
-     * paramsMaker: Do not supply both.
+     * Define parameters used by this command.
      */
     parameters?: ParametersDefinition<PARAMS>;
 
@@ -102,5 +98,4 @@ export interface CommandRegistration<PARAMS> {
      * @return {boolean}
      */
     registerWhen?: (sdmConfiguration: SoftwareDeliveryMachineConfiguration) => boolean;
-
 }

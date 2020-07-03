@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 import { AutoCodeInspection } from "../goal/common/AutoCodeInspection";
 import { Autofix } from "../goal/common/Autofix";
-// tslint:disable-next-line:deprecation
 import { PushImpact } from "../goal/common/PushImpact";
 
 /**
  * Commonly used goals in an SDM that may be used in creating an ExtensionPack
  */
 export interface WellKnownGoals {
-
     /**
      * pushImpactGoal to add push impact reactions to.
      */
@@ -40,5 +38,4 @@ export interface WellKnownGoals {
      * Autofix functionality won't work otherwise.
      */
     autofixGoal?: Autofix;
-
 }

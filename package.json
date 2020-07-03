@@ -26,7 +26,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/automation-client": "2.0.0-master.20200429110358",
+    "@atomist/automation-client": "2.0.0-master.20200701135449",
     "@atomist/tree-path": "^1.0.3",
     "@google-cloud/storage": "^4.3.1",
     "@kubernetes/client-node": "^0.12.0",

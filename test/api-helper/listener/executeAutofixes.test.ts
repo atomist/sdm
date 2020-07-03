@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,18 +39,12 @@ import { pushTest } from "../../../lib/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../lib/api/registration/AutofixRegistration";
 import { TransformPresentation } from "../../../lib/api/registration/CodeTransformRegistration";
 import { RepoRefResolver } from "../../../lib/spi/repo-ref/RepoRefResolver";
-import {
-    CoreRepoFieldsAndChannels,
-    OnPushToAnyBranch,
-    ScmProvider,
-    SdmGoalState,
-} from "../../../lib/typings/types";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, SdmGoalState } from "../../../lib/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
-    pushTest: pushTest(
-        "Is TypeScript",
-        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+    pushTest: pushTest("Is TypeScript", async (pi: PushListenerInvocation) =>
+        fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("thing", "1");
@@ -68,9 +62,8 @@ interface BirdParams {
 
 export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
     name: "AddThing",
-    pushTest: pushTest(
-        "Is TypeScript",
-        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+    pushTest: pushTest("Is TypeScript", async (pi: PushListenerInvocation) =>
+        fileExists(pi.project, "**/*.ts", () => true),
     ),
     transform: async (project, ci) => {
         await project.addFile("bird", ci.parameters.bird);
@@ -96,9 +89,8 @@ const FakeRepoRefResolver: RepoRefResolver = {
         throw new Error("Not implemented");
     },
 
-    toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string }): RemoteRepoRef {
+    toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string; branch?: string }): RemoteRepoRef {
         return {
-            kind: "fake",
             remoteBase: "unreal",
             providerType: 0,
             url: "not-here",
@@ -123,18 +115,18 @@ const FakeRepoRefResolver: RepoRefResolver = {
             branch: opts.branch,
         };
     },
-
 };
 
 describe("executeAutofixes", () => {
-
     it("should execute none", async () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
-        const r = await executeAutofixes([])(fakeGoalInvocation(id, {
-            projectLoader: pl,
-            repoRefResolver: FakeRepoRefResolver,
-        } as any)) as ExecuteGoalResult;
+        const r = (await executeAutofixes([])(
+            fakeGoalInvocation(id, {
+                projectLoader: pl,
+                repoRefResolver: FakeRepoRefResolver,
+            } as any),
+        )) as ExecuteGoalResult;
         assert.equal(r.code, 0);
     });
 
@@ -143,16 +135,19 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
-        (p as any as GitProject).revert = async () => undefined;
-        (p as any as GitProject).gitStatus = async () => ({
-            isClean: false,
-            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
-        } as any);
+        ((p as any) as GitProject).revert = async () => undefined;
+        ((p as any) as GitProject).gitStatus = async () =>
+            ({
+                isClean: false,
+                sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
-            projectLoader: pl,
-            repoRefResolver: FakeRepoRefResolver,
-        } as any)) as ExecuteGoalResult;
+        const r = (await executeAutofixes([AddThingAutofix])(
+            fakeGoalInvocation(id, {
+                projectLoader: pl,
+                repoRefResolver: FakeRepoRefResolver,
+            } as any),
+        )) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -162,20 +157,21 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => undefined;
-        (p as any as GitProject).commit = async () => undefined;
-        (p as any as GitProject).push = async () => undefined;
-        (p as any as GitProject).gitStatus = async () => ({
-            isClean: false,
-            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
-        } as any);
+        ((p as any) as GitProject).revert = async () => undefined;
+        ((p as any) as GitProject).commit = async () => undefined;
+        ((p as any) as GitProject).push = async () => undefined;
+        ((p as any) as GitProject).gitStatus = async () =>
+            ({
+                isClean: false,
+                sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            } as any);
         const pl = new SingleProjectLoader(p);
         const gi = fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
         } as any);
         assert(!!gi.credentials);
-        const r = await executeAutofixes([AddThingAutofix])(gi) as ExecuteGoalResult;
+        const r = (await executeAutofixes([AddThingAutofix])(gi)) as ExecuteGoalResult;
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");
@@ -188,18 +184,21 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => undefined;
-        (p as any as GitProject).commit = async () => undefined;
-        (p as any as GitProject).push = async () => undefined;
-        (p as any as GitProject).gitStatus = async () => ({
-            isClean: false,
-            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
-        } as any);
+        ((p as any) as GitProject).revert = async () => undefined;
+        ((p as any) as GitProject).commit = async () => undefined;
+        ((p as any) as GitProject).push = async () => undefined;
+        ((p as any) as GitProject).gitStatus = async () =>
+            ({
+                isClean: false,
+                sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
-            projectLoader: pl,
-            repoRefResolver: FakeRepoRefResolver,
-        } as any)) as ExecuteGoalResult;
+        const r = (await executeAutofixes([AddThingWithParamAutofix])(
+            fakeGoalInvocation(id, {
+                projectLoader: pl,
+                repoRefResolver: FakeRepoRefResolver,
+            } as any),
+        )) as ExecuteGoalResult;
         assert.equal(r.code, 0, "Did not return 0");
         assert.equal(r.state, SdmGoalState.stopped);
         assert(!!p, r.description);
@@ -213,13 +212,14 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => undefined;
-        (p as any as GitProject).commit = async () => undefined;
-        (p as any as GitProject).push = async () => undefined;
-        (p as any as GitProject).gitStatus = async () => ({
-            isClean: false,
-            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
-        } as any);
+        ((p as any) as GitProject).revert = async () => undefined;
+        ((p as any) as GitProject).commit = async () => undefined;
+        ((p as any) as GitProject).push = async () => undefined;
+        ((p as any) as GitProject).gitStatus = async () =>
+            ({
+                isClean: false,
+                sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            } as any);
         const pl = new SingleProjectLoader(p);
         const gi = fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -251,30 +251,31 @@ describe("executeAutofixes", () => {
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
-        (p as any as GitProject).revert = async () => undefined;
-        (p as any as GitProject).hasBranch = async name => {
+        ((p as any) as GitProject).revert = async () => undefined;
+        ((p as any) as GitProject).hasBranch = async name => {
             if (name === "test-branch") {
                 return false;
             }
             assert.fail();
             return undefined;
         };
-        (p as any as GitProject).commit = async () => undefined;
-        (p as any as GitProject).push = async () => undefined;
-        (p as any as GitProject).gitStatus = async () => ({
-            isClean: false,
-            sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
-        } as any);
+        ((p as any) as GitProject).commit = async () => undefined;
+        ((p as any) as GitProject).push = async () => undefined;
+        ((p as any) as GitProject).gitStatus = async () =>
+            ({
+                isClean: false,
+                sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783",
+            } as any);
 
         let createdBranch = false;
         let createdPr = false;
-        (p as any as GitProject).createBranch = async name => {
+        ((p as any) as GitProject).createBranch = async name => {
             if (name === "test-branch") {
                 createdBranch = true;
             }
             return p as any;
         };
-        (p as any as GitProject).raisePullRequest = async (title, body, targetBranch) => {
+        ((p as any) as GitProject).raisePullRequest = async (title, body, targetBranch) => {
             if (targetBranch === "master") {
                 createdPr = true;
             }
@@ -299,7 +300,7 @@ describe("executeAutofixes", () => {
         };
 
         assert(!!gi.credentials);
-        const r = await executeAutofixes([AddThingAutofix], tp)(gi) as ExecuteGoalResult;
+        const r = (await executeAutofixes([AddThingAutofix], tp)(gi)) as ExecuteGoalResult;
         assert.deepStrictEqual(r.code, 0);
         assert.deepStrictEqual(r.state, SdmGoalState.success);
         assert(!!p);
@@ -312,59 +313,65 @@ describe("executeAutofixes", () => {
     }).timeout(10000);
 
     describe("filterImmediateAutofixes", () => {
-
         it("should correctly filter applied autofix", () => {
-            const autofix = {
+            const autofix = ({
                 name: "test-autofix",
-            } as any as AutofixRegistration;
+            } as any) as AutofixRegistration;
 
             const push = {
-                commits: [{
-                    message: "foo",
-                }, {
-                    message: generateCommitMessageForAutofix(autofix),
-                }, {
-                    message: "bar",
-                }],
+                commits: [
+                    {
+                        message: "foo",
+                    },
+                    {
+                        message: generateCommitMessageForAutofix(autofix),
+                    },
+                    {
+                        message: "bar",
+                    },
+                ],
             };
 
-            const filterAutofixes = filterImmediateAutofixes([autofix], {
+            const filterAutofixes = filterImmediateAutofixes([autofix], ({
                 goalEvent: {
                     push,
                 },
-            } as any as GoalInvocation);
+            } as any) as GoalInvocation);
 
             assert.strictEqual(filterAutofixes.length, 0);
         });
 
         it("should correctly filter applied autofix but leave other", () => {
-            const autofix1 = {
+            const autofix1 = ({
                 name: "test-autofix1",
-            } as any as AutofixRegistration;
+            } as any) as AutofixRegistration;
 
-            const autofix2 = {
+            const autofix2 = ({
                 name: "test-autofix2",
-            } as any as AutofixRegistration;
+            } as any) as AutofixRegistration;
 
             const push = {
-                commits: [{
-                    message: "foo",
-                }, {
-                    message: generateCommitMessageForAutofix(autofix1),
-                }, {
-                    message: "bar",
-                }],
+                commits: [
+                    {
+                        message: "foo",
+                    },
+                    {
+                        message: generateCommitMessageForAutofix(autofix1),
+                    },
+                    {
+                        message: "bar",
+                    },
+                ],
             };
 
-            const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], {
+            const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], ({
                 goalEvent: {
                     push,
                 },
-            } as any as GoalInvocation);
+            } as any) as GoalInvocation);
 
             assert.strictEqual(filterAutofixes.length, 1);
             assert.strictEqual(filterAutofixes[0].name, autofix2.name);
         });
-
     });
 });

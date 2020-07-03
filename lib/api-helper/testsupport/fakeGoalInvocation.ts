@@ -15,10 +15,7 @@
  */
 
 import { guid } from "@atomist/automation-client/lib/internal/util/string";
-import {
-    RemoteRepoRef,
-    RepoId,
-} from "@atomist/automation-client/lib/operations/common/RepoId";
+import { RemoteRepoRef, RepoId } from "@atomist/automation-client/lib/operations/common/RepoId";
 import { logger } from "@atomist/automation-client/lib/util/logger";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { NoPreferenceStore } from "../../api/context/preferenceStore";
@@ -46,7 +43,6 @@ export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDelivery
         },
         preferences: NoPreferenceStore,
         progressLog: new LoggingProgressLog("fake"),
-        sdmGoal: fakeSdmGoal(id),
         goalEvent: fakeSdmGoal(id),
         goal: fakeGoal("fake goal"),
         configuration: {
@@ -92,13 +88,15 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 },
                 name: id.repo,
-                channels: [{
-                    name: "foo",
-                    id: "1",
-                    team: {
-                        id: "T357",
+                channels: [
+                    {
+                        name: "foo",
+                        id: "1",
+                        team: {
+                            id: "T357",
+                        },
                     },
-                }],
+                ],
             },
             commits: [{ sha: guid() }],
         },

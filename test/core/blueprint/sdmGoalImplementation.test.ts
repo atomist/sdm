@@ -46,10 +46,11 @@ const favoriteRepoRef = GitHubRepoRef.from({
     branch: "claude",
 });
 
-export const fakeSoftwareDeliveryMachineOptions = {
-    projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
-        { path: "README.md", content: "read something else" })),
-} as any as SoftwareDeliveryMachineOptions;
+export const fakeSoftwareDeliveryMachineOptions = ({
+    projectLoader: new SingleProjectLoader(
+        InMemoryProject.from(favoriteRepoRef, { path: "README.md", content: "read something else" }),
+    ),
+} as any) as SoftwareDeliveryMachineOptions;
 
 export const fakeSoftwareDeliveryMachineConfiguration: SoftwareDeliveryMachineConfiguration = {
     name: "fakeSoftwareDeliverMachine",
@@ -58,7 +59,7 @@ export const fakeSoftwareDeliveryMachineConfiguration: SoftwareDeliveryMachineCo
 
 const credentials: ProjectOperationCredentials = { token: "ab123bbbaaa" };
 
-const fakeContext = { context: { name: "my favorite context " } } as any as HandlerContext;
+const fakeContext = ({ context: { name: "my favorite context " } } as any) as HandlerContext;
 
 const aPush: PushFields.Fragment = {
     repo: {
@@ -71,33 +72,39 @@ const aPush: PushFields.Fragment = {
     after: {
         sha: guid(),
     },
-    commits: [{
-        sha: guid(),
-    }],
-
+    commits: [
+        {
+            sha: guid(),
+        },
+    ],
 } as any;
 
 describe("implementing goals in the SDM", () => {
-
     afterEach(() => {
         resetRegistrableManager();
     });
 
     it("can autofix", async () => {
-        const mySDM = createSoftwareDeliveryMachine(
-            { name: "Gustave", configuration: fakeSoftwareDeliveryMachineConfiguration });
+        const mySDM = createSoftwareDeliveryMachine({
+            name: "Gustave",
+            configuration: fakeSoftwareDeliveryMachineConfiguration,
+        });
         const autofixGoal = new Autofix();
-        mySDM.addGoalContributions(whenPushSatisfies(AnyPush)
-            .itMeans("autofix the crap out of that thing")
-            .setGoals(new Goals("Autofix only", autofixGoal)));
+        mySDM.addGoalContributions(
+            whenPushSatisfies(AnyPush)
+                .itMeans("autofix the crap out of that thing")
+                .setGoals(new Goals("Autofix only", autofixGoal)),
+        );
 
-        const { determinedGoals, goalsToSave } = await determineGoals({
+        const { determinedGoals, goalsToSave } = await determineGoals(
+            {
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 repoRefResolver: new DefaultRepoRefResolver(),
                 goalSetter: mySDM.pushMapping,
                 implementationMapping: mySDM.goalFulfillmentMapper,
                 enrichGoal: async g => g,
-            }, {
+            },
+            {
                 credentials,
                 id: favoriteRepoRef,
                 context: fakeContext,
@@ -115,15 +122,15 @@ describe("implementing goals in the SDM", () => {
         assert.strictEqual(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal as any as SdmGoalEvent);
+        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal((onlyGoal as any) as SdmGoalEvent);
         assert(myImpl.implementationName.endsWith(autofixGoal.definition.uniqueName));
     });
 
     it("I can teach it to do a custom goal", async () => {
-
         const customGoal = new GoalWithFulfillment({
             uniqueName: "Jerry",
-            displayName: "Springer", environment: "1-staging/", orderedName: "1-springer",
+            displayName: "Springer",
+            environment: "1-staging/",
         });
 
         let executed: boolean = false;
@@ -136,16 +143,22 @@ describe("implementing goals in the SDM", () => {
             { name: "Gustave", configuration: fakeSoftwareDeliveryMachineConfiguration },
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
-                .setGoals(new Goals("Springer", customGoal.with({ goalExecutor, name: "Cornelius" }))));
+                .setGoals(new Goals("Springer", customGoal.with({ goalExecutor, name: "Cornelius" }))),
+        );
 
-        const { determinedGoals, goalsToSave } = await determineGoals({
+        const { determinedGoals, goalsToSave } = await determineGoals(
+            {
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 repoRefResolver: new DefaultRepoRefResolver(),
                 goalSetter: mySDM.pushMapping,
                 implementationMapping: mySDM.goalFulfillmentMapper,
                 enrichGoal: async g => g,
-            }, {
-                credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
+            },
+            {
+                credentials,
+                id: favoriteRepoRef,
+                context: fakeContext,
+                push: aPush,
                 addressChannels: async () => {
                     return;
                 },
@@ -157,10 +170,9 @@ describe("implementing goals in the SDM", () => {
         assert(determinedGoals.goals.some(g => g.name === customGoal.name));
         assert.strictEqual(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal as any as SdmGoalEvent);
+        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal((onlyGoal as any) as SdmGoalEvent);
         assert.strictEqual(myImpl.implementationName, "Cornelius");
         await myImpl.goalExecutor(undefined);
         assert(executed);
     });
-
 });
