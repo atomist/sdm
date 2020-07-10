@@ -43,7 +43,6 @@ export { NodeProjectIdentifier } from "./build/nodeProjectIdentifier";
 export { NpmOptions, deleteBranchTag, executePublish, gitBranchToNpmTag, configureNpmRc } from "./build/executePublish";
 export { IsAtomistAutomationClient } from "./pushtest/nodePushTests";
 export {
-    NodeProjectVersioner,
     NpmVersioner,
     NpmVersionerRegistration,
     NpmVersionIncrementer,
