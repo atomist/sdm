@@ -203,7 +203,7 @@ describe("file", () => {
             const r = await FileVersionIncrementer(a);
             assert(r.code === 1);
             assert(r.message);
-            assert(/appears to have already been incremented/.test(r.message as string));
+            assert(/appears to have already been incremented/.test(r.message));
             const v = await (await p.getFile("VERSION")).getContent();
             assert(v === "3.3.0\n");
         });
