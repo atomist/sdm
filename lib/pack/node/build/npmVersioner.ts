@@ -68,9 +68,6 @@ export const NpmVersionerRegistration: ProjectVersionerRegistration = {
     versioner: NpmVersioner,
 };
 
-/** @deprecated use NpmVersioner */
-export const NodeProjectVersioner = NpmVersioner;
-
 /**
  * Command for incrementing the patch value in package.json.
  *
