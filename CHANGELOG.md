@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add index for k8s pack. [697144b](https://github.com/atomist/sdm/commit/697144b3cfec1e1040386f6075b8fcdf6a9be99d)
 -   Add docker pack. [79906fc](https://github.com/atomist/sdm/commit/79906fced411fd7e146e204664ee2e2a93cc37dd)
 -   Add version pack. [2107af5](https://github.com/atomist/sdm/commit/2107af52dfc9572a5dea3731f149324608468618)
+-   Add node pack. [50ce62f](https://github.com/atomist/sdm/commit/50ce62f00da960f8b6fd3e44a4328dd0679303c5)
 
 ### Changed
 
