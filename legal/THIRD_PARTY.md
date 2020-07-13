@@ -1084,7 +1084,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`dreamopt`|`0.6.0`|Andrey Tarantsov|[https://github.com/andreyvit/dreamopt.js](https://github.com/andreyvit/dreamopt.js)|
 
 #### Unlicense
-The Unlicense - [http://unlicense.org/](http://unlicense.org/)
+The Unlicense - [https://unlicense.org/](https://unlicense.org/)
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
