@@ -36,15 +36,22 @@ export {
 } from "@atomist/automation-client/lib/decorators";
 export { automationClientInstance } from "@atomist/automation-client/lib/globals";
 import * as GraphQL from "@atomist/automation-client/lib/graph/graphQL";
-import * as validationPatterns from "@atomist/automation-client/lib/operations/common/params/validationPatterns";
-import * as editModes from "@atomist/automation-client/lib/operations/edit/editModes";
-import * as parseUtils from "@atomist/automation-client/lib/project/util/parseUtils";
-import * as projectUtils from "@atomist/automation-client/lib/project/util/projectUtils";
-import * as secured from "@atomist/automation-client/lib/secured";
-import * as astUtils from "@atomist/automation-client/lib/tree/ast/astUtils";
-import * as matchTesters from "@atomist/automation-client/lib/tree/ast/matchTesters";
-
 export { GraphQL };
+import * as validationPatterns from "@atomist/automation-client/lib/operations/common/params/validationPatterns";
+export { validationPatterns };
+import * as editModes from "@atomist/automation-client/lib/operations/edit/editModes";
+export { editModes };
+import * as parseUtils from "@atomist/automation-client/lib/project/util/parseUtils";
+export { parseUtils };
+import * as projectUtils from "@atomist/automation-client/lib/project/util/projectUtils";
+export { projectUtils };
+import * as secured from "@atomist/automation-client/lib/secured";
+export { secured };
+import * as astUtils from "@atomist/automation-client/lib/tree/ast/astUtils";
+export { astUtils };
+import * as matchTesters from "@atomist/automation-client/lib/tree/ast/matchTesters";
+export { matchTesters };
+
 export { EventFired } from "@atomist/automation-client/lib/HandleEvent";
 export {
     AutomationContextAware,
@@ -80,7 +87,6 @@ export { BitBucketServerRepoRef } from "@atomist/automation-client/lib/operation
 export { gitHubRepoLoader } from "@atomist/automation-client/lib/operations/common/gitHubRepoLoader";
 export { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
 export { RemoteLocator } from "@atomist/automation-client/lib/operations/common/params/RemoteLocator";
-export { validationPatterns };
 export {
     isTokenCredentials,
     ProjectOperationCredentials,
@@ -98,8 +104,6 @@ export { RepoFilter } from "@atomist/automation-client/lib/operations/common/rep
 export { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
 export { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
 export { SourceLocation } from "@atomist/automation-client/lib/operations/common/SourceLocation";
-export { EditMode } from "@atomist/automation-client/lib/operations/edit/editModes";
-export { editModes };
 export { SimpleProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
 export { ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
 export { GitlabRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitlabRepoCreationParameters";
@@ -126,9 +130,6 @@ export { InMemoryFile as InMemoryProjectFile } from "@atomist/automation-client/
 export { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 export { Project, ProjectAsync } from "@atomist/automation-client/lib/project/Project";
 export { doWithJson } from "@atomist/automation-client/lib/project/util/jsonUtils";
-export { parseUtils };
-export { projectUtils };
-export { secured };
 export {
     AutomationEventListener,
     AutomationEventListenerSupport,
@@ -143,12 +144,7 @@ export {
 } from "@atomist/automation-client/lib/SmartParameters";
 export { CloneOptions } from "@atomist/automation-client/lib/spi/clone/DirectoryManager";
 export * from "@atomist/automation-client/lib/spi/graph/GraphClient";
-export * from "@atomist/automation-client/lib/spi/http/axiosHttpClient";
-export * from "@atomist/automation-client/lib/spi/http/curlHttpClient";
-export * from "@atomist/automation-client/lib/spi/http/httpClient";
 export * from "@atomist/automation-client/lib/spi/message/MessageClient";
-export { astUtils };
-export { matchTesters };
 
 export { MatchResult, ZapTrailingWhitespace } from "@atomist/automation-client/lib/tree/ast/FileHits";
 export { FileParser } from "@atomist/automation-client/lib/tree/ast/FileParser";
@@ -177,10 +173,9 @@ export { addRedaction } from "@atomist/automation-client/lib/util/redact";
 export { doWithRetry, RetryOptions } from "@atomist/automation-client/lib/util/retry";
 export { executeAll } from "@atomist/automation-client/lib/util/pool";
 export { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
-export * from "@atomist/automation-client/lib/operations/common/gitlabRepoLoader";
+export { gitlabRepoLoader } from "@atomist/automation-client/lib/operations/common/gitlabRepoLoader";
 export * from "@atomist/automation-client/lib/operations/common/GitlabPrivateTokenCredentials";
 export * from "@atomist/automation-client/lib/operations/common/GitlabRepoRef";
-export * from "@atomist/automation-client/lib/operations/generate/GitlabRepoCreationParameters";
 export { ApolloGraphClient, GraphClientListener } from "@atomist/automation-client/lib/graph/ApolloGraphClient";
 export { ApolloGraphClientFactory } from "@atomist/automation-client/lib/graph/ApolloGraphClientFactory";
 export {
