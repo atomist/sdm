@@ -17,11 +17,9 @@
 import * as _ from "lodash";
 import { metadata } from "../../api-helper/misc/extensionPack";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import {
-    CompressingGoalCache,
-    CompressionMethod,
-} from "../../core/goal/cache/CompressingGoalCache";
-import { GoogleCloudStorageGoalCacheArchiveStore } from "./cache";
+import { CompressingGoalCache, CompressionMethod } from "../../core/goal/cache/CompressingGoalCache";
+import { GoogleCloudStorageCacheConfiguration, GoogleCloudStorageGoalCacheArchiveStore } from "./cache";
+export { GoogleCloudStorageCacheConfiguration, GoogleCloudStorageGoalCacheArchiveStore };
 
 /**
  * Default the goal cache store to a CompressingGoalCache using
@@ -37,7 +35,8 @@ export function gcpSupport(options: { compression?: CompressionMethod } = {}): E
                     cache: {
                         store: new CompressingGoalCache(
                             new GoogleCloudStorageGoalCacheArchiveStore(),
-                            options.compression),
+                            options.compression,
+                        ),
                     },
                 },
             });
