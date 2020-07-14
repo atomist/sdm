@@ -22,6 +22,7 @@ import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
 } from "../../../api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
 import { readSdmVersion } from "../../../core/delivery/build/local/projectVersioner";
 import { cachePut, cacheRestore } from "../../../core/goal/cache/goalCaching";
 import { npmSpawnLogOptions } from "../npm/spawn";
@@ -104,16 +105,26 @@ export const NpmCompileProjectListener: GoalProjectListenerRegistration = {
     pushTest: IsNode,
 };
 
-const npmNodeModulesCacheClassifier = "node_modules";
+/**
+ * Return unique classifier for repo and SHA.
+ */
+function npmCacheClassifier(goalEvent: SdmGoalEvent, tail: string): string {
+    return `${goalEvent.repo.owner}_${goalEvent.repo.name}_${goalEvent.sha}_${tail}`;
+}
+
+const nodeModulesCacheClassifier = "node_modules";
 
 /**
  * Listener that stores the `node_modules` directory in the configured
  * cache after a goal invocation.
  */
-export const NpmNodeModulesCachePut = cachePut({
-    entries: [{ classifier: npmNodeModulesCacheClassifier, pattern: { directory: "node_modules" } }],
-    pushTest: IsNode,
-});
+export function npmNodeModulesCachePut(goalEvent: SdmGoalEvent): GoalProjectListenerRegistration {
+    const classifier = npmCacheClassifier(goalEvent, nodeModulesCacheClassifier);
+    return cachePut({
+        entries: [{ classifier, pattern: { directory: "node_modules" } }],
+        pushTest: IsNode,
+    });
+}
 
 /**
  * Install Node.js dependencies using NPM and cache the results.  If
@@ -136,7 +147,7 @@ async function cachingNpmInstallPreparation(
         return prepResult;
     }
     try {
-        await NpmNodeModulesCachePut.listener(p, gi, event);
+        await npmNodeModulesCachePut(gi.goalEvent).listener(p, gi, event);
     } catch (e) {
         log.write(`Failed to cache node_modules: ${e.message}`);
     }
@@ -147,14 +158,17 @@ async function cachingNpmInstallPreparation(
  * Listener that restores the `node_modules` directory from the
  * configured cache before a goal invocation.
  */
-export const NpmNodeModulesCacheRestore = cacheRestore({
-    entries: [{ classifier: npmNodeModulesCacheClassifier }],
-    onCacheMiss: {
-        name: "cache-miss-npm-install",
-        listener: cachingNpmInstallPreparation,
-    },
-    pushTest: IsNode,
-});
+export function npmNodeModulesCacheRestore(goalEvent: SdmGoalEvent): GoalProjectListenerRegistration {
+    const classifier = npmCacheClassifier(goalEvent, nodeModulesCacheClassifier);
+    return cacheRestore({
+        entries: [{ classifier }],
+        onCacheMiss: {
+            name: "cache-miss-npm-install",
+            listener: cachingNpmInstallPreparation,
+        },
+        pushTest: IsNode,
+    });
+}
 
 const typescriptCompileCacheClassifier = "ts-compile";
 
@@ -162,22 +176,24 @@ const typescriptCompileCacheClassifier = "ts-compile";
  * Listener that stores the output from TypeScript compilation in the
  * configured cache after a goal invocation.
  */
-export const TypeScriptCompileCachePut = cachePut({
-    entries: [
-        {
-            classifier: typescriptCompileCacheClassifier,
-            pattern: {
-                globPattern: [
-                    "*.{d.ts,js}{,.map}",
-                    "!(node_modules)/**/*.{d.ts,js}{,.map}",
-                    "lib/typings/types.ts",
-                    "git-info.json",
-                ],
+export function typeScriptCompileCachePut(goalEvent: SdmGoalEvent): GoalProjectListenerRegistration {
+    return cachePut({
+        entries: [
+            {
+                classifier: npmCacheClassifier(goalEvent, typescriptCompileCacheClassifier),
+                pattern: {
+                    globPattern: [
+                        "*.{d.ts,js}{,.map}",
+                        "!(node_modules)/**/*.{d.ts,js}{,.map}",
+                        "lib/typings/types.ts",
+                        "git-info.json",
+                    ],
+                },
             },
-        },
-    ],
-    pushTest: IsNode,
-});
+        ],
+        pushTest: IsNode,
+    });
+}
 
 /**
  * Use NPM to compile sources and cache the results.  If compilation
@@ -200,7 +216,7 @@ async function cachingNpmCompilePreparation(
         return prepResult;
     }
     try {
-        await TypeScriptCompileCachePut.listener(p, gi, event);
+        await typeScriptCompileCachePut(gi.goalEvent).listener(p, gi, event);
     } catch (e) {
         log.write(`Failed to cache compiled files: ${e.message}`);
     }
@@ -211,11 +227,13 @@ async function cachingNpmCompilePreparation(
  * Listener that restores the output from TypeScript compilation from
  * the configured cache before a goal invocation.
  */
-export const TypeScriptCompileCacheRestore = cacheRestore({
-    entries: [{ classifier: typescriptCompileCacheClassifier }],
-    onCacheMiss: {
-        name: "cache-miss-typescript-compile",
-        listener: cachingNpmCompilePreparation,
-    },
-    pushTest: IsNode,
-});
+export function typeScriptCompileCacheRestore(goalEvent: SdmGoalEvent): GoalProjectListenerRegistration {
+    return cacheRestore({
+        entries: [{ classifier: npmCacheClassifier(goalEvent, typescriptCompileCacheClassifier) }],
+        onCacheMiss: {
+            name: "cache-miss-typescript-compile",
+            listener: cachingNpmCompilePreparation,
+        },
+        pushTest: IsNode,
+    });
+}
