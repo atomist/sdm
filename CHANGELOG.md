@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Query k8s sync repo creds in worker. [#830](https://github.com/atomist/sdm/issues/830)
 -   Speed up slow YAML mapPushTests test. [91b5f0b](https://github.com/atomist/sdm/commit/91b5f0bc555a4c446466b65beec0cc3546e5fd4b)
 -   Fix mocha exiting with no test issue. [0bb2317](https://github.com/atomist/sdm/commit/0bb23171a48fcec13b48a8533dceab5ea56c8014)
+-   Fix node cache classifiers. [d251f0f](https://github.com/atomist/sdm/commit/d251f0f1fb64ab65908b3d54231e884ec8f4f023)
 
 ## [1.9.0](https://github.com/atomist/sdm/compare/1.8.0...1.9.0) - 2020-03-03
 
