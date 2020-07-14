@@ -58,10 +58,10 @@ export {
     NpmInstallProjectListener,
     NpmCompileProjectListener,
     NpmVersionProjectListener,
-    npmNodeModulesCachePut,
-    npmNodeModulesCacheRestore,
-    typeScriptCompileCachePut,
-    typeScriptCompileCacheRestore,
+    NpmNodeModulesCachePut,
+    NpmNodeModulesCacheRestore,
+    TypeScriptCompileCachePut,
+    TypeScriptCompileCacheRestore,
 } from "./listener/npm";
 export { DevelopmentEnvOptions } from "./npm/spawn";
 export { PackageJson } from "./util/PackageJson";
