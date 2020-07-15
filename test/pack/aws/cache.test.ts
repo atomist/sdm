@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { guid } from "@atomist/automation-client/lib/internal/util/string";
+import {guid} from "@atomist/automation-client/lib/internal/util/string";
+import * as assert from "assert";
 import * as AWS from "aws-sdk";
 import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as os from "os";
 import * as path from "path";
-import * as assert from "power-assert";
-import { GoalInvocation } from "../../../lib/api/goal/GoalInvocation";
+import {GoalInvocation} from "../../../lib/api/goal/GoalInvocation";
 import { getCacheConfig, getCachePath, S3GoalCacheArchiveStore } from "../../../lib/pack/aws/cache";
 
 describe("cache", () => {
+
     describe("getCacheConfig", () => {
+
         it("should provide default config", () => {
             const gi: GoalInvocation = {
                 configuration: {
                     name: "sweetheart-of-the-rodeo",
-                    sdm: {},
+                    sdm: {
+                        cache: {
+                            region: "us-east-2",
+                        },
+                    },
                 },
                 context: {
                     workspaceId: "TH3BY4D5",
@@ -41,6 +46,7 @@ describe("cache", () => {
                 bucket: "sdm-th3by4d5-sweetheart-of-the-rodeo-goal-cache",
                 enabled: false,
                 path: "goal-cache",
+                region: "us-east-2",
             };
             assert.deepStrictEqual(c, e);
         });
@@ -74,7 +80,8 @@ describe("cache", () => {
             const gi: GoalInvocation = {
                 configuration: {
                     name: "@Sweetheart/of--the-Rodeo-",
-                    sdm: {},
+                    sdm: {
+                    },
                 },
                 context: {
                     workspaceId: "TH3BY4D5",
@@ -88,24 +95,29 @@ describe("cache", () => {
             };
             assert.deepStrictEqual(c, e);
         });
+
     });
 
     describe("getCachePath", () => {
+
         it("should return a reasonable path", () => {
             const cc = {
                 bucket: "you-aint-goin-nowhere",
                 enabled: true,
                 path: "lazy/days",
+                region: "us-east-2",
             };
             const c = "i-am-a-pilgrim";
             const p = getCachePath(cc, c);
             const e = "lazy/days/i-am-a-pilgrim/cache.tar.gz";
             assert(p === e);
         });
+
     });
 
     describe("S3GoalCacheArchiveStore", () => {
-        before(function b(this: Mocha.Context): void {
+
+        before(function(this: Mocha.Context): void {
             if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.S3_TEST_BUCKET) {
                 this.skip();
             }
@@ -115,9 +127,7 @@ describe("cache", () => {
         after(async () => {
             try {
                 await Promise.all(tmpDirs.map(d => fs.remove(d)));
-            } catch (e) {
-                /* ignore */
-            }
+            } catch (e) { /* ignore */ }
         });
 
         it("should store, retrieve, and delete a cache item", async () => {
@@ -132,6 +142,7 @@ describe("cache", () => {
                             bucket: b,
                             enabled: true,
                             path: p,
+                            region: "us-east-2",
                         },
                     },
                 },
@@ -148,7 +159,7 @@ describe("cache", () => {
                     sha: "shax",
                 },
                 progressLog: {
-                    write: () => {},
+                    write: () => { },
                 },
             } as any;
             const c = "classifierx";
@@ -160,7 +171,7 @@ describe("cache", () => {
             await fs.writeFile(i, "Test junk\nNot an actual .tar.gz file\n");
             await a.store(gi, c, i);
             const s = new AWS.S3();
-            const objects = await s.listObjects({ Bucket: b }).promise();
+            const objects = await s.listObjects({Bucket: b}).promise();
             const ie = objects.Contents.some(obj => obj.Key === f);
             assert(ie === true, `Object s3://${b}/${f} does not exist: ${stringify(ie)}`);
             const o = path.join(t, `output-${guid()}.tar.gz`);
@@ -169,9 +180,11 @@ describe("cache", () => {
             const oc = await fs.readFile(o, "utf8");
             assert(oc === "Test junk\nNot an actual .tar.gz file\n");
             await a.delete(gi, c);
-            const deObjects = await s.listObjects({ Bucket: b }).promise();
+            const deObjects = await s.listObjects({Bucket: b}).promise();
             const de = deObjects.Contents.some(obj => obj.Key === f);
             assert(de === false, `Object does exist after delete: ${stringify(de)}`);
         }).timeout(20000);
+
     });
+
 });

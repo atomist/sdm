@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { doWithRetry } from "@atomist/automation-client/lib/util/retry";
 import * as AWS from "aws-sdk";
 import * as fs from "fs-extra";
-import { GoalInvocation } from "../../api/goal/GoalInvocation";
-import { CacheConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { GoalCacheArchiveStore } from "../../core/goal/cache/CompressingGoalCache";
+import {GoalInvocation} from "../../api/goal/GoalInvocation";
+import {CacheConfiguration} from "../../api/machine/SoftwareDeliveryMachineOptions";
+import {doWithRetry} from "../../client";
+import {GoalCacheArchiveStore} from "../../core";
 
 export interface S3CacheConfiguration extends CacheConfiguration {
     cache?: {
+        /** Set AWS Region */
+        region?: string;
+
         /**
          * AWS S3 bucket to perist cache entries to.  If
          * not provided, it defaults to
@@ -55,44 +57,56 @@ export class S3GoalCacheArchiveStore implements GoalCacheArchiveStore {
     public async store(gi: GoalInvocation, classifier: string, archivePath: string): Promise<string> {
         const file = fs.createReadStream(archivePath);
         return this.awsS3(
-            gi,
-            classifier,
-            async (storage, bucket, cachePath) =>
-                storage.putObject({ Bucket: bucket, Key: cachePath, Body: file }).promise(),
-            "store",
+          gi,
+          classifier,
+          async (storage, bucket, cachePath) =>
+            storage
+              .putObject({ Bucket: bucket, Key: cachePath, Body: file })
+              .promise(),
+          "store",
         );
     }
 
     public async delete(gi: GoalInvocation, classifier: string): Promise<void> {
         await this.awsS3(
-            gi,
-            classifier,
-            async (storage, bucket, cachePath) => storage.deleteObject({ Bucket: bucket, Key: cachePath }).promise(),
-            "delete",
+          gi,
+          classifier,
+          async (storage, bucket, cachePath) =>
+            storage.deleteObject({ Bucket: bucket, Key: cachePath }).promise(),
+          "delete",
         );
     }
 
     public async retrieve(gi: GoalInvocation, classifier: string, targetArchivePath: string): Promise<void> {
         await this.awsS3(
-            gi,
-            classifier,
-            async (storage, bucket, cachePath) => {
-                return new Promise(resolve => {
-                    storage
-                        .getObject({ Bucket: bucket, Key: cachePath })
-                        .createReadStream()
-                        .pipe(fs.createWriteStream(targetArchivePath))
-                        .on("close", () => resolve(targetArchivePath));
-                });
-            },
-            "retrieve",
+          gi,
+          classifier,
+          async (storage, bucket, cachePath) => {
+            return new Promise((resolve, reject) => {
+              storage
+                .getObject({ Bucket: bucket, Key: cachePath })
+                .createReadStream()
+                .on("error", reject)
+                .pipe(fs.createWriteStream(targetArchivePath))
+                .on("error", reject)
+                .on("end", () => resolve(targetArchivePath))
+                .on("close", () => resolve(targetArchivePath));
+            });
+          },
+          "retrieve",
         );
     }
 
     private async awsS3(gi: GoalInvocation, classifier: string, op: AwsOp, verb: string): Promise<string> {
         const cacheConfig = getCacheConfig(gi);
         const cachePath = getCachePath(cacheConfig, classifier);
-        const storage = new AWS.S3();
+
+        // Set region when supplied
+        if (cacheConfig.region) {
+            AWS.config.update({region: cacheConfig.region});
+        }
+
+        const storage =  new AWS.S3();
         const objectUri = `s3://${cacheConfig.bucket}/${cachePath}`;
         const gerund = verb.replace(/e$/, "ing");
         try {
@@ -109,6 +123,7 @@ export class S3GoalCacheArchiveStore implements GoalCacheArchiveStore {
         }
         return undefined;
     }
+
 }
 
 /** Construct object path for cache configuration and classifier. */
@@ -123,11 +138,11 @@ export function getCacheConfig(gi: GoalInvocation): CacheConfig {
     const cacheConfig = gi.configuration.sdm.cache || {};
     cacheConfig.enabled = cacheConfig.enabled || false;
     cacheConfig.bucket =
-        cacheConfig.bucket ||
-        `sdm-${gi.context.workspaceId}-${gi.configuration.name}-goal-cache`
-            .toLowerCase()
-            .replace(/[^-a-z0-9]*/g, "")
-            .replace(/--+/g, "-");
+      cacheConfig.bucket ||
+      `sdm-${gi.context.workspaceId}-${gi.configuration.name}-goal-cache`
+        .toLowerCase()
+        .replace(/[^-a-z0-9]*/g, "")
+        .replace(/--+/g, "-");
     cacheConfig.path = cacheConfig.path || "goal-cache";
     return cacheConfig;
 }
