@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Un-deprecate paramsMaker. [047b86b](https://github.com/atomist/sdm/commit/047b86b627751164a5fdb3507f4fc1239bc15301)
 -   Remove parameter from k8s deploy event handler. [e4766a9](https://github.com/atomist/sdm/commit/e4766a91600fbd2088fa3b2b44f21d404ec46da4)
 -   Update automation-client and dev deps. [3050e2e](https://github.com/atomist/sdm/commit/3050e2e01da353c4b154ed395ff2b132270daa6d)
+-   Consolidate globbing on micromatch/fast-glob. [b3fd2f2](https://github.com/atomist/sdm/commit/b3fd2f2934079d9c0363f875872d4aef3b33b6bf)
 
 ### Removed
 
