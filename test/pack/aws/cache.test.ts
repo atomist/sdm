@@ -39,7 +39,6 @@ describe("cache", () => {
             const c = getCacheConfig(gi);
             const e = {
                 bucket: "sdm-th3by4d5-sweetheart-of-the-rodeo-goal-cache",
-                enabled: false,
                 path: "goal-cache",
             };
             assert.deepStrictEqual(c, e);
@@ -54,6 +53,7 @@ describe("cache", () => {
                             bucket: "hickory-wind",
                             enabled: true,
                             path: "lazy/days",
+                            region: "us-east-2",
                         },
                     },
                 },
@@ -66,6 +66,7 @@ describe("cache", () => {
                 bucket: "hickory-wind",
                 enabled: true,
                 path: "lazy/days",
+                region: "us-east-2",
             };
             assert.deepStrictEqual(c, e);
         });
@@ -83,7 +84,6 @@ describe("cache", () => {
             const c = getCacheConfig(gi);
             const e = {
                 bucket: "sdm-th3by4d5-sweetheartof-the-rodeo-goal-cache",
-                enabled: false,
                 path: "goal-cache",
             };
             assert.deepStrictEqual(c, e);
@@ -132,6 +132,7 @@ describe("cache", () => {
                             bucket: b,
                             enabled: true,
                             path: p,
+                            region: "us-east-2",
                         },
                     },
                 },

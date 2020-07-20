@@ -39,11 +39,13 @@ export interface S3CacheConfiguration extends CacheConfiguration {
         enabled?: boolean;
         /** Path prefix, defaults to "goal-cache". */
         path?: string;
+        /** AWS region for cache bucket. */
+        region?: string;
     };
 }
 
 type AwsOp = (s: AWS.S3, b: string, p: string) => Promise<any>;
-export type CacheConfig = Required<Required<S3CacheConfiguration>["cache"]>;
+export type CacheConfig = Required<Pick<Required<S3CacheConfiguration>["cache"], "bucket" | "path">> & { region?: string };
 
 /**
  * Goal archive store that stores the compressed archives in a AWS
@@ -77,11 +79,13 @@ export class S3GoalCacheArchiveStore implements GoalCacheArchiveStore {
             gi,
             classifier,
             async (storage, bucket, cachePath) => {
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     storage
                         .getObject({ Bucket: bucket, Key: cachePath })
                         .createReadStream()
+                        .on("error", reject)
                         .pipe(fs.createWriteStream(targetArchivePath))
+                        .on("error", reject)
                         .on("close", () => resolve(targetArchivePath));
                 });
             },
@@ -92,7 +96,7 @@ export class S3GoalCacheArchiveStore implements GoalCacheArchiveStore {
     private async awsS3(gi: GoalInvocation, classifier: string, op: AwsOp, verb: string): Promise<string> {
         const cacheConfig = getCacheConfig(gi);
         const cachePath = getCachePath(cacheConfig, classifier);
-        const storage = new AWS.S3();
+        const storage = new AWS.S3({ region: cacheConfig.region });
         const objectUri = `s3://${cacheConfig.bucket}/${cachePath}`;
         const gerund = verb.replace(/e$/, "ing");
         try {
@@ -121,7 +125,6 @@ export function getCachePath(cacheConfig: CacheConfig, classifier: string = "def
  */
 export function getCacheConfig(gi: GoalInvocation): CacheConfig {
     const cacheConfig = gi.configuration.sdm.cache || {};
-    cacheConfig.enabled = cacheConfig.enabled || false;
     cacheConfig.bucket =
         cacheConfig.bucket ||
         `sdm-${gi.context.workspaceId}-${gi.configuration.name}-goal-cache`
