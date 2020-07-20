@@ -40,7 +40,7 @@ import {
     HttpResponse,
 } from "@atomist/automation-client/lib/spi/http/httpClient";
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import * as globby from "globby";
+import * as fg from "fast-glob";
 import * as stream from "stream";
 import {
     LazyProject,
@@ -283,15 +283,11 @@ class GitHubLazyProject extends AbstractProject implements GitProject, LazyProje
         await this.materializeIfNecessary("getFilesInternal");
 
         const optsToUse = {
-            // We can override these defaults...
-            nodir: true,
-            allowEmpty: true,
-            dot: true,
-            // ...but we force this one
             cwd: this.baseDir,
+            dot: true,
+            onlyFiles: true,
         };
-        // const paths = await glob.promise(`{${globPatterns.join(",")}}`, optsToUse);
-        const paths = await globby(globPatterns, optsToUse);
+        const paths = await fg(globPatterns, optsToUse);
         const files = paths.map(path => new NodeFsLocalFile(this.baseDir, path));
         return files;
     }

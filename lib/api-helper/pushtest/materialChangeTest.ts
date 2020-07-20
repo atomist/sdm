@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client/lib/util/logger";
-import * as minimatch from "minimatch";
+import * as micromatch from "micromatch";
 import { DefaultGoalNameGenerator } from "../../api/goal/GoalNameGenerator";
 import {
     pushTest,
@@ -90,7 +90,6 @@ export function anyFileChanged(options: MaterialChangeOptions = {},
         anyFileChangedSuchThat(changedFiles,
             path => (options.files || []).some(f => path === f)) ||
         anyFileChangedSuchThat(changedFiles,
-            path => (options.directories || []).some(d => path.startsWith(d))) ||
-        anyFileChangedSuchThat(changedFiles,
-            path => (options.globs || []).some(g => minimatch(path, g)));
+                               path => (options.directories || []).some(d => path.startsWith(d))) ||
+        micromatch(changedFiles, options.globs || []).length > 0;
 }
