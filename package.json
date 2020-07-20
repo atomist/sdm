@@ -27,7 +27,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@atomist/antlr": "1.0.3-master.20200709215047",
-    "@atomist/automation-client": "2.0.0-master.20200701135449",
+    "@atomist/automation-client": "2.0.0-master.20200713182021",
     "@atomist/slack-messages": "^1.1.1",
     "@atomist/tree-path": "^1.0.3",
     "@google-cloud/storage": "^4.3.1",
@@ -93,12 +93,12 @@
     "yargs-parser": "^17.0.0"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.7",
-    "@types/power-assert": "^1.5.0",
+    "@types/mocha": "^8.0.0",
+    "@types/power-assert": "^1.5.3",
     "axios-mock-adapter": "^1.17.0",
     "barrelsby": "^2.2.0",
     "espower-typescript": "^9.0.2",
-    "mocha": "^6.2.2",
+    "mocha": "^8.0.1",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
     "prettier": "^2.0.5",
@@ -108,8 +108,8 @@
     "tmp-promise": "^2.0.2",
     "ts-node": "^8.10.2",
     "tslint": "^5.20.1",
-    "typedoc": "^0.17.7",
-    "typescript": "^3.9.5"
+    "typedoc": "^0.17.8",
+    "typescript": "^3.9.7"
   },
   "directories": {
     "test": "test"
