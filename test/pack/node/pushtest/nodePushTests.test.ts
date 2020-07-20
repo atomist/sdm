@@ -54,6 +54,20 @@ describe("nodePushTests", () => {
             assert(r);
         });
 
+        it("should find automation client when it is a dependency", async () => {
+            const content = `{
+  "name": "@atomist/k8s-sdm",
+  "version": "0.9.0",
+  "dependencies": {
+    "@atomist/sdm": "^2.0.0"
+  }
+}
+`;
+            const project = InMemoryProject.of({ path: "package.json", content });
+            const r = await IsAtomistAutomationClient.mapping(({ project } as any) as PushListenerInvocation);
+            assert(r);
+        });
+
         it("should not find automation client when not in dependencies", async () => {
             const content = `{
   "name": "@atomist/k8-automation",

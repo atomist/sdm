@@ -31,7 +31,10 @@ export const IsAtomistAutomationClient: PredicatePushTest = predicatePushTest("I
         }
 
         const pj: PJ = JSON.parse(pjString);
-        return !!(pj && pj.dependencies && pj.dependencies["@atomist/automation-client"]);
+        if (!pj || !pj.dependencies) {
+            return false;
+        }
+        return !!(pj.dependencies["@atomist/automation-client"] || pj.dependencies["@atomist/sdm"]);
     } catch (e) {
         return false;
     }
