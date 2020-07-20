@@ -9,18 +9,11 @@ related projects.
 
 The SDM framework enables you to control your delivery process in
 code. Think of it as an API for your software delivery. See the
-[Atomist documentation][atomist-doc] for more information on the
+[Atomist SDM documentation][atomist-doc] for more information on the
 concept of a software delivery machine and how to create and develop
 an SDM.
 
 [atomist-doc]: https://docs.atomist.com/ "Atomist Documentation"
-
-## Getting started
-
-See the [Developer Quick Start][atomist-quick] to jump straight to
-creating an SDM.
-
-[atomist-quick]: https://docs.atomist.com/quick-start/ "Atomist - Developer Quick Start"
 
 ## Migrating to SDM 2.0
 
