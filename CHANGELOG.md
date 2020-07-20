@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add node pack. [50ce62f](https://github.com/atomist/sdm/commit/50ce62f00da960f8b6fd3e44a4328dd0679303c5)
 -   Add parts of spring pack. [3a6df36](https://github.com/atomist/sdm/commit/3a6df369885e25a379a1256ce32284ebdac2585c)
 -   Add AWS pack. [9068a39](https://github.com/atomist/sdm/commit/9068a39fabc0a054f0584f7487500b16ea9cf90a)
+-   Add check for SDM to automation client push test. [6ac49ca](https://github.com/atomist/sdm/commit/6ac49ca40ae4e683d93c749137d4765235c420e8)
 
 ### Changed
 
