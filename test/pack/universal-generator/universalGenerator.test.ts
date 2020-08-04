@@ -45,6 +45,24 @@ const Trans1UniversalTransform: UniversalTransform<{ firstName: string }> = {
     },
 };
 
+const Trans2UniversalTransform: UniversalTransform<{ middleName: string } | {}> = {
+    parameters: params => {
+        if (params.firstName === "Mickey") {
+            return {
+                middleName: {
+                    required: true,
+                },
+            }
+        } else {
+            return {};
+        }
+    },
+    test: async p => true,
+    transforms: async (p, papi: any) => {
+        await p.addFile("trans2", `${papi.parameters.middleName} was here`);
+    },
+};
+
 describe("universalGenerator", () => {
 
     it("should fail to generate project with missing initial parameters", async () => {
@@ -122,11 +140,12 @@ describe("universalGenerator", () => {
 
         const promptForParams = {
             firstName: "Mickey",
+            middleName: "Foo",
         };
 
         const result = await assertUniversalGenerator(
             SpringGeneratorRegistration,
-            Trans1UniversalTransform,
+            [Trans1UniversalTransform, Trans2UniversalTransform],
             params,
             promptForParams);
 
