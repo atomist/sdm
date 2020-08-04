@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add AWS pack. [9068a39](https://github.com/atomist/sdm/commit/9068a39fabc0a054f0584f7487500b16ea9cf90a)
 -   Add check for SDM to automation client push test. [6ac49ca](https://github.com/atomist/sdm/commit/6ac49ca40ae4e683d93c749137d4765235c420e8)
 -   Add region support and error checking to AWS cache. [d028b2b](https://github.com/atomist/sdm/commit/d028b2babdaede228fe5dbdfae041c8fa09d5282)
+-   Add support for including previous parameters for UniversalTransforms. [#840](https://github.com/atomist/sdm/issues/840)
 
 ### Changed
 
