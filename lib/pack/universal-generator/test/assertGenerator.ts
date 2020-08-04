@@ -103,7 +103,10 @@ export async function assertUniversalGenerator(generatorUnderTest: GeneratorRegi
         let result = await invokeCommand(generatorUnderTest, initialParams, mockHandlerContext(messageClient, initialParams));
         assert.deepStrictEqual(result.code, 0, `Generator failed during initial execution: ${result.message}`);
         const keys = _.keys(promptForParams).sort();
-        assert.deepStrictEqual(parameterSpecs.map(p => p.name).some(n => !keys.includes(n)), false);
+        assert.deepStrictEqual(
+            parameterSpecs.map(p => p.name).some(n => !keys.includes(n)),
+            false,
+            `Some expected parameters not provided: ${parameterSpecs.map(p => p.name).join(", ")}`);
 
         if (!!project) {
             return {
