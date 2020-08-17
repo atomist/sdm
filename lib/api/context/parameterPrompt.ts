@@ -61,6 +61,7 @@ export type ParameterPrompt<PARAMS> = (
     options?: ParameterPromptOptions,
 ) => Promise<PARAMS>;
 
+/* tslint:disable:cyclomatic-complexity */
 /**
  * No-op NoParameterPrompt implementation that never prompts for new parameters
  * @constructor
