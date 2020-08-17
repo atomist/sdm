@@ -26,7 +26,7 @@ import { ParametersObjectValue } from "../registration/ParametersDefinition";
 /**
  * Object with properties defining parameters. Useful for combination via spreads.
  */
-export type ParametersPromptObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue>;
+export type ParametersPromptObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue & { force?: boolean }>;
 
 /**
  * Factory to create a ParameterPrompt
@@ -97,6 +97,12 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
                     const parameterDefinition = newParameters[parameter];
                     const value = existingParameter.value;
 
+                    // Force question
+                    if (parameterDefinition.force) {
+                        trigger.parameters = trigger.parameters.filter(p => p.name !== parameter);
+                        requiredMissing = true;
+                        continue;
+                    }
                     // Verify pattern
                     if (parameterDefinition.pattern && !!value && !value.match(parameterDefinition.pattern)) {
                         requiredMissing = true;
