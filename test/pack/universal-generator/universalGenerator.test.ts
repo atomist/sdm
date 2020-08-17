@@ -46,7 +46,7 @@ const Trans1UniversalTransform: UniversalTransform<{ firstName: string }> = {
 };
 
 const Trans2UniversalTransform: UniversalTransform<{ middleName: string } | {}> = {
-    parameters: params => {
+    parameters: async params => {
         if (params.firstName === "Mickey") {
             return {
                 middleName: {

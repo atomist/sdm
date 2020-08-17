@@ -101,7 +101,7 @@ async function enhanceWithSpecificParameters<P>(
 		let params: ParametersObject<any>;
 		if (typeof universalTransform.parameters === "function") {
 			const paramsValues: any = await ctx.promptFor<P>(unsatisfiedParameters);
-            params = universalTransform.parameters(paramsValues);
+            params = await universalTransform.parameters(paramsValues);
 		} else {
 			params = universalTransform.parameters;
 		}

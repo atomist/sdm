@@ -32,7 +32,7 @@ export interface UniversalTransform<PARAMS = any> {
     /** CodeTransforms to execute */
     transforms: CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
     /** Additional parameters the CodeTransforms need */
-    parameters?: ((params: any) => ParametersObject<PARAMS>) | ParametersObject<PARAMS>;
+    parameters?: ((params: any) => Promise<ParametersObject<PARAMS>>) | ParametersObject<PARAMS>;
 }
 
 /**
