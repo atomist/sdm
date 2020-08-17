@@ -30,7 +30,7 @@ import { ParametersObjectValue } from "../registration/ParametersDefinition";
 /**
  * Object with properties defining parameters. Useful for combination via spreads.
  */
-export type ParametersPromptObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue>;
+export type ParametersPromptObject<PARAMS, K extends keyof PARAMS = keyof PARAMS> = Record<K, ParametersObjectValue & { force?: boolean }>;
 
 /**
  * Factory to create a ParameterPrompt
@@ -58,6 +58,7 @@ export interface ParameterPromptOptions {
  */
 export type ParameterPrompt<PARAMS> = (parameters: ParametersPromptObject<PARAMS>, options?: ParameterPromptOptions) => Promise<PARAMS>;
 
+/* tslint:disable:cyclomatic-complexity */
 /**
  * No-op NoParameterPrompt implementation that never prompts for new parameters
  * @constructor
@@ -89,6 +90,34 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
                         requiredMissing = true;
                     }
                 } else {
+                    // Do some validation against the rules
+                    const parameterDefinition = newParameters[parameter];
+                    const value = existingParameter.value;
+
+                    // Force question
+                    if (parameterDefinition.force) {
+                        trigger.parameters = trigger.parameters.filter(p => p.name !== parameter);
+                        requiredMissing = true;
+                        continue;
+                    }
+                    // Verify pattern
+                    if (parameterDefinition.pattern && !!value && !value.match(parameterDefinition.pattern)) {
+                        requiredMissing = true;
+                        continue;
+                    }
+                    // Verify minLength
+                    const minLength = parameterDefinition.minLength || (parameterDefinition as any).min_length;
+                    if (minLength !== undefined && !!value && value.length < minLength) {
+                        requiredMissing = true;
+                        continue;
+                    }
+                    // Verify maxLength
+                    const maxLength = parameterDefinition.maxLength || (parameterDefinition as any).max_length;
+                    if (maxLength !== undefined && !!value && value.length > maxLength) {
+                        requiredMissing = true;
+                        continue;
+                    }
+
                     params[parameter] = existingParameter.value;
                     delete newParameters[parameter];
                 }
