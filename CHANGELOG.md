@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add region support and error checking to AWS cache. [d028b2b](https://github.com/atomist/sdm/commit/d028b2babdaede228fe5dbdfae041c8fa09d5282)
 -   Add support for including previous parameters for UniversalTransforms. [#840](https://github.com/atomist/sdm/issues/840)
 -   Allow to force a parameter to be asked again. [f6fb23f](https://github.com/atomist/sdm/commit/f6fb23f0476bef5e7d8e31997fd502fa3559950d)
+-   Allow to force a parameter to be asked again. [4d7282a](https://github.com/atomist/sdm/commit/4d7282a2e7d3343a8580d8b9b3c5e99497bdeaef)
 
 ### Changed
 
