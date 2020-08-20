@@ -47,6 +47,7 @@ const Trans1UniversalTransform: UniversalTransform<{ firstName: string }> = {
 
 const Trans2UniversalTransform: UniversalTransform<{ middleName: string } | {}> = {
     parameters: async params => {
+        assert(params.name);
         if (params.firstName === "Mickey") {
             return {
                 middleName: {
