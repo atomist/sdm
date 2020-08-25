@@ -121,7 +121,7 @@ export function codeTransformRegistrationToCommand(
                         `Code Transform`,
                         `Invalid parameters to code transform ${italic(ci.commandName)}:
 
-${codeBlock(vr.message)}`,
+${vr.message}`,
                         ci.context,
                     ),
                 );
