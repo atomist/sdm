@@ -27,7 +27,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@atomist/antlr": "1.0.3-master.20200709215047",
-    "@atomist/automation-client": "2.0.0-master.20200713182021",
+    "@atomist/automation-client": "2.0.0-main.20200902195500",
     "@atomist/slack-messages": "^1.1.1",
     "@atomist/tree-path": "^1.0.3",
     "@google-cloud/storage": "^4.3.1",
