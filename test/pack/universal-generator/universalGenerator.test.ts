@@ -53,7 +53,7 @@ const Trans2UniversalTransform: UniversalTransform<{ middleName: string } | {}> 
                 middleName: {
                     required: true,
                 },
-            }
+            };
         } else {
             return {};
         }
