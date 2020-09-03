@@ -145,7 +145,7 @@
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "engines": {
-    "node": ">=8.2.0",
-    "npm": ">=5.0.0"
+    "node": ">=10.3.0",
+    "npm": ">=6.0.0"
   }
 }
