@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.9.0...HEAD)
 
+## [2.0.0](https://github.com/atomist/sdm/compare/1.9.0...2.0.0) - 2020-09-04
+
 ### Added
 
 -   Add registration to goal test. [db15c06](https://github.com/atomist/sdm/commit/db15c067e6574639d23d0d1361f3fd82c7895214)
