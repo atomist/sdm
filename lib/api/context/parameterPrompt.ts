@@ -162,10 +162,16 @@ export function commandRequestParameterPromptFactory<T>(ctx: HandlerContext): Pa
             auto_submit: !!options.autoSubmit ? options.autoSubmit : undefined,
             question: !!options.parameterStyle ? options.parameterStyle.toString() : undefined,
             parameter_specs: _.map(newParameters, (v, k) => ({
-                ...v,
                 name: k,
+                description: v.description,
                 required: v.required !== undefined ? v.required : true,
                 pattern: v.pattern ? v.pattern.source : undefined,
+                valid_input: v.validInput,
+                max_length: v.maxLength,
+                min_length: v.minLength,
+                display_name: v.displayName,
+                default_value: v.defaultValue,
+                type: v.type,
             })),
             content_type: AtomistContinuationMimeType,
         };
