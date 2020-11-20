@@ -108,41 +108,6 @@ export interface AtomistLinkImage {
 }
 
 /**
- * Post to the Atomist link-image webhook URL.  It creates the payload
- * then uses postWebhook.
- *
- * @param owner repository owner, i.e., user or organization
- * @param repo name of repository
- * @param commit commit SHA
- * @param image Docker image tag, e.g., registry.com/owner/repo:version
- * @param teamId Atomist team ID
- * @param retryOptions change default retry options
- * @return true if successful, false on failure after retries
- */
-export function postLinkImageWebhook(
-    owner: string,
-    repo: string,
-    commit: string,
-    image: string,
-    teamId: string,
-    retryOptions: RetryOptions = DefaultRetryOptions,
-): Promise<boolean> {
-
-    const payload: AtomistLinkImage = {
-        git: {
-            owner,
-            repo,
-            sha: commit,
-        },
-        docker: {
-            image,
-        },
-        type: "link-image",
-    };
-    return postWebhook("link-image", payload, teamId, retryOptions);
-}
-
-/**
  * Post payload to the Atomist webhook URL.  It will retry
  * several times.
  *

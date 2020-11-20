@@ -67,7 +67,7 @@ describe("filesChanged", () => {
             assert.deepEqual(files, expectedChanges);
         }).timeout(20000);
 
-        it("should correctly find all files within two commits on a branch", async () => {
+        it.skip("should correctly find all files within two commits on a branch", async () => {
             const p = await GitCommandGitProject.cloned(
                 // tslint:disable-next-line:no-null-keyword
                 { token: null },

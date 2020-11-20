@@ -25,15 +25,13 @@ import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
 import { K8sNamespaceFile } from "../../../pack/k8s/support/namespace";
 import {
     OnBuildCompleteForDryRun,
-    PushFields,
     UpdateSdmVersionMutation,
     UpdateSdmVersionMutationVariables,
 } from "../../../typings/types";
 import { getGoalVersion } from "../../delivery/build/local/projectVersioner";
 import { SdmVersion } from "../../ingesters/sdmVersionIngester";
-import { postBuildWebhook, postLinkImageWebhook } from "../../util/webhook/ImageLink";
+import { postBuildWebhook } from "../../util/webhook/ImageLink";
 import { ContainerInput, ContainerOutput, ContainerProjectHome } from "./container";
-import Images = PushFields.Images;
 import Build = OnBuildCompleteForDryRun.Build;
 
 /**
@@ -188,18 +186,6 @@ export async function processResult(result: any, gi: GoalInvocation): Promise<Ex
                 }
             }
 
-            const images = _.get(goal, "push.after.images") as Images[];
-            if (!!images) {
-                for (const image of images) {
-                    await postLinkImageWebhook(
-                        goalEvent.repo.owner,
-                        goalEvent.repo.name,
-                        goalEvent.sha,
-                        image.imageName,
-                        context.workspaceId,
-                    );
-                }
-            }
             const version = _.get(goal, "push.after.version");
             if (!!version) {
                 const sdmVersion: SdmVersion = {

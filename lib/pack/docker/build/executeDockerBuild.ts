@@ -34,7 +34,6 @@ import { mergeOptions } from "../../../api/goal/GoalWithFulfillment";
 import { SdmGoalEvent } from "../../../api/goal/SdmGoalEvent";
 import { readSdmVersion } from "../../../core/delivery/build/local/projectVersioner";
 import { toArray } from "../../../core/util/misc/array";
-import { postLinkImageWebhook } from "../../../core/util/webhook/ImageLink";
 import { DockerRegistryProviderAll, Password } from "../../../typings/types";
 import { cleanImageName } from "../support/name";
 import { DockerOptions, DockerRegistry } from "./DockerBuild";
@@ -108,23 +107,10 @@ export function executeDockerBuild(options: DockerOptions): ExecuteGoal {
                 }
             }
 
-            // 4. create image link
-            if (
-                await postLinkImageWebhook(
-                    goalEvent.repo.owner,
-                    goalEvent.repo.name,
-                    goalEvent.sha,
-                    images[0],
-                    context.workspaceId,
-                )
-            ) {
-                return {
-                    ...result,
-                    externalUrls,
-                };
-            } else {
-                return { code: 1, message: "Image link failed" };
-            }
+            return {
+              ...result,
+              externalUrls,
+            };
         },
         {
             readOnly: true,
