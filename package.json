@@ -1,7 +1,7 @@
 {
   "name": "@atomist/sdm",
   "version": "2.1.0",
-  "description": "Atomist Software Delivery Machine API",
+  "description": "Atomist Software Delivery Machine SDK",
   "author": {
     "name": "Atomist",
     "email": "support@atomist.com",
