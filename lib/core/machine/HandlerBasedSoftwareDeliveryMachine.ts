@@ -23,13 +23,11 @@ import { AbstractSoftwareDeliveryMachine } from "../../api-helper/machine/Abstra
 import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { SkillOutputGoalExecutionListener } from "../goal/skillOutput";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { RespondOnGoalCompletion } from "../handlers/events/delivery/goals/RespondOnGoalCompletion";
 import { SetGoalsOnGoal } from "../handlers/events/delivery/goals/SetGoalsOnGoal";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { SetGoalsOnSkillOutput } from "../handlers/events/delivery/goals/SetGoalsOnSkillOutput";
 import { SkipDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/SkipDownstreamGoalsOnGoalFailure";
 import { VoteOnGoalApprovalRequest } from "../handlers/events/delivery/goals/VoteOnGoalApprovalRequest";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -93,16 +91,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
                         this.configuration.sdm.preferenceStoreFactory,
                         this.configuration.sdm.enrichGoal,
                         this.configuration.sdm.tagGoalSet),
-                    () => new SetGoalsOnSkillOutput(
-                        this.configuration.sdm.projectLoader,
-                        this.configuration.sdm.repoRefResolver,
-                        this.pushMapping,
-                        this.goalsSetListeners,
-                        this.goalFulfillmentMapper,
-                        this.configuration.sdm.credentialsResolver,
-                        this.configuration.sdm.preferenceStoreFactory,
-                        this.configuration.sdm.enrichGoal,
-                        this.configuration.sdm.tagGoalSet)],
+                ],
                 commandHandlers: [],
                 ingesters: [],
             };
@@ -251,7 +240,6 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
                 configuration: Configuration & SoftwareDeliveryMachineConfiguration,
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super(name, configuration, goalSetters);
-        this.addGoalExecutionListener(SkillOutputGoalExecutionListener);
     }
 
 }

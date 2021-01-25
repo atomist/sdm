@@ -1,3 +1,0 @@
-mutation IngestSkillOutput($output: CustomSkillOutputInput!) {
-  ingestCustomSkillOutput(value: $output)
-}
