@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/2.0.0...HEAD)
 
+### Changed
+
+-   Update schema. [#845](https://github.com/atomist/sdm/pull/845)
+
 ### Fixed
 
 -   Fix camelCase problem in continuations. [7c0b18c](https://github.com/atomist/sdm/commit/7c0b18c3a0387707a918eea29ecef57427c455e7)
+
+### Removed
+
+-   Remove skill output. [#845](https://github.com/atomist/sdm/pull/845)
 
 ## [2.0.0](https://github.com/atomist/sdm/compare/1.9.0...2.0.0) - 2020-09-04
 
