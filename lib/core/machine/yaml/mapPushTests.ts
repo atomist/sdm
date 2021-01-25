@@ -19,7 +19,6 @@ import { hasCommit } from "../../../api-helper/pushtest/commit";
 import { isMaterialChange } from "../../../api-helper/pushtest/materialChangeTest";
 import { StatefulPushListenerInvocation } from "../../../api/dsl/goalContribution";
 import { isGoal } from "../../../api/mapping/goalTest";
-import { isOutput } from "../../../api/mapping/outputTest";
 import {
     pushTest,
     PushTest,
@@ -110,18 +109,6 @@ const IsGoal: CreatePushTest = async (test, additionalTests, extensionTests) => 
             pushTest: onGoal.test ? await mapTest(onGoal.test, additionalTests, extensionTests) : undefined,
             output: getStringOrRegexp(onGoal.output),
             data: getStringOrRegexp(onGoal.data),
-        });
-    }
-    return undefined;
-};
-
-const IsOutput: CreatePushTest = async (test, additionalTests, extensionTests) => {
-    const onOutput = test.isOutput || test.onOutput;
-    if (!!onOutput) {
-        return isOutput({
-            classifier: getStringOrRegexp(onOutput.classifier),
-            type: onOutput.type,
-            pushTest: onOutput.test ? await mapTest(onOutput.test, additionalTests, extensionTests) : undefined,
         });
     }
     return undefined;
@@ -223,7 +210,6 @@ export const CreatePushTests = [
     IsBranch,
     IsDefaultBranch,
     IsGoal,
-    IsOutput,
     IsSkillConfigured,
     IsMaterialChange,
     HasFileContaining,
