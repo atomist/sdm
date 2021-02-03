@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2021 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-import * as base64 from "base64-js";
-
 /**
  * Base 64 encode the given string
  * @param {string} str
  * @return {string}
  */
 export function encode(str: string): string {
-    const arr: number[] = [];
-    for (let i = 0; i < str.length; i++) {
-        arr.push(str.charCodeAt(i));
-    }
-    return base64.fromByteArray(arr);
+    return Buffer.from(str, "utf8").toString("base64");
 }
 
 /**
@@ -35,6 +29,5 @@ export function encode(str: string): string {
  * @return {string}
  */
 export function decode(coded: string): string {
-    const decoded = base64.toByteArray(coded);
-    return String.fromCharCode.apply(undefined, decoded);
+    return Buffer.from(coded, "base64").toString("utf8");
 }
