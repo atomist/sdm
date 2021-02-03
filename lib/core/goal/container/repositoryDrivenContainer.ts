@@ -117,7 +117,7 @@ export class RepositoryDrivenContainer extends FulfillableGoal {
 
                     if (config.hasOwnProperty(k)) {
                         const value = config[k];
-                        const v = camelcaseKeys(value, { deep: true }) as any;
+                        const v = camelcaseKeys(value, { deep: true });
                         const test = and(...toArray(await mapTests(v.test, this.tests, {})));
                         if (await test.mapping(pli)) {
                             const plannedGoals = toArray(mapGoals(v.goals, {}));
