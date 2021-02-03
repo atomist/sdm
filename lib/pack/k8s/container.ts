@@ -413,7 +413,7 @@ export function executeK8sJob(): ExecuteGoal {
                     cloneDir: projectDir,
                     cloneOptions: minimalClone(goalEvent.push, { detachHead: true }),
                 },
-                async project => {
+                async () => {
                     try {
                         await prepareInputAndOutput(inputDir, outputDir, gi);
                     } catch (e) {
@@ -743,15 +743,12 @@ function containerWatch(container: K8sContainer, timeout: number): Promise<k8s.V
                 }
                 container.log.write(`Container '${container.name}' phase: ${phase}`);
             },
+            () => containerCleanup(clean),
             err => {
-                if (err) {
-                    err.message = `Container watcher failed: ${err.message}`;
-                    container.log.write(err.message);
-                    containerCleanup(clean);
-                    reject(err);
-                } else {
-                    containerCleanup(clean);
-                }
+                err.message = `Container watcher failed: ${err.message}`;
+                container.log.write(err.message);
+                containerCleanup(clean);
+                reject(err);
             },
         );
     });
