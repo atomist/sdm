@@ -90,6 +90,6 @@ export async function parseKubernetesSpecFile(specFile: ProjectFile): Promise<k8
  * @return Parsed object of the spec
  */
 export async function parseKubernetesSpecString(specString: string, specPath: string): Promise<k8s.KubernetesObject> {
-    const spec: k8s.KubernetesObject = yaml.safeLoad(specString);
+    const spec = yaml.safeLoad(specString) as k8s.KubernetesObject;
     return spec;
 }
