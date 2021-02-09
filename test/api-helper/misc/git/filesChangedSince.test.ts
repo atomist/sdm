@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2021 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,18 +66,16 @@ describe("filesChanged", () => {
                 ".travis/travis-build.bash",
                 "README.md",
                 "src/main/java/com/atomist/spring/SpringRestSeedController.java"];
-            assert.deepEqual(files, expectedChanges);
+            assert.deepStrictEqual(files, expectedChanges);
         }).timeout(20000);
 
         it("should correctly find all files within two commits on a branch", async () => {
             const p = await GitCommandGitProject.cloned(
-                // tslint:disable-next-line:no-null-keyword
-                { token: null },
+                { token: undefined },
                 GitHubRepoRef.from({
                     owner: "atomist",
-                    repo: "lifecycle-automation",
-                    branch: "test",
-                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                    repo: "sdm",
+                    branch: "test-branch-do-not-delete",
                 }),
                 {
                     depth: 3, // 2 commits in the push + one extra to be able to diff
@@ -85,19 +83,25 @@ describe("filesChanged", () => {
             );
             const push: PushFields.Fragment = {
                 after: {
-                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                    sha: "28c3f487a7de64945bef599e971116d37704869d",
                 },
                 commits: [{
-                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                    sha: "28c3f487a7de64945bef599e971116d37704869d",
                 }, {
-                    sha: "4a725eff5dbfd35f213b97d9c204b402fe45106e",
+                    sha: "81a5d5dfa4bb44a10eeb431953c0cf08910b7131",
                 }],
             };
 
             const files = await filesChangedSince(p, push);
-            const expectedChanges = ["README.md",
-                "src/atomist.config.ts"];
-            assert.deepEqual(files, expectedChanges);
+            const expectedChanges = [
+                "CONTRIBUTING.md",
+                "DO_NOT_DELETE",
+                "blaml.yaml",
+                "package-lock.json",
+                "package.json",
+                "test.json",
+            ];
+            assert.deepStrictEqual(files, expectedChanges);
         }).timeout(20000);
 
     });
