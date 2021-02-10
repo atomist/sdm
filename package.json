@@ -36,7 +36,7 @@
     "@types/node": "^12.7.8",
     "@types/sprintf-js": "^1.1.2",
     "@types/stack-trace": "^0.0.29",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "base64-js": "^1.3.0",
     "cron": "^1.7.1",
     "dateformat": "^3.0.3",
@@ -54,11 +54,11 @@
     "strip-ansi": "^5.2.0"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "^1.9.0",
+    "@atomist/automation-client": "^1.9.2",
     "@atomist/slack-messages": "^1.1.1"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.9.1-1.9-fixes.20200311123135",
+    "@atomist/automation-client": "1.9.2",
     "@atomist/slack-messages": "^1.1.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
