@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/2.1.1...HEAD)
 
+### Removed
+
+-   Remove use of applicationEvents. [845ea97](https://github.com/atomist/sdm/commit/845ea979b687f462d66213b9ade3f67f198f0072)
+
 ## [2.1.1](https://github.com/atomist/sdm/compare/2.1.0...2.1.1) - 2021-02-10
 
 ### Fixed
