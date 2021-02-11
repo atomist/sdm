@@ -174,9 +174,6 @@ function configureSdmToRunExactlyOneGoal(mergedConfig: SoftwareDeliveryMachineCo
         new CacheCleanupAutomationEventListener(sdm));
     mergedConfig.requestProcessorFactory =
         (automations, cfg, listeners) => new GoalExecutionRequestProcessor(automations, cfg, listeners);
-
-    // Disable app events for forked clients
-    mergedConfig.applicationEvents.enabled = false;
 }
 
 /**
