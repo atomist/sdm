@@ -1180,7 +1180,7 @@ The Unlicense - [https://unlicense.org/](https://unlicense.org/)
 |`tweetnacl`|`0.14.5`|TweetNaCl-js contributors|[https://github.com/dchest/tweetnacl-js](https://github.com/dchest/tweetnacl-js)|
 
 #### WTFPL
-Do What The F*ck You Want To Public License - [http://sam.zoy.org/wtfpl/COPYING](http://sam.zoy.org/wtfpl/COPYING)
+Do What The F*ck You Want To Public License - [http://www.wtfpl.net/about/](http://www.wtfpl.net/about/)
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
