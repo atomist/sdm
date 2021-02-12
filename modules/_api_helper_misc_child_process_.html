@@ -1,0 +1,414 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;api-helper/misc/child_process&quot; | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_api_helper_misc_child_process_.html">&quot;api-helper/misc/child_process&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;api-helper/misc/child_process&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_api_helper_misc_child_process_.spawnlogcommand.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Command</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_api_helper_misc_child_process_.spawnloginvocation.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Invocation</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_api_helper_misc_child_process_.spawnlogoptions.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Options</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_api_helper_misc_child_process_.html#errorfinder" class="tsd-kind-icon">Error<wbr>Finder</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_api_helper_misc_child_process_.html#spawnlogresult" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Result</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_api_helper_misc_child_process_.html#successisreturn0errorfinder" class="tsd-kind-icon">Success<wbr>IsReturn0<wbr>Error<wbr>Finder</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_api_helper_misc_child_process_.html#cleartimers" class="tsd-kind-icon">clear<wbr>Timers</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_api_helper_misc_child_process_.html#killandwait" class="tsd-kind-icon">kill<wbr>And<wbr>Wait</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_api_helper_misc_child_process_.html#spawnlog" class="tsd-kind-icon">spawn<wbr>Log</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="errorfinder" class="tsd-anchor"></a>
+					<h3>Error<wbr>Finder</h3>
+					<div class="tsd-signature tsd-kind-icon">Error<wbr>Finder<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, log<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WritableLog</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L56">lib/api-helper/misc/child_process.ts:56</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type that can react to the exit of a spawned child process, after
+								Node has terminated without reporting an error.  This is necessary
+								only for commands that can return a zero exit status on failure or
+								non-zero exit code on success.  Implementations should return
+							<code>true</code> if an error is found, <code>false</code> otherwise.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, log<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WritableLog</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>code: <span class="tsd-signature-type">number</span></h5>
+											</li>
+											<li>
+												<h5>signal: <span class="tsd-signature-type">string</span></h5>
+											</li>
+											<li>
+												<h5>log: <span class="tsd-signature-type">WritableLog</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="spawnlogresult" class="tsd-anchor"></a>
+					<h3>Spawn<wbr>Log<wbr>Result</h3>
+					<div class="tsd-signature tsd-kind-icon">Spawn<wbr>Log<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HandlerResult</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">SpawnPromiseReturns</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L121">lib/api-helper/misc/child_process.ts:121</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Result returned by spawnAndLog after running a child process.  It
+								is compatible with handler results.  To support both HandlerResult
+								and SpawnPromiseReturns, the value of code and status are
+							identical.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="successisreturn0errorfinder" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Success<wbr>IsReturn0<wbr>Error<wbr>Finder</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">Success<wbr>IsReturn0<wbr>Error<wbr>Finder<span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L65">lib/api-helper/misc/child_process.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Default ErrorFinder that regards everything but a return code of 0
+									as failure.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>code: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>process exit status</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>true if exit status is not zero</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="cleartimers" class="tsd-anchor"></a>
+					<h3>clear<wbr>Timers</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">clear<wbr>Timers<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>timers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Timer</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L168">lib/api-helper/misc/child_process.ts:168</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Clear provided timers, checking to make sure the timers are defined
+									before clearing them.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>timers: <span class="tsd-signature-type">Timer</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the timers to clear.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="killandwait" class="tsd-anchor"></a>
+					<h3>kill<wbr>And<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">kill<wbr>And<wbr>Wait<span class="tsd-signature-symbol">(</span>childProcess<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ChildProcess</span>, wait<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L185">lib/api-helper/misc/child_process.ts:185</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Kill the process and wait for it to shut down. This can take a
+										while as processes may have shut down hooks.  On win32, the process
+										is killed and the Promise is rejected if the process does not exit
+										within <code>wait</code> milliseconds.  On other platforms, first the process
+										is sent the default signal, SIGTERM.  After <code>wait</code> milliseconds, it
+										is sent SIGKILL.  After another <code>wait</code> milliseconds, an error is
+									thrown.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>childProcess: <span class="tsd-signature-type">ChildProcess</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Child process to kill</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> wait: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 30000</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Number of milliseconds to wait before sending SIGKILL and
+										then erroring, default is 30000 ms</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="spawnlog" class="tsd-anchor"></a>
+					<h3>spawn<wbr>Log</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">spawn<wbr>Log<span class="tsd-signature-symbol">(</span>cmd<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, opts<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_misc_child_process_.spawnlogoptions.html" class="tsd-signature-type">SpawnLogOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_helper_misc_child_process_.html#spawnlogresult" class="tsd-signature-type">SpawnLogResult</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/misc/child_process.ts#L143">lib/api-helper/misc/child_process.ts:143</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Spawn a process, logging its standard output and standard error,
+										and return a Promise of its results.  The command is spawned using
+										cross-spawn.  A DelimitedWriteProgressLogDecorator, using newlines
+										as delimiters, is created from the provided <code>opts.log</code>.  The default
+										command timeout is 10 minutes.  The default
+										[[SpawnLogOptions#errorFinder]] sets the <code>error</code> property if the
+										command exits with a non-zero status or is killed by a signal.  If
+										the process is killed due to a signal or the <code>errorFinder</code> returns
+									<code>true</code>, the returned <code>code</code> property will be non-zero.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cmd: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Command to run.</p>
+									</div>
+								</li>
+								<li>
+									<h5>args: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Arguments to command.</p>
+									</div>
+								</li>
+								<li>
+									<h5>opts: <a href="../interfaces/_api_helper_misc_child_process_.spawnlogoptions.html" class="tsd-signature-type">SpawnLogOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Options for spawn, spawnPromise, and spawnLog.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_helper_misc_child_process_.html#spawnlogresult" class="tsd-signature-type">SpawnLogResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A promise that provides information on the child process and
+								its execution result, including if the exit status was non-zero
+								or the process was killed by a signal.  The promise is only
+								rejected with an <code>ExecPromiseError</code> if there is an error
+							spawning the process.</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_api_helper_misc_child_process_.html">&quot;api-<wbr>helper/misc/child_<wbr>process&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_api_helper_misc_child_process_.spawnlogcommand.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Command</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_api_helper_misc_child_process_.spawnloginvocation.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Invocation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_api_helper_misc_child_process_.spawnlogoptions.html" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_api_helper_misc_child_process_.html#errorfinder" class="tsd-kind-icon">Error<wbr>Finder</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_api_helper_misc_child_process_.html#spawnlogresult" class="tsd-kind-icon">Spawn<wbr>Log<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_api_helper_misc_child_process_.html#successisreturn0errorfinder" class="tsd-kind-icon">Success<wbr>IsReturn0<wbr>Error<wbr>Finder</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_api_helper_misc_child_process_.html#cleartimers" class="tsd-kind-icon">clear<wbr>Timers</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_api_helper_misc_child_process_.html#killandwait" class="tsd-kind-icon">kill<wbr>And<wbr>Wait</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_api_helper_misc_child_process_.html#spawnlog" class="tsd-kind-icon">spawn<wbr>Log</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

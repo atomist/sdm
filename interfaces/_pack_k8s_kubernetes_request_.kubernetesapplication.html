@@ -1,0 +1,516 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>KubernetesApplication | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_pack_k8s_kubernetes_request_.html">&quot;pack/k8s/kubernetes/request&quot;</a>
+				</li>
+				<li>
+					<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html">KubernetesApplication</a>
+				</li>
+			</ul>
+			<h1>Interface KubernetesApplication</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Information used to construct resources when creating or updating
+							an application in a Kubernetes cluster.  This structure is designed
+							for a typical microservice-type deployment of one container
+							optionally providing a service on a single port.  If you need
+							anything more complicated than that, you can use the various
+							partial specs in this structure to manage more elaborate
+							applications and the <code>applicationData</code> callback on the
+						[[KubernetesDeploymentRegistration]].</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">KubernetesApplication</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#deploymentspec" class="tsd-kind-icon">deployment<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#image" class="tsd-kind-icon">image</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#ingressspec" class="tsd-kind-icon">ingress<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#mode" class="tsd-kind-icon">mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#ns" class="tsd-kind-icon">ns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#patchstrategy" class="tsd-kind-icon">patch<wbr>Strategy</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#path" class="tsd-kind-icon">path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#port" class="tsd-kind-icon">port</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#rolebindingspec" class="tsd-kind-icon">role<wbr>Binding<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#rolespec" class="tsd-kind-icon">role<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#secrets" class="tsd-kind-icon">secrets</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#serviceaccountspec" class="tsd-kind-icon">service<wbr>Account<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#servicespec" class="tsd-kind-icon">service<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#workspaceid" class="tsd-kind-icon">workspace<wbr>Id</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="deploymentspec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> deployment<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">deployment<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1Deployment</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L69">lib/pack/k8s/kubernetes/request.ts:69</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial deployment spec for this application that is overlaid
+								on top of the default deployment spec template.  It can be used
+								to provide custom resource specifications, liveness and
+							readiness checks, etc.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="image" class="tsd-anchor"></a>
+					<h3>image</h3>
+					<div class="tsd-signature tsd-kind-icon">image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L43">lib/pack/k8s/kubernetes/request.ts:43</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Full image name and tag for deployment pod template container.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ingressspec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> ingress<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">ingress<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NetworkingV1beta1Ingress</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L79">lib/pack/k8s/kubernetes/request.ts:79</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial ingress spec for this application that is overlaid on
+							top of the default ingress spec template.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="mode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mode</h3>
+					<div class="tsd-signature tsd-kind-icon">mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"full"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"sync"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L51">lib/pack/k8s/kubernetes/request.ts:51</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Mode of operation.  If not provided, the &quot;full&quot; mode is used,
+								making calls to the Kubernetes API and, if configured,
+								persisting changes to the sync/GitOps repo.  If set to &quot;sync&quot;,
+								it will only persist changes to the configured sync/GitOps
+							repo, making no calls to the Kubernetes API.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L39">lib/pack/k8s/kubernetes/request.ts:39</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Name of resources to create.  It can be overriden for
+							individual resources in the partial specs.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ns" class="tsd-anchor"></a>
+					<h3>ns</h3>
+					<div class="tsd-signature tsd-kind-icon">ns<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L41">lib/pack/k8s/kubernetes/request.ts:41</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Namespace to create resources in.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="patchstrategy" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> patch<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">patch<wbr>Strategy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"application/merge-patch+json"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"application/strategic-merge-patch+json"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L121">lib/pack/k8s/kubernetes/request.ts:121</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Strategy to use when patching resources for this application.
+								Supported values are &quot;application/merge-patch+json&quot; and
+								&quot;application/strategic-merge-patch+json&quot;.  The default is
+								&quot;application/strategic-merge-patch+json&quot;.  See
+								<a href="https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/">https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/</a>
+							for details.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="path" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> path</h3>
+					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L62">lib/pack/k8s/kubernetes/request.ts:62</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ingress rule URL path, if not provided no ingress rule is
+								added.  Typically ingress paths start with a forward slash
+							(&quot;/&quot;) but do not end with one, unless the path is just &quot;/&quot;.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="port" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> port</h3>
+					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L56">lib/pack/k8s/kubernetes/request.ts:56</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Port the service listens on, if not provided, no service
+							resource is created.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="rolebindingspec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> role<wbr>Binding<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">role<wbr>Binding<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1RoleBinding</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1ClusterRoleBinding</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L112">lib/pack/k8s/kubernetes/request.ts:112</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial role binding spec for the role to service account.
+								This partial spec is overlaid onto the default role binding
+								spec, which contains metadata and the role and service account
+								names.  The role binding is only created if the <code>roleSpec</code> is
+							also provided.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="rolespec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> role<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">role<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1Role</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1ClusterRole</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L91">lib/pack/k8s/kubernetes/request.ts:91</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial role to create for binding to service account.  If
+								provided, this partial spec is overlaid onto the default role
+								spec, which is just metadata with no rules.  If this is not
+								defined, this deployment will not create a role and therefore
+							not bind a role to a service account.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="secrets" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> secrets</h3>
+					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">V1Secret</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L83">lib/pack/k8s/kubernetes/request.ts:83</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Secrets to upsert prior to creating deployment.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="serviceaccountspec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> service<wbr>Account<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Account<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1ServiceAccount</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L104">lib/pack/k8s/kubernetes/request.ts:104</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial service account spec to create and use in the
+								deployment.  This partial spec is overlaid onto the default
+								service account spec.  If the <code>serviceAccountSpec</code> is provided,
+								the resulting service account spec is upserted during
+								deployment.  If a <code>roleSpec</code> is provided, the resulting service
+								account spec is upserted during deployment and a role binding
+								is created between the role and service account.  If neither
+								the <code>serviceAccountSpec</code> nor <code>roleSpec</code> are created, no service
+								account is managed by the deployment.  If this spec contains a
+							name, it is used in the role binding and deployment specs.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="servicespec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> service<wbr>Spec</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Spec<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DeepPartial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V1Service</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L74">lib/pack/k8s/kubernetes/request.ts:74</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Partial service spec for this application that is overlaid on
+							top of the default service spec template.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="workspaceid" class="tsd-anchor"></a>
+					<h3>workspace<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">workspace<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/kubernetes/request.ts#L34">lib/pack/k8s/kubernetes/request.ts:34</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Atomist workspace ID</p>
+						</div>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html">&quot;pack/k8s/kubernetes/request&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html" class="tsd-kind-icon">Kubernetes<wbr>Application</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#deploymentspec" class="tsd-kind-icon">deployment<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#image" class="tsd-kind-icon">image</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#ingressspec" class="tsd-kind-icon">ingress<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#mode" class="tsd-kind-icon">mode</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#ns" class="tsd-kind-icon">ns</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#patchstrategy" class="tsd-kind-icon">patch<wbr>Strategy</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#path" class="tsd-kind-icon">path</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#port" class="tsd-kind-icon">port</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#rolebindingspec" class="tsd-kind-icon">role<wbr>Binding<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#rolespec" class="tsd-kind-icon">role<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#secrets" class="tsd-kind-icon">secrets</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#serviceaccountspec" class="tsd-kind-icon">service<wbr>Account<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#servicespec" class="tsd-kind-icon">service<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_pack_k8s_kubernetes_request_.kubernetesapplication.html#workspaceid" class="tsd-kind-icon">workspace<wbr>Id</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_pack_k8s_kubernetes_request_.kubernetesclientscontainer.html" class="tsd-kind-icon">Kubernetes<wbr>Clients<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_pack_k8s_kubernetes_request_.kubernetessdm.html" class="tsd-kind-icon">Kubernetes<wbr>Sdm</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#kubernetesdelete" class="tsd-kind-icon">Kubernetes<wbr>Delete</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#kubernetesdeleteresourcerequest" class="tsd-kind-icon">Kubernetes<wbr>Delete<wbr>Resource<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#kubernetesresourcerequest" class="tsd-kind-icon">Kubernetes<wbr>Resource<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#appname" class="tsd-kind-icon">app<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#iskubernetesapplication" class="tsd-kind-icon">is<wbr>Kubernetes<wbr>Application</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#reqfilter" class="tsd-kind-icon">req<wbr>Filter</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_pack_k8s_kubernetes_request_.html#reqstring" class="tsd-kind-icon">req<wbr>String</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

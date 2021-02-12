@@ -1,0 +1,519 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;pack/version/file&quot; | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_pack_version_file_.html">&quot;pack/version/file&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;pack/version/file&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_version_file_.html#fileversionincrementer" class="tsd-kind-icon">File<wbr>Version<wbr>Incrementer</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_version_file_.html#fileversioner" class="tsd-kind-icon">File<wbr>Versioner</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_version_file_.html#readversionfile" class="tsd-kind-icon">read<wbr>Version<wbr>File</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_version_file_.html#versionfilepath" class="tsd-kind-icon">version<wbr>File<wbr>Path</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_version_file_.html#writeversionfile" class="tsd-kind-icon">write<wbr>Version<wbr>File</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-module"><a href="_pack_version_file_.html#fileversionincrementerregistration" class="tsd-kind-icon">File<wbr>Version<wbr>Incrementer<wbr>Registration</a></li>
+								<li class="tsd-kind-object-literal tsd-parent-kind-module"><a href="_pack_version_file_.html#fileversionerregistration" class="tsd-kind-icon">File<wbr>Versioner<wbr>Registration</a></li>
+								<li class="tsd-kind-object-literal tsd-parent-kind-module"><a href="_pack_version_file_.html#hasversionfile" class="tsd-kind-icon">Has<wbr>Version<wbr>File</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="fileversionincrementer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> File<wbr>Version<wbr>Incrementer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">File<wbr>Version<wbr>Incrementer<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_version_increment_.versionincrementerarguments.html" class="tsd-signature-type">VersionIncrementerArguments</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L124">lib/pack/version/file.ts:124</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Command for incrementing the patch value in version file.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>args: <a href="../interfaces/_pack_version_increment_.versionincrementerarguments.html" class="tsd-signature-type">VersionIncrementerArguments</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Standard project incrementer arguments</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Goal execution result</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="fileversioner" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> File<wbr>Versioner</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">File<wbr>Versioner<span class="tsd-signature-symbol">(</span>goalEvent<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_goal_sdmgoalevent_.sdmgoalevent.html" class="tsd-signature-type">SdmGoalEvent</a>, project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GitProject</span>, log<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L32">lib/pack/version/file.ts:32</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Version projects based on the value in a file, the path to which is
+									governed by <a href="_pack_version_file_.html#versionfilepath">versionFilePath</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>goalEvent: <a href="../interfaces/_api_goal_sdmgoalevent_.sdmgoalevent.html" class="tsd-signature-type">SdmGoalEvent</a></h5>
+								</li>
+								<li>
+									<h5>project: <span class="tsd-signature-type">GitProject</span></h5>
+								</li>
+								<li>
+									<h5>log: <a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="readversionfile" class="tsd-anchor"></a>
+					<h3>read<wbr>Version<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Version<wbr>File<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, log<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L84">lib/pack/version/file.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Read version from version file in project.  Version file can be
+										<code>.version</code> or <code>VERSION</code>, with the former taking precedence if both
+									exist.  If neither exist, &quot;0.0.0&quot; is returned.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Project to read version file in</p>
+									</div>
+								</li>
+								<li>
+									<h5>log: <a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Progress log to write information to</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Version as string</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="versionfilepath" class="tsd-anchor"></a>
+					<h3>version<wbr>File<wbr>Path</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">version<wbr>File<wbr>Path<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L66">lib/pack/version/file.ts:66</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return path to version file in project.  Paths interrogated are
+										<code>.version</code> and <code>VERSION</code>.  The former takes precedence if neither
+									or both exist.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Projecto look for version file in</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="writeversionfile" class="tsd-anchor"></a>
+					<h3>write<wbr>Version<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Version<wbr>File<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, log<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a>, v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L106">lib/pack/version/file.ts:106</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Write provided version to version file in project.  The path to the
+									version file is determined using <a href="_pack_version_file_.html#versionfilepath">versionFilePath</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Project to write version file to</p>
+									</div>
+								</li>
+								<li>
+									<h5>log: <a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Progress log to write information to</p>
+									</div>
+								</li>
+								<li>
+									<h5>v: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Version to write to version file</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-module">
+					<a name="fileversionincrementerregistration" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> File<wbr>Version<wbr>Incrementer<wbr>Registration</h3>
+					<div class="tsd-signature tsd-kind-icon">File<wbr>Version<wbr>Incrementer<wbr>Registration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L155">lib/pack/version/file.ts:155</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Increment version registration for <a href="_pack_version_file_.html#fileversionincrementer">FileVersionIncrementer</a>.</p>
+						</div>
+					</div>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionincrementerregistration.loginterpreter" class="tsd-anchor"></a>
+						<h3>log<wbr>Interpreter</h3>
+						<div class="tsd-signature tsd-kind-icon">log<wbr>Interpreter<span class="tsd-signature-symbol">:</span> <a href="_spi_log_interpretedlog_.html#interpretlog" class="tsd-signature-type">InterpretLog</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = LogSuppressor</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L156">lib/pack/version/file.ts:156</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionincrementerregistration.name" class="tsd-anchor"></a>
+						<h3>name</h3>
+						<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = DefaultGoalNameGenerator.generateName(&quot;file-version-incrementer&quot;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L157">lib/pack/version/file.ts:157</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionincrementerregistration.pushtest" class="tsd-anchor"></a>
+						<h3>push<wbr>Test</h3>
+						<div class="tsd-signature tsd-kind-icon">push<wbr>Test<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_api_mapping_pushtest_.pushtest.html" class="tsd-signature-type">PushTest</a><span class="tsd-signature-symbol"> = HasVersionFile</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L158">lib/pack/version/file.ts:158</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionincrementerregistration.versionincrementer" class="tsd-anchor"></a>
+						<h3>version<wbr>Incrementer</h3>
+						<div class="tsd-signature tsd-kind-icon">version<wbr>Incrementer<span class="tsd-signature-symbol">:</span> <a href="_pack_version_increment_.html#versionincrementer" class="tsd-signature-type">VersionIncrementer</a><span class="tsd-signature-symbol"> = FileVersionIncrementer</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L159">lib/pack/version/file.ts:159</a></li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-module">
+					<a name="fileversionerregistration" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> File<wbr>Versioner<wbr>Registration</h3>
+					<div class="tsd-signature tsd-kind-icon">File<wbr>Versioner<wbr>Registration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L52">lib/pack/version/file.ts:52</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Versioner function registration for the <a href="../classes/_core_goal_common_version_.version.html">Version</a> goal.</p>
+						</div>
+					</div>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionerregistration.loginterpreter-1" class="tsd-anchor"></a>
+						<h3>log<wbr>Interpreter</h3>
+						<div class="tsd-signature tsd-kind-icon">log<wbr>Interpreter<span class="tsd-signature-symbol">:</span> <a href="_spi_log_interpretedlog_.html#interpretlog" class="tsd-signature-type">InterpretLog</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = LogSuppressor</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L53">lib/pack/version/file.ts:53</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionerregistration.name-1" class="tsd-anchor"></a>
+						<h3>name</h3>
+						<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = DefaultGoalNameGenerator.generateName(&quot;file-versioner&quot;)</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L54">lib/pack/version/file.ts:54</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionerregistration.pushtest-1" class="tsd-anchor"></a>
+						<h3>push<wbr>Test</h3>
+						<div class="tsd-signature tsd-kind-icon">push<wbr>Test<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_api_mapping_pushtest_.pushtest.html" class="tsd-signature-type">PushTest</a><span class="tsd-signature-symbol"> = HasVersionFile</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L55">lib/pack/version/file.ts:55</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="fileversionerregistration.versioner" class="tsd-anchor"></a>
+						<h3>versioner</h3>
+						<div class="tsd-signature tsd-kind-icon">versioner<span class="tsd-signature-symbol">:</span> <a href="_core_delivery_build_local_projectversioner_.html#projectversioner" class="tsd-signature-type">ProjectVersioner</a><span class="tsd-signature-symbol"> = FileVersioner</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L56">lib/pack/version/file.ts:56</a></li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-module">
+					<a name="hasversionfile" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Has<wbr>Version<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">Has<wbr>Version<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L44">lib/pack/version/file.ts:44</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Push test indicating if project has either a <code>.version</code> or
+							<code>VERSION</code> file at the root of the repository.</p>
+						</div>
+					</div>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="hasversionfile.name-2" class="tsd-anchor"></a>
+						<h3>name</h3>
+						<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;HasVersionFile&quot;</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L45">lib/pack/version/file.ts:45</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal">
+						<a name="hasversionfile.mapping" class="tsd-anchor"></a>
+						<h3>mapping</h3>
+						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon">mapping<span class="tsd-signature-symbol">(</span>inv<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_dsl_goalcontribution_.statefulpushlistenerinvocation.html" class="tsd-signature-type">StatefulPushListenerInvocation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/version/file.ts#L46">lib/pack/version/file.ts:46</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>inv: <a href="../interfaces/_api_dsl_goalcontribution_.statefulpushlistenerinvocation.html" class="tsd-signature-type">StatefulPushListenerInvocation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							</li>
+						</ul>
+					</section>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_pack_version_file_.html">&quot;pack/version/file&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#fileversionincrementer" class="tsd-kind-icon">File<wbr>Version<wbr>Incrementer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#fileversioner" class="tsd-kind-icon">File<wbr>Versioner</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#readversionfile" class="tsd-kind-icon">read<wbr>Version<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#versionfilepath" class="tsd-kind-icon">version<wbr>File<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#writeversionfile" class="tsd-kind-icon">write<wbr>Version<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#fileversionincrementerregistration" class="tsd-kind-icon">File<wbr>Version<wbr>Incrementer<wbr>Registration</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#fileversionerregistration" class="tsd-kind-icon">File<wbr>Versioner<wbr>Registration</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-module">
+						<a href="_pack_version_file_.html#hasversionfile" class="tsd-kind-icon">Has<wbr>Version<wbr>File</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

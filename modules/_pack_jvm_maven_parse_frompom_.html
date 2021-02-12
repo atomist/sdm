@@ -1,0 +1,433 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;pack/jvm/maven/parse/fromPom&quot; | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_pack_jvm_maven_parse_frompom_.html">&quot;pack/jvm/maven/parse/fromPom&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;pack/jvm/maven/parse/fromPom&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_jvm_maven_parse_frompom_.html#extractplugin" class="tsd-kind-icon">extract<wbr>Plugin</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_jvm_maven_parse_frompom_.html#extractversionedartifact" class="tsd-kind-icon">extract<wbr>Versioned<wbr>Artifact</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_jvm_maven_parse_frompom_.html#finddeclareddependencies" class="tsd-kind-icon">find<wbr>Declared<wbr>Dependencies</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_jvm_maven_parse_frompom_.html#finddeclareddependencieswith" class="tsd-kind-icon">find<wbr>Declared<wbr>Dependencies<wbr>With</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredmanagedplugins" class="tsd-kind-icon">find<wbr>Declared<wbr>Managed<wbr>Plugins</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredplugins" class="tsd-kind-icon">find<wbr>Declared<wbr>Plugins</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredpluginswith" class="tsd-kind-icon">find<wbr>Declared<wbr>Plugins<wbr>With</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_jvm_maven_parse_frompom_.html#parseconfiguration" class="tsd-kind-icon">parse<wbr>Configuration</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_jvm_maven_parse_frompom_.html#parseconfigurationnode" class="tsd-kind-icon">parse<wbr>Configuration<wbr>Node</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="extractplugin" class="tsd-anchor"></a>
+					<h3>extract<wbr>Plugin</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Plugin<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L128">lib/pack/jvm/maven/parse/fromPom.ts:128</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="extractversionedartifact" class="tsd-anchor"></a>
+					<h3>extract<wbr>Versioned<wbr>Artifact</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Versioned<wbr>Artifact<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_maven_versionedartifact_.versionedartifact.html" class="tsd-signature-type">VersionedArtifact</a><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L110">lib/pack/jvm/maven/parse/fromPom.ts:110</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_pack_jvm_maven_versionedartifact_.versionedartifact.html" class="tsd-signature-type">VersionedArtifact</a><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="finddeclareddependencies" class="tsd-anchor"></a>
+					<h3>find<wbr>Declared<wbr>Dependencies</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Declared<wbr>Dependencies<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, glob<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_inspection_finddependencies_.dependencies.html" class="tsd-signature-type">Dependencies</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L28">lib/pack/jvm/maven/parse/fromPom.ts:28</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return dependencies under dependencies section</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> glob: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;pom.xml&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_inspection_finddependencies_.dependencies.html" class="tsd-signature-type">Dependencies</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="finddeclareddependencieswith" class="tsd-anchor"></a>
+					<h3>find<wbr>Declared<wbr>Dependencies<wbr>With</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Declared<wbr>Dependencies<wbr>With<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, pathExpression<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, glob<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, functionRegistry<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FunctionRegistry</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_inspection_finddependencies_.dependencies.html" class="tsd-signature-type">Dependencies</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L56">lib/pack/jvm/maven/parse/fromPom.ts:56</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Find declared dependencies using the given path expression.
+										Control over the path expression allows us to look under dependencyManagement,
+									or directly in dependencies section under project</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+								</li>
+								<li>
+									<h5>pathExpression: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> glob: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;pom.xml&quot;</span></h5>
+								</li>
+								<li>
+									<h5>functionRegistry: <span class="tsd-signature-type">FunctionRegistry</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_inspection_finddependencies_.dependencies.html" class="tsd-signature-type">Dependencies</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="finddeclaredmanagedplugins" class="tsd-anchor"></a>
+					<h3>find<wbr>Declared<wbr>Managed<wbr>Plugins</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Declared<wbr>Managed<wbr>Plugins<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, glob<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L42">lib/pack/jvm/maven/parse/fromPom.ts:42</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return plugins under plugin management section</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> glob: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;pom.xml&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="finddeclaredplugins" class="tsd-anchor"></a>
+					<h3>find<wbr>Declared<wbr>Plugins</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Declared<wbr>Plugins<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, glob<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L35">lib/pack/jvm/maven/parse/fromPom.ts:35</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return plugins under plugins section</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> glob: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;pom.xml&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="finddeclaredpluginswith" class="tsd-anchor"></a>
+					<h3>find<wbr>Declared<wbr>Plugins<wbr>With</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Declared<wbr>Plugins<wbr>With<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Project</span>, pathExpression<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, glob<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, functionRegistry<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FunctionRegistry</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L84">lib/pack/jvm/maven/parse/fromPom.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Find declared plugins using the given path expression.
+										Control over the path expression allows us to look under pluginManagement,
+									or directly in plugin section under project/build</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">Project</span></h5>
+								</li>
+								<li>
+									<h5>pathExpression: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> glob: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;pom.xml&quot;</span></h5>
+								</li>
+								<li>
+									<h5>functionRegistry: <span class="tsd-signature-type">FunctionRegistry</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_jvm_maven_plugin_.plugin.html" class="tsd-signature-type">Plugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="parseconfiguration" class="tsd-anchor"></a>
+					<h3>parse<wbr>Configuration</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Configuration<span class="tsd-signature-symbol">(</span>nodes<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L163">lib/pack/jvm/maven/parse/fromPom.ts:163</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>nodes: <a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="parseconfigurationnode" class="tsd-anchor"></a>
+					<h3>parse<wbr>Configuration<wbr>Node</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Configuration<wbr>Node<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/jvm/maven/parse/fromPom.ts#L150">lib/pack/jvm/maven/parse/fromPom.ts:150</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <a href="../interfaces/_pack_jvm_xml_xmldocfileparser_.xmldoctreenode.html" class="tsd-signature-type">XmldocTreeNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_pack_jvm_maven_parse_frompom_.html">&quot;pack/jvm/maven/parse/from<wbr>Pom&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_jvm_maven_parse_frompom_.html#extractplugin" class="tsd-kind-icon">extract<wbr>Plugin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_jvm_maven_parse_frompom_.html#extractversionedartifact" class="tsd-kind-icon">extract<wbr>Versioned<wbr>Artifact</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_jvm_maven_parse_frompom_.html#finddeclareddependencies" class="tsd-kind-icon">find<wbr>Declared<wbr>Dependencies</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_jvm_maven_parse_frompom_.html#finddeclareddependencieswith" class="tsd-kind-icon">find<wbr>Declared<wbr>Dependencies<wbr>With</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredmanagedplugins" class="tsd-kind-icon">find<wbr>Declared<wbr>Managed<wbr>Plugins</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredplugins" class="tsd-kind-icon">find<wbr>Declared<wbr>Plugins</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_jvm_maven_parse_frompom_.html#finddeclaredpluginswith" class="tsd-kind-icon">find<wbr>Declared<wbr>Plugins<wbr>With</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_jvm_maven_parse_frompom_.html#parseconfiguration" class="tsd-kind-icon">parse<wbr>Configuration</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_jvm_maven_parse_frompom_.html#parseconfigurationnode" class="tsd-kind-icon">parse<wbr>Configuration<wbr>Node</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;pack/k8s/sync/change&quot; | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_pack_k8s_sync_change_.html">&quot;pack/k8s/sync/change&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;pack/k8s/sync/change&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_pack_k8s_sync_change_.syncchanges.html" class="tsd-kind-icon">Sync<wbr>Changes</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_pack_k8s_sync_change_.html#changetype" class="tsd-kind-icon">Change<wbr>Type</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_change_.html#calculatechanges" class="tsd-kind-icon">calculate<wbr>Changes</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_change_.html#changeresource" class="tsd-kind-icon">change<wbr>Resource</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_change_.html#filterignoredspecs" class="tsd-kind-icon">filter<wbr>Ignored<wbr>Specs</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_change_.html#hasmetadataannotation" class="tsd-kind-icon">has<wbr>Metadata<wbr>Annotation</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="changetype" class="tsd-anchor"></a>
+					<h3>Change<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">Change<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"apply"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"delete"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/change.ts#L35">lib/pack/k8s/sync/change.ts:35</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Whether a spec should be applied or deleted.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="calculatechanges" class="tsd-anchor"></a>
+					<h3>calculate<wbr>Changes</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">calculate<wbr>Changes<span class="tsd-signature-symbol">(</span>before<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span>, after<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, change<span class="tsd-signature-symbol">: </span><a href="_pack_k8s_sync_change_.html#changetype" class="tsd-signature-type">ChangeType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_k8s_sync_change_.syncchanges.html" class="tsd-signature-type">SyncChanges</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/change.ts#L104">lib/pack/k8s/sync/change.ts:104</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Inspect before and after specs to determine actions.</p>
+								</div>
+								<p>If the action is &quot;delete&quot;, return delete actions for all specs in
+									<code>before</code> that do not have an ignore annotation for the current SDM,
+								as the &quot;delete&quot; action implies there are no <code>after</code> specs.</p>
+								<p>If the action is &quot;apply&quot;, return apply actions for all specs in
+									<code>after</code> and delete actions for all specs in <code>before</code> that are not
+									in <code>after</code> that do not have an ignore annotation for the current
+									SDM.  If a <code>before</code> spec contains a sync ignore annotation for the
+									current SDM and the <code>after</code> annotation does not, the <code>after</code> spec
+									with an &quot;apply&quot; action is included in the returned changes.  If an
+									<code>after</code> spec contains a sync ignore annotation for the current SDM,
+									then it is omitted from the returned changes, regardless of whether
+								it appears in the <code>before</code> specs or not.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>before: <span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The specs before the change</p>
+									</div>
+								</li>
+								<li>
+									<h5>after: <span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The specs after the change</p>
+									</div>
+								</li>
+								<li>
+									<h5>change: <a href="_pack_k8s_sync_change_.html#changetype" class="tsd-signature-type">ChangeType</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of change</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_pack_k8s_sync_change_.syncchanges.html" class="tsd-signature-type">SyncChanges</a><span class="tsd-signature-symbol">[]</span></h4>
+							<p>Array containing the type of change for each spec</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="changeresource" class="tsd-anchor"></a>
+					<h3>change<wbr>Resource</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">change<wbr>Resource<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GitProject</span>, change<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/change.ts#L42">lib/pack/k8s/sync/change.ts:42</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Delete/apply resources in change.  The spec file provided by the
+										change.path may contain multiple specs.  The requested change is
+									applied to each.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-type">GitProject</span></h5>
+								</li>
+								<li>
+									<h5>change: <a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="filterignoredspecs" class="tsd-anchor"></a>
+					<h3>filter<wbr>Ignored<wbr>Specs</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">filter<wbr>Ignored<wbr>Specs<span class="tsd-signature-symbol">(</span>specs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/change.ts#L132">lib/pack/k8s/sync/change.ts:132</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returned array of specs with those that should be ignored filtered
+									out.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>specs: <span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Array of specs to check</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">KubernetesObject</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>Array of not ignored specs.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="hasmetadataannotation" class="tsd-anchor"></a>
+					<h3>has<wbr>Metadata<wbr>Annotation</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Metadata<wbr>Annotation<span class="tsd-signature-symbol">(</span>spec<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KubernetesObject</span>, annotationKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, annotationValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/change.ts#L146">lib/pack/k8s/sync/change.ts:146</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Check if the Kubernetes Object has an annotation that is relevant to the current SDM</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>spec: <span class="tsd-signature-type">KubernetesObject</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the spec to inspect</p>
+									</div>
+								</li>
+								<li>
+									<h5>annotationKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the key to validate for</p>
+									</div>
+								</li>
+								<li>
+									<h5>annotationValue: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the value validate for</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>the result of the annotation inspection</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_pack_k8s_sync_change_.html">&quot;pack/k8s/sync/change&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_pack_k8s_sync_change_.syncchanges.html" class="tsd-kind-icon">Sync<wbr>Changes</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_change_.html#changetype" class="tsd-kind-icon">Change<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_change_.html#calculatechanges" class="tsd-kind-icon">calculate<wbr>Changes</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_change_.html#changeresource" class="tsd-kind-icon">change<wbr>Resource</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_change_.html#filterignoredspecs" class="tsd-kind-icon">filter<wbr>Ignored<wbr>Specs</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_change_.html#hasmetadataannotation" class="tsd-kind-icon">has<wbr>Metadata<wbr>Annotation</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

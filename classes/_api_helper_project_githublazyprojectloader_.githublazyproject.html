@@ -1,0 +1,1769 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>GitHubLazyProject | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_api_helper_project_githublazyprojectloader_.html">&quot;api-helper/project/GitHubLazyProjectLoader&quot;</a>
+				</li>
+				<li>
+					<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>
+				</li>
+			</ul>
+			<h1>Class GitHubLazyProject</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Lazy project that loads remote GitHub project and forwards to it only if necessary.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="tsd-signature-type">AbstractProject</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">GitHubLazyProject</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><span class="tsd-signature-type">ScriptedFlushable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Project</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><span class="tsd-signature-type">Project</span></li>
+					<li><span class="tsd-signature-type">GitProject</span></li>
+					<li><a href="../interfaces/_spi_project_lazyprojectloader_.lazyproject.html" class="tsd-signature-type">LazyProject</a></li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#branch" class="tsd-kind-icon">branch</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#cache" class="tsd-kind-icon">cache</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#delegate" class="tsd-kind-icon">delegate</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#newrepo" class="tsd-kind-icon">new<wbr>Repo</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#params" class="tsd-kind-icon">params</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#projectpromise" class="tsd-kind-icon">project<wbr>Promise</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#remote" class="tsd-kind-icon">remote</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#shouldcache" class="tsd-kind-icon">should<wbr>Cache</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#basedir" class="tsd-kind-icon">base<wbr>Dir</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#dirty" class="tsd-kind-icon">dirty</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#provenance" class="tsd-kind-icon">provenance</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#adddirectory" class="tsd-kind-icon">add<wbr>Directory</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#addfile" class="tsd-kind-icon">add<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#addfilesync" class="tsd-kind-icon">add<wbr>File<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#checkout" class="tsd-kind-icon">checkout</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#commit" class="tsd-kind-icon">commit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#configurefromremote" class="tsd-kind-icon">configure<wbr>From<wbr>Remote</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#createandsetremote" class="tsd-kind-icon">create<wbr>And<wbr>Set<wbr>Remote</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#createbranch" class="tsd-kind-icon">create<wbr>Branch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletedirectory" class="tsd-kind-icon">delete<wbr>Directory</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletedirectorysync" class="tsd-kind-icon">delete<wbr>Directory<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletefile" class="tsd-kind-icon">delete<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletefilesync" class="tsd-kind-icon">delete<wbr>File<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#directoryexistssync" class="tsd-kind-icon">directory<wbr>Exists<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#fileexistssync" class="tsd-kind-icon">file<wbr>Exists<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#findfile" class="tsd-kind-icon">find<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#findfilesync" class="tsd-kind-icon">find<wbr>File<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#flush" class="tsd-kind-icon">flush</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfile" class="tsd-kind-icon">get<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfiles" class="tsd-kind-icon">get<wbr>Files</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfilesinternal" class="tsd-kind-icon">get<wbr>Files<wbr>Internal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#gitstatus" class="tsd-kind-icon">git<wbr>Status</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasbranch" class="tsd-kind-icon">has<wbr>Branch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasdirectory" class="tsd-kind-icon">has<wbr>Directory</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasfile" class="tsd-kind-icon">has<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#invalidatecache" class="tsd-kind-icon">invalidate<wbr>Cache</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#isclean" class="tsd-kind-icon">is<wbr>Clean</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#makeexecutable" class="tsd-kind-icon">make<wbr>Executable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#makeexecutablesync" class="tsd-kind-icon">make<wbr>Executable<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materialize" class="tsd-kind-icon">materialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materializeifnecessary" class="tsd-kind-icon">materialize<wbr>IfNecessary</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materialized" class="tsd-kind-icon">materialized</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materializing" class="tsd-kind-icon">materializing</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#movefile" class="tsd-kind-icon">move<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#push" class="tsd-kind-icon">push</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#raisepullrequest" class="tsd-kind-icon">raise<wbr>Pull<wbr>Request</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaction" class="tsd-kind-icon">record<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaddfile" class="tsd-kind-icon">record<wbr>Add<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recorddeletefile" class="tsd-kind-icon">record<wbr>Delete<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#release" class="tsd-kind-icon">release</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#revert" class="tsd-kind-icon">revert</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#setremote" class="tsd-kind-icon">set<wbr>Remote</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#setuserconfig" class="tsd-kind-icon">set<wbr>User<wbr>Config</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#streamfiles" class="tsd-kind-icon">stream<wbr>Files</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#streamfilesraw" class="tsd-kind-icon">stream<wbr>Files<wbr>Raw</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#totalfilecount" class="tsd-kind-icon">total<wbr>File<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#trackfile" class="tsd-kind-icon">track<wbr>File</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Git<wbr>Hub<wbr>Lazy<wbr>Project<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RemoteRepoRef</span>, delegate<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_project_projectloader_.projectloader.html" class="tsd-signature-type">ProjectLoader</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_project_projectloader_.projectloadingparameters.html" class="tsd-signature-type">ProjectLoadingParameters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html" class="tsd-signature-type">GitHubLazyProject</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.__constructor</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L80">lib/api-helper/project/GitHubLazyProjectLoader.ts:80</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">RemoteRepoRef</span></h5>
+								</li>
+								<li>
+									<h5>delegate: <a href="../interfaces/_spi_project_projectloader_.projectloader.html" class="tsd-signature-type">ProjectLoader</a></h5>
+								</li>
+								<li>
+									<h5>params: <a href="../interfaces/_spi_project_projectloader_.projectloadingparameters.html" class="tsd-signature-type">ProjectLoadingParameters</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html" class="tsd-signature-type">GitHubLazyProject</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="branch" class="tsd-anchor"></a>
+					<h3>branch</h3>
+					<div class="tsd-signature tsd-kind-icon">branch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = this.id.branch</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L112">lib/api-helper/project/GitHubLazyProjectLoader.ts:112</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="cache" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> cache</h3>
+					<div class="tsd-signature tsd-kind-icon">cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#cache">cache</a></p>
+						<ul>
+							<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:17</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="delegate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> delegate</h3>
+					<div class="tsd-signature tsd-kind-icon">delegate<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_spi_project_projectloader_.projectloader.html" class="tsd-signature-type">ProjectLoader</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L82">lib/api-helper/project/GitHubLazyProjectLoader.ts:82</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RepoRef</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#id">id</a></p>
+						<ul>
+							<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:11</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="newrepo" class="tsd-anchor"></a>
+					<h3>new<wbr>Repo</h3>
+					<div class="tsd-signature tsd-kind-icon">new<wbr>Repo<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L113">lib/api-helper/project/GitHubLazyProjectLoader.ts:113</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="params" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> params</h3>
+					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_spi_project_projectloader_.projectloadingparameters.html" class="tsd-signature-type">ProjectLoadingParameters</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L82">lib/api-helper/project/GitHubLazyProjectLoader.ts:82</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="projectpromise" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> project<wbr>Promise</h3>
+					<div class="tsd-signature tsd-kind-icon">project<wbr>Promise<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html" class="tsd-signature-type">QueryablePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitProject</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L80">lib/api-helper/project/GitHubLazyProjectLoader.ts:80</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="remote" class="tsd-anchor"></a>
+					<h3>remote</h3>
+					<div class="tsd-signature tsd-kind-icon">remote<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = (this.id as RemoteRepoRef).url</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L114">lib/api-helper/project/GitHubLazyProjectLoader.ts:114</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="shouldcache" class="tsd-anchor"></a>
+					<h3>should<wbr>Cache</h3>
+					<div class="tsd-signature tsd-kind-icon">should<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#shouldcache">shouldCache</a></p>
+						<ul>
+							<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:12</li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+					<a name="basedir" class="tsd-anchor"></a>
+					<h3>base<wbr>Dir</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> baseDir<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L105">lib/api-helper/project/GitHubLazyProjectLoader.ts:105</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="dirty" class="tsd-anchor"></a>
+					<h3>dirty</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> dirty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#dirty">dirty</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/internal/common/AbstractScriptedFlushable.d.ts:8</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> name<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#name">name</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:18</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+					<a name="provenance" class="tsd-anchor"></a>
+					<h3>provenance</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> provenance<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L99">lib/api-helper/project/GitHubLazyProjectLoader.ts:99</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="add" class="tsd-anchor"></a>
+					<h3>add</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#add">add</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:52</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>f: <span class="tsd-signature-type">File</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="adddirectory" class="tsd-anchor"></a>
+					<h3>add<wbr>Directory</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Directory<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.addDirectory</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L116">lib/api-helper/project/GitHubLazyProjectLoader.ts:116</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="addfile" class="tsd-anchor"></a>
+					<h3>add<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.addFile</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L126">lib/api-helper/project/GitHubLazyProjectLoader.ts:126</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>content: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="addfilesync" class="tsd-anchor"></a>
+					<h3>add<wbr>File<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>File<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.addFileSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L131">lib/api-helper/project/GitHubLazyProjectLoader.ts:131</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>content: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="checkout" class="tsd-anchor"></a>
+					<h3>checkout</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">checkout<span class="tsd-signature-symbol">(</span>sha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L212">lib/api-helper/project/GitHubLazyProjectLoader.ts:212</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sha: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="commit" class="tsd-anchor"></a>
+					<h3>commit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">commit<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L217">lib/api-helper/project/GitHubLazyProjectLoader.ts:217</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="configurefromremote" class="tsd-anchor"></a>
+					<h3>configure<wbr>From<wbr>Remote</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">configure<wbr>From<wbr>Remote<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L222">lib/api-helper/project/GitHubLazyProjectLoader.ts:222</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="createandsetremote" class="tsd-anchor"></a>
+					<h3>create<wbr>And<wbr>Set<wbr>Remote</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>And<wbr>Set<wbr>Remote<span class="tsd-signature-symbol">(</span>gid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RemoteRepoRef</span>, description<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, visibility<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"private"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"public"</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L227">lib/api-helper/project/GitHubLazyProjectLoader.ts:227</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>gid: <span class="tsd-signature-type">RemoteRepoRef</span></h5>
+								</li>
+								<li>
+									<h5>description: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>visibility: <span class="tsd-signature-type">"private"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"public"</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="createbranch" class="tsd-anchor"></a>
+					<h3>create<wbr>Branch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Branch<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L232">lib/api-helper/project/GitHubLazyProjectLoader.ts:232</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="deletedirectory" class="tsd-anchor"></a>
+					<h3>delete<wbr>Directory</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Directory<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.deleteDirectory</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L135">lib/api-helper/project/GitHubLazyProjectLoader.ts:135</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="deletedirectorysync" class="tsd-anchor"></a>
+					<h3>delete<wbr>Directory<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Directory<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.deleteDirectorySync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L140">lib/api-helper/project/GitHubLazyProjectLoader.ts:140</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="deletefile" class="tsd-anchor"></a>
+					<h3>delete<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.deleteFile</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L144">lib/api-helper/project/GitHubLazyProjectLoader.ts:144</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="deletefilesync" class="tsd-anchor"></a>
+					<h3>delete<wbr>File<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>File<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.deleteFileSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L149">lib/api-helper/project/GitHubLazyProjectLoader.ts:149</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="directoryexistssync" class="tsd-anchor"></a>
+					<h3>directory<wbr>Exists<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">directory<wbr>Exists<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.directoryExistsSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L153">lib/api-helper/project/GitHubLazyProjectLoader.ts:153</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="fileexistssync" class="tsd-anchor"></a>
+					<h3>file<wbr>Exists<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">file<wbr>Exists<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.fileExistsSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L157">lib/api-helper/project/GitHubLazyProjectLoader.ts:157</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="findfile" class="tsd-anchor"></a>
+					<h3>find<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.findFile</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L161">lib/api-helper/project/GitHubLazyProjectLoader.ts:161</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="findfilesync" class="tsd-anchor"></a>
+					<h3>find<wbr>File<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>File<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">File</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.findFileSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L169">lib/api-helper/project/GitHubLazyProjectLoader.ts:169</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">File</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="flush" class="tsd-anchor"></a>
+					<h3>flush</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">flush<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#flush">flush</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/internal/common/AbstractScriptedFlushable.d.ts:9</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="getfile" class="tsd-anchor"></a>
+					<h3>get<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.getFile</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L173">lib/api-helper/project/GitHubLazyProjectLoader.ts:173</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="getfiles" class="tsd-anchor"></a>
+					<h3>get<wbr>Files</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Files<span class="tsd-signature-symbol">(</span>globPatterns<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfiles">getFiles</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:37</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get files matching these patterns</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> globPatterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-not-exported">
+					<a name="getfilesinternal" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> get<wbr>Files<wbr>Internal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Files<wbr>Internal<span class="tsd-signature-symbol">(</span>globPatterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.getFilesInternal</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L282">lib/api-helper/project/GitHubLazyProjectLoader.ts:282</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>globPatterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="gitstatus" class="tsd-anchor"></a>
+					<h3>git<wbr>Status</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">git<wbr>Status<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitStatus</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L237">lib/api-helper/project/GitHubLazyProjectLoader.ts:237</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitStatus</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="hasbranch" class="tsd-anchor"></a>
+					<h3>has<wbr>Branch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Branch<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L242">lib/api-helper/project/GitHubLazyProjectLoader.ts:242</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="hasdirectory" class="tsd-anchor"></a>
+					<h3>has<wbr>Directory</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Directory<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.hasDirectory</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L121">lib/api-helper/project/GitHubLazyProjectLoader.ts:121</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="hasfile" class="tsd-anchor"></a>
+					<h3>has<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasfile">hasFile</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:27</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="init" class="tsd-anchor"></a>
+					<h3>init</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L247">lib/api-helper/project/GitHubLazyProjectLoader.ts:247</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
+					<a name="invalidatecache" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> invalidate<wbr>Cache</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">invalidate<wbr>Cache<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#invalidatecache">invalidateCache</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:60</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="isclean" class="tsd-anchor"></a>
+					<h3>is<wbr>Clean</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Clean<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L252">lib/api-helper/project/GitHubLazyProjectLoader.ts:252</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="makeexecutable" class="tsd-anchor"></a>
+					<h3>make<wbr>Executable</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Executable<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.makeExecutable</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L188">lib/api-helper/project/GitHubLazyProjectLoader.ts:188</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="makeexecutablesync" class="tsd-anchor"></a>
+					<h3>make<wbr>Executable<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Executable<wbr>Sync<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.makeExecutableSync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L193">lib/api-helper/project/GitHubLazyProjectLoader.ts:193</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="materialize" class="tsd-anchor"></a>
+					<h3>materialize</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">materialize<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitProject</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_spi_project_lazyprojectloader_.lazyproject.html">LazyProject</a>.<a href="../interfaces/_spi_project_lazyprojectloader_.lazyproject.html#materialize">materialize</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L94">lib/api-helper/project/GitHubLazyProjectLoader.ts:94</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitProject</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="materializeifnecessary" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> materialize<wbr>IfNecessary</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">materialize<wbr>IfNecessary<span class="tsd-signature-symbol">(</span>why<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html" class="tsd-signature-type">QueryablePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitProject</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L295">lib/api-helper/project/GitHubLazyProjectLoader.ts:295</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>why: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html" class="tsd-signature-type">QueryablePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GitProject</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="materialized" class="tsd-anchor"></a>
+					<h3>materialized</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">materialized<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_spi_project_lazyprojectloader_.lazyproject.html">LazyProject</a>.<a href="../interfaces/_spi_project_lazyprojectloader_.lazyproject.html#materialized">materialized</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L90">lib/api-helper/project/GitHubLazyProjectLoader.ts:90</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="materializing" class="tsd-anchor"></a>
+					<h3>materializing</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">materializing<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L86">lib/api-helper/project/GitHubLazyProjectLoader.ts:86</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="movefile" class="tsd-anchor"></a>
+					<h3>move<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">move<wbr>File<span class="tsd-signature-symbol">(</span>oldPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, newPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#movefile">moveFile</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:45</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>oldPath: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>newPath: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="push" class="tsd-anchor"></a>
+					<h3>push</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">push<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">GitPushOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L257">lib/api-helper/project/GitHubLazyProjectLoader.ts:257</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">GitPushOptions</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="raisepullrequest" class="tsd-anchor"></a>
+					<h3>raise<wbr>Pull<wbr>Request</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">raise<wbr>Pull<wbr>Request<span class="tsd-signature-symbol">(</span>title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, targetBranch<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L262">lib/api-helper/project/GitHubLazyProjectLoader.ts:262</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>title: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>body: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> targetBranch: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="recordaction" class="tsd-anchor"></a>
+					<h3>record<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">record<wbr>Action<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ScriptAction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Project</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaction">recordAction</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/internal/common/AbstractScriptedFlushable.d.ts:7</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>action: <span class="tsd-signature-type">ScriptAction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Project</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="recordaddfile" class="tsd-anchor"></a>
+					<h3>record<wbr>Add<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">record<wbr>Add<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaddfile">recordAddFile</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:47</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>content: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="recorddeletefile" class="tsd-anchor"></a>
+					<h3>record<wbr>Delete<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">record<wbr>Delete<wbr>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recorddeletefile">recordDeleteFile</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:48</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>path: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="release" class="tsd-anchor"></a>
+					<h3>release</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">release<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L103">lib/api-helper/project/GitHubLazyProjectLoader.ts:103</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="revert" class="tsd-anchor"></a>
+					<h3>revert</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">revert<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L267">lib/api-helper/project/GitHubLazyProjectLoader.ts:267</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="setremote" class="tsd-anchor"></a>
+					<h3>set<wbr>Remote</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Remote<span class="tsd-signature-symbol">(</span>remote<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L272">lib/api-helper/project/GitHubLazyProjectLoader.ts:272</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>remote: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="setuserconfig" class="tsd-anchor"></a>
+					<h3>set<wbr>User<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>User<wbr>Config<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L277">lib/api-helper/project/GitHubLazyProjectLoader.ts:277</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>user: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>email: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="streamfiles" class="tsd-anchor"></a>
+					<h3>stream<wbr>Files</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">stream<wbr>Files<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>globPatterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FileStream</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#streamfiles">streamFiles</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:30</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>globPatterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">FileStream</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="streamfilesraw" class="tsd-anchor"></a>
+					<h3>stream<wbr>Files<wbr>Raw</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">stream<wbr>Files<wbr>Raw<span class="tsd-signature-symbol">(</span>globPatterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, opts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FileStream</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides AbstractProject.streamFilesRaw</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api-helper/project/GitHubLazyProjectLoader.ts#L197">lib/api-helper/project/GitHubLazyProjectLoader.ts:197</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>globPatterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>opts: <span class="tsd-signature-symbol">{}</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">FileStream</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="totalfilecount" class="tsd-anchor"></a>
+					<h3>total<wbr>File<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">total<wbr>File<wbr>Count<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#totalfilecount">totalFileCount</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:43</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="trackfile" class="tsd-anchor"></a>
+					<h3>track<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">track<wbr>File<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FileNonBlocking</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html">GitHubLazyProject</a>.<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#trackfile">trackFile</a></p>
+								<ul>
+									<li>Defined in node_modules/@atomist/automation-client/lib/project/support/AbstractProject.d.ts:44</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>f: <span class="tsd-signature-type">FileNonBlocking</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_api_helper_project_githublazyprojectloader_.html">&quot;api-<wbr>helper/project/<wbr>Git<wbr>Hub<wbr>Lazy<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html" class="tsd-kind-icon">Git<wbr>Hub<wbr>Lazy<wbr>Project</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#branch" class="tsd-kind-icon">branch</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#cache" class="tsd-kind-icon">cache</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#delegate" class="tsd-kind-icon">delegate</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#newrepo" class="tsd-kind-icon">new<wbr>Repo</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#params" class="tsd-kind-icon">params</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#projectpromise" class="tsd-kind-icon">project<wbr>Promise</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#remote" class="tsd-kind-icon">remote</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#shouldcache" class="tsd-kind-icon">should<wbr>Cache</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#basedir" class="tsd-kind-icon">base<wbr>Dir</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#dirty" class="tsd-kind-icon">dirty</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#provenance" class="tsd-kind-icon">provenance</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#add" class="tsd-kind-icon">add</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#adddirectory" class="tsd-kind-icon">add<wbr>Directory</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#addfile" class="tsd-kind-icon">add<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#addfilesync" class="tsd-kind-icon">add<wbr>File<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#checkout" class="tsd-kind-icon">checkout</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#commit" class="tsd-kind-icon">commit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#configurefromremote" class="tsd-kind-icon">configure<wbr>From<wbr>Remote</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#createandsetremote" class="tsd-kind-icon">create<wbr>And<wbr>Set<wbr>Remote</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#createbranch" class="tsd-kind-icon">create<wbr>Branch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletedirectory" class="tsd-kind-icon">delete<wbr>Directory</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletedirectorysync" class="tsd-kind-icon">delete<wbr>Directory<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletefile" class="tsd-kind-icon">delete<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#deletefilesync" class="tsd-kind-icon">delete<wbr>File<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#directoryexistssync" class="tsd-kind-icon">directory<wbr>Exists<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#fileexistssync" class="tsd-kind-icon">file<wbr>Exists<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#findfile" class="tsd-kind-icon">find<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#findfilesync" class="tsd-kind-icon">find<wbr>File<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#flush" class="tsd-kind-icon">flush</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfile" class="tsd-kind-icon">get<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfiles" class="tsd-kind-icon">get<wbr>Files</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#getfilesinternal" class="tsd-kind-icon">get<wbr>Files<wbr>Internal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#gitstatus" class="tsd-kind-icon">git<wbr>Status</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasbranch" class="tsd-kind-icon">has<wbr>Branch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasdirectory" class="tsd-kind-icon">has<wbr>Directory</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#hasfile" class="tsd-kind-icon">has<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#init" class="tsd-kind-icon">init</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#invalidatecache" class="tsd-kind-icon">invalidate<wbr>Cache</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#isclean" class="tsd-kind-icon">is<wbr>Clean</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#makeexecutable" class="tsd-kind-icon">make<wbr>Executable</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#makeexecutablesync" class="tsd-kind-icon">make<wbr>Executable<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materialize" class="tsd-kind-icon">materialize</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materializeifnecessary" class="tsd-kind-icon">materialize<wbr>IfNecessary</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materialized" class="tsd-kind-icon">materialized</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#materializing" class="tsd-kind-icon">materializing</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#movefile" class="tsd-kind-icon">move<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#push" class="tsd-kind-icon">push</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#raisepullrequest" class="tsd-kind-icon">raise<wbr>Pull<wbr>Request</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaction" class="tsd-kind-icon">record<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recordaddfile" class="tsd-kind-icon">record<wbr>Add<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#recorddeletefile" class="tsd-kind-icon">record<wbr>Delete<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#release" class="tsd-kind-icon">release</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#revert" class="tsd-kind-icon">revert</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#setremote" class="tsd-kind-icon">set<wbr>Remote</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#setuserconfig" class="tsd-kind-icon">set<wbr>User<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#streamfiles" class="tsd-kind-icon">stream<wbr>Files</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#streamfilesraw" class="tsd-kind-icon">stream<wbr>Files<wbr>Raw</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#totalfilecount" class="tsd-kind-icon">total<wbr>File<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_helper_project_githublazyprojectloader_.githublazyproject.html#trackfile" class="tsd-kind-icon">track<wbr>File</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_api_helper_project_githublazyprojectloader_.githublazyprojectloader.html" class="tsd-kind-icon">Git<wbr>Hub<wbr>Lazy<wbr>Project<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html" class="tsd-kind-icon">Queryable<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_api_helper_project_githublazyprojectloader_.html#filecontent" class="tsd-kind-icon">file<wbr>Content</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_api_helper_project_githublazyprojectloader_.html#filepromise" class="tsd-kind-icon">file<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../modules/_api_helper_project_githublazyprojectloader_.html#makequeryablepromise" class="tsd-kind-icon">make<wbr>Queryable<wbr>Promise</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

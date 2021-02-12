@@ -1,0 +1,336 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;pack/k8s/sync/diff&quot; | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_pack_k8s_sync_diff_.html">&quot;pack/k8s/sync/diff&quot;</a>
+				</li>
+			</ul>
+			<h1>Module &quot;pack/k8s/sync/diff&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-kind-icon">Push<wbr>Diff</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_pack_k8s_sync_diff_.html#k8sspecglob" class="tsd-kind-icon">k8s<wbr>Spec<wbr>Glob</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_pack_k8s_sync_diff_.html#k8sspecregexp" class="tsd-kind-icon">k8s<wbr>Spec<wbr>Reg<wbr>Exp</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_pack_k8s_sync_diff_.html#comparediff" class="tsd-kind-icon">compare<wbr>Diff</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_diff_.html#diffpush" class="tsd-kind-icon">diff<wbr>Push</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_pack_k8s_sync_diff_.html#parsenamestatusdiff" class="tsd-kind-icon">parse<wbr>Name<wbr>Status<wbr>Diff</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="k8sspecglob" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> k8s<wbr>Spec<wbr>Glob</h3>
+					<div class="tsd-signature tsd-kind-icon">k8s<wbr>Spec<wbr>Glob<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"*.@(json|yaml|yml)"</span><span class="tsd-signature-symbol"> = &quot;*.@(json|yaml|yml)&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/diff.ts#L28">lib/pack/k8s/sync/diff.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Glob pattern used to identify Kubernetes spec files in a
+								repository.  It only matched JSON and YAML files at the root of the
+							repository.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="k8sspecregexp" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> k8s<wbr>Spec<wbr>Reg<wbr>Exp</h3>
+					<div class="tsd-signature tsd-kind-icon">k8s<wbr>Spec<wbr>Reg<wbr>Exp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> = /^[^/]+\.(?:json|ya?ml)$/</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/diff.ts#L34">lib/pack/k8s/sync/diff.ts:34</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Regular expression used to identify Kubernetes spec files in a
+								repository.  It only matched JSON and YAML files at the root of the
+							repository.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="comparediff" class="tsd-anchor"></a>
+					<h3>compare<wbr>Diff</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">compare<wbr>Diff<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a>, b<span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/diff.ts#L126">lib/pack/k8s/sync/diff.ts:126</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sort &quot;delete&quot; changes before &quot;apply&quot;.  Within each category, sort
+									by path.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>a: <a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a></h5>
+								</li>
+								<li>
+									<h5>b: <a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="diffpush" class="tsd-anchor"></a>
+					<h3>diff<wbr>Push</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">diff<wbr>Push<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LocalProject</span>, push<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SdmGoalEvent</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">"push"</span><span class="tsd-signature-symbol">]</span>, tag<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, log<span class="tsd-signature-symbol">: </span><a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/diff.ts#L65">lib/pack/k8s/sync/diff.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Determine all changed Kubernetes resource spec files in a push.  A
+										file is considered a Kubernetes resource spec if it matches
+										<a href="_pack_k8s_sync_diff_.html#k8sspecregexp">k8sSpecRegExp</a>.  Changes are returned in commit order, with the
+										commit order unchanged from the push event sent by cortex, which it
+										typically chronologically with the oldest commit first.  Within a
+										commit, the changes are sorted first by operation, with deletes
+										before applies, and then by path using <code>sort(localCompare)</code>.
+										Deletes are sorted first because renames are processed as adds and
+										deletes and we want to avoid a rename resulting in a resource being
+										deleted.  If you want to control the order of operations, spread
+									the operations across multiple commits in the same push.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>project: <span class="tsd-signature-type">LocalProject</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>project with the changed Kubernetes resource specs.</p>
+									</div>
+								</li>
+								<li>
+									<h5>push: <span class="tsd-signature-type">SdmGoalEvent</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">"push"</span><span class="tsd-signature-symbol">]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>git push with changes</p>
+									</div>
+								</li>
+								<li>
+									<h5>tag: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>git commit message tag indicating automated commits that should be ignored</p>
+									</div>
+								</li>
+								<li>
+									<h5>log: <a href="../interfaces/_spi_log_progresslog_.progresslog.html" class="tsd-signature-type">ProgressLog</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>goal execution progress log</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_helper_project_githublazyprojectloader_.queryablepromise.html#promise" class="tsd-signature-type">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>sorted resource spec changes</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="parsenamestatusdiff" class="tsd-anchor"></a>
+					<h3>parse<wbr>Name<wbr>Status<wbr>Diff</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Name<wbr>Status<wbr>Diff<span class="tsd-signature-symbol">(</span>sha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, diff<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/pack/k8s/sync/diff.ts#L92">lib/pack/k8s/sync/diff.ts:92</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convert output of <code>git diff -z --name-status</code> to a list of file
+									changes.  The returned changes are sorted by file path.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sha: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>git commit SHA</p>
+									</div>
+								</li>
+								<li>
+									<h5>diff: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>output from git diff command</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-signature-type">PushDiff</a><span class="tsd-signature-symbol">[]</span></h4>
+							<p>sorted resource spec changes</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_pack_k8s_sync_diff_.html">&quot;pack/k8s/sync/diff&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_pack_k8s_sync_diff_.pushdiff.html" class="tsd-kind-icon">Push<wbr>Diff</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_diff_.html#k8sspecglob" class="tsd-kind-icon">k8s<wbr>Spec<wbr>Glob</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_diff_.html#k8sspecregexp" class="tsd-kind-icon">k8s<wbr>Spec<wbr>Reg<wbr>Exp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_pack_k8s_sync_diff_.html#comparediff" class="tsd-kind-icon">compare<wbr>Diff</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_diff_.html#diffpush" class="tsd-kind-icon">diff<wbr>Push</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_pack_k8s_sync_diff_.html#parsenamestatusdiff" class="tsd-kind-icon">parse<wbr>Name<wbr>Status<wbr>Diff</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

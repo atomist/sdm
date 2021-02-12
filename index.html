@@ -1,0 +1,1624 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@atomist/sdm</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p align="center">
+					<img src="https://images.atomist.com/sdm/SDM-Logo-Dark.png">
+				</p>
+				# Software Delivery Machine - `@atomist/sdm`
+				<p>This is the home of the Software Delivery Machine (SDM) framework and
+				related projects.</p>
+				<p>The SDM framework enables you to control your delivery process in
+					code. Think of it as an API for your software delivery. See the
+					<a href="https://docs.atomist.com/" title="Atomist Documentation">Atomist SDM documentation</a> for more information on the
+					concept of a software delivery machine and how to create and develop
+				an SDM.</p>
+				<a href="#migrating-to-sdm-20" id="migrating-to-sdm-20" style="color: inherit; text-decoration: none;">
+					<h2>Migrating to SDM 2.0</h2>
+				</a>
+				<p>SDM version 2.0 aims to make it easier to use the SDM framework. We
+					have consolidated the most useful NPM packages under
+					<a href="https://www.npmjs.com/package/@atomist/sdm">@atomist/sdm</a> to simplify dependency management. Rather
+					than separately installing @atomist/automation-client,
+					@atomist/sdm-core, and various @atomist/sdm-pack-*, you now just
+				install @atomist/sdm. @atomist/sdm-local is deprecated.</p>
+				<p>To update to the new single package in your SDM, follow these steps:</p>
+				<ol>
+					<li><p>Remove Atomist SDM and automation-client dependencies</p>
+						<pre><code> $ npm uninstall <span class="hljs-symbol">@atomist</span>/automation-client <span class="hljs-symbol">@atomist</span>/sdm <span class="hljs-symbol">@atomist</span>/sdm-core <span class="hljs-symbol">@atomist</span>/sdm-<span class="hljs-keyword">local</span>
+</code></pre>
+					</li>
+					<li><p>Remove any extension SDM packs</p>
+						<pre><code> $ npm uninstall @atomist/sdm-<span class="hljs-keyword">pack</span>-ABC @atomist/sdm-<span class="hljs-keyword">pack</span>-DEF @atomist/sdm-<span class="hljs-keyword">pack</span>-GHI
+</code></pre>
+					</li>
+					<li><p>Reinstall Atomist SDM</p>
+						<pre><code> $ <span class="hljs-built_in">npm</span> install @atomist/sdm
+</code></pre>
+					</li>
+					<li><p>The consolidation of packages introduces a breaking change: you must
+						update your import statements. Specifically:</p>
+						<ul>
+							<li>  Change <code>import … &quot;@atomist/automation-client&quot;</code> to <code>import … &quot;@atomist/sdm/lib/client&quot;</code></li>
+							<li>  Change <code>import … &quot;@atomist/sdm-core&quot;</code> to <code>import … &quot;@atomist/sdm/lib/core&quot;</code></li>
+							<li>  Change <code>import … &quot;@atomist/sdm-pack-spring&quot;</code> to <code>import … &quot;@atomist/sdm/lib/pack/jvm&quot;</code></li>
+							<li>  Change <code>import … &quot;@atomist/sdm-pack-XYZ&quot;</code> to <code>import … &quot;@atomist/sdm/lib/pack/XYZ&quot;</code></li>
+						</ul>
+					</li>
+					<li><p> <code>EditMode</code> in automation-client is now <code>editModes.EditMode</code> in <code>import { editModes } from &quot;@atomist/sdm/lib/client&quot;</code></p>
+					</li>
+					<li><p>Some packs that were part of sdm-core have been relocated under
+						<code>sdm/lib/pack</code>, so their imports change like these:</p>
+						<pre><code> <span class="hljs-keyword">import</span> { githubGoalStatusSupport } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@atomist/sdm/lib/pack/github-goal-status&quot;</span>;
+ <span class="hljs-keyword">import</span> { goalStateSupport } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@atomist/sdm/lib/pack/goal-state&quot;</span>;
+ <span class="hljs-keyword">import</span> { notificationSupport } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@atomist/sdm/lib/pack/notification&quot;</span>;
+</code></pre>
+					</li>
+					<li><p>Deprecated exports have been removed from SDM 2.0. If you need
+							help moving away from capabilities that have been removed, please
+						<a href="#support">contact us</a>.</p>
+					</li>
+				</ol>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h2>Contributing</h2>
+				</a>
+				<p>Contributions to this project from community members are encouraged
+					and appreciated. Please review the <a href="CONTRIBUTING.md">Contributing
+					Guidelines</a> for more information. Also see the
+				<a href="#development">Development</a> section in this document.</p>
+				<a href="#code-of-conduct" id="code-of-conduct" style="color: inherit; text-decoration: none;">
+					<h2>Code of conduct</h2>
+				</a>
+				<p>This project is governed by the <a href="CODE_OF_CONDUCT.md">Code of
+					Conduct</a>. You are expected to act in accordance
+					with this code by participating. Please report any unacceptable
+				behavior to <a href="mailto:&#x63;&#111;&#x64;&#x65;&#x2d;&#x6f;&#102;&#x2d;&#x63;&#111;&#110;&#100;&#x75;&#x63;&#116;&#64;&#x61;&#x74;&#111;&#109;&#x69;&#115;&#116;&#46;&#x63;&#x6f;&#109;">&#x63;&#111;&#x64;&#x65;&#x2d;&#x6f;&#102;&#x2d;&#x63;&#111;&#110;&#100;&#x75;&#x63;&#116;&#64;&#x61;&#x74;&#111;&#109;&#x69;&#115;&#116;&#46;&#x63;&#x6f;&#109;</a>.</p>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
+				</a>
+				<p>Please see <a href="https://docs.atomist.com/" title="Atomist Documentation">docs.atomist.com</a> for
+				<a href="https://docs.atomist.com/developer/sdm/" title="Atomist Documentation - SDM Developer">developer</a> documentation.</p>
+				<ul>
+					<li>  API documentation for this project: <a href="https://atomist.github.io/sdm/" title="@atomist/sdm TypeDoc">@atomist/sdm TypeDoc</a></li>
+					<li>  List of third-party OSS licenses used in this project: <a href="legal/THIRD_PARTY.md" title="@atomist/sdm Third-Party Licenses">@atomist/sdm OSS licenses</a></li>
+				</ul>
+				<a href="#connect" id="connect" style="color: inherit; text-decoration: none;">
+					<h2>Connect</h2>
+				</a>
+				<p>Follow <a href="https://twitter.com/atomist" title="Atomist on Twitter">@atomist</a> and <a href="https://the-composition.com/" title="The Composition - The Official Atomist Blog">The Composition</a>
+				blog related to SDM.</p>
+				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+					<h2>Support</h2>
+				</a>
+				<p>General support questions should be discussed in the <code>#help</code>
+				channel in the <a href="https://join.atomist.com/" title="Atomist Community Slack">Atomist community Slack workspace</a>.</p>
+				<p>If you find a problem, please create an <a href="https://github.com/atomist/sdm/issues">issue</a>.</p>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h2>Development</h2>
+				</a>
+				<p>You will need to install <a href="https://nodejs.org/" title="Node.js">Node.js</a> to build and test this
+				project.</p>
+				<a href="#build-and-test" id="build-and-test" style="color: inherit; text-decoration: none;">
+					<h3>Build and test</h3>
+				</a>
+				<p>Install dependencies.</p>
+				<pre><code>$ npm <span class="hljs-keyword">install</span>
+</code></pre>
+				<p>Use the <code>build</code> package script to compile, test, lint, and build the
+				documentation.</p>
+				<pre><code>$ npm <span class="hljs-keyword">run</span><span class="bash"> build</span>
+</code></pre>
+				<a href="#release" id="release" style="color: inherit; text-decoration: none;">
+					<h3>Release</h3>
+				</a>
+				<p>Releases are handled via the <a href="https://github.com/atomist/atomist-sdm" title="Atomist Software Delivery Machine">Atomist SDM</a>. Just press
+				the &#39;Approve&#39; button in the Atomist dashboard or Slack.</p>
+				<hr>
+				<p>Created by <a href="https://atomist.com/" title="Atomist - Automate All the Software Things">Atomist</a>.
+				Need Help? <a href="https://join.atomist.com/" title="Atomist Community Slack">Join our Slack workspace</a>.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_code_autofix_spawnautofix_.html">&quot;api-<wbr>helper/code/autofix/spawn<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_code_review_goalreviewlistener_.html">&quot;api-<wbr>helper/code/review/goal<wbr>Review<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_code_review_patternmatchreviewer_.html">&quot;api-<wbr>helper/code/review/pattern<wbr>Match<wbr>Reviewer&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_code_review_slackreviewlistener_.html">&quot;api-<wbr>helper/code/review/slack<wbr>Review<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_createcommand_.html">&quot;api-<wbr>helper/command/create<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_generator_generatorcommand_.html">&quot;api-<wbr>helper/command/generator/generator<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_allreposinteam_.html">&quot;api-<wbr>helper/command/transform/all<wbr>Repos<wbr>InTeam&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_chattydryrunawareeditor_.html">&quot;api-<wbr>helper/command/transform/chatty<wbr>Dry<wbr>Run<wbr>Aware<wbr>Editor&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_codetransformwrapping_.html">&quot;api-<wbr>helper/command/transform/code<wbr>Transform<wbr>Wrapping&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_confirmeditedness_.html">&quot;api-<wbr>helper/command/transform/confirm<wbr>Editedness&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_ontransformresult_.html">&quot;api-<wbr>helper/command/transform/on<wbr>Transform<wbr>Result&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_command_transform_spawncodetransform_.html">&quot;api-<wbr>helper/command/transform/spawn<wbr>Code<wbr>Transform&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_defaultgoalimplementationmapper_.html">&quot;api-<wbr>helper/goal/<wbr>Default<wbr>Goal<wbr>Implementation<wbr>Mapper&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_chooseandsetgoals_.html">&quot;api-<wbr>helper/goal/choose<wbr>And<wbr>Set<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_executegoal_.html">&quot;api-<wbr>helper/goal/execute<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_executesendmessagetoslack_.html">&quot;api-<wbr>helper/goal/execute<wbr>Send<wbr>Message<wbr>ToSlack&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_fetchgoalsoncommit_.html">&quot;api-<wbr>helper/goal/fetch<wbr>Goals<wbr>OnCommit&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_goalpreconditions_.html">&quot;api-<wbr>helper/goal/goal<wbr>Preconditions&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_minimalclone_.html">&quot;api-<wbr>helper/goal/minimal<wbr>Clone&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_mock_.html">&quot;api-<wbr>helper/goal/mock&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_progress_progress_.html">&quot;api-<wbr>helper/goal/progress/progress&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_sdmgoal_.html">&quot;api-<wbr>helper/goal/sdm<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_goal_storegoals_.html">&quot;api-<wbr>helper/goal/store<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_cancelgoals_.html">&quot;api-<wbr>helper/listener/cancel<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_createpushimpactlistenerinvocation_.html">&quot;api-<wbr>helper/listener/create<wbr>Push<wbr>Impact<wbr>Listener<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_executeautoinspects_.html">&quot;api-<wbr>helper/listener/execute<wbr>Auto<wbr>Inspects&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_executeautofixes_.html">&quot;api-<wbr>helper/listener/execute<wbr>Autofixes&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_executecancel_.html">&quot;api-<wbr>helper/listener/execute<wbr>Cancel&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_executepushimpact_.html">&quot;api-<wbr>helper/listener/execute<wbr>Push<wbr>Impact&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_goalsetlistener_.html">&quot;api-<wbr>helper/listener/goal<wbr>Set<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_listener_relevantcodeactions_.html">&quot;api-<wbr>helper/listener/relevant<wbr>Code<wbr>Actions&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_delimitedwriteprogresslogdecorator_.html">&quot;api-<wbr>helper/log/<wbr>Delimited<wbr>Write<wbr>Progress<wbr>Log<wbr>Decorator&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_ephemeralprogresslog_.html">&quot;api-<wbr>helper/log/<wbr>Ephemeral<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_loggingprogresslog_.html">&quot;api-<wbr>helper/log/<wbr>Logging<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_stringcapturingprogresslog_.html">&quot;api-<wbr>helper/log/<wbr>String<wbr>Capturing<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_writetoallprogresslog_.html">&quot;api-<wbr>helper/log/<wbr>Write<wbr>ToAll<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_addresschannelsprogresslog_.html">&quot;api-<wbr>helper/log/address<wbr>Channels<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_firstavailableprogresslog_.html">&quot;api-<wbr>helper/log/first<wbr>Available<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_format_.html">&quot;api-<wbr>helper/log/format&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_log_loginterpreters_.html">&quot;api-<wbr>helper/log/log<wbr>Interpreters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_abstractsoftwaredeliverymachine_.html">&quot;api-<wbr>helper/machine/<wbr>Abstract<wbr>Software<wbr>Delivery<wbr>Machine&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_handlerregistrationmanagersupport_.html">&quot;api-<wbr>helper/machine/<wbr>Handler<wbr>Registration<wbr>Manager<wbr>Support&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_listenerregistrationmanagersupport_.html">&quot;api-<wbr>helper/machine/<wbr>Listener<wbr>Registration<wbr>Manager<wbr>Support&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_repotargetingparameters_.html">&quot;api-<wbr>helper/machine/<wbr>Repo<wbr>Targeting<wbr>Parameters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_adapthandlecommand_.html">&quot;api-<wbr>helper/machine/adapt<wbr>Handle<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_handlerregistrations_.html">&quot;api-<wbr>helper/machine/handler<wbr>Registrations&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_projectloaderrepoloader_.html">&quot;api-<wbr>helper/machine/project<wbr>Loader<wbr>Repo<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_machine_tomachineoptions_.html">&quot;api-<wbr>helper/machine/to<wbr>Machine<wbr>Options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_base64_.html">&quot;api-<wbr>helper/misc/base64&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_child_process_.html">&quot;api-<wbr>helper/misc/child_<wbr>process&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_credentials_totoken_.html">&quot;api-<wbr>helper/misc/credentials/to<wbr>Token&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_dateformat_.html">&quot;api-<wbr>helper/misc/date<wbr>Format&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_extensionpack_.html">&quot;api-<wbr>helper/misc/extension<wbr>Pack&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_git_githubissuerouter_.html">&quot;api-<wbr>helper/misc/git/<wbr>Git<wbr>Hub<wbr>Issue<wbr>Router&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_git_fileschangedsince_.html">&quot;api-<wbr>helper/misc/git/files<wbr>Changed<wbr>Since&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_job_createjob_.html">&quot;api-<wbr>helper/misc/job/create<wbr>Job&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_project_filteredview_.html">&quot;api-<wbr>helper/misc/project/filtered<wbr>View&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_reportfailureinterpretation_.html">&quot;api-<wbr>helper/misc/report<wbr>Failure<wbr>Interpretation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_result_.html">&quot;api-<wbr>helper/misc/result&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_sha_.html">&quot;api-<wbr>helper/misc/sha&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_misc_slack_messages_.html">&quot;api-<wbr>helper/misc/slack/messages&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_cachingprojectloader_.html">&quot;api-<wbr>helper/project/<wbr>Caching<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_githublazyprojectloader_.html">&quot;api-<wbr>helper/project/<wbr>Git<wbr>Hub<wbr>Lazy<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_projectlistenerinvokingprojectloader_.html">&quot;api-<wbr>helper/project/<wbr>Project<wbr>Listener<wbr>Invoking<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_appendorcreate_.html">&quot;api-<wbr>helper/project/append<wbr>OrCreate&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_cloningprojectloader_.html">&quot;api-<wbr>helper/project/cloning<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_configuration_projectconfiguration_.html">&quot;api-<wbr>helper/project/configuration/project<wbr>Configuration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_filecopy_.html">&quot;api-<wbr>helper/project/file<wbr>Copy&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_globpatterns_.html">&quot;api-<wbr>helper/project/glob<wbr>Patterns&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_support_lrucache_.html">&quot;api-<wbr>helper/project/support/<wbr>Lru<wbr>Cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_support_simplecache_.html">&quot;api-<wbr>helper/project/support/<wbr>Simple<wbr>Cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_support_cachekey_.html">&quot;api-<wbr>helper/project/support/cache<wbr>Key&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_withproject_.html">&quot;api-<wbr>helper/project/with<wbr>Project&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_project_withrepos_.html">&quot;api-<wbr>helper/project/with<wbr>Repos&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_pushtest_ci_cipushtests_.html">&quot;api-<wbr>helper/pushtest/ci/ci<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_pushtest_commit_.html">&quot;api-<wbr>helper/pushtest/commit&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_pushtest_configuration_configurationtests_.html">&quot;api-<wbr>helper/pushtest/configuration/configuration<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_pushtest_materialchangetest_.html">&quot;api-<wbr>helper/pushtest/material<wbr>Change<wbr>Test&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_testsupport_singleprojectloader_.html">&quot;api-<wbr>helper/testsupport/<wbr>Single<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_testsupport_fakecommandlistenerinvocation_.html">&quot;api-<wbr>helper/testsupport/fake<wbr>Command<wbr>Listener<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_testsupport_fakecontext_.html">&quot;api-<wbr>helper/testsupport/fake<wbr>Context&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_testsupport_fakegoalinvocation_.html">&quot;api-<wbr>helper/testsupport/fake<wbr>Goal<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_testsupport_fakepush_.html">&quot;api-<wbr>helper/testsupport/fake<wbr>Push&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_helper_voter_githubteamvoter_.html">&quot;api-<wbr>helper/voter/github<wbr>Team<wbr>Voter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_generator_bitbucketrepocreationparameters_.html">&quot;api/command/generator/<wbr>Bit<wbr>Bucket<wbr>Repo<wbr>Creation<wbr>Parameters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_generator_generatorconfig_.html">&quot;api/command/generator/<wbr>Generator<wbr>Config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_generator_seeddrivengeneratorparameterssupport_.html">&quot;api/command/generator/<wbr>Seed<wbr>Driven<wbr>Generator<wbr>Parameters<wbr>Support&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_support_buttons_.html">&quot;api/command/support/buttons&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_support_commonvalidationpatterns_.html">&quot;api/command/support/common<wbr>Validation<wbr>Patterns&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_target_bitbucketrepotargets_.html">&quot;api/command/target/<wbr>Bit<wbr>Bucket<wbr>Repo<wbr>Targets&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_target_githubrepotargets_.html">&quot;api/command/target/<wbr>Git<wbr>Hub<wbr>Repo<wbr>Targets&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_target_gitlabrepotargets_.html">&quot;api/command/target/<wbr>Gitlab<wbr>Repo<wbr>Targets&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_command_target_transformmodesuggestion_.html">&quot;api/command/target/<wbr>Transform<wbr>Mode<wbr>Suggestion&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_admincommunicationcontext_.html">&quot;api/context/<wbr>Admin<wbr>Communication<wbr>Context&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_sdmcontext_.html">&quot;api/context/<wbr>Sdm<wbr>Context&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_addresschannels_.html">&quot;api/context/address<wbr>Channels&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_parameterprompt_.html">&quot;api/context/parameter<wbr>Prompt&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_preferencestore_.html">&quot;api/context/preference<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_context_skillcontext_.html">&quot;api/context/skill<wbr>Context&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_dsl_goalcomponent_.html">&quot;api/dsl/<wbr>Goal<wbr>Component&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_dsl_allof_.html">&quot;api/dsl/all<wbr>Of&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_dsl_decisiontree_.html">&quot;api/dsl/decision<wbr>Tree&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_dsl_goalcontribution_.html">&quot;api/dsl/goal<wbr>Contribution&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_dsl_goaldsl_.html">&quot;api/dsl/goal<wbr>Dsl&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_executegoalresult_.html">&quot;api/goal/<wbr>Execute<wbr>Goal<wbr>Result&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_githubcontext_.html">&quot;api/goal/<wbr>Git<wbr>Hub<wbr>Context&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_goal_.html">&quot;api/goal/<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_goalinvocation_.html">&quot;api/goal/<wbr>Goal<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_goalnamegenerator_.html">&quot;api/goal/<wbr>Goal<wbr>Name<wbr>Generator&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_goalwithfulfillment_.html">&quot;api/goal/<wbr>Goal<wbr>With<wbr>Fulfillment&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_goals_.html">&quot;api/goal/<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_sdmgoalevent_.html">&quot;api/goal/<wbr>Sdm<wbr>Goal<wbr>Event&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_sdmgoalmessage_.html">&quot;api/goal/<wbr>Sdm<wbr>Goal<wbr>Message&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_sdmgoalsetmessage_.html">&quot;api/goal/<wbr>Sdm<wbr>Goal<wbr>Set<wbr>Message&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_autocodeinspection_.html">&quot;api/goal/common/<wbr>Auto<wbr>Code<wbr>Inspection&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_autofix_.html">&quot;api/goal/common/<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_cancel_.html">&quot;api/goal/common/<wbr>Cancel&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_immaterial_.html">&quot;api/goal/common/<wbr>Immaterial&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_locking_.html">&quot;api/goal/common/<wbr>Locking&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_pushimpact_.html">&quot;api/goal/common/<wbr>Push<wbr>Impact&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_queue_.html">&quot;api/goal/common/<wbr>Queue&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_creategoal_.html">&quot;api/goal/common/create<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_common_suggestaction_.html">&quot;api/goal/common/suggest<wbr>Action&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_enrichgoal_.html">&quot;api/goal/enrich<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_progress_reportprogress_.html">&quot;api/goal/progress/<wbr>Report<wbr>Progress&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_support_goalimplementationmapper_.html">&quot;api/goal/support/<wbr>Goal<wbr>Implementation<wbr>Mapper&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_support_goalscheduler_.html">&quot;api/goal/support/<wbr>Goal<wbr>Scheduler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_support_environment_.html">&quot;api/goal/support/environment&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_goal_taggoalset_.html">&quot;api/goal/tag<wbr>Goal<wbr>Set&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_buildlistener_.html">&quot;api/listener/<wbr>Build<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_channellinklistenerinvocation_.html">&quot;api/listener/<wbr>Channel<wbr>Link<wbr>Listener<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_closedissuelistener_.html">&quot;api/listener/<wbr>Closed<wbr>Issue<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_commandlistener_.html">&quot;api/listener/<wbr>Command<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_endpointverificationlistener_.html">&quot;api/listener/<wbr>Endpoint<wbr>Verification<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_goalcompletionlistener_.html">&quot;api/listener/<wbr>Goal<wbr>Completion<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_goalstatuslistener_.html">&quot;api/listener/<wbr>Goal<wbr>Status<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_goalssetlistener_.html">&quot;api/listener/<wbr>Goals<wbr>Set<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_issuelistenerinvocation_.html">&quot;api/listener/<wbr>Issue<wbr>Listener<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_listener_.html">&quot;api/listener/<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_newissuelistener_.html">&quot;api/listener/<wbr>New<wbr>Issue<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_parametersinvocation_.html">&quot;api/listener/<wbr>Parameters<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_projectlistener_.html">&quot;api/listener/<wbr>Project<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_pullrequestlistener_.html">&quot;api/listener/<wbr>Pull<wbr>Request<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_pushimpactlistener_.html">&quot;api/listener/<wbr>Push<wbr>Impact<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_pushlistener_.html">&quot;api/listener/<wbr>Push<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_repocreationlistener_.html">&quot;api/listener/<wbr>Repo<wbr>Creation<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_reviewlistener_.html">&quot;api/listener/<wbr>Review<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_startuplistener_.html">&quot;api/listener/<wbr>Startup<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_taglistener_.html">&quot;api/listener/<wbr>Tag<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_triggeredlistener_.html">&quot;api/listener/<wbr>Triggered<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_updatedissuelistener_.html">&quot;api/listener/<wbr>Updated<wbr>Issue<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_listener_userjoiningchannellistener_.html">&quot;api/listener/<wbr>User<wbr>Joining<wbr>Channel<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_commandregistrationmanager_.html">&quot;api/machine/<wbr>Command<wbr>Registration<wbr>Manager&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_configurationvalues_.html">&quot;api/machine/<wbr>Configuration<wbr>Values&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_extensionpack_.html">&quot;api/machine/<wbr>Extension<wbr>Pack&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_functionalunit_.html">&quot;api/machine/<wbr>Functional<wbr>Unit&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_goaldrivenmachine_.html">&quot;api/machine/<wbr>Goal<wbr>Driven<wbr>Machine&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_listenerregistrationmanager_.html">&quot;api/machine/<wbr>Listener<wbr>Registration<wbr>Manager&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_machineconfiguration_.html">&quot;api/machine/<wbr>Machine<wbr>Configuration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_machineconfigurer_.html">&quot;api/machine/<wbr>Machine<wbr>Configurer&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_registerable_.html">&quot;api/machine/<wbr>Registerable&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_repotargets_.html">&quot;api/machine/<wbr>Repo<wbr>Targets&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_signingkeys_.html">&quot;api/machine/<wbr>Signing<wbr>Keys&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_softwaredeliverymachine_.html">&quot;api/machine/<wbr>Software<wbr>Delivery<wbr>Machine&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_softwaredeliverymachineoptions_.html">&quot;api/machine/<wbr>Software<wbr>Delivery<wbr>Machine<wbr>Options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_machine_wellknowngoals_.html">&quot;api/machine/<wbr>Well<wbr>Known<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_goalsetter_.html">&quot;api/mapping/<wbr>Goal<wbr>Setter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_mapping_.html">&quot;api/mapping/<wbr>Mapping&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_predicatemapping_.html">&quot;api/mapping/<wbr>Predicate<wbr>Mapping&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_pushmapping_.html">&quot;api/mapping/<wbr>Push<wbr>Mapping&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_pushtest_.html">&quot;api/mapping/<wbr>Push<wbr>Test&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_goaltest_.html">&quot;api/mapping/goal<wbr>Test&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_predicatemappingcostanalyzer_.html">&quot;api/mapping/support/<wbr>Predicate<wbr>Mapping<wbr>Cost<wbr>Analyzer&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_predicatemappingterm_.html">&quot;api/mapping/support/<wbr>Predicate<wbr>Mapping<wbr>Term&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_pushrule_.html">&quot;api/mapping/support/<wbr>Push<wbr>Rule&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_pushrules_.html">&quot;api/mapping/support/<wbr>Push<wbr>Rules&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_staticpushmapping_.html">&quot;api/mapping/support/<wbr>Static<wbr>Push<wbr>Mapping&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_commonpushtests_.html">&quot;api/mapping/support/common<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_defaultpredicatemappingcostanalyzer_.html">&quot;api/mapping/support/default<wbr>Predicate<wbr>Mapping<wbr>Cost<wbr>Analyzer&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_deploypushtests_.html">&quot;api/mapping/support/deploy<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_namedseedrepo_.html">&quot;api/mapping/support/named<wbr>Seed<wbr>Repo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_predicateutils_.html">&quot;api/mapping/support/predicate<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_projectpredicateutils_.html">&quot;api/mapping/support/project<wbr>Predicate<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_mapping_support_pushtestutils_.html">&quot;api/mapping/support/push<wbr>Test<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_autoinspectregistration_.html">&quot;api/registration/<wbr>Auto<wbr>Inspect<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_autofixregistration_.html">&quot;api/registration/<wbr>Autofix<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_codeinspectionregistration_.html">&quot;api/registration/<wbr>Code<wbr>Inspection<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_codetransform_.html">&quot;api/registration/<wbr>Code<wbr>Transform&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_codetransformregistration_.html">&quot;api/registration/<wbr>Code<wbr>Transform<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_commandhandlerregistration_.html">&quot;api/registration/<wbr>Command<wbr>Handler<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_commandregistration_.html">&quot;api/registration/<wbr>Command<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_eventhandlerregistration_.html">&quot;api/registration/<wbr>Event<wbr>Handler<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_eventregistrationmanager_.html">&quot;api/registration/<wbr>Event<wbr>Registration<wbr>Manager&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_generatorregistration_.html">&quot;api/registration/<wbr>Generator<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_ingesterregistration_.html">&quot;api/registration/<wbr>Ingester<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_ingesterregistrationmanager_.html">&quot;api/registration/<wbr>Ingester<wbr>Registration<wbr>Manager&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_parametersbuilder_.html">&quot;api/registration/<wbr>Parameters<wbr>Builder&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_parametersdefinition_.html">&quot;api/registration/<wbr>Parameters<wbr>Definition&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_projectoperationregistration_.html">&quot;api/registration/<wbr>Project<wbr>Operation<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_projectsoperationregistration_.html">&quot;api/registration/<wbr>Projects<wbr>Operation<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_pushawareparametersinvocation_.html">&quot;api/registration/<wbr>Push<wbr>Aware<wbr>Parameters<wbr>Invocation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_pushimpactlistenerregistration_.html">&quot;api/registration/<wbr>Push<wbr>Impact<wbr>Listener<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_pushregistration_.html">&quot;api/registration/<wbr>Push<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_reviewlistenerregistration_.html">&quot;api/registration/<wbr>Review<wbr>Listener<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_reviewererror_.html">&quot;api/registration/<wbr>Reviewer<wbr>Error&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_reviewerregistration_.html">&quot;api/registration/<wbr>Reviewer<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_serviceregistration_.html">&quot;api/registration/<wbr>Service<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_triggeredlistenerregistration_.html">&quot;api/registration/<wbr>Triggered<wbr>Listener<wbr>Registration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_goalapprovalrequestvote_.html">&quot;api/registration/goal<wbr>Approval<wbr>Request<wbr>Vote&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_api_registration_transformutils_.html">&quot;api/registration/transform<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_client_index_.html">&quot;client/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_delivery_build_executetag_.html">&quot;core/delivery/build/execute<wbr>Tag&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_delivery_build_local_projectidentifier_.html">&quot;core/delivery/build/local/project<wbr>Identifier&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_delivery_build_local_projectversioner_.html">&quot;core/delivery/build/local/project<wbr>Versioner&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_delivery_goals_support_validategoal_.html">&quot;core/delivery/goals/support/validate<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_cache_compressinggoalcache_.html">&quot;core/goal/cache/<wbr>Compressing<wbr>Goal<wbr>Cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_cache_filesystemgoalcachearchivestore_.html">&quot;core/goal/cache/<wbr>File<wbr>System<wbr>Goal<wbr>Cache<wbr>Archive<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_cache_noopgoalcache_.html">&quot;core/goal/cache/<wbr>NoOp<wbr>Goal<wbr>Cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_cache_goalcaching_.html">&quot;core/goal/cache/goal<wbr>Caching&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_common_tag_.html">&quot;core/goal/common/<wbr>Tag&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_common_version_.html">&quot;core/goal/common/<wbr>Version&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_common_pipeline_.html">&quot;core/goal/common/pipeline&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_common_skill_.html">&quot;core/goal/common/skill&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_action_.html">&quot;core/goal/container/action&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_container_.html">&quot;core/goal/container/container&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_docker_.html">&quot;core/goal/container/docker&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_encrypt_.html">&quot;core/goal/container/encrypt&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_execute_.html">&quot;core/goal/container/execute&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_provider_.html">&quot;core/goal/container/provider&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_repositorydrivencontainer_.html">&quot;core/goal/container/repository<wbr>Driven<wbr>Container&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_goal_container_util_.html">&quot;core/goal/container/util&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_commands_displaydeployenablement_.html">&quot;core/handlers/commands/<wbr>Display<wbr>Deploy<wbr>Enablement&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_commands_setdeployenablement_.html">&quot;core/handlers/commands/<wbr>Set<wbr>Deploy<wbr>Enablement&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_commands_deleterepository_.html">&quot;core/handlers/commands/delete<wbr>Repository&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_commands_disposecommand_.html">&quot;core/handlers/commands/dispose<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_common_configurationbasedbasiccredentialsresolver_.html">&quot;core/handlers/common/<wbr>Configuration<wbr>Based<wbr>Basic<wbr>Credentials<wbr>Resolver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_common_defaultreporefresolver_.html">&quot;core/handlers/common/<wbr>Default<wbr>Repo<wbr>Ref<wbr>Resolver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_common_githubcredentialsresolver_.html">&quot;core/handlers/common/<wbr>Git<wbr>Hub<wbr>Credentials<wbr>Resolver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_cancelgoaloncanceled_.html">&quot;core/handlers/events/delivery/goals/<wbr>Cancel<wbr>Goal<wbr>OnCanceled&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_fulfillgoalonrequested_.html">&quot;core/handlers/events/delivery/goals/<wbr>Fulfill<wbr>Goal<wbr>OnRequested&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_requestdownstreamgoalsongoalsuccess_.html">&quot;core/handlers/events/delivery/goals/<wbr>Request<wbr>Downstream<wbr>Goals<wbr>OnGoal<wbr>Success&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_respondongoalcompletion_.html">&quot;core/handlers/events/delivery/goals/<wbr>Respond<wbr>OnGoal<wbr>Completion&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_setgoalsongoal_.html">&quot;core/handlers/events/delivery/goals/<wbr>Set<wbr>Goals<wbr>OnGoal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_setgoalsonpush_.html">&quot;core/handlers/events/delivery/goals/<wbr>Set<wbr>Goals<wbr>OnPush&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_skipdownstreamgoalsongoalfailure_.html">&quot;core/handlers/events/delivery/goals/<wbr>Skip<wbr>Downstream<wbr>Goals<wbr>OnGoal<wbr>Failure&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_voteongoalapprovalrequest_.html">&quot;core/handlers/events/delivery/goals/<wbr>Vote<wbr>OnGoal<wbr>Approval<wbr>Request&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_goalexecution_.html">&quot;core/handlers/events/delivery/goals/goal<wbr>Execution&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_delivery_goals_k8s_cachecleanupautomationeventlistener_.html">&quot;core/handlers/events/delivery/goals/k8s/<wbr>Cache<wbr>Cleanup<wbr>Automation<wbr>Event<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_issue_closedissuehandler_.html">&quot;core/handlers/events/issue/<wbr>Closed<wbr>Issue<wbr>Handler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_issue_newissuehandler_.html">&quot;core/handlers/events/issue/<wbr>New<wbr>Issue<wbr>Handler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_issue_updatedissuehandler_.html">&quot;core/handlers/events/issue/<wbr>Updated<wbr>Issue<wbr>Handler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onchannellink_.html">&quot;core/handlers/events/repo/<wbr>OnChannel<wbr>Link&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onfirstpushtorepo_.html">&quot;core/handlers/events/repo/<wbr>OnFirst<wbr>Push<wbr>ToRepo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onpullrequest_.html">&quot;core/handlers/events/repo/<wbr>OnPull<wbr>Request&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onrepocreation_.html">&quot;core/handlers/events/repo/<wbr>OnRepo<wbr>Creation&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onrepoonboarded_.html">&quot;core/handlers/events/repo/<wbr>OnRepo<wbr>Onboarded&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_ontag_.html">&quot;core/handlers/events/repo/<wbr>OnTag&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_handlers_events_repo_onuserjoiningchannel_.html">&quot;core/handlers/events/repo/<wbr>OnUser<wbr>Joining<wbr>Channel&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_index_.html">&quot;core/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_ingesters_sdmdeployenablement_.html">&quot;core/ingesters/sdm<wbr>Deploy<wbr>Enablement&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_ingesters_sdmversioningester_.html">&quot;core/ingesters/sdm<wbr>Version<wbr>Ingester&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_log_dashboarddisplayprogresslog_.html">&quot;core/log/<wbr>Dashboard<wbr>Display<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_log_rolarprogresslog_.html">&quot;core/log/<wbr>Rolar<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_log_rolaranddashboardlogfactory_.html">&quot;core/log/rolar<wbr>And<wbr>Dashboard<wbr>Log<wbr>Factory&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_handlerbasedsoftwaredeliverymachine_.html">&quot;core/machine/<wbr>Handler<wbr>Based<wbr>Software<wbr>Delivery<wbr>Machine&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_invokesdmstartuplistenersautomationeventlistener_.html">&quot;core/machine/<wbr>Invoke<wbr>Sdm<wbr>Startup<wbr>Listeners<wbr>Automation<wbr>Event<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_localsoftwaredeliverymachineoptions_.html">&quot;core/machine/<wbr>Local<wbr>Software<wbr>Delivery<wbr>Machine<wbr>Options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_configure_.html">&quot;core/machine/configure&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_configuresdm_.html">&quot;core/machine/configure<wbr>Sdm&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_defaultsoftwaredeliverymachineconfiguration_.html">&quot;core/machine/default<wbr>Software<wbr>Delivery<wbr>Machine<wbr>Configuration&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_machinefactory_.html">&quot;core/machine/machine<wbr>Factory&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_modes_.html">&quot;core/machine/modes&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_configureyaml_.html">&quot;core/machine/yaml/configure<wbr>Yaml&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_mapcommand_.html">&quot;core/machine/yaml/map<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_mapgoals_.html">&quot;core/machine/yaml/map<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_mappushtests_.html">&quot;core/machine/yaml/map<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_maprules_.html">&quot;core/machine/yaml/map<wbr>Rules&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_resolveplaceholder_.html">&quot;core/machine/yaml/resolve<wbr>Placeholder&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_schema_.html">&quot;core/machine/yaml/schema&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_machine_yaml_util_.html">&quot;core/machine/yaml/util&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_mapping_pushtest_isskillconfigured_.html">&quot;core/mapping/pushtest/is<wbr>Skill<wbr>Configured&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_mapping_pushtest_topublicrepo_.html">&quot;core/mapping/pushtest/to<wbr>Public<wbr>Repo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_preferences_abstractpreferencestore_.html">&quot;core/preferences/<wbr>Abstract<wbr>Preference<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_preferences_filepreferencestore_.html">&quot;core/preferences/<wbr>File<wbr>Preference<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_preferences_inmemorypreferencestore_.html">&quot;core/preferences/<wbr>InMemory<wbr>Preference<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_preferences_teamconfigurationpreferencestore_.html">&quot;core/preferences/<wbr>Team<wbr>Configuration<wbr>Preference<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_repo_publishtags_.html">&quot;core/repo/publish<wbr>Tags&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_signing_goalsigning_.html">&quot;core/signing/goal<wbr>Signing&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_signing_rsagoalsigning_.html">&quot;core/signing/rsa<wbr>Goal<wbr>Signing&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_sdmgoalmetricreportingautomationeventlistener_.html">&quot;core/util/<wbr>Sdm<wbr>Goal<wbr>Metric<wbr>Reporting<wbr>Automation<wbr>Event<wbr>Listener&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_github_ghub_.html">&quot;core/util/github/ghub&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_github_githubprovider_.html">&quot;core/util/github/git<wbr>Hub<wbr>Provider&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_github_githubtagrouter_.html">&quot;core/util/github/git<wbr>Hub<wbr>Tag<wbr>Router&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_github_tagrepo_.html">&quot;core/util/github/tag<wbr>Repo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_graph_querycommits_.html">&quot;core/util/graph/query<wbr>Commits&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_lifecyclehelpers_.html">&quot;core/util/lifecycle<wbr>Helpers&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_misc_array_.html">&quot;core/util/misc/array&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_misc_time_.html">&quot;core/util/misc/time&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_slack_diffrendering_.html">&quot;core/util/slack/diff<wbr>Rendering&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_startupmessage_.html">&quot;core/util/startup<wbr>Message&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_util_webhook_imagelink_.html">&quot;core/util/webhook/<wbr>Image<wbr>Link&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_aws_cache_.html">&quot;pack/aws/cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_aws_index_.html">&quot;pack/aws/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_build_dockerbuild_.html">&quot;pack/docker/build/<wbr>Docker<wbr>Build&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_build_dockerprogressreporter_.html">&quot;pack/docker/build/<wbr>Docker<wbr>Progress<wbr>Reporter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_build_executedockerbuild_.html">&quot;pack/docker/build/execute<wbr>Docker<wbr>Build&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_index_.html">&quot;pack/docker/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_parse_dockerfileparser_.html">&quot;pack/docker/parse/<wbr>Docker<wbr>File<wbr>Parser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_support_dockerpushtests_.html">&quot;pack/docker/support/docker<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_docker_support_name_.html">&quot;pack/docker/support/name&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_gcp_cache_.html">&quot;pack/gcp/cache&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_gcp_index_.html">&quot;pack/gcp/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_github_goal_status_github_.html">&quot;pack/github-<wbr>goal-<wbr>status/github&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_github_goal_status_index_.html">&quot;pack/github-<wbr>goal-<wbr>status/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_github_goal_status_statussetters_.html">&quot;pack/github-<wbr>goal-<wbr>status/status<wbr>Setters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_cancelgoals_.html">&quot;pack/goal-<wbr>state/cancel<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_goalstate_.html">&quot;pack/goal-<wbr>state/goal<wbr>State&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_index_.html">&quot;pack/goal-<wbr>state/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_managegoalsets_.html">&quot;pack/goal-<wbr>state/manage<wbr>Goal<wbr>Sets&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_resetgoals_.html">&quot;pack/goal-<wbr>state/reset<wbr>Goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_setgoalstate_.html">&quot;pack/goal-<wbr>state/set<wbr>Goal<wbr>State&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_goal_state_updategoal_.html">&quot;pack/goal-<wbr>state/update<wbr>Goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_info_selfdescribe_.html">&quot;pack/info/<wbr>Self<wbr>Describe&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_info_exposeinfo_.html">&quot;pack/info/expose<wbr>Info&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_info_index_.html">&quot;pack/info/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_info_listgenerators_.html">&quot;pack/info/list<wbr>Generators&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_info_support_commandsearch_.html">&quot;pack/info/support/command<wbr>Search&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_job_executetask_.html">&quot;pack/job/execute<wbr>Task&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_job_helpers_.html">&quot;pack/job/helpers&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_job_index_.html">&quot;pack/job/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_job_invokecommand_.html">&quot;pack/job/invoke<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_job_job_.html">&quot;pack/job/job&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_index_.html">&quot;pack/jvm/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_javaprojectstructure_.html">&quot;pack/jvm/java/<wbr>Java<wbr>Project<wbr>Structure&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_generate_javaprojectcreationparameters_.html">&quot;pack/jvm/java/generate/<wbr>Java<wbr>Project<wbr>Creation<wbr>Parameters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_javapatterns_.html">&quot;pack/jvm/java/java<wbr>Patterns&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_javaprojectutils_.html">&quot;pack/jvm/java/java<wbr>Project<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_pushtests_.html">&quot;pack/jvm/java/push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_query_javapathexpressions_.html">&quot;pack/jvm/java/query/java<wbr>Path<wbr>Expressions&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_java_query_packageinfo_.html">&quot;pack/jvm/java/query/package<wbr>Info&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_mavenprogressreporter_.html">&quot;pack/jvm/maven/<wbr>Maven<wbr>Progress<wbr>Reporter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_plugin_.html">&quot;pack/jvm/maven/<wbr>Plugin&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_versionedartifact_.html">&quot;pack/jvm/maven/<wbr>Versioned<wbr>Artifact&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_build_helpers_.html">&quot;pack/jvm/maven/build/helpers&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_inspection_finddependencies_.html">&quot;pack/jvm/maven/inspection/find<wbr>Dependencies&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_mavencommand_.html">&quot;pack/jvm/maven/maven<wbr>Command&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_parse_frompom_.html">&quot;pack/jvm/maven/parse/from<wbr>Pom&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_parse_pomparser_.html">&quot;pack/jvm/maven/parse/pom<wbr>Parser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_maven_pushtests_.html">&quot;pack/jvm/maven/push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_spring_.html">&quot;pack/jvm/spring&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_spring_generate_springbootprojectstructure_.html">&quot;pack/jvm/spring/generate/<wbr>Spring<wbr>Boot<wbr>Project<wbr>Structure&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_spring_generate_springprojectcreationparameters_.html">&quot;pack/jvm/spring/generate/<wbr>Spring<wbr>Project<wbr>Creation<wbr>Parameters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_spring_generate_springbootutils_.html">&quot;pack/jvm/spring/generate/spring<wbr>Boot<wbr>Utils&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_util_boundedelement_.html">&quot;pack/jvm/util/<wbr>Bounded<wbr>Element&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_jvm_xml_xmldocfileparser_.html">&quot;pack/jvm/xml/<wbr>Xmldoc<wbr>File<wbr>Parser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_commands_kubernetesundeploy_.html">&quot;pack/k8s/commands/kubernetes<wbr>Undeploy&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_config_.html">&quot;pack/k8s/config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_container_.html">&quot;pack/k8s/container&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_cluster_.html">&quot;pack/k8s/deploy/cluster&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_data_.html">&quot;pack/k8s/deploy/data&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_deploy_.html">&quot;pack/k8s/deploy/deploy&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_externalurls_.html">&quot;pack/k8s/deploy/external<wbr>Urls&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_fulfiller_.html">&quot;pack/k8s/deploy/fulfiller&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_goal_.html">&quot;pack/k8s/deploy/goal&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_deploy_spec_.html">&quot;pack/k8s/deploy/spec&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_events_kubernetesdeploy_.html">&quot;pack/k8s/events/kubernetes<wbr>Deploy&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_index_.html">&quot;pack/k8s/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_k8s_.html">&quot;pack/k8s/k8s&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_api_.html">&quot;pack/k8s/kubernetes/api&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_application_.html">&quot;pack/k8s/kubernetes/application&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_apply_.html">&quot;pack/k8s/kubernetes/apply&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_clients_.html">&quot;pack/k8s/kubernetes/clients&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_config_.html">&quot;pack/k8s/kubernetes/config&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_delete_.html">&quot;pack/k8s/kubernetes/delete&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_deployment_.html">&quot;pack/k8s/kubernetes/deployment&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_fetch_.html">&quot;pack/k8s/kubernetes/fetch&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_ingress_.html">&quot;pack/k8s/kubernetes/ingress&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_labels_.html">&quot;pack/k8s/kubernetes/labels&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_metadata_.html">&quot;pack/k8s/kubernetes/metadata&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_name_.html">&quot;pack/k8s/kubernetes/name&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_namespace_.html">&quot;pack/k8s/kubernetes/namespace&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_patch_.html">&quot;pack/k8s/kubernetes/patch&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_rbac_.html">&quot;pack/k8s/kubernetes/rbac&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_request_.html">&quot;pack/k8s/kubernetes/request&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_resource_.html">&quot;pack/k8s/kubernetes/resource&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_role_.html">&quot;pack/k8s/kubernetes/role&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_rolebinding_.html">&quot;pack/k8s/kubernetes/role<wbr>Binding&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_secret_.html">&quot;pack/k8s/kubernetes/secret&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_service_.html">&quot;pack/k8s/kubernetes/service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_serviceaccount_.html">&quot;pack/k8s/kubernetes/service<wbr>Account&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_kubernetes_spec_.html">&quot;pack/k8s/kubernetes/spec&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_scheduler_kubernetesfulfillmentgoalscheduler_.html">&quot;pack/k8s/scheduler/<wbr>Kubernetes<wbr>Fulfillment<wbr>Goal<wbr>Scheduler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_scheduler_kubernetesgoalscheduler_.html">&quot;pack/k8s/scheduler/<wbr>Kubernetes<wbr>Goal<wbr>Scheduler&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_scheduler_goalscheduling_.html">&quot;pack/k8s/scheduler/goal<wbr>Scheduling&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_scheduler_service_.html">&quot;pack/k8s/scheduler/service&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_support_crypto_.html">&quot;pack/k8s/support/crypto&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_support_error_.html">&quot;pack/k8s/support/error&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_support_name_.html">&quot;pack/k8s/support/name&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_support_namespace_.html">&quot;pack/k8s/support/namespace&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_support_retry_.html">&quot;pack/k8s/support/retry&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_application_.html">&quot;pack/k8s/sync/application&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_change_.html">&quot;pack/k8s/sync/change&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_clone_.html">&quot;pack/k8s/sync/clone&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_diff_.html">&quot;pack/k8s/sync/diff&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_goals_.html">&quot;pack/k8s/sync/goals&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_previousspecversion_.html">&quot;pack/k8s/sync/previous<wbr>Spec<wbr>Version&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_repo_.html">&quot;pack/k8s/sync/repo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_startup_.html">&quot;pack/k8s/sync/startup&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_sync_.html">&quot;pack/k8s/sync/sync&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_k8s_sync_tag_.html">&quot;pack/k8s/sync/tag&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_addbuildscript_.html">&quot;pack/node/autofix/add<wbr>Build<wbr>Script&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_eslintautofix_.html">&quot;pack/node/autofix/eslint<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_npmauditautofix_.html">&quot;pack/node/autofix/npm<wbr>Audit<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_packagejsonformat_.html">&quot;pack/node/autofix/package<wbr>Json<wbr>Format&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_packagelockurlrewriteautofix_.html">&quot;pack/node/autofix/package<wbr>Lock<wbr>Url<wbr>Rewrite<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_thirdpartylicense_.html">&quot;pack/node/autofix/third<wbr>Party<wbr>License&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_autofix_typescript_tslintautofix_.html">&quot;pack/node/autofix/typescript/tslint<wbr>Autofix&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_executepublish_.html">&quot;pack/node/build/execute<wbr>Publish&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_nodeoptions_.html">&quot;pack/node/build/node<wbr>Options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_nodeprojectidentifier_.html">&quot;pack/node/build/node<wbr>Project<wbr>Identifier&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_npmloginterpreter_.html">&quot;pack/node/build/npm<wbr>Log<wbr>Interpreter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_npmprogressreporter_.html">&quot;pack/node/build/npm<wbr>Progress<wbr>Reporter&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_build_npmversioner_.html">&quot;pack/node/build/npm<wbr>Versioner&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_generator_nodeprojectcreationparameters_.html">&quot;pack/node/generator/<wbr>Node<wbr>Project<wbr>Creation<wbr>Parameters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_goal_npmpublish_.html">&quot;pack/node/goal/<wbr>Npm<wbr>Publish&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_index_.html">&quot;pack/node/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_inspection_eslint_.html">&quot;pack/node/inspection/eslint&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_inspection_npmaudit_.html">&quot;pack/node/inspection/npm<wbr>Audit&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_inspection_tslint_.html">&quot;pack/node/inspection/tslint&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_listener_npm_.html">&quot;pack/node/listener/npm&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_nodesupport_.html">&quot;pack/node/node<wbr>Support&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_npm_spawn_.html">&quot;pack/node/npm/spawn&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_pushtest_materialchangetonoderepo_.html">&quot;pack/node/pushtest/material<wbr>Change<wbr>ToNode<wbr>Repo&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_pushtest_nodepushtests_.html">&quot;pack/node/pushtest/node<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_pushtest_tspushtests_.html">&quot;pack/node/pushtest/ts<wbr>Push<wbr>Tests&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_transform_findauthorname_.html">&quot;pack/node/transform/find<wbr>Author<wbr>Name&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_transform_trytoupdatedependency_.html">&quot;pack/node/transform/try<wbr>ToUpdate<wbr>Dependency&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_transform_updatepackagejsonidentification_.html">&quot;pack/node/transform/update<wbr>Package<wbr>Json<wbr>Identification&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_transform_updatepackageversion_.html">&quot;pack/node/transform/update<wbr>Package<wbr>Version&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_transform_updatereadmetitle_.html">&quot;pack/node/transform/update<wbr>Readme<wbr>Title&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_typings_spdx_license_list_.html">&quot;pack/node/typings/spdx-<wbr>license-<wbr>list&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_node_util_packagejson_.html">&quot;pack/node/util/<wbr>Package<wbr>Json&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_notification_index_.html">&quot;pack/notification/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_notification_notification_.html">&quot;pack/notification/notification&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_universal_generator_generator_.html">&quot;pack/universal-<wbr>generator/generator&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_universal_generator_generatorsupport_.html">&quot;pack/universal-<wbr>generator/generator<wbr>Support&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_universal_generator_index_.html">&quot;pack/universal-<wbr>generator/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_universal_generator_test_assertgenerator_.html">&quot;pack/universal-<wbr>generator/test/assert<wbr>Generator&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_file_.html">&quot;pack/version/file&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_github_.html">&quot;pack/version/github&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_increment_.html">&quot;pack/version/increment&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_index_.html">&quot;pack/version/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_octokit_.html">&quot;pack/version/octokit&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_release_.html">&quot;pack/version/release&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_semver_.html">&quot;pack/version/semver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_pack_version_version_.html">&quot;pack/version/version&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_credentials_credentialsresolver_.html">&quot;spi/credentials/<wbr>Credentials<wbr>Resolver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_issue_issuecreationoptions_.html">&quot;spi/issue/<wbr>Issue<wbr>Creation<wbr>Options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_issue_issuerouter_.html">&quot;spi/issue/<wbr>Issue<wbr>Router&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_log_interpretedlog_.html">&quot;spi/log/<wbr>Interpreted<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_log_progresslog_.html">&quot;spi/log/<wbr>Progress<wbr>Log&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_project_lazyprojectloader_.html">&quot;spi/project/<wbr>Lazy<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_project_projectloader_.html">&quot;spi/project/<wbr>Project<wbr>Loader&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_spi_repo_ref_reporefresolver_.html">&quot;spi/repo-<wbr>ref/<wbr>Repo<wbr>Ref<wbr>Resolver&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_typings_types_.html">&quot;typings/types&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

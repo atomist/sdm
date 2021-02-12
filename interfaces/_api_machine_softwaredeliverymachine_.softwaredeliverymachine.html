@@ -1,0 +1,1458 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>SoftwareDeliveryMachine | @atomist/sdm</title>
+	<meta name="description" content="Documentation for @atomist/sdm">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_api_machine_softwaredeliverymachine_.html">&quot;api/machine/SoftwareDeliveryMachine&quot;</a>
+				</li>
+				<li>
+					<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html">SoftwareDeliveryMachine</a>
+				</li>
+			</ul>
+			<h1>Interface SoftwareDeliveryMachine&lt;O&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Class instantiated to create a <strong>Software Delivery MachineConfiguration</strong>.
+						Combines commands and delivery event handling using <em>goals</em>.</p>
+					</div>
+					<p>Goals and goal &quot;implementations&quot; can be defined by users.</p>
+					<p>The most important element of a software delivery machine is setting
+						zero or more <em>push rules</em>.
+					This is normally done using an internal DSL</p>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>O<span class="tsd-signature-symbol">: </span><a href="_api_machine_softwaredeliverymachineoptions_.softwaredeliverymachineconfiguration.html" class="tsd-signature-type">SoftwareDeliveryMachineConfiguration</a> = <span class="tsd-signature-type">SoftwareDeliveryMachineConfiguration</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html" class="tsd-signature-type">GoalDrivenMachine</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>
+					</li>
+					<li>
+						<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html" class="tsd-signature-type">ListenerRegistrationManager</a>
+					</li>
+					<li>
+						<a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html" class="tsd-signature-type">CommandRegistrationManager</a>
+					</li>
+					<li>
+						<a href="_api_registration_eventregistrationmanager_.eventregistrationmanager.html" class="tsd-signature-type">EventRegistrationManager</a>
+					</li>
+					<li>
+						<a href="_api_registration_ingesterregistrationmanager_.ingesterregistrationmanager.html" class="tsd-signature-type">IngesterRegistrationManager</a>
+					</li>
+					<li>
+						<a href="_api_machine_functionalunit_.functionalunit.html" class="tsd-signature-type">FunctionalUnit</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">SoftwareDeliveryMachine</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_api_helper_machine_abstractsoftwaredeliverymachine_.abstractsoftwaredeliverymachine.html" class="tsd-signature-type">AbstractSoftwareDeliveryMachine</a></li>
+					<li><a href="../classes/_core_machine_handlerbasedsoftwaredeliverymachine_.handlerbasedsoftwaredeliverymachine.html" class="tsd-signature-type">HandlerBasedSoftwareDeliveryMachine</a></li>
+					<li><a href="../classes/_pack_universal_generator_test_assertgenerator_.testsoftwaredeliverymachine.html" class="tsd-signature-type">TestSoftwareDeliveryMachine</a></li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#channellinklisteners" class="tsd-kind-icon">channel<wbr>Link<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#closedissuelisteners" class="tsd-kind-icon">closed<wbr>Issue<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#commandhandlers" class="tsd-kind-icon">command<wbr>Handlers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#configuration" class="tsd-kind-icon">configuration</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#eventhandlers" class="tsd-kind-icon">event<wbr>Handlers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#extensionpacks" class="tsd-kind-icon">extension<wbr>Packs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#firstpushlisteners" class="tsd-kind-icon">first<wbr>Push<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalcompletionlisteners" class="tsd-kind-icon">goal<wbr>Completion<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalexecutionlisteners" class="tsd-kind-icon">goal<wbr>Execution<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalfulfillmentmapper" class="tsd-kind-icon">goal<wbr>Fulfillment<wbr>Mapper</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalssetlisteners" class="tsd-kind-icon">goals<wbr>Set<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#ingesters" class="tsd-kind-icon">ingesters</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#newissuelisteners" class="tsd-kind-icon">new<wbr>Issue<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#pullrequestlisteners" class="tsd-kind-icon">pull<wbr>Request<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#pushmapping" class="tsd-kind-icon">push<wbr>Mapping</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#repocreationlisteners" class="tsd-kind-icon">repo<wbr>Creation<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#repoonboardinglisteners" class="tsd-kind-icon">repo<wbr>Onboarding<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#startuplisteners" class="tsd-kind-icon">startup<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#taglisteners" class="tsd-kind-icon">tag<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#updatedissuelisteners" class="tsd-kind-icon">updated<wbr>Issue<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#userjoiningchannellisteners" class="tsd-kind-icon">user<wbr>Joining<wbr>Channel<wbr>Listeners</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addchannellinklistener" class="tsd-kind-icon">add<wbr>Channel<wbr>Link<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addclosedissuelistener" class="tsd-kind-icon">add<wbr>Closed<wbr>Issue<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcodeinspectioncommand" class="tsd-kind-icon">add<wbr>Code<wbr>Inspection<wbr>Command</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcodetransformcommand" class="tsd-kind-icon">add<wbr>Code<wbr>Transform<wbr>Command</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcommand" class="tsd-kind-icon">add<wbr>Command</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addevent" class="tsd-kind-icon">add<wbr>Event</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addextensionpacks" class="tsd-kind-icon">add<wbr>Extension<wbr>Packs</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addfirstpushlistener" class="tsd-kind-icon">add<wbr>First<wbr>Push<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgeneratorcommand" class="tsd-kind-icon">add<wbr>Generator<wbr>Command</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalapprovalrequestvoter" class="tsd-kind-icon">add<wbr>Goal<wbr>Approval<wbr>Request<wbr>Voter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalcompletionlistener" class="tsd-kind-icon">add<wbr>Goal<wbr>Completion<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalcontributions" class="tsd-kind-icon">add<wbr>Goal<wbr>Contributions</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalexecutionlistener" class="tsd-kind-icon">add<wbr>Goal<wbr>Execution<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalssetlistener" class="tsd-kind-icon">add<wbr>Goals<wbr>Set<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addingester" class="tsd-kind-icon">add<wbr>Ingester</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addnewissuelistener" class="tsd-kind-icon">add<wbr>New<wbr>Issue<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addpullrequestlistener" class="tsd-kind-icon">add<wbr>Pull<wbr>Request<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addrepocreationlistener" class="tsd-kind-icon">add<wbr>Repo<wbr>Creation<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addrepoonboardinglistener" class="tsd-kind-icon">add<wbr>Repo<wbr>Onboarding<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addstartuplistener" class="tsd-kind-icon">add<wbr>Startup<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addtaglistener" class="tsd-kind-icon">add<wbr>Tag<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addtriggeredlistener" class="tsd-kind-icon">add<wbr>Triggered<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addupdatedissuelistener" class="tsd-kind-icon">add<wbr>Updated<wbr>Issue<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#adduserjoiningchannellistener" class="tsd-kind-icon">add<wbr>User<wbr>Joining<wbr>Channel<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#setgoalapprovalrequestvotedecisionmanager" class="tsd-kind-icon">set<wbr>Goal<wbr>Approval<wbr>Request<wbr>Vote<wbr>Decision<wbr>Manager</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited"><a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#withpushrules" class="tsd-kind-icon">with<wbr>Push<wbr>Rules</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="channellinklisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> channel<wbr>Link<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">channel<wbr>Link<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_channellinklistenerinvocation_.html#channellinklistener" class="tsd-signature-type">ChannelLinkListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#channellinklisteners">channelLinkListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L135">lib/api/machine/ListenerRegistrationManager.ts:135</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="closedissuelisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> closed<wbr>Issue<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">closed<wbr>Issue<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_closedissuelistener_.html#closedissuelistener" class="tsd-signature-type">ClosedIssueListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#closedissuelisteners">closedIssueListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L125">lib/api/machine/ListenerRegistrationManager.ts:125</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="commandhandlers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> command<wbr>Handlers</h3>
+					<div class="tsd-signature tsd-kind-icon">command<wbr>Handlers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Maker</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">HandleCommand</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_functionalunit_.functionalunit.html">FunctionalUnit</a>.<a href="_api_machine_functionalunit_.functionalunit.html#commandhandlers">commandHandlers</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/FunctionalUnit.ts#L28">lib/api/machine/FunctionalUnit.ts:28</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="configuration" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> configuration</h3>
+					<div class="tsd-signature tsd-kind-icon">configuration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Configuration</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">O</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_machineconfiguration_.machineconfiguration.html">MachineConfiguration</a>.<a href="_api_machine_machineconfiguration_.machineconfiguration.html#configuration">configuration</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/MachineConfiguration.ts#L29">lib/api/machine/MachineConfiguration.ts:29</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Automation client and machine configuration this machine will run in</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="eventhandlers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> event<wbr>Handlers</h3>
+					<div class="tsd-signature tsd-kind-icon">event<wbr>Handlers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Maker</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">HandleEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_functionalunit_.functionalunit.html">FunctionalUnit</a>.<a href="_api_machine_functionalunit_.functionalunit.html#eventhandlers">eventHandlers</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/FunctionalUnit.ts#L26">lib/api/machine/FunctionalUnit.ts:26</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="extensionpacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> extension<wbr>Packs</h3>
+					<div class="tsd-signature tsd-kind-icon">extension<wbr>Packs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_machine_extensionpack_.extensionpack.html" class="tsd-signature-type">ExtensionPack</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/SoftwareDeliveryMachine.ts#L54">lib/api/machine/SoftwareDeliveryMachine.ts:54</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="firstpushlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> first<wbr>Push<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">first<wbr>Push<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_pushlistener_.html#pushlistener" class="tsd-signature-type">PushListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#firstpushlisteners">firstPushListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L133">lib/api/machine/ListenerRegistrationManager.ts:133</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="goalcompletionlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> goal<wbr>Completion<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">goal<wbr>Completion<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_goalcompletionlistener_.html#goalcompletionlistener" class="tsd-signature-type">GoalCompletionListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#goalcompletionlisteners">goalCompletionListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L139">lib/api/machine/ListenerRegistrationManager.ts:139</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="goalexecutionlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> goal<wbr>Execution<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">goal<wbr>Execution<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_goalstatuslistener_.html#goalexecutionlistener" class="tsd-signature-type">GoalExecutionListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#goalexecutionlisteners">goalExecutionListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L113">lib/api/machine/ListenerRegistrationManager.ts:113</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="goalfulfillmentmapper" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> goal<wbr>Fulfillment<wbr>Mapper</h3>
+					<div class="tsd-signature tsd-kind-icon">goal<wbr>Fulfillment<wbr>Mapper<span class="tsd-signature-symbol">:</span> <a href="_api_goal_support_goalimplementationmapper_.goalimplementationmapper.html" class="tsd-signature-type">GoalImplementationMapper</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#goalfulfillmentmapper">goalFulfillmentMapper</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L44">lib/api/machine/GoalDrivenMachine.ts:44</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="goalssetlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> goals<wbr>Set<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">goals<wbr>Set<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_goalssetlistener_.html#goalssetlistener" class="tsd-signature-type">GoalsSetListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#goalssetlisteners">goalsSetListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L137">lib/api/machine/ListenerRegistrationManager.ts:137</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="ingesters" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> ingesters</h3>
+					<div class="tsd-signature tsd-kind-icon">ingesters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_functionalunit_.functionalunit.html">FunctionalUnit</a>.<a href="_api_machine_functionalunit_.functionalunit.html#ingesters">ingesters</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/FunctionalUnit.ts#L30">lib/api/machine/FunctionalUnit.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_machineconfiguration_.machineconfiguration.html">MachineConfiguration</a>.<a href="_api_machine_machineconfiguration_.machineconfiguration.html#name">name</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/MachineConfiguration.ts#L24">lib/api/machine/MachineConfiguration.ts:24</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="newissuelisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> new<wbr>Issue<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">new<wbr>Issue<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_newissuelistener_.html#newissuelistener" class="tsd-signature-type">NewIssueListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#newissuelisteners">newIssueListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L121">lib/api/machine/ListenerRegistrationManager.ts:121</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="pullrequestlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> pull<wbr>Request<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">pull<wbr>Request<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_pullrequestlistener_.html#pullrequestlistener" class="tsd-signature-type">PullRequestListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#pullrequestlisteners">pullRequestListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L131">lib/api/machine/ListenerRegistrationManager.ts:131</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="pushmapping" class="tsd-anchor"></a>
+					<h3>push<wbr>Mapping</h3>
+					<div class="tsd-signature tsd-kind-icon">push<wbr>Mapping<span class="tsd-signature-symbol">:</span> <a href="_api_mapping_pushmapping_.pushmapping.html" class="tsd-signature-type">PushMapping</a><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_goal_goals_.goals.html" class="tsd-signature-type">Goals</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#pushmapping">pushMapping</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L42">lib/api/machine/GoalDrivenMachine.ts:42</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Return the PushMapping that will be used on pushes.
+							Useful in testing goal setting.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>returns</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="repocreationlisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> repo<wbr>Creation<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">repo<wbr>Creation<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_repocreationlistener_.html#repocreationlistener" class="tsd-signature-type">RepoCreationListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#repocreationlisteners">repoCreationListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L127">lib/api/machine/ListenerRegistrationManager.ts:127</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="repoonboardinglisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> repo<wbr>Onboarding<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">repo<wbr>Onboarding<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_projectlistener_.html#projectlistener" class="tsd-signature-type">ProjectListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#repoonboardinglisteners">repoOnboardingListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L129">lib/api/machine/ListenerRegistrationManager.ts:129</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="startuplisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> startup<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">startup<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_startuplistener_.html#startuplistener" class="tsd-signature-type">StartupListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#startuplisteners">startupListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L115">lib/api/machine/ListenerRegistrationManager.ts:115</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="taglisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> tag<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">tag<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_taglistener_.html#taglistener" class="tsd-signature-type">TagListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#taglisteners">tagListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L119">lib/api/machine/ListenerRegistrationManager.ts:119</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="updatedissuelisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> updated<wbr>Issue<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">updated<wbr>Issue<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_updatedissuelistener_.html#updatedissuelistener" class="tsd-signature-type">UpdatedIssueListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#updatedissuelisteners">updatedIssueListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L123">lib/api/machine/ListenerRegistrationManager.ts:123</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="userjoiningchannellisteners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> user<wbr>Joining<wbr>Channel<wbr>Listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">user<wbr>Joining<wbr>Channel<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_api_listener_userjoiningchannellistener_.html#userjoiningchannellistener" class="tsd-signature-type">UserJoiningChannelListener</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#userjoiningchannellisteners">userJoiningChannelListeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L117">lib/api/machine/ListenerRegistrationManager.ts:117</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addchannellinklistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Channel<wbr>Link<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Channel<wbr>Link<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_channellinklistenerinvocation_.html#channellinklistener" class="tsd-signature-type">ChannelLinkListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addchannellinklistener">addChannelLinkListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L75">lib/api/machine/ListenerRegistrationManager.ts:75</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a listener that will be invoked when a channel is linked to a repo</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_channellinklistenerinvocation_.html#channellinklistener" class="tsd-signature-type">ChannelLinkListener</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addclosedissuelistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Closed<wbr>Issue<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Closed<wbr>Issue<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_closedissuelistener_.html#closedissuelistener" class="tsd-signature-type">ClosedIssueListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addclosedissuelistener">addClosedIssueListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L61">lib/api/machine/ListenerRegistrationManager.ts:61</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_closedissuelistener_.html#closedissuelistener" class="tsd-signature-type">ClosedIssueListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="addcodeinspectioncommand" class="tsd-anchor"></a>
+					<h3>add<wbr>Code<wbr>Inspection<wbr>Command</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Code<wbr>Inspection<wbr>Command&lt;R, PARAMS&gt;<span class="tsd-signature-symbol">(</span>cir<span class="tsd-signature-symbol">: </span><a href="_api_registration_codeinspectionregistration_.codeinspectionregistration.html" class="tsd-signature-type">CodeInspectionRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html">CommandRegistrationManager</a>.<a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html#addcodeinspectioncommand">addCodeInspectionCommand</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/CommandRegistrationManager.ts#L51">lib/api/machine/CommandRegistrationManager.ts:51</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a code inspection to this machine.
+									Unlike code transformations, code inspections cannot mutate projects.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>R</h4>
+								</li>
+								<li>
+									<h4>PARAMS = <span class="tsd-signature-type">NoParameters</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cir: <a href="_api_registration_codeinspectionregistration_.codeinspectionregistration.html" class="tsd-signature-type">CodeInspectionRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="addcodetransformcommand" class="tsd-anchor"></a>
+					<h3>add<wbr>Code<wbr>Transform<wbr>Command</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Code<wbr>Transform<wbr>Command&lt;PARAMS&gt;<span class="tsd-signature-symbol">(</span>ctr<span class="tsd-signature-symbol">: </span><a href="_api_registration_codetransformregistration_.codetransformregistration.html" class="tsd-signature-type">CodeTransformRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html">CommandRegistrationManager</a>.<a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html#addcodetransformcommand">addCodeTransformCommand</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/CommandRegistrationManager.ts#L44">lib/api/machine/CommandRegistrationManager.ts:44</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a code transformation to this machine.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>PARAMS = <span class="tsd-signature-type">NoParameters</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ctr: <a href="_api_registration_codetransformregistration_.codetransformregistration.html" class="tsd-signature-type">CodeTransformRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="addcommand" class="tsd-anchor"></a>
+					<h3>add<wbr>Command</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Command&lt;PARAMS&gt;<span class="tsd-signature-symbol">(</span>command<span class="tsd-signature-symbol">: </span><a href="_api_registration_commandhandlerregistration_.commandhandlerregistration.html" class="tsd-signature-type">CommandHandlerRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html">CommandRegistrationManager</a>.<a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html#addcommand">addCommand</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/CommandRegistrationManager.ts#L32">lib/api/machine/CommandRegistrationManager.ts:32</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a generic command to this machine</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>PARAMS = <span class="tsd-signature-type">NoParameters</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>command: <a href="_api_registration_commandhandlerregistration_.commandhandlerregistration.html" class="tsd-signature-type">CommandHandlerRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="addevent" class="tsd-anchor"></a>
+					<h3>add<wbr>Event</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Event&lt;TYPE, PARAMS&gt;<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="_api_registration_eventhandlerregistration_.eventhandlerregistration.html" class="tsd-signature-type">EventHandlerRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TYPE</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_registration_eventregistrationmanager_.eventregistrationmanager.html">EventRegistrationManager</a>.<a href="_api_registration_eventregistrationmanager_.eventregistrationmanager.html#addevent">addEvent</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/registration/EventRegistrationManager.ts#L29">lib/api/registration/EventRegistrationManager.ts:29</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add an event to this machine.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TYPE</h4>
+								</li>
+								<li>
+									<h4>PARAMS</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>event: <a href="_api_registration_eventhandlerregistration_.eventhandlerregistration.html" class="tsd-signature-type">EventHandlerRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TYPE</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="addextensionpacks" class="tsd-anchor"></a>
+					<h3>add<wbr>Extension<wbr>Packs</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Extension<wbr>Packs<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>packs<span class="tsd-signature-symbol">: </span><a href="_api_machine_extensionpack_.extensionpack.html" class="tsd-signature-type">ExtensionPack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/SoftwareDeliveryMachine.ts#L52">lib/api/machine/SoftwareDeliveryMachine.ts:52</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add capabilities from these extension packs.
+										This is the primary SDM extension
+										mechanism. Extension packs are typically brought in as Node modules,
+									and can contribute goals as well configure SDM behavior.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>packs: <a href="_api_machine_extensionpack_.extensionpack.html" class="tsd-signature-type">ExtensionPack</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addfirstpushlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>First<wbr>Push<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>First<wbr>Push<wbr>Listener<span class="tsd-signature-symbol">(</span>pl<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_pushlistener_.html#pushlistener" class="tsd-signature-type">PushListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addfirstpushlistener">addFirstPushListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L103">lib/api/machine/ListenerRegistrationManager.ts:103</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Register a listener that reacts to a new repo appearing with
+										content. The invocation&#39;s addressChannels will DM the
+										creator of the project if possible, as any channel mapping
+									will not have been set up.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>pl: <a href="../modules/_api_listener_pushlistener_.html#pushlistener" class="tsd-signature-type">PushListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="addgeneratorcommand" class="tsd-anchor"></a>
+					<h3>add<wbr>Generator<wbr>Command</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Generator<wbr>Command&lt;PARAMS&gt;<span class="tsd-signature-symbol">(</span>generator<span class="tsd-signature-symbol">: </span><a href="_api_registration_generatorregistration_.generatorregistration.html" class="tsd-signature-type">GeneratorRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html">CommandRegistrationManager</a>.<a href="_api_machine_commandregistrationmanager_.commandregistrationmanager.html#addgeneratorcommand">addGeneratorCommand</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/CommandRegistrationManager.ts#L38">lib/api/machine/CommandRegistrationManager.ts:38</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a generator to this machine to enable project creation</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>PARAMS = <span class="tsd-signature-type">NoParameters</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>generator: <a href="_api_registration_generatorregistration_.generatorregistration.html" class="tsd-signature-type">GeneratorRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PARAMS</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addgoalapprovalrequestvoter" class="tsd-anchor"></a>
+					<h3>add<wbr>Goal<wbr>Approval<wbr>Request<wbr>Voter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Goal<wbr>Approval<wbr>Request<wbr>Voter<span class="tsd-signature-symbol">(</span>vote<span class="tsd-signature-symbol">: </span><a href="../modules/_api_registration_goalapprovalrequestvote_.html#goalapprovalrequestvoter" class="tsd-signature-type">GoalApprovalRequestVoter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#addgoalapprovalrequestvoter">addGoalApprovalRequestVoter</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L78">lib/api/machine/GoalDrivenMachine.ts:78</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add vote that gets to decide whether to deny or grant goal approval requests.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>vote: <a href="../modules/_api_registration_goalapprovalrequestvote_.html#goalapprovalrequestvoter" class="tsd-signature-type">GoalApprovalRequestVoter</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addgoalcompletionlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Goal<wbr>Completion<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Goal<wbr>Completion<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_goalcompletionlistener_.html#goalcompletionlistener" class="tsd-signature-type">GoalCompletionListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addgoalcompletionlistener">addGoalCompletionListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L109">lib/api/machine/ListenerRegistrationManager.ts:109</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_goalcompletionlistener_.html#goalcompletionlistener" class="tsd-signature-type">GoalCompletionListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addgoalcontributions" class="tsd-anchor"></a>
+					<h3>add<wbr>Goal<wbr>Contributions</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Goal<wbr>Contributions<span class="tsd-signature-symbol">(</span>goalContributions<span class="tsd-signature-symbol">: </span><a href="../modules/_api_mapping_goalsetter_.html#goalsetter" class="tsd-signature-type">GoalSetter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#addgoalcontributions">addGoalContributions</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L62">lib/api/machine/GoalDrivenMachine.ts:62</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(hint: prefer <code>withPushRules</code>)</p>
+								</div>
+								<p>Add goal setting contributions that will be added into SDM goal setting.
+								Decorates other goal setting behavior.</p>
+								<p>For example, always do fingerprints:
+								sdm.addGoalContributions(onAnyPush().setGoals(FingerprintGoal))</p>
+								<p>Or, sometimes do a custom local deploy goal:
+									sdm.addGoalContributions(
+									whenPushSatisfies(IsSdm, IsInLocalMode).setGoals(
+								new Goals(&quot;delivery&quot;, LocalSdmDelivery)));</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>goalContributions: <a href="../modules/_api_mapping_goalsetter_.html#goalsetter" class="tsd-signature-type">GoalSetter</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>contributions to goals</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addgoalexecutionlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Goal<wbr>Execution<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Goal<wbr>Execution<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_goalstatuslistener_.html#goalexecutionlistener" class="tsd-signature-type">GoalExecutionListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addgoalexecutionlistener">addGoalExecutionListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L67">lib/api/machine/ListenerRegistrationManager.ts:67</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Invoked when a goal state changes to in-process, success, or failure.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_goalstatuslistener_.html#goalexecutionlistener" class="tsd-signature-type">GoalExecutionListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addgoalssetlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Goals<wbr>Set<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Goals<wbr>Set<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_goalssetlistener_.html#goalssetlistener" class="tsd-signature-type">GoalsSetListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addgoalssetlistener">addGoalsSetListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L107">lib/api/machine/ListenerRegistrationManager.ts:107</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_goalssetlistener_.html#goalssetlistener" class="tsd-signature-type">GoalsSetListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addingester" class="tsd-anchor"></a>
+					<h3>add<wbr>Ingester</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Ingester<span class="tsd-signature-symbol">(</span>ingester<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_api_registration_ingesterregistration_.ingesterregistration.html" class="tsd-signature-type">IngesterRegistration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_registration_ingesterregistrationmanager_.ingesterregistrationmanager.html">IngesterRegistrationManager</a>.<a href="_api_registration_ingesterregistrationmanager_.ingesterregistrationmanager.html#addingester">addIngester</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/registration/IngesterRegistrationManager.ts#L29">lib/api/registration/IngesterRegistrationManager.ts:29</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add ingester to this machine.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ingester: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_api_registration_ingesterregistration_.ingesterregistration.html" class="tsd-signature-type">IngesterRegistration</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addnewissuelistener" class="tsd-anchor"></a>
+					<h3>add<wbr>New<wbr>Issue<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>New<wbr>Issue<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_newissuelistener_.html#newissuelistener" class="tsd-signature-type">NewIssueListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addnewissuelistener">addNewIssueListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L57">lib/api/machine/ListenerRegistrationManager.ts:57</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a listener that reacts to new issues</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_newissuelistener_.html#newissuelistener" class="tsd-signature-type">NewIssueListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addpullrequestlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Pull<wbr>Request<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Pull<wbr>Request<wbr>Listener<span class="tsd-signature-symbol">(</span>prl<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_pullrequestlistener_.html#pullrequestlistener" class="tsd-signature-type">PullRequestListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addpullrequestlistener">addPullRequestListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L105">lib/api/machine/ListenerRegistrationManager.ts:105</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>prl: <a href="../modules/_api_listener_pullrequestlistener_.html#pullrequestlistener" class="tsd-signature-type">PullRequestListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addrepocreationlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Repo<wbr>Creation<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Repo<wbr>Creation<wbr>Listener<span class="tsd-signature-symbol">(</span>rcl<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_repocreationlistener_.html#repocreationlistener" class="tsd-signature-type">RepoCreationListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addrepocreationlistener">addRepoCreationListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L85">lib/api/machine/ListenerRegistrationManager.ts:85</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>You probably mean to use addFirstPushListener!
+										This responds to a repo creation, but there may be no
+										code in it. The invocation&#39;s addressChannels method with have no effect:
+									use the context if you want to send messages</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>rcl: <a href="../modules/_api_listener_repocreationlistener_.html#repocreationlistener" class="tsd-signature-type">RepoCreationListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addrepoonboardinglistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Repo<wbr>Onboarding<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Repo<wbr>Onboarding<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_projectlistener_.html#projectlistener" class="tsd-signature-type">ProjectListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addrepoonboardinglistener">addRepoOnboardingListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L93">lib/api/machine/ListenerRegistrationManager.ts:93</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Register a listener that reacts to a repo being
+									brought to Atomist&#39;s notice</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_projectlistener_.html#projectlistener" class="tsd-signature-type">ProjectListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addstartuplistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Startup<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Startup<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_startuplistener_.html#startuplistener" class="tsd-signature-type">StartupListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addstartuplistener">addStartupListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L43">lib/api/machine/ListenerRegistrationManager.ts:43</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a listener that will be notified of machine startup</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_startuplistener_.html#startuplistener" class="tsd-signature-type">StartupListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addtaglistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Tag<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tag<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_taglistener_.html#taglistener" class="tsd-signature-type">TagListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addtaglistener">addTagListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L69">lib/api/machine/ListenerRegistrationManager.ts:69</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_taglistener_.html#taglistener" class="tsd-signature-type">TagListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addtriggeredlistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Triggered<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Triggered<wbr>Listener<span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><a href="_api_registration_triggeredlistenerregistration_.triggeredlistenerregistration.html" class="tsd-signature-type">TriggeredListenerRegistration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addtriggeredlistener">addTriggeredListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L50">lib/api/machine/ListenerRegistrationManager.ts:50</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a listener that gets invoked on time-based triggers</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>t: <a href="_api_registration_triggeredlistenerregistration_.triggeredlistenerregistration.html" class="tsd-signature-type">TriggeredListenerRegistration</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="addupdatedissuelistener" class="tsd-anchor"></a>
+					<h3>add<wbr>Updated<wbr>Issue<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Updated<wbr>Issue<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_updatedissuelistener_.html#updatedissuelistener" class="tsd-signature-type">UpdatedIssueListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#addupdatedissuelistener">addUpdatedIssueListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L59">lib/api/machine/ListenerRegistrationManager.ts:59</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_updatedissuelistener_.html#updatedissuelistener" class="tsd-signature-type">UpdatedIssueListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="adduserjoiningchannellistener" class="tsd-anchor"></a>
+					<h3>add<wbr>User<wbr>Joining<wbr>Channel<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>User<wbr>Joining<wbr>Channel<wbr>Listener<span class="tsd-signature-symbol">(</span>l<span class="tsd-signature-symbol">: </span><a href="../modules/_api_listener_userjoiningchannellistener_.html#userjoiningchannellistener" class="tsd-signature-type">UserJoiningChannelListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html">ListenerRegistrationManager</a>.<a href="_api_machine_listenerregistrationmanager_.listenerregistrationmanager.html#adduserjoiningchannellistener">addUserJoiningChannelListener</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/ListenerRegistrationManager.ts#L111">lib/api/machine/ListenerRegistrationManager.ts:111</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>l: <a href="../modules/_api_listener_userjoiningchannellistener_.html#userjoiningchannellistener" class="tsd-signature-type">UserJoiningChannelListener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="setgoalapprovalrequestvotedecisionmanager" class="tsd-anchor"></a>
+					<h3>set<wbr>Goal<wbr>Approval<wbr>Request<wbr>Vote<wbr>Decision<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Goal<wbr>Approval<wbr>Request<wbr>Vote<wbr>Decision<wbr>Manager<span class="tsd-signature-symbol">(</span>manager<span class="tsd-signature-symbol">: </span><a href="../modules/_api_registration_goalapprovalrequestvote_.html#goalapprovalrequestvotedecisionmanager" class="tsd-signature-type">GoalApprovalRequestVoteDecisionManager</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#setgoalapprovalrequestvotedecisionmanager">setGoalApprovalRequestVoteDecisionManager</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L84">lib/api/machine/GoalDrivenMachine.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the decision manager used to make final decision on GoalApprovalRequestVoteResult instances.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>manager: <a href="../modules/_api_registration_goalapprovalrequestvote_.html#goalapprovalrequestvotedecisionmanager" class="tsd-signature-type">GoalApprovalRequestVoteDecisionManager</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+					<a name="withpushrules" class="tsd-anchor"></a>
+					<h3>with<wbr>Push<wbr>Rules</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">with<wbr>Push<wbr>Rules&lt;F&gt;<span class="tsd-signature-symbol">(</span>contributor<span class="tsd-signature-symbol">: </span><a href="_api_dsl_goalcontribution_.goalcontribution.html" class="tsd-signature-type">GoalContribution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span>, <span class="tsd-signature-symbol">...</span>contributors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_dsl_goalcontribution_.goalcontribution.html" class="tsd-signature-type">GoalContribution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html">GoalDrivenMachine</a>.<a href="_api_machine_goaldrivenmachine_.goaldrivenmachine.html#withpushrules">withPushRules</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/atomist/sdm/blob/9968260/lib/api/machine/GoalDrivenMachine.ts#L71">lib/api/machine/GoalDrivenMachine.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add to the list of things an SDM
+									can do on a push.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>F<span class="tsd-signature-symbol">: </span><a href="_api_context_sdmcontext_.sdmcontext.html" class="tsd-signature-type">SdmContext</a> = <span class="tsd-signature-type">PushListenerInvocation</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>contributor: <a href="_api_dsl_goalcontribution_.goalcontribution.html" class="tsd-signature-type">GoalContribution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>contributor to set</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>contributors: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_dsl_goalcontribution_.goalcontribution.html" class="tsd-signature-type">GoalContribution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>additional contributors</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_api_machine_softwaredeliverymachine_.html">&quot;api/machine/<wbr>Software<wbr>Delivery<wbr>Machine&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html" class="tsd-kind-icon">Software<wbr>Delivery<wbr>Machine</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#channellinklisteners" class="tsd-kind-icon">channel<wbr>Link<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#closedissuelisteners" class="tsd-kind-icon">closed<wbr>Issue<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#commandhandlers" class="tsd-kind-icon">command<wbr>Handlers</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#configuration" class="tsd-kind-icon">configuration</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#eventhandlers" class="tsd-kind-icon">event<wbr>Handlers</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#extensionpacks" class="tsd-kind-icon">extension<wbr>Packs</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#firstpushlisteners" class="tsd-kind-icon">first<wbr>Push<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalcompletionlisteners" class="tsd-kind-icon">goal<wbr>Completion<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalexecutionlisteners" class="tsd-kind-icon">goal<wbr>Execution<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalfulfillmentmapper" class="tsd-kind-icon">goal<wbr>Fulfillment<wbr>Mapper</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#goalssetlisteners" class="tsd-kind-icon">goals<wbr>Set<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#ingesters" class="tsd-kind-icon">ingesters</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#newissuelisteners" class="tsd-kind-icon">new<wbr>Issue<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#pullrequestlisteners" class="tsd-kind-icon">pull<wbr>Request<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#pushmapping" class="tsd-kind-icon">push<wbr>Mapping</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#repocreationlisteners" class="tsd-kind-icon">repo<wbr>Creation<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#repoonboardinglisteners" class="tsd-kind-icon">repo<wbr>Onboarding<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#startuplisteners" class="tsd-kind-icon">startup<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#taglisteners" class="tsd-kind-icon">tag<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#updatedissuelisteners" class="tsd-kind-icon">updated<wbr>Issue<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#userjoiningchannellisteners" class="tsd-kind-icon">user<wbr>Joining<wbr>Channel<wbr>Listeners</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addchannellinklistener" class="tsd-kind-icon">add<wbr>Channel<wbr>Link<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addclosedissuelistener" class="tsd-kind-icon">add<wbr>Closed<wbr>Issue<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcodeinspectioncommand" class="tsd-kind-icon">add<wbr>Code<wbr>Inspection<wbr>Command</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcodetransformcommand" class="tsd-kind-icon">add<wbr>Code<wbr>Transform<wbr>Command</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addcommand" class="tsd-kind-icon">add<wbr>Command</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addevent" class="tsd-kind-icon">add<wbr>Event</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addextensionpacks" class="tsd-kind-icon">add<wbr>Extension<wbr>Packs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addfirstpushlistener" class="tsd-kind-icon">add<wbr>First<wbr>Push<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgeneratorcommand" class="tsd-kind-icon">add<wbr>Generator<wbr>Command</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalapprovalrequestvoter" class="tsd-kind-icon">add<wbr>Goal<wbr>Approval<wbr>Request<wbr>Voter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalcompletionlistener" class="tsd-kind-icon">add<wbr>Goal<wbr>Completion<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalcontributions" class="tsd-kind-icon">add<wbr>Goal<wbr>Contributions</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalexecutionlistener" class="tsd-kind-icon">add<wbr>Goal<wbr>Execution<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addgoalssetlistener" class="tsd-kind-icon">add<wbr>Goals<wbr>Set<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addingester" class="tsd-kind-icon">add<wbr>Ingester</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addnewissuelistener" class="tsd-kind-icon">add<wbr>New<wbr>Issue<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addpullrequestlistener" class="tsd-kind-icon">add<wbr>Pull<wbr>Request<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addrepocreationlistener" class="tsd-kind-icon">add<wbr>Repo<wbr>Creation<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addrepoonboardinglistener" class="tsd-kind-icon">add<wbr>Repo<wbr>Onboarding<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addstartuplistener" class="tsd-kind-icon">add<wbr>Startup<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addtaglistener" class="tsd-kind-icon">add<wbr>Tag<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addtriggeredlistener" class="tsd-kind-icon">add<wbr>Triggered<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#addupdatedissuelistener" class="tsd-kind-icon">add<wbr>Updated<wbr>Issue<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#adduserjoiningchannellistener" class="tsd-kind-icon">add<wbr>User<wbr>Joining<wbr>Channel<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#setgoalapprovalrequestvotedecisionmanager" class="tsd-kind-icon">set<wbr>Goal<wbr>Approval<wbr>Request<wbr>Vote<wbr>Decision<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
+								<a href="_api_machine_softwaredeliverymachine_.softwaredeliverymachine.html#withpushrules" class="tsd-kind-icon">with<wbr>Push<wbr>Rules</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
