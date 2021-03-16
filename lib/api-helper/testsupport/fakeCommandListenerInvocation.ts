@@ -28,7 +28,7 @@ export function fakeCommandListenerInvocation<P>(opts: Partial<CommandListenerIn
         context: fakeContext(),
         configuration: {},
         addressChannels: AddressNoChannels,
-        promptFor: NoParameterPrompt,
+        promptFor: NoParameterPrompt as any,
         preferences: NoPreferenceStore,
         credentials: opts.credentials,
         ...opts,

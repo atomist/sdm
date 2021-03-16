@@ -463,7 +463,7 @@ export function toCommandListenerInvocation<P>(
     }
 
     const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
-    const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt;
+    const promptFor = sdm.parameterPromptFactory ? sdm.parameterPromptFactory(context) : NoParameterPrompt as any;
     const preferences = sdm.preferenceStoreFactory ? sdm.preferenceStoreFactory(context) : NoPreferenceStore;
     const configuration = (((context || {}) as any) as ConfigurationAware).configuration;
     return {
