@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/2.1.2...HEAD)
 
+### Changed
+
+-   Update @atomist dependencies. [00fcd48](https://github.com/atomist/sdm/commit/00fcd4896d5fabbf89e7c0e0e9ca2679d217937d)
+
 ## [2.1.2](https://github.com/atomist/sdm/compare/2.1.1...2.1.2) - 2021-02-12
 
 ### Removed
