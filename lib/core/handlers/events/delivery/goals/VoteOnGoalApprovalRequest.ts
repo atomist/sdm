@@ -89,14 +89,14 @@ export class VoteOnGoalApprovalRequest implements HandleEvent<OnAnyApprovedSdmGo
 
     public async handle(event: EventFired<OnAnyApprovedSdmGoal.Subscription>,
                         context: HandlerContext): Promise<HandlerResult> {
-        const sdmGoal = event.data.SdmGoal[0] as SdmGoalEvent;
+        let sdmGoal = event.data.SdmGoal[0] as SdmGoalEvent;
 
         if (!shouldHandle(sdmGoal)) {
             logger.debug(`Goal ${sdmGoal.name} skipped because not managed by this SDM`);
             return Success;
         }
 
-        await verifyGoal(sdmGoal, this.configuration.sdm.goalSigning, context);
+        sdmGoal  =await verifyGoal(sdmGoal, this.configuration.sdm.goalSigning, context);
 
         const id = this.repoRefResolver.repoRefFromPush(sdmGoal.push);
         const credentials = await resolveCredentialsPromise(this.credentialsFactory.eventHandlerCredentials(context, id));
