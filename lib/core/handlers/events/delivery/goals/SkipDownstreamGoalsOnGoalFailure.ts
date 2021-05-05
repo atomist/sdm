@@ -58,14 +58,14 @@ export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
 
     public async handle(event: EventFired<OnAnyFailedSdmGoal.Subscription>,
                         context: HandlerContext): Promise<HandlerResult> {
-        const failedGoal = event.data.SdmGoal[0] as SdmGoalEvent;
+        let failedGoal = event.data.SdmGoal[0] as SdmGoalEvent;
 
         if (!shouldHandle(failedGoal)) {
             logger.debug(`Goal ${failedGoal.uniqueName} skipped because not managed by this SDM`);
             return Success;
         }
 
-        await verifyGoal(failedGoal, this.configuration.sdm.goalSigning, context);
+        failedGoal = await verifyGoal(failedGoal, this.configuration.sdm.goalSigning, context);
 
         const goals = fetchGoalsFromPush(failedGoal);
 
