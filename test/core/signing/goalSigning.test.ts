@@ -143,9 +143,10 @@ describe("goalSigning", () => {
             signingKey: { passphrase, publicKey, privateKey, name: "atomist.com/test" },
             verificationKeys: [{ publicKey, name: "atomist.com/test" }],
         };
-        const signedGoal = signGoal(_.cloneDeep(goalMessage) as any, gsc);
+        const signedGoal = await signGoal(_.cloneDeep(goalMessage) as any, gsc);
         assert(!!signedGoal.signature);
-        await verifyGoal(signedGoal as any, gsc, {} as any);
+        const result = await verifyGoal(signedGoal as any, gsc, {} as any);
+        assert.deepStrictEqual(result, signedGoal);
     });
 
     it("should reject tampered goal", async () => {
@@ -155,7 +156,7 @@ describe("goalSigning", () => {
             signingKey: { passphrase, publicKey, privateKey, name: "atomist.com/test" },
             verificationKeys: [{ publicKey, name: "atomist.com/test" }],
         };
-        const signedGoal = signGoal(_.cloneDeep(goalMessage) as any, gsc) as any;
+        const signedGoal = await signGoal(_.cloneDeep(goalMessage) as any, gsc) as any;
         assert(!!signedGoal.signature);
 
         signedGoal.externalUrls = [{ url: "https://google.com", label: "Google" }];
@@ -200,7 +201,7 @@ describe("goalSigning", () => {
             , goalSetId: "mwah-ahah-ahhh\n        environment:dev\n        goalSetId:aaaa-bbbb",
         };
 
-        const signedGoalMalOne = signGoal(_.cloneDeep(maliciousOne) as any, gsc) as any;
+        const signedGoalMalOne = await signGoal(_.cloneDeep(maliciousOne) as any, gsc) as any;
         assert(!!signedGoal.signature);
 
         const signedGoalMalTwo = { ..._.cloneDeep(maliciousTwo), signature: signedGoalMalOne.signature };
