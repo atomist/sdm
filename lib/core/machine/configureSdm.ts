@@ -33,6 +33,10 @@ import {
     GoalExecutionRequestProcessor,
 } from "../handlers/events/delivery/goals/goalExecution";
 import { CacheCleanupAutomationEventListener } from "../handlers/events/delivery/goals/k8s/CacheCleanupAutomationEventListener";
+import {
+    EventSigningAutomationEventListener,
+    wrapEventHandlersToVerifySignature,
+} from "../signing/eventSigning";
 import { GoalSigningAutomationEventListener } from "../signing/goalSigning";
 import { toArray } from "../util/misc/array";
 import { SdmGoalMetricReportingAutomationEventListener } from "../util/SdmGoalMetricReportingAutomationEventListener";
@@ -93,7 +97,8 @@ export function configureSdm(machineMaker: SoftwareDeliveryMachineMaker,
         // Configure the job forking ability
         await configureJobLaunching(mergedConfig, sdm);
         configureGoalSigning(mergedConfig);
-
+        configureEventSigning(mergedConfig);
+        
         await registerMetadata(mergedConfig, sdm);
 
         // Register startup message detail
@@ -186,6 +191,21 @@ function configureGoalSigning(mergedConfig: SoftwareDeliveryMachineConfiguration
             old => !!old ? old : []);
         mergedConfig.graphql.listeners.push(
             new GoalSigningAutomationEventListener(mergedConfig.sdm.goalSigning));
+    }
+}
+
+/**
+ * Configure SDM to sign and verify events
+ * @param mergedConfig
+ */
+function configureEventSigning(mergedConfig: SoftwareDeliveryMachineConfiguration): void {
+    if (mergedConfig.sdm?.eventSigning?.enabled === true) {
+        _.update(mergedConfig, "graphql.listeners",
+            old => !!old ? old : []);
+        mergedConfig.graphql.listeners.push(
+            new EventSigningAutomationEventListener(mergedConfig.sdm.eventSigning));
+        mergedConfig.events = wrapEventHandlersToVerifySignature(
+            mergedConfig.events || [], mergedConfig.sdm.eventSigning);
     }
 }
 

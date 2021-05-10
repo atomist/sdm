@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-export interface GoalVerificationKey<T> {
+import { SdmGoalEvent } from "../goal/SdmGoalEvent";
+import { SdmGoalMessage } from "../goal/SdmGoalMessage";
+
+export interface VerificationKey<T> {
     name: string;
     publicKey: T;
     algorithm?: string;
@@ -23,7 +26,7 @@ export interface GoalVerificationKey<T> {
 /**
  * Private/public key pair to use for SDM goal signing and verification
  */
-export interface GoalSigningKey<T> extends GoalVerificationKey<T> {
+export interface SigningKey<T> extends VerificationKey<T> {
     privateKey: T;
     passphrase?: string;
 }
@@ -55,14 +58,14 @@ export interface GoalSigningAlgorithm<T> {
     name: string;
 
     /**
-     * Sign the provided normalized goal with the given key
+     * Sign the provided goal with the given key
      */
-    sign(goal: string, key: GoalSigningKey<T>): string;
+    sign(goal: SdmGoalMessage, key: SigningKey<T>): Promise<string>;
 
     /**
-     * Verify the provided normalized goal against the signature
+     * Verify the provided goal against the signature
      */
-    verify(goal: string, signature: string, key: GoalVerificationKey<T>): boolean;
+    verify(goal: SdmGoalEvent, signature: string, key: VerificationKey<T>): Promise<SdmGoalEvent>;
 }
 
 export interface GoalSigningConfiguration {
@@ -84,12 +87,12 @@ export interface GoalSigningConfiguration {
      * Public/Private key pair to use for goal signing.
      * The public key will also be used to verify incoming goals.
      */
-    signingKey?: GoalSigningKey<any>;
+    signingKey?: SigningKey<any>;
 
     /**
      * Public keys to verify incoming goals
      */
-    verificationKeys?: GoalVerificationKey<any> | Array<GoalVerificationKey<any>>;
+    verificationKeys?: VerificationKey<any> | Array<VerificationKey<any>>;
 
     /**
      * Algorithms to use for signing and verification
@@ -97,4 +100,30 @@ export interface GoalSigningConfiguration {
      * Default RSA-SHA512 algorithm will always be available
      */
     algorithms?: GoalSigningAlgorithm<any> | Array<GoalSigningAlgorithm<any>>;
+}
+
+export interface EventSigningConfiguration {
+
+    /**
+     * Enable event signature verification on this SDM.
+     */
+    enabled: boolean;
+
+    /**
+     * Regular expressions matching subscription and mutation names
+     * to identify events that should be verified.
+     */
+    events: string[];
+
+    /**
+     * Public/Private key pair to use for event signing.
+     * The public key will also be used to verify incoming events.
+     */
+    signingKey?: SigningKey<any>;
+
+    /**
+     * Public keys to verify incoming events
+     */
+    verificationKeys?: VerificationKey<any> | Array<VerificationKey<any>>;
+
 }

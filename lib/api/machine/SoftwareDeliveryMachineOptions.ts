@@ -29,7 +29,10 @@ import { EnrichGoal } from "../goal/enrichGoal";
 import { GoalScheduler } from "../goal/support/GoalScheduler";
 import { TagGoalSet } from "../goal/tagGoalSet";
 import { RepoTargets } from "./RepoTargets";
-import { GoalSigningConfiguration } from "./SigningKeys";
+import {
+    EventSigningConfiguration,
+    GoalSigningConfiguration,
+} from "./SigningKeys";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -110,6 +113,11 @@ export interface SoftwareDeliveryMachineOptions {
      * by this SDM.
      */
     goalSigning?: GoalSigningConfiguration;
+
+    /**
+     * Optional set o of keys to sign and verify custom events.
+     */
+    eventSigning?: EventSigningConfiguration;
 }
 
 /**

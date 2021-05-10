@@ -72,14 +72,14 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         event: EventFired<OnAnyRequestedSdmGoal.Subscription>,
         ctx: HandlerContext,
     ): Promise<HandlerResult> {
-        const sdmGoal = event.data.SdmGoal[0] as SdmGoalEvent;
+        let sdmGoal = event.data.SdmGoal[0] as SdmGoalEvent;
 
         if (!shouldFulfill(sdmGoal)) {
             logger.debug(`Goal ${sdmGoal.uniqueName} skipped because not fulfilled by this SDM`);
             return Success;
         }
 
-        await verifyGoal(sdmGoal, this.configuration.sdm.goalSigning, ctx);
+        sdmGoal = await verifyGoal(sdmGoal, this.configuration.sdm.goalSigning, ctx);
 
         if ((await cancelableGoal(sdmGoal, this.configuration)) && (await isGoalCanceled(sdmGoal, ctx))) {
             logger.debug(`Goal ${sdmGoal.uniqueName} has been canceled. Not fulfilling`);
