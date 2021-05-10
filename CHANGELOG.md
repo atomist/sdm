@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/2.1.4...HEAD)
 
+### Added
+
+-   Add support for signing custom events. [#863](https://github.com/atomist/sdm/issues/863)
+
 ## [2.1.4](https://github.com/atomist/sdm/compare/2.1.2...2.1.4) - 2021-04-02
 
 ### Changed
