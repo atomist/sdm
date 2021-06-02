@@ -132,19 +132,20 @@ export function cancelGoalSetsCommand(sdm: SoftwareDeliveryMachine): CommandHand
             if (!!ci.parameters.goalSetId) {
                 await cancelGoalSet(ci.parameters.goalSetId, ci.context, id);
             } else {
+                const canceledGoalSets = [];
                 let pgs = await pendingGoalSets(ci.context, sdm.configuration.name);
-                let count = 0;
                 while (pgs.length > 0) {
                     for (const pg of pgs) {
+                        canceledGoalSets.push(pgs);
                         await cancelGoalSet(pg.goalSetId, ci.context);
-                        count++;
                     }
-                    pgs = await pendingGoalSets(ci.context, sdm.configuration.name);
+                    pgs = (await pendingGoalSets(ci.context, sdm.configuration.name))
+                        .filter(gs => !canceledGoalSets.includes(gs.goalSetId));
                 }
                 await ci.context.messageClient.respond(
                     slackSuccessMessage(
                         "Cancel Goal Sets",
-                        `Successfully canceled ${count} pending goal ${count > 1 ? "sets" : "set"}`));
+                        `Successfully canceled ${canceledGoalSets.length} pending goal ${canceledGoalSets.length > 1 ? "sets" : "set"}`));
             }
         },
     };
