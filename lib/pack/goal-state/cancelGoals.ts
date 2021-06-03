@@ -136,7 +136,7 @@ export function cancelGoalSetsCommand(sdm: SoftwareDeliveryMachine): CommandHand
                 let pgs = await pendingGoalSets(ci.context, sdm.configuration.name);
                 while (pgs.length > 0) {
                     for (const pg of pgs) {
-                        canceledGoalSets.push(pgs);
+                        canceledGoalSets.push(pg.goalSetId);
                         await cancelGoalSet(pg.goalSetId, ci.context);
                     }
                     pgs = (await pendingGoalSets(ci.context, sdm.configuration.name))
