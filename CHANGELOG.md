@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/2.1.5...HEAD)
 
+### Fixed
+
+-   Store goalSetIds instead of goalSet to break loop. [aac1d8c](https://github.com/atomist/sdm/commit/aac1d8ce90078068b0c8f028fdb14f96081975df)
+
 ## [2.1.5](https://github.com/atomist/sdm/compare/2.1.4...2.1.5) - 2021-06-03
 
 ### Added
@@ -15,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Track goal sets that were already canceled in this command. [dddfaba](https://github.com/atomist/sdm/commit/dddfaba64da520b35abfae0bd4581ead0444ef2c)
+*   Track goal sets that were already canceled in this command. [dddfaba](https://github.com/atomist/sdm/commit/dddfaba64da520b35abfae0bd4581ead0444ef2c)
 
 ## [2.1.4](https://github.com/atomist/sdm/compare/2.1.2...2.1.4) - 2021-04-02
 
