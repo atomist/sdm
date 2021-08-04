@@ -261,7 +261,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 | `signal-exit`               | `3.0.2`  | Ben Coe              | [https://github.com/tapjs/signal-exit](https://github.com/tapjs/signal-exit)                         |
 | `slide`                     | `1.1.6`  | Isaac Z. Schlueter   | [https://github.com/isaacs/slide-flow-control](https://github.com/isaacs/slide-flow-control)         |
 | `stringify-tree`            | `1.1.1`  | Jessica Kerr         | [https://github.com/jessitron/stringify-tree](https://github.com/jessitron/stringify-tree)           |
-| `tar`                       | `6.1.0`  | Isaac Z. Schlueter   | [https://github.com/npm/node-tar](https://github.com/npm/node-tar)                                   |
+| `tar`                       | `6.1.6`  | Isaac Z. Schlueter   | [https://github.com/npm/node-tar](https://github.com/npm/node-tar)                                   |
 | `tinyqueue`                 | `2.0.0`  |                      | [https://github.com/mourner/tinyqueue](https://github.com/mourner/tinyqueue)                         |
 | `tty`                       | `1.0.1`  |                      | [https://github.com/npm/security-holder](https://github.com/npm/security-holder)                     |
 | `universal-user-agent`      | `4.0.1`  |                      | [https://github.com/gr2m/universal-user-agent](https://github.com/gr2m/universal-user-agent)         |
