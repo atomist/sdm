@@ -71,7 +71,7 @@
     "js-yaml": "^3.14.1",
     "json-stable-stringify": "^1.0.1",
     "json-stringify-safe": "^5.0.1",
-    "jszip": "^3.6.0",
+    "jszip": "^3.7.1",
     "license-checker": "^25.0.1",
     "lodash": "^4.17.21",
     "micromatch": "^4.0.2",
